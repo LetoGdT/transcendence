@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+    nestjs:
+        container_name: nestjs
+        ports:
+            - "3000:3000"
+        build: ./
+        restart: unless-stopped
+        volumes:
+            - nestjs:/usr/src/app
+
+volumes:
+    nestjs:
+        driver: local
+        driver_opts:
+            type: none
+            device: ./srcs/backend
+            o: bind
