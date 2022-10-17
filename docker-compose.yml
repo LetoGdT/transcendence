@@ -5,7 +5,7 @@ services:
         container_name: nestjs
         ports:
             - "3000:3000"
-        build: ./
+        build: ./srcs/backend/
         restart: unless-stopped
         volumes:
             - nestjs:/usr/src/app
