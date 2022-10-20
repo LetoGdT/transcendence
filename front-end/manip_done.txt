@@ -1,2 +1,4 @@
+apt upgrade
 apt install npm 
 npm install react react-dom
+apt install nodejs
