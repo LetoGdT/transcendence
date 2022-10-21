@@ -11,10 +11,12 @@ export class Api42
 {
 	token: string;
 	refresh: string;
-	private readonly logger = new Logger(Api42.name);
-	private readonly http = new HttpService();
-	private readonly configService = new ConfigService;
+	private readonly logger = new Logger(Api42.name); // Debug
+	private readonly http = new HttpService(); // Used to make http requests
+	private readonly configService = new ConfigService; // To get .env variables
 
+	// Create a token from an auth code (provided by the 42's login api)
+	// Make sure to await to get the token or it will be empty !
 	async setToken(auth_code: string): Promise<void>
 	{
 		const checkResultObservable = this.http.post(
@@ -32,6 +34,7 @@ export class Api42
 		this.refresh = checkResult.refresh_token;
 	}
 
+	// Uses the refresh token obtained with the token to get a new token
 	async refreshToken(): Promise<void>
 	{
 		const refresh = this.http.post(
@@ -48,6 +51,7 @@ export class Api42
 		this.refresh = refreshJson.refresh_token;
 	}
 
+	// Check if current token is valid
 	async isTokenValid(): Promise<boolean>
 	{
 		let info = await this.get('/oauth/token/info');
@@ -56,6 +60,7 @@ export class Api42
 		return true;
 	}
 
+	// Get request on 42's api
 	async get(endpoint: string)//: Promise<object>
 	{
 		if (!this.token)
@@ -67,5 +72,6 @@ export class Api42
 		return (await (await lastValueFrom(ret)).data);
 	}
 
+	// Probably won't need post ever on 42's api
 	// async post(endpoint: string): Promise<object>
 }
