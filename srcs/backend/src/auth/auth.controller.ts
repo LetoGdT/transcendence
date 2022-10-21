@@ -21,6 +21,9 @@ export class AuthController
 		let host: string = 'https://api.intra.42.fr/oauth/authorize';
 		let uid: string = this.configService.get<string>('UID');
 		let secret: string = this.configService.get<string>('SECRET');
+		if (uid == undefined || secret == undefined)
+			throw new HttpException('42API credentials not set. Did you forget to create .env ?',
+				HttpStatus.INTERNAL_SERVER_ERROR);
 		let redirect_uri: string = 'http://localhost:3000/callback';
 		let state: string = randomBytes(32).toString("hex");
 		this.state = state;
