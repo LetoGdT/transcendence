@@ -16,13 +16,15 @@ exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
 const axios_1 = require("@nestjs/axios");
 const config_1 = require("@nestjs/config");
+const jwt_1 = require("@nestjs/jwt");
 const crypto_1 = require("crypto");
 const auth_service_1 = require("./auth.service");
 let AuthController = class AuthController {
-    constructor(http) {
+    constructor(http, configService, jwtService) {
         this.http = http;
+        this.configService = configService;
+        this.jwtService = jwtService;
         this.logger = new common_1.Logger(auth_service_1.Api42.name);
-        this.configService = new config_1.ConfigService;
     }
     redirect(res) {
         let host = 'https://api.intra.42.fr/oauth/authorize';
@@ -38,15 +40,25 @@ let AuthController = class AuthController {
             url: url
         };
     }
-    async getCode(query) {
-        if (!query.code || !this.state || query.state != this.state)
+    async getCode(query, res) {
+        if (!query.code || !this.state)
             throw new common_1.HttpException('Forbidden', common_1.HttpStatus.FORBIDDEN);
+        if (query.state != this.state)
+            throw new common_1.HttpException('CSRF attempt detected !', common_1.HttpStatus.FORBIDDEN);
         let api = new auth_service_1.Api42();
         await api.setToken(query.code);
         if (!(await api.isTokenValid()))
             await api.refreshToken();
         let me = await api.get('/v2/me');
-        return (me.login);
+        const payload = { username: me.login };
+        const access_token = await this.jwtService.sign(payload);
+        res.cookie('auth_cookie', access_token, {
+            maxAge: 3600 * 1000,
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: true,
+        });
+        return (res.redirect('/'));
     }
 };
 __decorate([
@@ -60,13 +72,16 @@ __decorate([
 __decorate([
     (0, common_1.Get)('/callback'),
     __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Res)({ passthrough: true })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "getCode", null);
 AuthController = __decorate([
     (0, common_1.Controller)(),
-    __metadata("design:paramtypes", [axios_1.HttpService])
+    __metadata("design:paramtypes", [axios_1.HttpService,
+        config_1.ConfigService,
+        jwt_1.JwtService])
 ], AuthController);
 exports.AuthController = AuthController;
 //# sourceMappingURL=auth.controller.js.map

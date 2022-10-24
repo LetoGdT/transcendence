@@ -1,4 +1,5 @@
 import { AppService } from './app.service';
+import { Request } from 'express';
 export declare class AppController {
     private readonly appService;
     private readonly logger;
@@ -6,6 +7,5 @@ export declare class AppController {
     getHello(query: {
         plain: string;
         pass: string;
-    }): Promise<boolean>;
-    getNameList(message: string): string;
+    }, request: Request): string;
 }

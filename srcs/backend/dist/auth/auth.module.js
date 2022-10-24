@@ -10,13 +10,19 @@ exports.AuthModule = void 0;
 const common_1 = require("@nestjs/common");
 const axios_1 = require("@nestjs/axios");
 const config_1 = require("@nestjs/config");
+const jwt_1 = require("@nestjs/jwt");
 const auth_controller_1 = require("./auth.controller");
 const auth_service_1 = require("./auth.service");
+const jwt_config_1 = require("./jwt.config");
 let AuthModule = class AuthModule {
 };
 AuthModule = __decorate([
     (0, common_1.Module)({
-        imports: [axios_1.HttpModule, config_1.ConfigModule],
+        imports: [
+            axios_1.HttpModule,
+            jwt_1.JwtModule.registerAsync(jwt_config_1.jwtConfig),
+            config_1.ConfigModule
+        ],
         controllers: [auth_controller_1.AuthController],
         providers: [auth_service_1.AuthService]
     })

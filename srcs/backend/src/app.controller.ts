@@ -1,6 +1,6 @@
 import
 {
-	Controller, Get, Post, Query,
+	Controller, Get, Post, Query, Req,
 	Logger, Body, HttpStatus, HttpException
 } from '@nestjs/common';
 import { AppService } from './app.service';
@@ -14,18 +14,18 @@ export class AppController
 	constructor(private readonly appService: AppService) {}
 
 	@Get()
-	async getHello(@Query() query: { plain: string, pass: string }): Promise<boolean>
+	getHello(@Query() query: { plain: string, pass: string },
+		@Req() request: Request): string
 	{
-		if (!query.plain || !query.pass)
-			throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
-		const hash = await this.appService.getHashedPassword(query.plain);
-		return await this.appService.checkPassword(query.pass, hash);
+		if ( request.cookies && 'auth_cookie' in request.cookies && request.cookies.auth_cookie.length > 0)
+			return "You are logged in";
+		return "You are not logged in";
 	}
 
-	@Post()
-	getNameList(@Body() message: string)
-	{
-		this.logger.log(message);
-		return message;
-	}
+	// @Post()
+	// getNameList(@Body() message: string)
+	// {
+	// 	this.logger.log(message);
+	// 	return message;
+	// }
 }

@@ -20,31 +20,20 @@ let AppController = class AppController {
         this.appService = appService;
         this.logger = new common_1.Logger(app_service_1.AppService.name);
     }
-    async getHello(query) {
-        if (!query.plain || !query.pass)
-            throw new common_1.HttpException('Forbidden', common_1.HttpStatus.FORBIDDEN);
-        const hash = await this.appService.getHashedPassword(query.plain);
-        return await this.appService.checkPassword(query.pass, hash);
-    }
-    getNameList(message) {
-        this.logger.log(message);
-        return message;
+    getHello(query, request) {
+        if (request.cookies && 'auth_cookie' in request.cookies && request.cookies.auth_cookie.length > 0)
+            return "You are logged in";
+        return "You are not logged in";
     }
 };
 __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", String)
 ], AppController.prototype, "getHello", null);
-__decorate([
-    (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], AppController.prototype, "getNameList", null);
 AppController = __decorate([
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [app_service_1.AppService])

@@ -1,6 +1,11 @@
-import { Controller, Get, Post, Logger, Redirect, Query, HttpStatus, HttpException, Res } from '@nestjs/common';
+import {
+	Controller, Get, Post, Logger, Redirect,
+	Query, HttpStatus, HttpException, Res
+} from '@nestjs/common';
 import { HttpService } from "@nestjs/axios";
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { Response } from 'express';
 import { lastValueFrom } from 'rxjs';
 import { randomBytes } from 'crypto';
 import { Api42 } from './auth.service';
@@ -10,9 +15,10 @@ export class AuthController
 {
 	state: string;
 	private readonly logger = new Logger(Api42.name);
-	private readonly configService = new ConfigService;
 
-	constructor(private readonly http: HttpService) {}
+	constructor(private readonly http: HttpService,
+				private readonly configService: ConfigService,
+				private jwtService: JwtService) {}
 
 	@Redirect('', 301)
 	@Get('/log')
@@ -34,15 +40,28 @@ export class AuthController
 	}
 
 	@Get('/callback')
-	async getCode(@Query() query: { code: string, state: string })
+	async getCode(@Query() query: { code: string, state: string },
+		@Res({ passthrough: true }) res: Response)
 	{
-		if (!query.code || !this.state || query.state != this.state) // Avoid CSRF
+		if (!query.code || !this.state) // Avoid CSRF
 			throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+		if (query.state != this.state)
+			throw new HttpException('CSRF attempt detected !', HttpStatus.FORBIDDEN);
 		let api = new Api42();
 		await api.setToken(query.code);
 		if (!(await api.isTokenValid()))
 			await api.refreshToken();
-		let me = await api.get('/v2/me')
-		return (me.login);
+		let me = await api.get('/v2/me');
+		const payload = { username: me.login };	// Random stuff for now
+		const access_token = await this.jwtService.sign(payload);	// Create a jwt
+		res.cookie('auth_cookie', access_token,	// Set the jwt as cookie
+			{
+				maxAge: 3600 * 1000,	// 1h in ms
+				httpOnly: true,			// Prevent xss
+				sameSite: 'lax',		// Prevent CSRF
+				secure: true,			// Just info for the browser
+			}
+		);
+		return (res.redirect('/'));
 	}
 }

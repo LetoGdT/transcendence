@@ -6,6 +6,10 @@ RUN npm i -g @nestjs/cli && \
 	npm i --save @nestjs/config && \
 	npm i --save @nestjs/axios && \
 	npm i bcrypt && \
-	npm i -D @types/bcrypt
+	npm i -D @types/bcrypt && \
+	npm install --save @nestjs/jwt passport-jwt && \
+	npm install --save-dev @types/passport-jwt && \
+	npm i cookie-parser && \
+	npm i -D @types/cookie-parser
 
 CMD ["npm", "run", "start:dev"]
