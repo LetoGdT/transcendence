@@ -2,5 +2,8 @@ apt update
 apt upgrade
 to install node.js v19.x https://github.com/nodesource/distributions#installation-instructions
 apt install npm 
+npm cache clean -f
+npm instal -g n
+n stable
 npm install react react-dom
 

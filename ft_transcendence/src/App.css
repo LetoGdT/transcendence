@@ -10,14 +10,14 @@
   padding: 1.5em;
   will-change: filter;
 }
-.logo:hover {
+.logo:hover { /*permet un ombrage quand pointé a reutiliser pour le menu :3*/
   filter: drop-shadow(0 0 2em #646cffaa);
 }
-.logo.react:hover {
+.logo.react:hover {/*idem*/
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
-@keyframes logo-spin {
+@keyframes logo-spin {/*permet de faire tourner*/
   from {
     transform: rotate(0deg);
   }
@@ -28,7 +28,7 @@
 
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+    animation: logo-spin infinite 20s linear;/*ici la rotation est en boucle*/
   }
 }
 
