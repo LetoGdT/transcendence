@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { useState } from 'react'
 import './App.css'
 
@@ -6,22 +6,27 @@ class Menu extends React.Component {
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			item_menu: "",
-			pong_item: Array(2),
-			profile_item: Array(4),
 		};
 	}
 
 	handleClick(item_menu: string) {
 		if (item_menu = "pong"){
-			<tr>spec a match</tr>
-			<tr>play</tr>
+			return(
+				<Fragment>
+					<tr>spec a match</tr>
+					<tr>play</tr>
+				</Fragment>
+			);
 		}
 		else if (item_menu = "profile"){
-			<tr>Settings</tr>
-			<tr>Stats</tr>
-			<tr>Friend list</tr>
-			<tr>Matchs history</tr>
+			return(
+				<Fragment>
+					<tr>Settings</tr>
+					<tr>Stats</tr>
+					<tr>Friend list</tr>
+					<tr>Matchs history</tr>
+				</Fragment>
+			);
 		}
 		else if (item_menu = "home") {
 
@@ -37,7 +42,7 @@ class Menu extends React.Component {
 				<table>
 					<tr>
 						<td>
-							<button /*onClick={() => }*/>
+							<button onClick={() => this.handleClick("home")>
 								<img src="src/home.png" className="menu_button" alt="Home" />
 							</button>
 						</td>
