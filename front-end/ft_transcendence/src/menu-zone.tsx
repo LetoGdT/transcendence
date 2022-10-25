@@ -42,9 +42,7 @@ class Menu extends React.Component {
 				<table>
 					<tr>
 						<td>
-							<button onClick={() => this.handleClick("home")>
-								<img src="src/home.png" className="menu_button" alt="Home" />
-							</button>
+								<img src="src/home.png" className="menu_button" alt="Home" onClick={() => this.handleClick("home") />
 						</td>
 						<td>
 							<button /*onClick={() => }*/>
