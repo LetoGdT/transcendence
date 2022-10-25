@@ -1,39 +1,50 @@
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { Fragment } from 'react'
+import homeIcon from './assets/house-solid.svg'
+import pongIcon from './assets/pong-solid.svg'
+import profileIcon from './assets/user-solid.svg'
+import chatIcon from './assets/comment-solid.svg'
 import { useState } from 'react'
 import './App.css'
 
-class Menu extends React.Component {
+
+
+export class Menu extends React.Component {
 	constructor(props: any) {
 		super(props);
 		this.state = {
 		};
 	}
 
-	handleClick(item_menu: string) {
-		if (item_menu = "pong"){
-			return(
-				<Fragment>
-					<tr>spec a match</tr>
-					<tr>play</tr>
-				</Fragment>
-			);
-		}
-		else if (item_menu = "profile"){
-			return(
-				<Fragment>
-					<tr>Settings</tr>
-					<tr>Stats</tr>
-					<tr>Friend list</tr>
-					<tr>Matchs history</tr>
-				</Fragment>
-			);
-		}
-		else if (item_menu = "home") {
+	handleHome() {
+		
+	}
 
-		}
-		else if (item_menu = "chat") {
+	handleProfile() {
+		return (
+			<Fragment>
+				<tr>Settings</tr>
+				<tr>Stats</tr>
+				<tr>Friend list</tr>
+				<tr>Matchs history</tr>
+			</Fragment>
+		);
+	}
 
-		}
+	handlePong() {
+		return(
+			<Fragment>
+				<tr>spec a match</tr>
+				<tr>play</tr>
+			</Fragment>
+		);
+	}
+
+	handleChat() {
+		return (
+			<div>bouh</div>
+		);
 	}
 
 	render() {
@@ -42,22 +53,16 @@ class Menu extends React.Component {
 				<table>
 					<tr>
 						<td>
-								<img src="src/home.png" className="menu_button" alt="Home" onClick={() => this.handleClick("home") />
+							<img src={homeIcon} className="menu_button" alt="Home" onClick={this.handleHome} />
 						</td>
 						<td>
-							<button /*onClick={() => }*/>
-								<img src="src/pong.png" className="menu_button" alt="Pong" />
-							</button>
+							<img src={pongIcon} className="menu_button" alt="Pong" onClick={this.handlePong}/>
 						</td>
 						<td>
-							<button /*onClick={() => }*/>
-								<img src="src/chat.png" className="menu_button" alt="Chat" />
-							</button>
+							<img src={chatIcon} className="menu_button" alt="Chat" onClick={this.handleChat}/>
 						</td>
 						<td>
-							<button /*onClick={() => }*/>
-								<img src="src/profile.png" className="menu_button" alt="Profile" />
-							</button>
+							<img src={profileIcon} className="menu_button" alt="Profile" onClick={this.handleProfile}/>
 						</td>
 					</tr>
 				</table>
