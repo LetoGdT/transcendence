@@ -3,15 +3,32 @@ import { useState } from 'react'
 import './App.css'
 
 class Menu extends React.Component {
-	constructor(props) {
+	constructor(props: any) {
 		super(props);
 		this.state = {
 			item_menu: "",
+			pong_item: Array(2),
+			profile_item: Array(4),
 		};
 	}
 
-	handleClick(item_menu) {
-		if (item_menu = "home")
+	handleClick(item_menu: string) {
+		if (item_menu = "pong"){
+			<tr>spec a match</tr>
+			<tr>play</tr>
+		}
+		else if (item_menu = "profile"){
+			<tr>Settings</tr>
+			<tr>Stats</tr>
+			<tr>Friend list</tr>
+			<tr>Matchs history</tr>
+		}
+		else if (item_menu = "home") {
+
+		}
+		else if (item_menu = "chat") {
+
+		}
 	}
 
 	render() {
@@ -25,10 +42,7 @@ class Menu extends React.Component {
 							</button>
 						</td>
 						<td>
-							<button onClick={() => 
-								<tr>spec a match</tr>
-								<tr>play</tr>
-							}>
+							<button /*onClick={() => }*/>
 								<img src="src/pong.png" className="menu_button" alt="Pong" />
 							</button>
 						</td>
@@ -38,12 +52,7 @@ class Menu extends React.Component {
 							</button>
 						</td>
 						<td>
-							<button onClick={() => 
-								<tr>Settings</tr>
-								<tr>Stats</tr>
-								<tr>Friend list</tr>
-								<tr>Matchs history</tr>
-							}>
+							<button /*onClick={() => }*/>
 								<img src="src/profile.png" className="menu_button" alt="Profile" />
 							</button>
 						</td>
