@@ -20,11 +20,11 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
             ignoreExpiration: false,
             secretOrKey: configService.get('JWT_SECRET'),
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromExtractors([(request) => {
-                    let data = request === null || request === void 0 ? void 0 : request.cookies["auth-cookie"];
+                    let data = request === null || request === void 0 ? void 0 : request.cookies["auth_cookie"];
                     if (!data) {
                         return null;
                     }
-                    return data.token;
+                    return data;
                 }])
         });
         this.configService = configService;

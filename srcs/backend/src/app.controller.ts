@@ -1,10 +1,12 @@
 import
 {
-	Controller, Get, Post, Query, Req,
-	Logger, Body, HttpStatus, HttpException
+	Controller, Get, Post, Query, Req, Headers,
+	Logger, Body, HttpStatus, HttpException, UseGuards, UseFilters
 } from '@nestjs/common';
-import { AppService } from './app.service';
+import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express'
+import { AppService } from './app.service';
+import { RedirectToLoginFilter } from './filters/auth-exceptions.filter'
 
 @Controller()
 export class AppController
@@ -13,13 +15,13 @@ export class AppController
 
 	constructor(private readonly appService: AppService) {}
 
-	@Get()
+	@Get('')
+	@UseGuards(AuthGuard('jwt'))
+	@UseFilters(RedirectToLoginFilter)
 	getHello(@Query() query: { plain: string, pass: string },
 		@Req() request: Request): string
 	{
-		if ( request.cookies && 'auth_cookie' in request.cookies && request.cookies.auth_cookie.length > 0)
-			return "You are logged in";
-		return "You are not logged in";
+		return 'Coucou';
 	}
 
 	// @Post()

@@ -17,8 +17,10 @@ const common_1 = require("@nestjs/common");
 const axios_1 = require("@nestjs/axios");
 const config_1 = require("@nestjs/config");
 const jwt_1 = require("@nestjs/jwt");
+const passport_1 = require("@nestjs/passport");
 const crypto_1 = require("crypto");
 const auth_service_1 = require("./auth.service");
+const auth_exceptions_filter_1 = require("../filters/auth-exceptions.filter");
 let AuthController = class AuthController {
     constructor(http, configService, jwtService) {
         this.http = http;
@@ -60,9 +62,21 @@ let AuthController = class AuthController {
         });
         return (res.redirect('/'));
     }
+    async movies(req) {
+        return ["Avatar", "Avengers"];
+    }
+    logout(res) {
+        res.clearCookie('auth_cookie', {
+            maxAge: 3600 * 1000,
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: true,
+        });
+        return (res.redirect('/'));
+    }
 };
 __decorate([
-    (0, common_1.Redirect)('', 301),
+    (0, common_1.Redirect)('', 302),
     (0, common_1.Get)('/log'),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -77,6 +91,22 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "getCode", null);
+__decorate([
+    (0, common_1.Get)('/test'),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.UseFilters)(auth_exceptions_filter_1.RedirectToLoginFilter),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "movies", null);
+__decorate([
+    (0, common_1.Get)('/logout'),
+    __param(0, (0, common_1.Res)({ passthrough: true })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "logout", null);
 AuthController = __decorate([
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [axios_1.HttpService,

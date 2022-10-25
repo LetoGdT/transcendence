@@ -14,20 +14,22 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppController = void 0;
 const common_1 = require("@nestjs/common");
+const passport_1 = require("@nestjs/passport");
 const app_service_1 = require("./app.service");
+const auth_exceptions_filter_1 = require("./filters/auth-exceptions.filter");
 let AppController = class AppController {
     constructor(appService) {
         this.appService = appService;
         this.logger = new common_1.Logger(app_service_1.AppService.name);
     }
     getHello(query, request) {
-        if (request.cookies && 'auth_cookie' in request.cookies && request.cookies.auth_cookie.length > 0)
-            return "You are logged in";
-        return "You are not logged in";
+        return 'Coucou';
     }
 };
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.Get)(''),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.UseFilters)(auth_exceptions_filter_1.RedirectToLoginFilter),
     __param(0, (0, common_1.Query)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
