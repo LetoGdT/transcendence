@@ -49,8 +49,8 @@ export class Menu extends React.Component {
 
 	render() {
 		return(
-			<nav className='Menu'>
-				<table>
+			<div style={{width: 500}}>
+				<table align='center'>
 					<tr>
 						<td>
 							<img src={homeIcon} className="menu_button" alt="Home" onClick={this.handleHome} />
@@ -66,7 +66,7 @@ export class Menu extends React.Component {
 						</td>
 					</tr>
 				</table>
-			</nav>
+			</div>
 		);
 	}
 }
