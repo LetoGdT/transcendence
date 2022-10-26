@@ -1,7 +1,7 @@
 import {
 	Controller, Get, Post, Logger, Redirect,
 	Query, HttpStatus, HttpException, Res, Req, UseGuards,
-	UseFilters
+	UseFilters, Request
 } from '@nestjs/common';
 import { HttpService } from "@nestjs/axios";
 import { ConfigService } from '@nestjs/config';
@@ -55,9 +55,9 @@ export class AuthController
 		if (!(await api.isTokenValid()))
 			await api.refreshToken();
 		let me = await api.get('/v2/me');
-		const payload = { username: me.login };	// Random stuff for now
+		const payload = { username: me.login };						// Random stuff for now
 		const access_token = await this.jwtService.sign(payload);	// Create a jwt
-		res.cookie('auth_cookie', access_token,	// Set the jwt as cookie
+		res.cookie('auth_cookie', access_token,						// Set the jwt as cookie
 			{
 				maxAge: 3600 * 1000,	// 1h in ms
 				httpOnly: true,			// Prevent xss
@@ -73,7 +73,7 @@ export class AuthController
 	@UseFilters(RedirectToLoginFilter)
 	async movies(@Req() req)
 	{
-		return ["Avatar", "Avengers"];
+		return req.user.username;
 	}
 
 	@Get('/logout')

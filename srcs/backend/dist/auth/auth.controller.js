@@ -63,7 +63,7 @@ let AuthController = class AuthController {
         return (res.redirect('/'));
     }
     async movies(req) {
-        return ["Avatar", "Avengers"];
+        return req.user.username;
     }
     logout(res) {
         res.clearCookie('auth_cookie', {

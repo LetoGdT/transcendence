@@ -16,6 +16,6 @@ export declare class AuthController {
         code: string;
         state: string;
     }, res: Response): Promise<void>;
-    movies(req: any): Promise<string[]>;
+    movies(req: any): Promise<any>;
     logout(res: Response): void;
 }
