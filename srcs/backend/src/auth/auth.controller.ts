@@ -1,7 +1,7 @@
 import {
 	Controller, Get, Post, Logger, Redirect,
 	Query, HttpStatus, HttpException, Res, Req, UseGuards,
-	UseFilters, Request
+	UseFilters, Request, Headers
 } from '@nestjs/common';
 import { HttpService } from "@nestjs/axios";
 import { ConfigService } from '@nestjs/config';
@@ -12,6 +12,8 @@ import { lastValueFrom } from 'rxjs';
 import { randomBytes } from 'crypto';
 import { Api42 } from './auth.service';
 import { RedirectToLoginFilter } from '../filters/auth-exceptions.filter'
+import { CreateUserDto } from '../dto/users.dto';
+import { UsersService } from '../users/users.service'
 
 @Controller()
 export class AuthController
@@ -21,7 +23,8 @@ export class AuthController
 
 	constructor(private readonly http: HttpService,
 				private readonly configService: ConfigService,
-				private jwtService: JwtService) {}
+				private jwtService: JwtService,
+				private readonly usersService: UsersService) {}
 
 	@Redirect('', 302)
 	@Get('/log')
@@ -44,7 +47,8 @@ export class AuthController
 
 	@Get('/callback')
 	async getCode(@Query() query: { code: string, state: string },
-		@Res({ passthrough: true }) res: Response)
+		@Res({ passthrough: true }) res: Response,
+		@Headers() headers)
 	{
 		if (!query.code || !this.state) // Avoid CSRF
 			throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
@@ -54,7 +58,9 @@ export class AuthController
 		await api.setToken(query.code);
 		if (!(await api.isTokenValid()))
 			await api.refreshToken();
-		let me = await api.get('/v2/me');
+		let me: CreateUserDto = await api.get('/v2/me');
+		// this.logger.log(me);
+		this.usersService.createUser(me);
 		const payload = { username: me.login };						// Random stuff for now
 		const access_token = await this.jwtService.sign(payload);	// Create a jwt
 		res.cookie('auth_cookie', access_token,						// Set the jwt as cookie
