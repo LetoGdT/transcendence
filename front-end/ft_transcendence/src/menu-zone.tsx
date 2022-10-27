@@ -49,7 +49,7 @@ export class Menu extends React.Component {
 
 	render() {
 		return(
-			<div style={{width: 500}}>
+			<div>
 				<table align='center'>
 					<tr>
 						<td>

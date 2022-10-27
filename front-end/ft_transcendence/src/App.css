@@ -5,6 +5,10 @@
   text-align: center;
 }
 
+.menu {
+  width: 500;
+}
+
 .menu_button {
   height: 3em;
   padding: 1.5em;
