@@ -12,7 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt')
 		super({
 			ignoreExpiration: false,
 			secretOrKey: configService.get<string>('JWT_SECRET'),
-			jwtFromRequest:ExtractJwt.fromExtractors([(request: Request) => {
+			jwtFromRequest: ExtractJwt.fromExtractors([(request: Request) => {
 				let data = request?.cookies["auth_cookie"];
 				if (!data)
 				{
@@ -25,7 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt')
 
 	async validate(payload: any)
 	{
-		if(payload === null)
+		if (payload === null)
 		{
 			throw new UnauthorizedException();
 		}

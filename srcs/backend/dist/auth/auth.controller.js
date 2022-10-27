@@ -54,11 +54,11 @@ let AuthController = class AuthController {
         if (!(await api.isTokenValid()))
             await api.refreshToken();
         let me = await api.get('/v2/me');
-        this.usersService.createUser(me);
-        const payload = { username: me.login };
+        const user = await this.usersService.addUser(me);
+        const payload = { username: user.login, sub: user.id };
         const access_token = await this.jwtService.sign(payload);
         res.cookie('auth_cookie', access_token, {
-            maxAge: 3600 * 1000,
+            maxAge: 30000,
             httpOnly: true,
             sameSite: 'lax',
             secure: true,
@@ -70,7 +70,7 @@ let AuthController = class AuthController {
     }
     logout(res) {
         res.clearCookie('auth_cookie', {
-            maxAge: 3600 * 1000,
+            maxAge: 30000,
             httpOnly: true,
             sameSite: 'lax',
             secure: true,

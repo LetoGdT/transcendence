@@ -11,9 +11,10 @@ import { Response } from 'express';
 import { lastValueFrom } from 'rxjs';
 import { randomBytes } from 'crypto';
 import { Api42 } from './auth.service';
-import { RedirectToLoginFilter } from '../filters/auth-exceptions.filter'
+import { RedirectToLoginFilter } from '../filters/auth-exceptions.filter';
 import { CreateUserDto } from '../dto/users.dto';
-import { UsersService } from '../users/users.service'
+import { UsersService } from '../users/users.service';
+import { User } from '../typeorm/user.entity';
 
 @Controller()
 export class AuthController
@@ -59,16 +60,15 @@ export class AuthController
 		if (!(await api.isTokenValid()))
 			await api.refreshToken();
 		let me: CreateUserDto = await api.get('/v2/me');
-		// this.logger.log(me);
-		this.usersService.createUser(me);
-		const payload = { username: me.login };						// Random stuff for now
+		const user: User = await this.usersService.addUser(me);
+		const payload = { username: user.login, sub: user.id };		// Set token owner
 		const access_token = await this.jwtService.sign(payload);	// Create a jwt
 		res.cookie('auth_cookie', access_token,						// Set the jwt as cookie
 			{
-				maxAge: 3600 * 1000,	// 1h in ms
-				httpOnly: true,			// Prevent xss
-				sameSite: 'lax',		// Prevent CSRF
-				secure: true,			// Just info for the browser
+				maxAge: 30000,		// 30s in ms
+				httpOnly: true,		// Prevent xss
+				sameSite: 'lax',	// Prevent CSRF
+				secure: true,		// Just info for the browser
 			}
 		);
 		return (res.redirect('/'));
@@ -87,7 +87,7 @@ export class AuthController
 	{
 		res.clearCookie('auth_cookie',
 			{
-				maxAge: 3600 * 1000,	// 1h in ms
+				maxAge: 30000,			// 30s in ms
 				httpOnly: true,			// Prevent xss
 				sameSite: 'lax',		// Prevent CSRF
 				secure: true,			// Just info for the browser

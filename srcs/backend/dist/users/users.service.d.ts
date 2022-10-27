@@ -5,5 +5,5 @@ export declare class UsersService {
     private readonly userRepository;
     constructor(userRepository: Repository<User>);
     getAll(): Promise<User[]>;
-    createUser(createUserDto: CreateUserDto): Promise<User>;
+    addUser(createUserDto: CreateUserDto): Promise<User>;
 }

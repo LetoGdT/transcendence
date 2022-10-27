@@ -15,6 +15,7 @@ RUN npm i -g @nestjs/cli && \
 	npm install pg && \
 	npm i --save @nestjs/passport passport && \
 	npm install --save passport-jwt && \
-	npm install --save-dev @types/passport-jwt
+	npm install --save-dev @types/passport-jwt && \
+	npm install rand-token --save
 
 CMD ["npm", "run", "start:dev"]

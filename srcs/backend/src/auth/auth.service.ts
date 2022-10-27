@@ -1,19 +1,66 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from "@nestjs/axios";
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 import { lastValueFrom } from 'rxjs';
+import { Repository } from 'typeorm';
+import * as randtoken from 'rand-token';
+import { User } from '../typeorm/user.entity';
+
 
 @Injectable()
-export class AuthService {}
+export class AuthService
+{
+	constructor(@InjectRepository(User) private readonly userRepository: Repository<User>,
+				private readonly jwtService: JwtService,) {}
+
+	// Check if token is valid
+	verifyToken(token: string): boolean
+	{
+		try
+		{
+			this.jwtService.verify(token);
+			return true;
+		}
+		catch (err)
+		{
+			return false;
+		}
+	}
+
+	// Returns the token info.
+	// Throws if the token is invalid (which should have been
+	// checked before with verifyToken()).
+	decodeToken(token: string)
+	{
+		return this.jwtService.verify(token);
+	}
+
+	async createTokens(id: number): Promise<{ access_token: string, refresh_token: string }>
+	{
+		const refreshToken = randtoken.generate(16);
+		const expire = new Date();
+		expire.setDate(expire.getDate() + 6);
+		// await this.usersService.saveorupdateRefreshToke(refreshToken, userId, expire);
+
+		/*********	*********/
+
+		const user = await this.userRepository.findOne({where: { id: id }});
+		const payload = { username: user.login, sub: user.id };
+		const access_token = await this.jwtService.sign(payload);
+		return { access_token: access_token, refresh_token: "123" };
+	}
+}
 
 @Injectable()
 export class Api42
 {
 	token: string;
 	refresh: string;
-	private readonly logger = new Logger(Api42.name); // Debug
-	private readonly http = new HttpService(); // Used to make http requests
-	private readonly configService = new ConfigService; // To get .env variables
+	private readonly logger = new Logger(Api42.name);	// Debug
+	private readonly http = new HttpService();			// Used to make http requests
+	private readonly configService = new ConfigService;	// To get .env variables
 
 	// Create a token from an auth code (provided by the 42's login api)
 	// Make sure to await to get the token or it will be empty !

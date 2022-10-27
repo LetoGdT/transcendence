@@ -27,4 +27,10 @@ export class User
 		default: '',
 	})
 	image_url: string;
+
+	@Column({
+		nullable: true,
+		default: '',
+	})
+	refresh_token: string;
 }

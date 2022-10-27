@@ -42,6 +42,13 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], User.prototype, "image_url", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        nullable: true,
+        default: '',
+    }),
+    __metadata("design:type", String)
+], User.prototype, "refresh_token", void 0);
 User = __decorate([
     (0, typeorm_1.Entity)()
 ], User);

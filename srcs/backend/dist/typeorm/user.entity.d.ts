@@ -3,4 +3,5 @@ export declare class User {
     login: string;
     email: string;
     image_url: string;
+    refresh_token: string;
 }

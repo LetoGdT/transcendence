@@ -24,7 +24,10 @@ let UsersService = class UsersService {
     async getAll() {
         return this.userRepository.find();
     }
-    async createUser(createUserDto) {
+    async addUser(createUserDto) {
+        const user = await this.userRepository.findOne({ where: { login: createUserDto.login } });
+        if (user)
+            return user;
         const newUser = this.userRepository.create(createUserDto);
         return this.userRepository.save(newUser);
     }
