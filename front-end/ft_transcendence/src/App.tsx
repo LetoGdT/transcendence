@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
-import OurMenu from './menu-zone'
+import { OurMenu } from './menu-zone'
 
 function App() {
 	const [count, setCount] = useState(0)

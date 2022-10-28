@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 
-export default function BasicMenu() {
+export function OurMenu() {
   const [anchorElHome, setAnchorElHome] = React.useState<null | HTMLElement>(null);
   const [anchorElPong, setAnchorElPong] = React.useState<null | HTMLElement>(null);
   const [anchorElChat, setAnchorElChat] = React.useState<null | HTMLElement>(null);
