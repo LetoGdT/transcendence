@@ -1,12 +1,8 @@
-import { Fragment } from 'react'
-import homeIcon from './assets/house-solid.svg'
-import pongIcon from './assets/pong-solid.svg'
-import profileIcon from './assets/user-solid.svg'
-import chatIcon from './assets/comment-solid.svg'
-import { useState } from 'react'
+
 import './App.css'
+
 import * as React from 'react';
-import Button from '@mui/material/Button';
+
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 
