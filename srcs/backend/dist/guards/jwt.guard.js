@@ -9,77 +9,55 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var JwtAuthGuard_1;
-var _a, _b;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.JwtAuthGuard = void 0;
 const common_1 = require("@nestjs/common");
 const passport_1 = require("@nestjs/passport");
-const passport_jwt_1 = require("passport-jwt");
+const users_service_1 = require("../users/users.service");
+const auth_service_1 = require("../auth/auth.service");
 let JwtAuthGuard = JwtAuthGuard_1 = class JwtAuthGuard extends (0, passport_1.AuthGuard)('jwt') {
-    constructor(authService, userService) {
+    constructor(authService, usersService) {
         super();
         this.authService = authService;
-        this.userService = userService;
+        this.usersService = usersService;
         this.logger = new common_1.Logger(JwtAuthGuard_1.name);
     }
     async canActivate(context) {
         const request = context.switchToHttp().getRequest();
         const response = context.switchToHttp().getResponse();
         const cookie_options = {
-            maxAge: 30000,
             httpOnly: true,
             sameSite: 'lax',
             secure: true,
         };
-        try {
-            const accessToken = passport_jwt_1.ExtractJwt.fromExtractors([(request) => {
-                    let data = request === null || request === void 0 ? void 0 : request.cookies["auth_cookie"];
-                    if (!data) {
-                        return null;
-                    }
-                    console.log(data);
-                    return data;
-                }]);
-            if (!accessToken)
-                throw new common_1.UnauthorizedException('Access token is not set');
-            const isValidAccessToken = this.authService.validateToken(accessToken);
-            if (isValidAccessToken)
-                return this.activate(context);
-            const refreshToken = request.cookies['refresh_token'];
-            if (!refreshToken)
-                throw new common_1.UnauthorizedException('Refresh token is not set');
-            const isValidRefreshToken = this.authService.validateToken(refreshToken);
-            if (!isValidRefreshToken)
-                throw new common_1.UnauthorizedException('Refresh token is not valid');
-            const user = await this.userService.getByRefreshToken(refreshToken);
-            const { accessToken: newAccessToken, refreshToken: newRefreshToken, } = this.authService.createTokens(user.id);
-            await this.userService.updateRefreshToken(user.id, newRefreshToken);
-            request.cookies['access_token'] = newAccessToken;
-            request.cookies['refresh_token'] = newRefreshToken;
-            response.cookie('access_token', newAccessToken, cookie_options);
-            response.cookie('refresh_token', newRefreshToken, cookie_options);
-            return this.activate(context);
+        const accessToken = request === null || request === void 0 ? void 0 : request.cookies["access_token"];
+        const isValidAccessToken = this.authService.verifyToken(accessToken);
+        console.log(isValidAccessToken);
+        if (isValidAccessToken)
+            return true;
+        const user = await this.authService.tokenOwner(accessToken);
+        const refreshToken = await request.cookies['refresh_token'];
+        if (!refreshToken)
+            throw new common_1.UnauthorizedException('Refresh token is not set');
+        const expires = new Date(user.refresh_expires);
+        const today = new Date();
+        if (refreshToken != user.refresh_token || expires < today) {
+            if (expires < today)
+                console.log('Refresh expired');
+            throw new common_1.UnauthorizedException('Refresh token is not valid');
         }
-        catch (err) {
-            this.logger.error(err.message);
-            response.clearCookie('access_token', cookie_options);
-            response.clearCookie('refresh_token', cookie_options);
-            return false;
-        }
-    }
-    async activate(context) {
-        return super.canActivate(context);
-    }
-    handleRequest(err, user) {
-        if (err || !user) {
-            throw new common_1.UnauthorizedException();
-        }
-        return user;
+        const { access_token: newAccessToken, refresh_token: newRefreshToken, } = await this.authService.createTokens(user.id);
+        request.cookies['access_token'] = newAccessToken;
+        request.cookies['refresh_token'] = newRefreshToken;
+        response.cookie('access_token', newAccessToken, cookie_options);
+        response.cookie('refresh_token', newRefreshToken, cookie_options);
+        return true;
     }
 };
 JwtAuthGuard = JwtAuthGuard_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof AuthService !== "undefined" && AuthService) === "function" ? _a : Object, typeof (_b = typeof UserService !== "undefined" && UserService) === "function" ? _b : Object])
+    __metadata("design:paramtypes", [auth_service_1.AuthService,
+        users_service_1.UsersService])
 ], JwtAuthGuard);
 exports.JwtAuthGuard = JwtAuthGuard;
 //# sourceMappingURL=jwt.guard.js.map

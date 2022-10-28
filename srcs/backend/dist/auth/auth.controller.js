@@ -17,17 +17,20 @@ const common_1 = require("@nestjs/common");
 const axios_1 = require("@nestjs/axios");
 const config_1 = require("@nestjs/config");
 const jwt_1 = require("@nestjs/jwt");
-const passport_1 = require("@nestjs/passport");
 const crypto_1 = require("crypto");
 const auth_service_1 = require("./auth.service");
 const auth_exceptions_filter_1 = require("../filters/auth-exceptions.filter");
 const users_service_1 = require("../users/users.service");
+const auth_service_2 = require("./auth.service");
+const jwt_guard_1 = require("../guards/jwt.guard");
+const auth_interceptor_1 = require("./auth.interceptor");
 let AuthController = class AuthController {
-    constructor(http, configService, jwtService, usersService) {
+    constructor(http, configService, jwtService, usersService, authService) {
         this.http = http;
         this.configService = configService;
         this.jwtService = jwtService;
         this.usersService = usersService;
+        this.authService = authService;
         this.logger = new common_1.Logger(auth_service_1.Api42.name);
     }
     redirect(res) {
@@ -55,10 +58,13 @@ let AuthController = class AuthController {
             await api.refreshToken();
         let me = await api.get('/v2/me');
         const user = await this.usersService.addUser(me);
-        const payload = { username: user.login, sub: user.id };
-        const access_token = await this.jwtService.sign(payload);
-        res.cookie('auth_cookie', access_token, {
-            maxAge: 30000,
+        const { access_token, refresh_token } = await this.authService.createTokens(user.id);
+        res.cookie('access_token', access_token, {
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: true,
+        });
+        res.cookie('refresh_token', refresh_token, {
             httpOnly: true,
             sameSite: 'lax',
             secure: true,
@@ -66,11 +72,17 @@ let AuthController = class AuthController {
         return (res.redirect('/'));
     }
     async movies(req) {
-        return req.user.username;
+        console.log(req.user);
+        return 'salut';
     }
-    logout(res) {
-        res.clearCookie('auth_cookie', {
-            maxAge: 30000,
+    logout(res, req) {
+        this.usersService.updateOne(req.user.id, { refresh_expires: Date() });
+        res.clearCookie('access_token', {
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: true,
+        });
+        res.clearCookie('refresh_token', {
             httpOnly: true,
             sameSite: 'lax',
             secure: true,
@@ -97,8 +109,9 @@ __decorate([
 ], AuthController.prototype, "getCode", null);
 __decorate([
     (0, common_1.Get)('/test'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, common_1.UseGuards)(jwt_guard_1.JwtAuthGuard),
     (0, common_1.UseFilters)(auth_exceptions_filter_1.RedirectToLoginFilter),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -106,9 +119,11 @@ __decorate([
 ], AuthController.prototype, "movies", null);
 __decorate([
     (0, common_1.Get)('/logout'),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
     __param(0, (0, common_1.Res)({ passthrough: true })),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "logout", null);
 AuthController = __decorate([
@@ -116,7 +131,8 @@ AuthController = __decorate([
     __metadata("design:paramtypes", [axios_1.HttpService,
         config_1.ConfigService,
         jwt_1.JwtService,
-        users_service_1.UsersService])
+        users_service_1.UsersService,
+        auth_service_2.AuthService])
 ], AuthController);
 exports.AuthController = AuthController;
 //# sourceMappingURL=auth.controller.js.map

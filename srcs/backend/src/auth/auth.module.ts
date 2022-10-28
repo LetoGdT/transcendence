@@ -8,15 +8,19 @@ import { jwtConfig } from './jwt.config';
 import { JwtStrategy } from './jwt.strategy';
 import { UsersModule } from '../users/users.module';
 import { UsersService } from '../users/users.service';
+import { User } from '../typeorm/user.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
 	imports: [
+		TypeOrmModule.forFeature([User]),
 		UsersModule,
 		HttpModule,
 		JwtModule.registerAsync(jwtConfig),
 		ConfigModule
 	],
 	controllers: [AuthController],
-	providers: [AuthService, JwtStrategy]
+	providers: [AuthService, JwtStrategy],
+	exports: [AuthService]
 })
 export class AuthModule {}

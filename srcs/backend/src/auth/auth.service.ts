@@ -9,6 +9,8 @@ import * as randtoken from 'rand-token';
 import { User } from '../typeorm/user.entity';
 
 
+// { username: 'tlafay', sub: '4', iat: 1666947580, exp: 1666947610 }
+
 @Injectable()
 export class AuthService
 {
@@ -20,7 +22,7 @@ export class AuthService
 	{
 		try
 		{
-			this.jwtService.verify(token);
+			this.jwtService.verify(token, { ignoreExpiration: true });
 			return true;
 		}
 		catch (err)
@@ -29,27 +31,26 @@ export class AuthService
 		}
 	}
 
-	// Returns the token info.
-	// Throws if the token is invalid (which should have been
-	// checked before with verifyToken()).
-	decodeToken(token: string)
+	// Return the token info.
+	// Doesn't check the token validity.
+	async tokenOwner(token: string): Promise<User>
 	{
-		return this.jwtService.verify(token);
+		const login = this.jwtService.decode(token) as { username: string };
+		return await this.userRepository.findOne({where: { login: login.username }});
 	}
 
+	// Returns a new token/refresh pair
 	async createTokens(id: number): Promise<{ access_token: string, refresh_token: string }>
 	{
-		const refreshToken = randtoken.generate(16);
-		const expire = new Date();
-		expire.setDate(expire.getDate() + 6);
-		// await this.usersService.saveorupdateRefreshToke(refreshToken, userId, expire);
-
-		/*********	*********/
-
 		const user = await this.userRepository.findOne({where: { id: id }});
 		const payload = { username: user.login, sub: user.id };
 		const access_token = await this.jwtService.sign(payload);
-		return { access_token: access_token, refresh_token: "123" };
+		const refresh_token = randtoken.generate(16);
+		const expires = new Date();
+		expires.setDate(expires.getDate() + 6);
+		this.userRepository.update(id,
+			{ refresh_token: refresh_token, refresh_expires: expires.toDateString() });
+		return { access_token: access_token, refresh_token: refresh_token };
 	}
 }
 

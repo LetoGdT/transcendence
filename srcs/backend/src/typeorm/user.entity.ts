@@ -33,4 +33,10 @@ export class User
 		default: '',
 	})
 	refresh_token: string;
+
+	@Column({
+		nullable: true,
+		default: '',
+	})
+	refresh_expires: string;
 }

@@ -6,7 +6,7 @@ export declare class AuthService {
     private readonly jwtService;
     constructor(userRepository: Repository<User>, jwtService: JwtService);
     verifyToken(token: string): boolean;
-    decodeToken(token: string): any;
+    tokenOwner(token: string): Promise<User>;
     createTokens(id: number): Promise<{
         access_token: string;
         refresh_token: string;

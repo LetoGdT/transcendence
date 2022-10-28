@@ -24,6 +24,12 @@ let UsersService = class UsersService {
     async getAll() {
         return this.userRepository.find();
     }
+    async getOneById(id) {
+        return this.userRepository.findOne({ where: { id: id } });
+    }
+    async updateOne(id, updated) {
+        this.userRepository.update(id, updated);
+    }
     async addUser(createUserDto) {
         const user = await this.userRepository.findOne({ where: { login: createUserDto.login } });
         if (user)

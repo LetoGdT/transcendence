@@ -30,24 +30,26 @@ let AuthService = class AuthService {
     }
     verifyToken(token) {
         try {
-            this.jwtService.verify(token);
+            this.jwtService.verify(token, { ignoreExpiration: true });
             return true;
         }
         catch (err) {
             return false;
         }
     }
-    decodeToken(token) {
-        return this.jwtService.verify(token);
+    async tokenOwner(token) {
+        const login = this.jwtService.decode(token);
+        return await this.userRepository.findOne({ where: { login: login.username } });
     }
     async createTokens(id) {
-        const refreshToken = randtoken.generate(16);
-        const expire = new Date();
-        expire.setDate(expire.getDate() + 6);
         const user = await this.userRepository.findOne({ where: { id: id } });
         const payload = { username: user.login, sub: user.id };
         const access_token = await this.jwtService.sign(payload);
-        return { access_token: access_token, refresh_token: "123" };
+        const refresh_token = randtoken.generate(16);
+        const expires = new Date();
+        expires.setDate(expires.getDate() + 6);
+        this.userRepository.update(id, { refresh_token: refresh_token, refresh_expires: expires.toDateString() });
+        return { access_token: access_token, refresh_token: refresh_token };
     }
 };
 AuthService = __decorate([

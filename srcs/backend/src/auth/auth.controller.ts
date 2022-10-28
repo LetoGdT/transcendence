@@ -1,7 +1,7 @@
 import {
 	Controller, Get, Post, Logger, Redirect,
 	Query, HttpStatus, HttpException, Res, Req, UseGuards,
-	UseFilters, Request, Headers
+	UseFilters, Request, Headers, UseInterceptors
 } from '@nestjs/common';
 import { HttpService } from "@nestjs/axios";
 import { ConfigService } from '@nestjs/config';
@@ -15,6 +15,9 @@ import { RedirectToLoginFilter } from '../filters/auth-exceptions.filter';
 import { CreateUserDto } from '../dto/users.dto';
 import { UsersService } from '../users/users.service';
 import { User } from '../typeorm/user.entity';
+import { AuthService } from './auth.service';
+import { JwtAuthGuard } from '../guards/jwt.guard';
+import { AuthInterceptor } from './auth.interceptor'
 
 @Controller()
 export class AuthController
@@ -25,7 +28,8 @@ export class AuthController
 	constructor(private readonly http: HttpService,
 				private readonly configService: ConfigService,
 				private jwtService: JwtService,
-				private readonly usersService: UsersService) {}
+				private readonly usersService: UsersService,
+				private readonly authService: AuthService) {}
 
 	@Redirect('', 302)
 	@Get('/log')
@@ -61,11 +65,16 @@ export class AuthController
 			await api.refreshToken();
 		let me: CreateUserDto = await api.get('/v2/me');
 		const user: User = await this.usersService.addUser(me);
-		const payload = { username: user.login, sub: user.id };		// Set token owner
-		const access_token = await this.jwtService.sign(payload);	// Create a jwt
-		res.cookie('auth_cookie', access_token,						// Set the jwt as cookie
+		const { access_token, refresh_token } = await this.authService.createTokens(user.id);
+		res.cookie('access_token', access_token,
 			{
-				maxAge: 30000,		// 30s in ms
+				httpOnly: true,		// Prevent xss
+				sameSite: 'lax',	// Prevent CSRF
+				secure: true,		// Just info for the browser
+			}
+		);
+		res.cookie('refresh_token', refresh_token,
+			{
 				httpOnly: true,		// Prevent xss
 				sameSite: 'lax',	// Prevent CSRF
 				secure: true,		// Just info for the browser
@@ -75,22 +84,33 @@ export class AuthController
 	}
 
 	@Get('/test')
-	@UseGuards(AuthGuard('jwt'))
+	@UseGuards(JwtAuthGuard)
 	@UseFilters(RedirectToLoginFilter)
+	@UseInterceptors(AuthInterceptor)
 	async movies(@Req() req)
 	{
-		return req.user.username;
+		console.log(req.user);
+		return 'salut';
 	}
 
 	@Get('/logout')
-	logout(@Res({ passthrough: true }) res: Response)
+	@UseInterceptors(AuthInterceptor)
+	logout(@Res({ passthrough: true }) res: Response,
+			@Req() req)
 	{
-		res.clearCookie('auth_cookie',
+		this.usersService.updateOne(req.user.id, { refresh_expires: Date() });
+		res.clearCookie('access_token',
 			{
-				maxAge: 30000,			// 30s in ms
-				httpOnly: true,			// Prevent xss
-				sameSite: 'lax',		// Prevent CSRF
-				secure: true,			// Just info for the browser
+				httpOnly: true,		// Prevent xss
+				sameSite: 'lax',	// Prevent CSRF
+				secure: true,		// Just info for the browser
+			}
+		);
+		res.clearCookie('refresh_token',
+			{
+				httpOnly: true,		// Prevent xss
+				sameSite: 'lax',	// Prevent CSRF
+				secure: true,		// Just info for the browser
 			}
 		);
 		return (res.redirect('/'));

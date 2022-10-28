@@ -15,6 +15,18 @@ export class UsersService
 		return this.userRepository.find();
 	}
 
+	// Get a user (using a general User dto)
+	async getOneById(id: number): Promise<User>
+	{
+		return this.userRepository.findOne({ where: { id: id } })
+	}
+
+	// Update a user
+	async updateOne(id: number, updated): Promise<void>
+	{
+		this.userRepository.update(id, updated);
+	}
+
 	// Create a user in the database
 	async addUser(createUserDto: CreateUserDto): Promise<User>
 	{

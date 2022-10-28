@@ -7,6 +7,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express'
 import { AppService } from './app.service';
 import { RedirectToLoginFilter } from './filters/auth-exceptions.filter'
+import { JwtAuthGuard } from './guards/jwt.guard';
 
 @Controller()
 export class AppController
@@ -16,7 +17,7 @@ export class AppController
 	constructor(private readonly appService: AppService) {}
 
 	@Get('')
-	@UseGuards(AuthGuard('jwt'))
+	@UseGuards(JwtAuthGuard)
 	@UseFilters(RedirectToLoginFilter)
 	getHello(@Query() query: { plain: string, pass: string },
 		@Req() request: Request): string

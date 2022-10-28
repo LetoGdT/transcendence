@@ -4,6 +4,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { Request } from "express";
 import { Observable } from "rxjs";
+import { UsersService } from '../users/users.service';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt')
@@ -12,7 +14,7 @@ export class JwtAuthGuard extends AuthGuard('jwt')
 
 	constructor(
 		private readonly authService: AuthService,
-		private readonly userService: UserService,
+		private readonly usersService: UsersService,
 		)
 	{
 		super();
@@ -23,78 +25,47 @@ export class JwtAuthGuard extends AuthGuard('jwt')
 		const request = context.switchToHttp().getRequest();
 		const response = context.switchToHttp().getResponse();
 		const cookie_options = {
-				maxAge: 30000,
 				httpOnly: true,
 				sameSite: 'lax',
 				secure: true,
 			}
 
-		try
+		const accessToken: string = request?.cookies["access_token"];
+
+		// Access granted if the token is already valid, else we check the refresh
+		const isValidAccessToken = this.authService.verifyToken(accessToken);
+		console.log(isValidAccessToken);
+		if (isValidAccessToken)
+			return true;
+
+		// TO DO !! Refresh token has to be independant from access token,
+		// so I have to do a search by refresh token instead of searching
+		// with the old access token which might be unset.
+		const user = await this.authService.tokenOwner(accessToken);
+
+		const refreshToken = await request.cookies['refresh_token'];
+		if (!refreshToken)
+			throw new UnauthorizedException('Refresh token is not set');
+		const expires: Date = new Date(user.refresh_expires);
+		const today: Date = new Date();
+		if (refreshToken != user.refresh_token || expires < today)
 		{
-			const accessToken = ExtractJwt.fromExtractors([(request: Request) => {
-				let data = request?.cookies["auth_cookie"];
-				if (!data)
-				{
-					return null;
-				}
-				console.log(data);
-				return data;
-			}]);
-			if (!accessToken)
-				throw new UnauthorizedException('Access token is not set');
-
-			const isValidAccessToken = this.authService.validateToken(accessToken);
-			if (isValidAccessToken) return this.activate(context);
-
-			const refreshToken = request.cookies['refresh_token'];
-			if (!refreshToken)
-				throw new UnauthorizedException('Refresh token is not set');
-			const isValidRefreshToken = this.authService.validateToken(refreshToken);
-			if (!isValidRefreshToken)
-				throw new UnauthorizedException('Refresh token is not valid');
-
-			const user = await this.userService.getByRefreshToken(refreshToken);
-			const {
-				accessToken: newAccessToken,
-				refreshToken: newRefreshToken,
-			} = this.authService.createTokens(user.id);
-
-			await this.userService.updateRefreshToken(user.id, newRefreshToken);
-
-			request.cookies['access_token'] = newAccessToken;
-			request.cookies['refresh_token'] = newRefreshToken;
-
-			response.cookie('access_token', newAccessToken, cookie_options);
-			response.cookie(
-				'refresh_token',
-				newRefreshToken,
-				cookie_options,
-				);
-
-			return this.activate(context);
+			if (expires < today)
+				console.log('Refresh expired');
+			throw new UnauthorizedException('Refresh token is not valid');
 		}
 
-		catch (err)
-		{
-			this.logger.error(err.message);
-			response.clearCookie('access_token', cookie_options);
-			response.clearCookie('refresh_token', cookie_options);
-			return false;
-		}
-	}
+		const {
+			access_token: newAccessToken,
+			refresh_token: newRefreshToken,
+		} = await this.authService.createTokens(user.id);
 
-	async activate(context: ExecutionContext): Promise<boolean>
-	{
-		return super.canActivate(context) as Promise<boolean>;
-	}
+		request.cookies['access_token'] = newAccessToken;
+		request.cookies['refresh_token'] = newRefreshToken;
 
-	handleRequest(err, user)
-	{
-		if (err || !user)
-		{
-			throw new UnauthorizedException();
-		}
+		response.cookie('access_token', newAccessToken, cookie_options);
+		response.cookie('refresh_token', newRefreshToken, cookie_options);
 
-		return user;
+		return true;
 	}
 }
