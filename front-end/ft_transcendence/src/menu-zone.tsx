@@ -9,7 +9,6 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { SvgIcon } from '@mui/material';
 
 export default function BasicMenu() {
   const [anchorElHome, setAnchorElHome] = React.useState<null | HTMLElement>(null);
@@ -107,7 +106,7 @@ export default function BasicMenu() {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={handleCloseChat}>Nothiing in Chat</MenuItem>
+        <MenuItem onClick={handleCloseChat}>Nothing in Chat</MenuItem>
       </Menu>
       <Button
         id="basic-button"
