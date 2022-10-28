@@ -10,6 +10,47 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 
+import { faHouse } from '@fortawesome/free-solid-svg-icons/faHouse';
+import { faTableTennisPaddleBall } from '@fortawesome/free-solid-svg-icons/faTableTennisPaddleBall';
+import { faComments } from '@fortawesome/free-solid-svg-icons/faComments';
+import { faUser } from '@fortawesome/free-solid-svg-icons/faUser';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import IconButton from '@mui/material/IconButton';
+import SvgIcon from '@mui/material/SvgIcon';
+
+type FontAwesomeSvgIconProps = {
+  icon: any;
+};
+
+const FontAwesomeSvgIcon = React.forwardRef<SVGSVGElement, FontAwesomeSvgIconProps>(
+  (props, ref) => {
+    const { icon } = props;
+
+    const {
+      icon: [width, height, , , svgPathData],
+    } = icon;
+
+    return (
+      <SvgIcon ref={ref} viewBox={`0 0 ${width} ${height}`}>
+        {typeof svgPathData === 'string' ? (
+          <path d={svgPathData} />
+        ) : (
+          /**
+           * A multi-path Font Awesome icon seems to imply a duotune icon. The 0th path seems to
+           * be the faded element (referred to as the "secondary" path in the Font Awesome docs)
+           * of a duotone icon. 40% is the default opacity.
+           *
+           * @see https://fontawesome.com/how-to-use/on-the-web/styling/duotone-icons#changing-opacity
+           */
+          svgPathData.map((d: string, i: number) => (
+            <path style={{ opacity: i === 0 ? 0.4 : 1 }} d={d} />
+          ))
+        )}
+      </SvgIcon>
+    );
+  },
+);
+
 export function OurMenu() {
   const [anchorElHome, setAnchorElHome] = React.useState<null | HTMLElement>(null);
   const [anchorElPong, setAnchorElPong] = React.useState<null | HTMLElement>(null);
@@ -47,15 +88,15 @@ export function OurMenu() {
 
   return (
     <div>
-      <Button
-        id="basic-button"
+      <IconButton
+        size="large"
         aria-controls={openHome ? 'home-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={openHome ? 'true' : undefined}
         onClick={handleClickHome}
       >
-        Home
-      </Button>
+        <FontAwesomeIcon icon={faHouse} />
+      </IconButton>
       <Menu
         id="home-menu"
         anchorEl={anchorElHome}
@@ -67,15 +108,15 @@ export function OurMenu() {
       >
         <MenuItem onClick={handleCloseHome}>Nothing in home</MenuItem>
       </Menu>
-      <Button
-        id="basic-button"
+	  <IconButton
+        size="large"
         aria-controls={openPong ? 'pong-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={openPong  ? 'true' : undefined}
         onClick={handleClickPong}
       >
-        Pong
-      </Button>
+        <FontAwesomeIcon icon={faTableTennisPaddleBall} />
+      </IconButton>
       <Menu
         id="pong-menu"
         anchorEl={anchorElPong}
@@ -88,15 +129,15 @@ export function OurMenu() {
         <MenuItem onClick={handleClosePong}>Spec a match</MenuItem>
         <MenuItem onClick={handleClosePong}>Play</MenuItem>
       </Menu>
-      <Button
-        id="basic-button"
+	  <IconButton
+        size="large"
         aria-controls={openChat ? 'chat-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={openChat ? 'true' : undefined}
         onClick={handleClickChat}
       >
-        Chat
-      </Button>
+        <FontAwesomeIcon icon={faComments} />
+      </IconButton>
       <Menu
         id="chat-menu"
         anchorEl={anchorElChat}
@@ -108,15 +149,15 @@ export function OurMenu() {
       >
         <MenuItem onClick={handleCloseChat}>Nothing in Chat</MenuItem>
       </Menu>
-      <Button
-        id="basic-button"
+	  <IconButton
+        size="large"
         aria-controls={openProfile ? 'profile-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={openProfile ? 'true' : undefined}
         onClick={handleClickProfile}
       >
-        Profile
-      </Button>
+        <FontAwesomeIcon icon={faUser} />
+      </IconButton>
       <Menu
         id="profile-menu"
         anchorEl={anchorElProfile}
