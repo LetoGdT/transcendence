@@ -21,6 +21,7 @@ function App() {
 				<OurMenu/>
 			</div>
 			<div className='Adaptable'>
+				{/**  
 				<Routes>
 					<Route path="/home">
 						<Home/>
@@ -29,6 +30,7 @@ function App() {
 							<Chat/>
 					</Route>
 				</Routes>
+				*/}
 			</div>
 		</Router>
 	</React.Fragment>
