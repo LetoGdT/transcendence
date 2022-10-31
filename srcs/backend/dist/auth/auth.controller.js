@@ -14,7 +14,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
-const axios_1 = require("@nestjs/axios");
 const config_1 = require("@nestjs/config");
 const jwt_1 = require("@nestjs/jwt");
 const crypto_1 = require("crypto");
@@ -25,8 +24,7 @@ const auth_service_2 = require("./auth.service");
 const jwt_guard_1 = require("../guards/jwt.guard");
 const auth_interceptor_1 = require("./auth.interceptor");
 let AuthController = class AuthController {
-    constructor(http, configService, jwtService, usersService, authService) {
-        this.http = http;
+    constructor(configService, jwtService, usersService, authService) {
         this.configService = configService;
         this.jwtService = jwtService;
         this.usersService = usersService;
@@ -47,7 +45,7 @@ let AuthController = class AuthController {
             url: url
         };
     }
-    async getCode(query, res, headers) {
+    async getCode(query, res) {
         if (!query.code || !this.state)
             throw new common_1.HttpException('Forbidden', common_1.HttpStatus.FORBIDDEN);
         if (query.state != this.state)
@@ -70,10 +68,6 @@ let AuthController = class AuthController {
             secure: true,
         });
         return (res.redirect('/'));
-    }
-    async movies(req) {
-        console.log(req.user);
-        return 'salut';
     }
     logout(res, req) {
         this.usersService.updateOne(req.user.id, { refresh_expires: Date() });
@@ -102,23 +96,14 @@ __decorate([
     (0, common_1.Get)('/callback'),
     __param(0, (0, common_1.Query)()),
     __param(1, (0, common_1.Res)({ passthrough: true })),
-    __param(2, (0, common_1.Headers)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object, Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "getCode", null);
 __decorate([
-    (0, common_1.Get)('/test'),
+    (0, common_1.Get)('/logout'),
     (0, common_1.UseGuards)(jwt_guard_1.JwtAuthGuard),
     (0, common_1.UseFilters)(auth_exceptions_filter_1.RedirectToLoginFilter),
-    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
-    __param(0, (0, common_1.Req)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "movies", null);
-__decorate([
-    (0, common_1.Get)('/logout'),
     (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
     __param(0, (0, common_1.Res)({ passthrough: true })),
     __param(1, (0, common_1.Req)()),
@@ -128,8 +113,7 @@ __decorate([
 ], AuthController.prototype, "logout", null);
 AuthController = __decorate([
     (0, common_1.Controller)(),
-    __metadata("design:paramtypes", [axios_1.HttpService,
-        config_1.ConfigService,
+    __metadata("design:paramtypes", [config_1.ConfigService,
         jwt_1.JwtService,
         users_service_1.UsersService,
         auth_service_2.AuthService])

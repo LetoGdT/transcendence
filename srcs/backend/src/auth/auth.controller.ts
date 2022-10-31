@@ -1,14 +1,11 @@
 import {
 	Controller, Get, Post, Logger, Redirect,
 	Query, HttpStatus, HttpException, Res, Req, UseGuards,
-	UseFilters, Request, Headers, UseInterceptors
+	UseFilters, Request, UseInterceptors
 } from '@nestjs/common';
-import { HttpService } from "@nestjs/axios";
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { AuthGuard } from '@nestjs/passport';
 import { Response } from 'express';
-import { lastValueFrom } from 'rxjs';
 import { randomBytes } from 'crypto';
 import { Api42 } from './auth.service';
 import { RedirectToLoginFilter } from '../filters/auth-exceptions.filter';
@@ -25,8 +22,7 @@ export class AuthController
 	state: string;
 	private readonly logger = new Logger(Api42.name);
 
-	constructor(private readonly http: HttpService,
-				private readonly configService: ConfigService,
+	constructor(private readonly configService: ConfigService,
 				private jwtService: JwtService,
 				private readonly usersService: UsersService,
 				private readonly authService: AuthService) {}
@@ -52,8 +48,7 @@ export class AuthController
 
 	@Get('/callback')
 	async getCode(@Query() query: { code: string, state: string },
-		@Res({ passthrough: true }) res: Response,
-		@Headers() headers)
+		@Res({ passthrough: true }) res: Response)
 	{
 		if (!query.code || !this.state) // Avoid CSRF
 			throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
@@ -83,17 +78,9 @@ export class AuthController
 		return (res.redirect('/'));
 	}
 
-	@Get('/test')
+	@Get('/logout')
 	@UseGuards(JwtAuthGuard)
 	@UseFilters(RedirectToLoginFilter)
-	@UseInterceptors(AuthInterceptor)
-	async movies(@Req() req)
-	{
-		console.log(req.user);
-		return 'salut';
-	}
-
-	@Get('/logout')
 	@UseInterceptors(AuthInterceptor)
 	logout(@Res({ passthrough: true }) res: Response,
 			@Req() req)

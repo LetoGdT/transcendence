@@ -22,7 +22,7 @@ export class AuthService
 	{
 		try
 		{
-			this.jwtService.verify(token, { ignoreExpiration: true });
+			this.jwtService.verify(token, { ignoreExpiration: false });
 			return true;
 		}
 		catch (err)
@@ -32,11 +32,11 @@ export class AuthService
 	}
 
 	// Return the token info.
-	// Doesn't check the token validity.
+	// Doesn't check the token validity, so use with caution !
 	async tokenOwner(token: string): Promise<User>
 	{
 		const login = this.jwtService.decode(token) as { username: string };
-		return await this.userRepository.findOne({where: { login: login.username }});
+		return await this.userRepository.findOne({ where: { login: login.username }});
 	}
 
 	// Returns a new token/refresh pair

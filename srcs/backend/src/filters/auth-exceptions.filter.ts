@@ -9,6 +9,6 @@ export class RedirectToLoginFilter implements ExceptionFilter
 		const ctx = host.switchToHttp();
 		const response = ctx.getResponse();
 		const status = exception.getStatus();
-		response.status(status).redirect('/log');
+		response.status(status).redirect('/');
 	}
 }

@@ -34,26 +34,19 @@ export class JwtAuthGuard extends AuthGuard('jwt')
 
 		// Access granted if the token is already valid, else we check the refresh
 		const isValidAccessToken = this.authService.verifyToken(accessToken);
-		console.log(isValidAccessToken);
 		if (isValidAccessToken)
 			return true;
-
-		// TO DO !! Refresh token has to be independant from access token,
-		// so I have to do a search by refresh token instead of searching
-		// with the old access token which might be unset.
-		const user = await this.authService.tokenOwner(accessToken);
 
 		const refreshToken = await request.cookies['refresh_token'];
 		if (!refreshToken)
 			throw new UnauthorizedException('Refresh token is not set');
+		const user = await this.usersService.getOneByRefresh(refreshToken);
+		if (!user)
+			throw new UnauthorizedException('Refresh token is not valid');
 		const expires: Date = new Date(user.refresh_expires);
 		const today: Date = new Date();
-		if (refreshToken != user.refresh_token || expires < today)
-		{
-			if (expires < today)
-				console.log('Refresh expired');
+		if (!user || refreshToken != user.refresh_token || expires < today)
 			throw new UnauthorizedException('Refresh token is not valid');
-		}
 
 		const {
 			access_token: newAccessToken,

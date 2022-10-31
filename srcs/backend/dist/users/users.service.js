@@ -21,11 +21,14 @@ let UsersService = class UsersService {
     constructor(userRepository) {
         this.userRepository = userRepository;
     }
-    async getAll() {
+    getAll() {
         return this.userRepository.find();
     }
     async getOneById(id) {
         return this.userRepository.findOne({ where: { id: id } });
+    }
+    async getOneByRefresh(refresh) {
+        return this.userRepository.findOne({ where: { refresh_token: refresh } });
     }
     async updateOne(id, updated) {
         this.userRepository.update(id, updated);

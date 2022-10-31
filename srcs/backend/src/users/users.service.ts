@@ -2,7 +2,7 @@ import { Logger, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../typeorm/user.entity';
-import { CreateUserDto } from '../dto/users.dto';
+import { CreateUserDto, ReturnUserDto } from '../dto/users.dto';
 
 @Injectable()
 export class UsersService
@@ -10,7 +10,7 @@ export class UsersService
 	constructor(@InjectRepository(User) private readonly userRepository: Repository<User>) {}
 
 	// Return all users from the database
-	async getAll(): Promise<User[]>
+	getAll(): Promise<User[]>
 	{
 		return this.userRepository.find();
 	}
@@ -18,7 +18,12 @@ export class UsersService
 	// Get a user (using a general User dto)
 	async getOneById(id: number): Promise<User>
 	{
-		return this.userRepository.findOne({ where: { id: id } })
+		return this.userRepository.findOne({ where: { id: id } });
+	}
+
+	async getOneByRefresh(refresh: string): Promise<User>
+	{
+		return this.userRepository.findOne({ where: { refresh_token: refresh } });
 	}
 
 	// Update a user

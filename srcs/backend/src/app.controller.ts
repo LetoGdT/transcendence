@@ -1,6 +1,6 @@
 import
 {
-	Controller, Get, Post, Query, Req, Headers,
+	Controller, Get, Post, Query, Req, Headers, UseInterceptors,
 	Logger, Body, HttpStatus, HttpException, UseGuards, UseFilters
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -8,6 +8,7 @@ import { Request } from 'express'
 import { AppService } from './app.service';
 import { RedirectToLoginFilter } from './filters/auth-exceptions.filter'
 import { JwtAuthGuard } from './guards/jwt.guard';
+import { AuthInterceptor } from './auth/auth.interceptor'
 
 @Controller()
 export class AppController
@@ -17,18 +18,12 @@ export class AppController
 	constructor(private readonly appService: AppService) {}
 
 	@Get('')
-	@UseGuards(JwtAuthGuard)
-	@UseFilters(RedirectToLoginFilter)
+	@UseInterceptors(AuthInterceptor)
 	getHello(@Query() query: { plain: string, pass: string },
 		@Req() request: Request): string
 	{
-		return 'Coucou';
+		if (request.user)
+			return ('Hello ' + request.user['login']);
+		return '<a href="http://localhost:3000/log">Login</a>';
 	}
-
-	// @Post()
-	// getNameList(@Body() message: string)
-	// {
-	// 	this.logger.log(message);
-	// 	return message;
-	// }
 }

@@ -32,20 +32,18 @@ let JwtAuthGuard = JwtAuthGuard_1 = class JwtAuthGuard extends (0, passport_1.Au
         };
         const accessToken = request === null || request === void 0 ? void 0 : request.cookies["access_token"];
         const isValidAccessToken = this.authService.verifyToken(accessToken);
-        console.log(isValidAccessToken);
         if (isValidAccessToken)
             return true;
-        const user = await this.authService.tokenOwner(accessToken);
         const refreshToken = await request.cookies['refresh_token'];
         if (!refreshToken)
             throw new common_1.UnauthorizedException('Refresh token is not set');
+        const user = await this.usersService.getOneByRefresh(refreshToken);
+        if (!user)
+            throw new common_1.UnauthorizedException('Refresh token is not valid');
         const expires = new Date(user.refresh_expires);
         const today = new Date();
-        if (refreshToken != user.refresh_token || expires < today) {
-            if (expires < today)
-                console.log('Refresh expired');
+        if (!user || refreshToken != user.refresh_token || expires < today)
             throw new common_1.UnauthorizedException('Refresh token is not valid');
-        }
         const { access_token: newAccessToken, refresh_token: newRefreshToken, } = await this.authService.createTokens(user.id);
         request.cookies['access_token'] = newAccessToken;
         request.cookies['refresh_token'] = newRefreshToken;

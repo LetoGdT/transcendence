@@ -13,7 +13,7 @@ let RedirectToLoginFilter = class RedirectToLoginFilter {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse();
         const status = exception.getStatus();
-        response.status(status).redirect('/log');
+        response.status(status).redirect('/');
     }
 };
 RedirectToLoginFilter = __decorate([
