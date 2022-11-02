@@ -51,16 +51,19 @@ export function OurMenu() {
 
 	return (
 		<div>
-		<IconButton
-			sx={{fontSize:"2.5rem"}}
-			size="large"
-			aria-controls={openHome ? 'home-menu' : undefined}
-			aria-haspopup="true"
-			aria-expanded={openHome ? 'true' : undefined}
-			onClick={handleClickHome}
-		>
-			<FontAwesomeIcon icon={faHouse} />
-		</IconButton>
+		<Link to="/">
+			<IconButton
+				sx={{fontSize:"2.5rem"}}
+				size="large"
+				aria-controls={openHome ? 'home-menu' : undefined}
+				aria-haspopup="true"
+				aria-expanded={openHome ? 'true' : undefined}
+				onClick={handleClickHome}
+			>
+				<FontAwesomeIcon icon={faHouse} />
+			</IconButton>
+		</Link>
+		{/**
 		<Menu
 			id="home-menu"
 			anchorEl={anchorElHome}
@@ -74,6 +77,7 @@ export function OurMenu() {
 				<MenuItem onClick={handleCloseHome}>Nothing in home</MenuItem>
 			</Link>
 		</Menu>
+		*/}
 		<IconButton
 			sx={{fontSize:"2.5rem"}}
 			size="large"
@@ -100,29 +104,33 @@ export function OurMenu() {
 				<MenuItem onClick={handleClosePong}>Play</MenuItem>
 			</Link>
 		</Menu>
-		<IconButton
-			sx={{fontSize:"2.5rem"}}
-			size="large"
-			aria-controls={openChat ? 'chat-menu' : undefined}
-			aria-haspopup="true"
-			aria-expanded={openChat ? 'true' : undefined}
-			onClick={handleClickChat}
-		>
-			<FontAwesomeIcon icon={faComments} />
-		</IconButton>
+		<Link to="/chat">
+			<IconButton
+				sx={{fontSize:"2.5rem"}}
+				size="large"
+				aria-controls={openChat ? 'chat-menu' : undefined}
+				aria-haspopup="true"
+				aria-expanded={openChat ? 'true' : undefined}
+				onClick={handleClickChat}
+				>
+				<FontAwesomeIcon icon={faComments} />
+			</IconButton>
+		</Link>
+		{/**
 		<Menu
 			id="chat-menu"
 			anchorEl={anchorElChat}
 			open={openChat}
 			onClose={handleCloseChat}
 			MenuListProps={{
-			'aria-labelledby': 'basic-button',
+				'aria-labelledby': 'basic-button',
 			}}
 		>
 			<Link to="/chat">
 				<MenuItem onClick={handleCloseChat}>Nothing in Chat</MenuItem>
 			</Link>
 		</Menu>
+		*/}
 		<IconButton
 			sx={{fontSize:"2.5rem"}}
 			size="large"
