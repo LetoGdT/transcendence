@@ -6,19 +6,18 @@ import { Home } from './adaptable-zone';
 import { Play, SpecAMatch} from './adaptable-zone';
 import { Chat } from './adaptable-zone';
 import { Friends, MatchHistory, Profile, Stats } from './adaptable-zone';
-
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
+
+import { OurHeader } from './header-zone';
 
 
 function App() {
   return (
 	<React.Fragment>
 		<Router>
-			<div>
-				<header className="Header">
-					baniere + avatar-zone
-				</header>
-			</div>
+			<header>
+				<OurHeader/>
+			</header>
 			<div className='Menu'>
 				<OurMenu/>
 			</div>

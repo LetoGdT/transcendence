@@ -1,8 +1,10 @@
 .Header {
-  height: 400;
-  width: 100%;
   background-color: #61dafb;
-  display: flow-root list-item;
+  display: flex;
+  justify-content: flex-end;
+  margin: 30px;
+ 
+  
 }
 
 .Menu {
@@ -16,6 +18,7 @@
   padding: 1.5em;
   will-change: filter;
 }
+
 .menu_button:hover { /*permet un ombrage quand pointé a reutiliser pour le menu :3*/
   filter: drop-shadow(0 0 2em #646cffaa);
 }
