@@ -3,6 +3,7 @@ import './App.css'
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
+import { truncate } from 'fs/promises';
 
 export function OurHeader(){
 	return(
@@ -34,7 +35,15 @@ function AvatarZone(){
 	}
 	else {
 		return(
-			<div>a coder</div>
+			<Stack
+				direction="column"
+				justifyContent="center"
+				spacing={0.5}
+			>
+				recup avatar
+				<Button variant="text" size='small'>Log Out</Button>
+
+			</Stack>
 		);
 	}
 }
