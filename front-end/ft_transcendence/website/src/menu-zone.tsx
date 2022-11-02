@@ -1,4 +1,3 @@
-
 import './App.css'
 
 import * as React from 'react';
@@ -12,6 +11,8 @@ import { faComments } from '@fortawesome/free-solid-svg-icons/faComments';
 import { faUser } from '@fortawesome/free-solid-svg-icons/faUser';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import IconButton from '@mui/material/IconButton';
+
+import { Link } from 'react-router-dom'
 
 export function OurMenu() {
 	const [anchorElHome, setAnchorElHome] = React.useState<null | HTMLElement>(null);
@@ -69,7 +70,9 @@ export function OurMenu() {
 			'aria-labelledby': 'basic-button',
 			}}
 		>
-			<MenuItem onClick={handleCloseHome}>Nothing in home</MenuItem>
+			<Link to="/">
+				<MenuItem onClick={handleCloseHome}>Nothing in home</MenuItem>
+			</Link>
 		</Menu>
 		<IconButton
 			sx={{fontSize:"2.5rem"}}
@@ -90,8 +93,12 @@ export function OurMenu() {
 			'aria-labelledby': 'basic-button',
 			}}
 		>
-			<MenuItem onClick={handleClosePong}>Spec a match</MenuItem>
-			<MenuItem onClick={handleClosePong}>Play</MenuItem>
+			<Link to="/specamatch">
+				<MenuItem onClick={handleClosePong}>Spec a match</MenuItem>
+			</Link>
+			<Link to="/play">
+				<MenuItem onClick={handleClosePong}>Play</MenuItem>
+			</Link>
 		</Menu>
 		<IconButton
 			sx={{fontSize:"2.5rem"}}
@@ -112,7 +119,9 @@ export function OurMenu() {
 			'aria-labelledby': 'basic-button',
 			}}
 		>
-			<MenuItem onClick={handleCloseChat}>Nothing in Chat</MenuItem>
+			<Link to="/chat">
+				<MenuItem onClick={handleCloseChat}>Nothing in Chat</MenuItem>
+			</Link>
 		</Menu>
 		<IconButton
 			sx={{fontSize:"2.5rem"}}
@@ -133,10 +142,18 @@ export function OurMenu() {
 			'aria-labelledby': 'basic-button',
 			}}
 		>
-			<MenuItem onClick={handleCloseProfile}>Friends</MenuItem>
-			<MenuItem onClick={handleCloseProfile}>Stats</MenuItem>
-			<MenuItem onClick={handleCloseProfile}>Match history</MenuItem>
-			<MenuItem onClick={handleCloseProfile}>Settings</MenuItem>
+			<Link to="/friends">
+				<MenuItem onClick={handleCloseProfile}>Friends</MenuItem>
+			</Link>
+			<Link to="/stats">
+				<MenuItem onClick={handleCloseProfile}>Stats</MenuItem>
+			</Link>
+			<Link to="/matchhistory">
+				<MenuItem onClick={handleCloseProfile}>Match history</MenuItem>
+			</Link>
+			<Link to="/profile">
+				<MenuItem onClick={handleCloseProfile}>Settings</MenuItem>
+			</Link>
 		</Menu>
 		</div>
 	);
