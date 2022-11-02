@@ -33,7 +33,7 @@ function AvatarZone(){
 			</Stack>
 		);
 	}
-	else {
+	else if (isLogIn === true){
 		return(
 			<Stack
 				direction="column"
