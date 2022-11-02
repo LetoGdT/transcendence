@@ -56,7 +56,7 @@ let AuthController = class AuthController {
             await api.refreshToken();
         let me = await api.get('/v2/me');
         const user = await this.usersService.addUser(me);
-        const { access_token, refresh_token } = await this.authService.createTokens(user.id.toString());
+        const { access_token, refresh_token } = await this.authService.createTokens(user.id);
         res.cookie('access_token', access_token, {
             httpOnly: true,
             sameSite: 'lax',
@@ -70,7 +70,6 @@ let AuthController = class AuthController {
         return (res.redirect('/'));
     }
     logout(res, req) {
-        this.usersService.updateOne(req.user.id, { refresh_expires: Date() });
         res.clearCookie('access_token', {
             httpOnly: true,
             sameSite: 'lax',

@@ -60,7 +60,7 @@ export class AuthController
 			await api.refreshToken();
 		let me: CreateUserDto = await api.get('/v2/me');
 		const user: User = await this.usersService.addUser(me);
-		const { access_token, refresh_token } = await this.authService.createTokens(user.id.toString());
+		const { access_token, refresh_token } = await this.authService.createTokens(user.id);
 		res.cookie('access_token', access_token,
 			{
 				httpOnly: true,		// Prevent xss
@@ -85,7 +85,8 @@ export class AuthController
 	logout(@Res({ passthrough: true }) res: Response,
 			@Req() req)
 	{
-		this.usersService.updateOne(req.user.id, { refresh_expires: Date() });
+		// Need to uncomment for security reasons !
+		// this.usersService.updateOne(req.user.id, { refresh_expires: Date() });
 		res.clearCookie('access_token',
 			{
 				httpOnly: true,		// Prevent xss

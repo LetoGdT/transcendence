@@ -16,16 +16,17 @@ exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
 const users_service_1 = require("./users.service");
 const page_options_dto_1 = require("../dto/page-options.dto");
+const users_dto_1 = require("../dto/users.dto");
+const auth_interceptor_1 = require("../auth/auth.interceptor");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
     }
-    async getAllUsers() {
-        let users = await this.usersService.getAll();
-        return this.usersService.getAll();
-    }
-    async getAll(pageOptionsDto) {
+    async getAllUsers(pageOptionsDto) {
         return this.usersService.getUsers(pageOptionsDto);
+    }
+    currentUser(req) {
+        return req.user;
     }
     async getUserById(id) {
         try {
@@ -39,30 +40,44 @@ let UsersController = class UsersController {
             throw new common_1.NotFoundException('User id was not found');
         return user;
     }
+    async updateUser(id, updateUserDto) {
+        return await this.usersService.updateOne(id, updateUserDto);
+    }
 };
 __decorate([
+    (0, common_1.Get)('/'),
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
-    (0, common_1.Get)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "getAllUsers", null);
-__decorate([
-    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
-    (0, common_1.Get)('/all'),
     __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [page_options_dto_1.PageOptionsDto]),
     __metadata("design:returntype", Promise)
-], UsersController.prototype, "getAll", null);
+], UsersController.prototype, "getAllUsers", null);
 __decorate([
+    (0, common_1.Get)('/me'),
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "currentUser", null);
+__decorate([
     (0, common_1.Get)(':id'),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getUserById", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, users_dto_1.UpdateUserDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateUser", null);
 UsersController = __decorate([
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [users_service_1.UsersService])

@@ -8,7 +8,7 @@ export class User
 		type: 'bigint',
 		name: 'user_id',
 	})
-	id: string;
+	id: number;
 
 	@Column({
 		nullable: false,

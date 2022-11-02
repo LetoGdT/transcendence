@@ -1,35 +1,38 @@
 import {
-	Controller, Get, Post, Param, ParseIntPipe, NotFoundException,
-	BadRequestException, ClassSerializerInterceptor, UseInterceptors, Query
+	Controller, Get, Post, Put, Param, ParseIntPipe, NotFoundException,
+	BadRequestException, ClassSerializerInterceptor, UseInterceptors, Query, Req
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from '../typeorm/user.entity';
 import { PageDto } from "../dto/page.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
+import { UpdateUserDto } from '../dto/users.dto';
+import { AuthInterceptor } from '../auth/auth.interceptor'
 
 @Controller('users')
 export class UsersController
 {
 	constructor(private readonly usersService: UsersService) {}
 
+	@Get('/')
 	@UseInterceptors(ClassSerializerInterceptor)
-	@Get()
-	async getAllUsers(): Promise<User[]>
-	{
-		let users = await this.usersService.getAll();
-		return this.usersService.getAll();
-	}
-
-	@UseInterceptors(ClassSerializerInterceptor)
-	@Get('/all')
-	async getAll(@Query() pageOptionsDto: PageOptionsDto): Promise<PageDto<User>>
+	async getAllUsers(@Query() pageOptionsDto: PageOptionsDto): Promise<PageDto<User>>
 	{
 		return this.usersService.getUsers(pageOptionsDto);
 	}
 
+	@Get('/me')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	currentUser(@Req() req)
+	{
+		return req.user;
+	}
+
 	@Get(':id')
-	async getUserById(@Param('id', ParseIntPipe) id: string): Promise<User>
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	async getUserById(@Param('id', ParseIntPipe) id: number): Promise<User>
 	{
 		try
 		{
@@ -44,4 +47,12 @@ export class UsersController
 			throw new NotFoundException('User id was not found');
 		return user;
 	}
+
+	@Put(':id')
+	async updateUser(@Param('id', ParseIntPipe) id: number,
+		@Query() updateUserDto: UpdateUserDto)
+	{
+		return await this.usersService.updateOne(id, updateUserDto);
+	}
 }
+

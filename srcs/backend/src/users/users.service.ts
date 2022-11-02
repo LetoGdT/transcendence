@@ -1,8 +1,8 @@
 import { Logger, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { User } from '../typeorm/user.entity';
-import { CreateUserDto } from '../dto/users.dto';
+import { CreateUserDto, UpdateUserDto } from '../dto/users.dto';
 import { PageDto } from "../dto/page.dto";
 import { PageMetaDto } from "../dto/page-meta.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
@@ -12,17 +12,12 @@ export class UsersService
 {
 	constructor(@InjectRepository(User) private readonly userRepository: Repository<User>) {}
 
-	// Return all users from the database
-	getAll(): Promise<User[]>
-	{
-		return this.userRepository.find();
-	}
-
 	public async getUsers(pageOptionsDto: PageOptionsDto): Promise<PageDto<User>>
 	{
 		const queryBuilder = this.userRepository.createQueryBuilder("user");
 
-		queryBuilder.orderBy("user.id", pageOptionsDto.order)
+		queryBuilder
+			.orderBy("user.id", pageOptionsDto.order)
 			.skip(pageOptionsDto.skip)
 			.take(pageOptionsDto.take);
 
@@ -35,7 +30,7 @@ export class UsersService
 	}
 
 	// Get a user (using a general User dto)
-	async getOneById(id: string): Promise<User>
+	async getOneById(id: number): Promise<User>
 	{
 		return this.userRepository.findOne({ where: { id: id } });
 	}
@@ -46,9 +41,9 @@ export class UsersService
 	}
 
 	// Update a user
-	async updateOne(id: number, updated): Promise<void>
+	async updateOne(id: number, updateUserDto: UpdateUserDto): Promise<UpdateResult>
 	{
-		this.userRepository.update(id, updated);
+		return await this.userRepository.update(id, updateUserDto);
 	}
 
 	// Create a user in the database

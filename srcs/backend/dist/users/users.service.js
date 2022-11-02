@@ -23,12 +23,10 @@ let UsersService = class UsersService {
     constructor(userRepository) {
         this.userRepository = userRepository;
     }
-    getAll() {
-        return this.userRepository.find();
-    }
     async getUsers(pageOptionsDto) {
         const queryBuilder = this.userRepository.createQueryBuilder("user");
-        queryBuilder.orderBy("user.id", pageOptionsDto.order)
+        queryBuilder
+            .orderBy("user.id", pageOptionsDto.order)
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take);
         const itemCount = await queryBuilder.getCount();
@@ -42,8 +40,8 @@ let UsersService = class UsersService {
     async getOneByRefresh(refresh) {
         return this.userRepository.findOne({ where: { refresh_token: refresh } });
     }
-    async updateOne(id, updated) {
-        this.userRepository.update(id, updated);
+    async updateOne(id, updateUserDto) {
+        return await this.userRepository.update(id, updateUserDto);
     }
     async addUser(createUserDto) {
         const user = await this.userRepository.findOne({ where: { login: createUserDto.login } });
