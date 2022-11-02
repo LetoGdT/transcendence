@@ -17,12 +17,24 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("../typeorm/user.entity");
+const page_dto_1 = require("../dto/page.dto");
+const page_meta_dto_1 = require("../dto/page-meta.dto");
 let UsersService = class UsersService {
     constructor(userRepository) {
         this.userRepository = userRepository;
     }
     getAll() {
         return this.userRepository.find();
+    }
+    async getUsers(pageOptionsDto) {
+        const queryBuilder = this.userRepository.createQueryBuilder("user");
+        queryBuilder.orderBy("user.id", pageOptionsDto.order)
+            .skip(pageOptionsDto.skip)
+            .take(pageOptionsDto.take);
+        const itemCount = await queryBuilder.getCount();
+        const { entities } = await queryBuilder.getRawAndEntities();
+        const pageMetaDto = new page_meta_dto_1.PageMetaDto({ itemCount, pageOptionsDto });
+        return new page_dto_1.PageDto(entities, pageMetaDto);
     }
     async getOneById(id) {
         return this.userRepository.findOne({ where: { id: id } });

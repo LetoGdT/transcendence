@@ -60,7 +60,7 @@ export class AuthController
 			await api.refreshToken();
 		let me: CreateUserDto = await api.get('/v2/me');
 		const user: User = await this.usersService.addUser(me);
-		const { access_token, refresh_token } = await this.authService.createTokens(user.id);
+		const { access_token, refresh_token } = await this.authService.createTokens(user.id.toString());
 		res.cookie('access_token', access_token,
 			{
 				httpOnly: true,		// Prevent xss

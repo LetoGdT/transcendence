@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User
@@ -7,7 +8,7 @@ export class User
 		type: 'bigint',
 		name: 'user_id',
 	})
-	id: number;
+	id: string;
 
 	@Column({
 		nullable: false,
@@ -28,12 +29,14 @@ export class User
 	})
 	image_url: string;
 
+	@Exclude({ toPlainOnly: true })
 	@Column({
 		nullable: true,
 		default: '',
 	})
 	refresh_token: string;
 
+	@Exclude({ toPlainOnly: true })
 	@Column({
 		nullable: true,
 		default: '',

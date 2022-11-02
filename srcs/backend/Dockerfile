@@ -16,6 +16,7 @@ RUN npm i -g @nestjs/cli && \
 	npm i --save @nestjs/passport passport && \
 	npm install --save passport-jwt && \
 	npm install --save-dev @types/passport-jwt && \
-	npm install rand-token --save
+	npm install rand-token --save && \
+	npm i --save class-validator class-transformer
 
 CMD ["npm", "run", "start:dev"]

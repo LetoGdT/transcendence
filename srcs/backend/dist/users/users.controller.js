@@ -15,13 +15,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
 const users_service_1 = require("./users.service");
+const page_options_dto_1 = require("../dto/page-options.dto");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
     }
     async getAllUsers() {
         let users = await this.usersService.getAll();
-        return users.map(({ id, login, email, image_url }) => ({ id, login, email, image_url }));
+        return this.usersService.getAll();
+    }
+    async getAll(pageOptionsDto) {
+        return this.usersService.getUsers(pageOptionsDto);
     }
     async getUserById(id) {
         try {
@@ -29,24 +33,34 @@ let UsersController = class UsersController {
         }
         catch (err) {
             console.log(err);
-            throw new common_1.BadRequestException('Number too large');
+            throw new common_1.BadRequestException('An error occured');
         }
         if (user == null)
             throw new common_1.NotFoundException('User id was not found');
-        return { id: user.id, login: user.login, email: user.email, image_url: user.image_url };
+        return user;
     }
 };
 __decorate([
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getAllUsers", null);
 __decorate([
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.Get)('/all'),
+    __param(0, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [page_options_dto_1.PageOptionsDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getAll", null);
+__decorate([
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getUserById", null);
 UsersController = __decorate([

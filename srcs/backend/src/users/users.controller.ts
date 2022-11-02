@@ -1,36 +1,47 @@
-import { Controller, Get, Post, Param, ParseIntPipe, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+	Controller, Get, Post, Param, ParseIntPipe, NotFoundException,
+	BadRequestException, ClassSerializerInterceptor, UseInterceptors, Query
+} from '@nestjs/common';
 import { UsersService } from './users.service';
-import { ReturnUserDto } from '../dto/users.dto';
+import { User } from '../typeorm/user.entity';
+import { PageDto } from "../dto/page.dto";
+import { PageOptionsDto } from "../dto/page-options.dto";
 
 @Controller('users')
 export class UsersController
 {
 	constructor(private readonly usersService: UsersService) {}
 
+	@UseInterceptors(ClassSerializerInterceptor)
 	@Get()
-	async getAllUsers(): Promise<ReturnUserDto[]>
+	async getAllUsers(): Promise<User[]>
 	{
-		let users: ReturnUserDto[] = await this.usersService.getAll();
-
-		// Remove anything associated with the user's refresh token.
-		return users.map(({ id, login, email, image_url }) => ({ id, login, email, image_url }));
+		let users = await this.usersService.getAll();
+		return this.usersService.getAll();
 	}
 
+	@UseInterceptors(ClassSerializerInterceptor)
+	@Get('/all')
+	async getAll(@Query() pageOptionsDto: PageOptionsDto): Promise<PageDto<User>>
+	{
+		return this.usersService.getUsers(pageOptionsDto);
+	}
+
+	@UseInterceptors(ClassSerializerInterceptor)
 	@Get(':id')
-	async getUserById(@Param('id', ParseIntPipe) id: number): Promise<ReturnUserDto>
+	async getUserById(@Param('id', ParseIntPipe) id: string): Promise<User>
 	{
 		try
 		{
-			var user: ReturnUserDto = await this.usersService.getOneById(id);
+			var user: User = await this.usersService.getOneById(id);
 		}
-
 		catch (err)
 		{
 			console.log(err);
-			throw new BadRequestException('Number too large');
+			throw new BadRequestException('An error occured');
 		}
 		if (user == null)
 			throw new NotFoundException('User id was not found');
-		return { id: user.id, login: user.login, email: user.email, image_url: user.image_url }
+		return user;
 	}
 }

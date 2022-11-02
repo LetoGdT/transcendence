@@ -3,9 +3,3 @@ export declare class CreateUserDto {
     email: string;
     image_url: string;
 }
-export declare class ReturnUserDto {
-    id: number;
-    login: string;
-    email: string;
-    image_url: string;
-}
