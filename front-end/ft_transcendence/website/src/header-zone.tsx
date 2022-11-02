@@ -4,20 +4,6 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
-export default function OutlinedButtons() {
-  return (
-    <Stack direction="row" spacing={2}>
-      <Button variant="outlined">Primary</Button>
-      <Button variant="outlined" disabled>
-        Disabled
-      </Button>
-      <Button variant="outlined" href="#outlined-buttons">
-        Link
-      </Button>
-    </Stack>
-  );
-}
-
 export function OurHeader(){
 	return(
 		<div className='Header'>
@@ -40,11 +26,9 @@ function AvatarZone(){
 				justifyContent="center"
 				
 				spacing={0.5}
-			>
-				<Button variant="outlined">Log In</Button>
-				<Button variant="outlined" href="#outlined-buttons">
-					Sign On
-				</Button>
+				>
+				<Button variant="text" size='small'>Sign On</Button>
+				<Button variant="text" size='small'>Log In</Button>
 			</Stack>
 		);
 	}
