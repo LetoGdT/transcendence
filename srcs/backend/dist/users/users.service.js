@@ -44,7 +44,7 @@ let UsersService = class UsersService {
         return await this.userRepository.update(id, updateUserDto);
     }
     async addUser(createUserDto) {
-        const user = await this.userRepository.findOne({ where: { login: createUserDto.login } });
+        const user = await this.userRepository.findOne({ where: { uid: createUserDto.uid } });
         if (user)
             return user;
         const newUser = this.userRepository.create(createUserDto);

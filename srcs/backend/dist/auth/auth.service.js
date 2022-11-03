@@ -38,12 +38,12 @@ let AuthService = class AuthService {
         }
     }
     async tokenOwner(token) {
-        const login = this.jwtService.decode(token);
-        return await this.userRepository.findOne({ where: { login: login.username } });
+        const decoded = this.jwtService.decode(token);
+        return await this.userRepository.findOne({ where: { id: decoded.id } });
     }
     async createTokens(id) {
         const user = await this.userRepository.findOne({ where: { id: id } });
-        const payload = { username: user.login, sub: user.id };
+        const payload = { username: user.username, sub: user.id };
         const access_token = await this.jwtService.sign(payload);
         const refresh_token = randtoken.generate(16);
         const expires = new Date();

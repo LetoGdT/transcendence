@@ -1,6 +1,6 @@
 import {
 	Controller, Get, Post, Put, Param, ParseIntPipe, NotFoundException,
-	BadRequestException, ClassSerializerInterceptor, UseInterceptors, Query, Req
+	BadRequestException, UnauthorizedException, ClassSerializerInterceptor, UseInterceptors, Query, Req
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from '../typeorm/user.entity';
@@ -29,6 +29,15 @@ export class UsersController
 		return req.user;
 	}
 
+	@Put('/me')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	async updateUser(@Query() updateUserDto: UpdateUserDto,
+		@Req() req)
+	{
+		return await this.usersService.updateOne(req.user.id, updateUserDto);
+	}
+
 	@Get(':id')
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
@@ -46,13 +55,6 @@ export class UsersController
 		if (user == null)
 			throw new NotFoundException('User id was not found');
 		return user;
-	}
-
-	@Put(':id')
-	async updateUser(@Param('id', ParseIntPipe) id: number,
-		@Query() updateUserDto: UpdateUserDto)
-	{
-		return await this.usersService.updateOne(id, updateUserDto);
 	}
 }
 

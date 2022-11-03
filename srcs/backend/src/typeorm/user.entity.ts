@@ -12,9 +12,16 @@ export class User
 
 	@Column({
 		nullable: false,
-		default: '',
+		unique: true,
 	})
-	login: string;
+	uid: number;
+
+	@Column({
+		nullable: false,
+		default: '',
+		unique: true,
+	})
+	username: string;
 
 	@Column({
 		name: 'email_address',

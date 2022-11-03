@@ -8,6 +8,6 @@ export declare class UsersController {
     constructor(usersService: UsersService);
     getAllUsers(pageOptionsDto: PageOptionsDto): Promise<PageDto<User>>;
     currentUser(req: any): any;
+    updateUser(updateUserDto: UpdateUserDto, req: any): Promise<import("typeorm").UpdateResult>;
     getUserById(id: number): Promise<User>;
-    updateUser(id: number, updateUserDto: UpdateUserDto): Promise<import("typeorm").UpdateResult>;
 }

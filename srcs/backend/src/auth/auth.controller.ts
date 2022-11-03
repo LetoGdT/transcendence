@@ -56,10 +56,8 @@ export class AuthController
 			throw new HttpException('CSRF attempt detected !', HttpStatus.FORBIDDEN);
 		let api = new Api42();
 		await api.setToken(query.code);
-		if (!(await api.isTokenValid()))
-			await api.refreshToken();
-		let me: CreateUserDto = await api.get('/v2/me');
-		const user: User = await this.usersService.addUser(me);
+		let me = await api.get('/v2/me');
+		const user: User = await this.usersService.addUser({ uid: me.id, username: me.login, email: me.email, image_url: me.image_url });
 		const { access_token, refresh_token } = await this.authService.createTokens(user.id);
 		res.cookie('access_token', access_token,
 			{

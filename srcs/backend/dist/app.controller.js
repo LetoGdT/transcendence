@@ -23,7 +23,7 @@ let AppController = class AppController {
     }
     getHello(query, request) {
         if (request.user)
-            return ('Hello ' + request.user['login']);
+            return ('Hello ' + request.user['username']);
         return '<a href="http://localhost:3000/log">Login</a>';
     }
 };

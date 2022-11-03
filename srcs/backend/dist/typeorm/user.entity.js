@@ -24,10 +24,18 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)({
         nullable: false,
+        unique: true,
+    }),
+    __metadata("design:type", Number)
+], User.prototype, "uid", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        nullable: false,
         default: '',
+        unique: true,
     }),
     __metadata("design:type", String)
-], User.prototype, "login", void 0);
+], User.prototype, "username", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         name: 'email_address',

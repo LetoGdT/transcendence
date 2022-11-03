@@ -49,7 +49,7 @@ export class UsersService
 	// Create a user in the database
 	async addUser(createUserDto: CreateUserDto): Promise<User>
 	{
-		const user = await this.userRepository.findOne({where: { login: createUserDto.login }});
+		const user = await this.userRepository.findOne({where: { uid: createUserDto.uid }});
 		if (user)
 			return user;
 		const newUser = this.userRepository.create(createUserDto);
