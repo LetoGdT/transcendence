@@ -3,20 +3,6 @@ import './App.css'
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import { truncate } from 'fs/promises';
-
-export function OurHeader(){
-	return(
-		<div className='Header'>
-			<div>
-				bannière
-			</div>
-			<div>
-				<AvatarZone/>
-			</div>
-		</div>
-	);
-}
 
 function AvatarZone(){
 	let isLogIn: boolean = false;
@@ -25,7 +11,6 @@ function AvatarZone(){
 			<Stack 
 				direction="column"
 				justifyContent="center"
-				
 				spacing={0.5}
 				>
 				<Button variant="text" size='small'>Sign On</Button>
@@ -46,4 +31,19 @@ function AvatarZone(){
 			</Stack>
 		);
 	}
+}
+
+export function OurHeader(){
+	return(
+		<div className='Header'>
+			<div>
+				bannière
+			</div>
+			<div>
+				{/** pourquoi ça marche pas sur ubuntu ???
+				<AvatarZone />
+				*/}
+			</div>
+		</div>
+	);
 }
