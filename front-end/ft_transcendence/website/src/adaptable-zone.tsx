@@ -74,7 +74,8 @@ export function Stats(){
 
 export function PleaseConnect(){
 	return(
-		<div>
+		<div className='App'>
+			You have not logged in yet please connect or register.
 			<Stack 
 				direction="column"
 				justifyContent="center"
