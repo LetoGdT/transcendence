@@ -1,19 +1,67 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from "@nestjs/axios";
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 import { lastValueFrom } from 'rxjs';
+import { Repository } from 'typeorm';
+import * as randtoken from 'rand-token';
+import { User } from '../typeorm/user.entity';
+
+
+// { username: 'tlafay', sub: '4', iat: 1666947580, exp: 1666947610 }
 
 @Injectable()
-export class AuthService {}
+export class AuthService
+{
+	constructor(@InjectRepository(User) private readonly userRepository: Repository<User>,
+				private readonly jwtService: JwtService,) {}
+
+	// Check if token is valid
+	verifyToken(token: string): boolean
+	{
+		try
+		{
+			this.jwtService.verify(token, { ignoreExpiration: false });
+			return true;
+		}
+		catch (err)
+		{
+			return false;
+		}
+	}
+
+	// Return the token info.
+	// Doesn't check the token validity, so use with caution !
+	async tokenOwner(token: string): Promise<User>
+	{
+		const decoded = this.jwtService.decode(token) as { username: string, id: number };
+		return await this.userRepository.findOne({ where: { id: decoded.id }});
+	}
+
+	// Returns a new token/refresh pair
+	async createTokens(id: number): Promise<{ access_token: string, refresh_token: string }>
+	{
+		const user = await this.userRepository.findOne({where: { id: id }});
+		const payload = { username: user.username, sub: user.id };
+		const access_token = await this.jwtService.sign(payload);
+		const refresh_token = randtoken.generate(16);
+		const expires = new Date();
+		expires.setDate(expires.getDate() + 6);
+		this.userRepository.update(id,
+			{ refresh_token: refresh_token, refresh_expires: expires.toDateString() });
+		return { access_token: access_token, refresh_token: refresh_token };
+	}
+}
 
 @Injectable()
 export class Api42
 {
 	token: string;
 	refresh: string;
-	private readonly logger = new Logger(Api42.name); // Debug
-	private readonly http = new HttpService(); // Used to make http requests
-	private readonly configService = new ConfigService; // To get .env variables
+	private readonly logger = new Logger(Api42.name);	// Debug
+	private readonly http = new HttpService();			// Used to make http requests
+	private readonly configService = new ConfigService;	// To get .env variables
 
 	// Create a token from an auth code (provided by the 42's login api)
 	// Make sure to await to get the token or it will be empty !

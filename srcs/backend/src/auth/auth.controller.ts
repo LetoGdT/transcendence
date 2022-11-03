@@ -1,14 +1,20 @@
 import {
 	Controller, Get, Post, Logger, Redirect,
-	Query, HttpStatus, HttpException, Res
+	Query, HttpStatus, HttpException, Res, Req, UseGuards,
+	UseFilters, Request, UseInterceptors
 } from '@nestjs/common';
-import { HttpService } from "@nestjs/axios";
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
-import { lastValueFrom } from 'rxjs';
 import { randomBytes } from 'crypto';
 import { Api42 } from './auth.service';
+import { RedirectToLoginFilter } from '../filters/auth-exceptions.filter';
+import { CreateUserDto } from '../dto/users.dto';
+import { UsersService } from '../users/users.service';
+import { User } from '../typeorm/user.entity';
+import { AuthService } from './auth.service';
+import { JwtAuthGuard } from '../guards/jwt.guard';
+import { AuthInterceptor } from './auth.interceptor'
 
 @Controller()
 export class AuthController
@@ -16,11 +22,12 @@ export class AuthController
 	state: string;
 	private readonly logger = new Logger(Api42.name);
 
-	constructor(private readonly http: HttpService,
-				private readonly configService: ConfigService,
-				private jwtService: JwtService) {}
+	constructor(private readonly configService: ConfigService,
+				private jwtService: JwtService,
+				private readonly usersService: UsersService,
+				private readonly authService: AuthService) {}
 
-	@Redirect('', 301)
+	@Redirect('', 302)
 	@Get('/log')
 	redirect(@Res() res)
 	{
@@ -49,17 +56,47 @@ export class AuthController
 			throw new HttpException('CSRF attempt detected !', HttpStatus.FORBIDDEN);
 		let api = new Api42();
 		await api.setToken(query.code);
-		if (!(await api.isTokenValid()))
-			await api.refreshToken();
 		let me = await api.get('/v2/me');
-		const payload = { username: me.login };	// Random stuff for now
-		const access_token = await this.jwtService.sign(payload);	// Create a jwt
-		res.cookie('auth_cookie', access_token,	// Set the jwt as cookie
+		const user: User = await this.usersService.addUser({ uid: me.id, username: me.login, email: me.email, image_url: me.image_url });
+		const { access_token, refresh_token } = await this.authService.createTokens(user.id);
+		res.cookie('access_token', access_token,
 			{
-				maxAge: 3600 * 1000,	// 1h in ms
-				httpOnly: true,			// Prevent xss
-				sameSite: 'lax',		// Prevent CSRF
-				secure: true,			// Just info for the browser
+				httpOnly: true,		// Prevent xss
+				sameSite: 'lax',	// Prevent CSRF
+				secure: true,		// Just info for the browser
+			}
+		);
+		res.cookie('refresh_token', refresh_token,
+			{
+				httpOnly: true,		// Prevent xss
+				sameSite: 'lax',	// Prevent CSRF
+				secure: true,		// Just info for the browser
+			}
+		);
+		return (res.redirect('/'));
+	}
+
+	@Get('/logout')
+	@UseGuards(JwtAuthGuard)
+	@UseFilters(RedirectToLoginFilter)
+	@UseInterceptors(AuthInterceptor)
+	logout(@Res({ passthrough: true }) res: Response,
+			@Req() req)
+	{
+		// Need to uncomment for security reasons !
+		// this.usersService.updateOne(req.user.id, { refresh_expires: Date() });
+		res.clearCookie('access_token',
+			{
+				httpOnly: true,		// Prevent xss
+				sameSite: 'lax',	// Prevent CSRF
+				secure: true,		// Just info for the browser
+			}
+		);
+		res.clearCookie('refresh_token',
+			{
+				httpOnly: true,		// Prevent xss
+				sameSite: 'lax',	// Prevent CSRF
+				secure: true,		// Just info for the browser
 			}
 		);
 		return (res.redirect('/'));

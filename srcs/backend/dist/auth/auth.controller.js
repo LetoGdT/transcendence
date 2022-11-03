@@ -14,16 +14,21 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
-const axios_1 = require("@nestjs/axios");
 const config_1 = require("@nestjs/config");
 const jwt_1 = require("@nestjs/jwt");
 const crypto_1 = require("crypto");
 const auth_service_1 = require("./auth.service");
+const auth_exceptions_filter_1 = require("../filters/auth-exceptions.filter");
+const users_service_1 = require("../users/users.service");
+const auth_service_2 = require("./auth.service");
+const jwt_guard_1 = require("../guards/jwt.guard");
+const auth_interceptor_1 = require("./auth.interceptor");
 let AuthController = class AuthController {
-    constructor(http, configService, jwtService) {
-        this.http = http;
+    constructor(configService, jwtService, usersService, authService) {
         this.configService = configService;
         this.jwtService = jwtService;
+        this.usersService = usersService;
+        this.authService = authService;
         this.logger = new common_1.Logger(auth_service_1.Api42.name);
     }
     redirect(res) {
@@ -47,13 +52,28 @@ let AuthController = class AuthController {
             throw new common_1.HttpException('CSRF attempt detected !', common_1.HttpStatus.FORBIDDEN);
         let api = new auth_service_1.Api42();
         await api.setToken(query.code);
-        if (!(await api.isTokenValid()))
-            await api.refreshToken();
         let me = await api.get('/v2/me');
-        const payload = { username: me.login };
-        const access_token = await this.jwtService.sign(payload);
-        res.cookie('auth_cookie', access_token, {
-            maxAge: 3600 * 1000,
+        const user = await this.usersService.addUser({ uid: me.id, username: me.login, email: me.email, image_url: me.image_url });
+        const { access_token, refresh_token } = await this.authService.createTokens(user.id);
+        res.cookie('access_token', access_token, {
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: true,
+        });
+        res.cookie('refresh_token', refresh_token, {
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: true,
+        });
+        return (res.redirect('/'));
+    }
+    logout(res, req) {
+        res.clearCookie('access_token', {
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: true,
+        });
+        res.clearCookie('refresh_token', {
             httpOnly: true,
             sameSite: 'lax',
             secure: true,
@@ -62,7 +82,7 @@ let AuthController = class AuthController {
     }
 };
 __decorate([
-    (0, common_1.Redirect)('', 301),
+    (0, common_1.Redirect)('', 302),
     (0, common_1.Get)('/log'),
     __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -77,11 +97,23 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "getCode", null);
+__decorate([
+    (0, common_1.Get)('/logout'),
+    (0, common_1.UseGuards)(jwt_guard_1.JwtAuthGuard),
+    (0, common_1.UseFilters)(auth_exceptions_filter_1.RedirectToLoginFilter),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Res)({ passthrough: true })),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "logout", null);
 AuthController = __decorate([
     (0, common_1.Controller)(),
-    __metadata("design:paramtypes", [axios_1.HttpService,
-        config_1.ConfigService,
-        jwt_1.JwtService])
+    __metadata("design:paramtypes", [config_1.ConfigService,
+        jwt_1.JwtService,
+        users_service_1.UsersService,
+        auth_service_2.AuthService])
 ], AuthController);
 exports.AuthController = AuthController;
 //# sourceMappingURL=auth.controller.js.map

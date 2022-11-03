@@ -15,19 +15,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppController = void 0;
 const common_1 = require("@nestjs/common");
 const app_service_1 = require("./app.service");
+const auth_interceptor_1 = require("./auth/auth.interceptor");
 let AppController = class AppController {
     constructor(appService) {
         this.appService = appService;
         this.logger = new common_1.Logger(app_service_1.AppService.name);
     }
     getHello(query, request) {
-        if (request.cookies && 'auth_cookie' in request.cookies && request.cookies.auth_cookie.length > 0)
-            return "You are logged in";
-        return "You are not logged in";
+        if (request.user)
+            return ('Hello ' + request.user['username']);
+        return '<a href="http://localhost:3000/log">Login</a>';
     }
 };
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.Get)(''),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
     __param(0, (0, common_1.Query)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
