@@ -68,6 +68,8 @@ let AuthController = class AuthController {
         return (res.redirect('/'));
     }
     logout(res, req) {
+        req.user.refresh_expires = Date();
+        this.usersService.updateOne(req.user.id, req.user);
         res.clearCookie('access_token', {
             httpOnly: true,
             sameSite: 'lax',

@@ -26,4 +26,12 @@ export class AppController
 			return ('Hello ' + request.user['username']);
 		return '<a href="http://localhost:3000/log">Login</a>';
 	}
+
+	@Get('/test')
+	@UseGuards(JwtAuthGuard)
+	@UseFilters(RedirectToLoginFilter)
+	test()
+	{
+		return ('Coucou')
+	}
 }

@@ -15,6 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppController = void 0;
 const common_1 = require("@nestjs/common");
 const app_service_1 = require("./app.service");
+const auth_exceptions_filter_1 = require("./filters/auth-exceptions.filter");
+const jwt_guard_1 = require("./guards/jwt.guard");
 const auth_interceptor_1 = require("./auth/auth.interceptor");
 let AppController = class AppController {
     constructor(appService) {
@@ -26,6 +28,9 @@ let AppController = class AppController {
             return ('Hello ' + request.user['username']);
         return '<a href="http://localhost:3000/log">Login</a>';
     }
+    test() {
+        return ('Coucou');
+    }
 };
 __decorate([
     (0, common_1.Get)(''),
@@ -36,6 +41,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", String)
 ], AppController.prototype, "getHello", null);
+__decorate([
+    (0, common_1.Get)('/test'),
+    (0, common_1.UseGuards)(jwt_guard_1.JwtAuthGuard),
+    (0, common_1.UseFilters)(auth_exceptions_filter_1.RedirectToLoginFilter),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AppController.prototype, "test", null);
 AppController = __decorate([
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [app_service_1.AppService])

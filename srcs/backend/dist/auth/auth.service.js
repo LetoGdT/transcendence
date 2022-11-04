@@ -39,7 +39,9 @@ let AuthService = class AuthService {
     }
     async tokenOwner(token) {
         const decoded = this.jwtService.decode(token);
-        return await this.userRepository.findOne({ where: { id: decoded.id } });
+        return await this.userRepository.createQueryBuilder("user")
+            .where("user.id = :id", { id: decoded.sub })
+            .getOne();
     }
     async createTokens(id) {
         const user = await this.userRepository.findOne({ where: { id: id } });
