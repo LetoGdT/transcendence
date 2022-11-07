@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { Max } from 'class-validator';
+import { Max, IsDate } from 'class-validator';
 
 @Entity()
 export class User
@@ -45,6 +45,7 @@ export class User
 	})
 	refresh_token: string;
 
+	@IsDate()
 	@Exclude({ toPlainOnly: true })
 	@Column({
 		nullable: true,

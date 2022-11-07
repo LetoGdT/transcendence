@@ -9,69 +9,50 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = void 0;
+exports.Message = void 0;
 const typeorm_1 = require("typeorm");
-const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
-let User = class User {
+let Message = class Message {
 };
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)({
         type: 'bigint',
-        name: 'user_id',
+        name: 'message_id',
     }),
     (0, class_validator_1.Max)(1000000000000),
     __metadata("design:type", Number)
-], User.prototype, "id", void 0);
+], Message.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         nullable: false,
-        unique: true,
+        unique: false,
     }),
     __metadata("design:type", Number)
-], User.prototype, "uid", void 0);
+], Message.prototype, "sender_id", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         nullable: false,
-        default: '',
-        unique: true,
+        unique: false,
     }),
-    __metadata("design:type", String)
-], User.prototype, "username", void 0);
-__decorate([
-    (0, typeorm_1.Column)({
-        name: 'email_address',
-        nullable: false,
-        default: '',
-    }),
-    __metadata("design:type", String)
-], User.prototype, "email", void 0);
+    __metadata("design:type", Number)
+], Message.prototype, "receiver_id", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         nullable: false,
-        default: '',
+        unique: false,
     }),
     __metadata("design:type", String)
-], User.prototype, "image_url", void 0);
-__decorate([
-    (0, class_transformer_1.Exclude)({ toPlainOnly: true }),
-    (0, typeorm_1.Column)({
-        nullable: true,
-        default: '',
-    }),
-    __metadata("design:type", String)
-], User.prototype, "refresh_token", void 0);
+], Message.prototype, "content", void 0);
 __decorate([
     (0, class_validator_1.IsDate)(),
-    (0, class_transformer_1.Exclude)({ toPlainOnly: true }),
     (0, typeorm_1.Column)({
-        nullable: true,
-        default: '',
+        nullable: false,
+        unique: false,
     }),
     __metadata("design:type", String)
-], User.prototype, "refresh_expires", void 0);
-User = __decorate([
+], Message.prototype, "sent_date", void 0);
+Message = __decorate([
     (0, typeorm_1.Entity)()
-], User);
-exports.User = User;
-//# sourceMappingURL=user.entity.js.map
+], Message);
+exports.Message = Message;
+//# sourceMappingURL=message.entity.js.map
