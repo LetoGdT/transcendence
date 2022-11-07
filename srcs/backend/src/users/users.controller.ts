@@ -7,7 +7,8 @@ import { User } from '../typeorm/user.entity';
 import { PageDto } from "../dto/page.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
 import { UpdateUserDto } from '../dto/users.dto';
-import { AuthInterceptor } from '../auth/auth.interceptor'
+import { UserQueryFilterDto } from '../dto/query-filters.dto';
+import { AuthInterceptor } from '../auth/auth.interceptor';
 
 @Controller('users')
 export class UsersController
@@ -16,9 +17,10 @@ export class UsersController
 
 	@Get('/')
 	@UseInterceptors(ClassSerializerInterceptor)
-	async getAllUsers(@Query() pageOptionsDto: PageOptionsDto): Promise<PageDto<User>>
+	async getAllUsers(@Query() pageOptionsDto: PageOptionsDto,
+		@Query() userQueryFilterDto: UserQueryFilterDto): Promise<PageDto<User>>
 	{
-		return this.usersService.getUsers(pageOptionsDto);
+		return this.usersService.getUsers(pageOptionsDto, userQueryFilterDto);
 	}
 
 	@Get('/me')
@@ -35,6 +37,8 @@ export class UsersController
 	async updateUser(@Query() updateUserDto: UpdateUserDto,
 		@Req() req)
 	{
+		if (Object.keys(updateUserDto).length === 0)
+			throw new BadRequestException('Empty parameters');
 		return await this.usersService.updateOne(req.user.id, updateUserDto);
 	}
 
@@ -43,15 +47,7 @@ export class UsersController
 	@UseInterceptors(AuthInterceptor)
 	async getUserById(@Param('id', ParseIntPipe) id: number): Promise<User>
 	{
-		try
-		{
-			var user: User = await this.usersService.getOneById(id);
-		}
-		catch (err)
-		{
-			console.log(err);
-			throw new BadRequestException('An error occured');
-		}
+		var user: User = await this.usersService.getOneById(id);
 		if (user == null)
 			throw new NotFoundException('User id was not found');
 		return user;

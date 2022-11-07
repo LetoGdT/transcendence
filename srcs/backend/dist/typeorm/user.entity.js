@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typeorm_1 = require("typeorm");
 const class_transformer_1 = require("class-transformer");
+const class_validator_1 = require("class-validator");
 let User = class User {
 };
 __decorate([
@@ -19,6 +20,7 @@ __decorate([
         type: 'bigint',
         name: 'user_id',
     }),
+    (0, class_validator_1.Max)(1000000000000),
     __metadata("design:type", Number)
 ], User.prototype, "id", void 0);
 __decorate([
