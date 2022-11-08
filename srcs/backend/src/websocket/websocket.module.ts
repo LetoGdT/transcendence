@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { MySocket } from './websocket.ts';
+import { MySocket } from './websocket';
 
 @Module({
 	providers: [MySocket],
