@@ -8,4 +8,5 @@ export declare class AppController {
         plain: string;
         pass: string;
     }, request: Request): string;
+    test(): string;
 }

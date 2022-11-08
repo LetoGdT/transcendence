@@ -35,8 +35,10 @@ export class AuthService
 	// Doesn't check the token validity, so use with caution !
 	async tokenOwner(token: string): Promise<User>
 	{
-		const decoded = this.jwtService.decode(token) as { username: string, id: number };
-		return await this.userRepository.findOne({ where: { id: decoded.id }});
+		const decoded = this.jwtService.decode(token) as { username: string, sub: number };
+		return await this.userRepository.createQueryBuilder("user")
+			.where("user.id = :id", { id: decoded.sub })
+			.getOne();
 	}
 
 	// Returns a new token/refresh pair

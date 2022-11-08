@@ -83,8 +83,8 @@ export class AuthController
 	logout(@Res({ passthrough: true }) res: Response,
 			@Req() req)
 	{
-		// Need to uncomment for security reasons !
-		// this.usersService.updateOne(req.user.id, { refresh_expires: Date() });
+		req.user.refresh_expires = Date();
+		this.usersService.updateOne(req.user.id, req.user);
 		res.clearCookie('access_token',
 			{
 				httpOnly: true,		// Prevent xss
@@ -94,9 +94,9 @@ export class AuthController
 		);
 		res.clearCookie('refresh_token',
 			{
-				httpOnly: true,		// Prevent xss
-				sameSite: 'lax',	// Prevent CSRF
-				secure: true,		// Just info for the browser
+				httpOnly: true,
+				sameSite: 'lax',
+				secure: true,
 			}
 		);
 		return (res.redirect('/'));

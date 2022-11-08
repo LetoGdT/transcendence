@@ -8,6 +8,8 @@ import { PageMetaDto } from "../dto/page-meta.dto";
 import { UserQueryFilterDto } from '../dto/query-filters.dto';
 import { PageOptionsDto } from "../dto/page-options.dto";
 
+// QueryFailedError UpdateValuesMissingError
+
 @Injectable()
 export class UsersService
 {
@@ -75,7 +77,7 @@ export class UsersService
 		const user = await this.userRepository.findOne({ where: { uid: createUserDto.uid }});
 		if (user)
 			return user;
-		const newUser = this.userRepository.create(createUserDto);
+		const newUser: User = this.userRepository.create(createUserDto);
 		return this.userRepository.save(newUser);
 	}
 }
