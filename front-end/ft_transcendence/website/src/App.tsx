@@ -15,29 +15,30 @@ import { OurHeader } from './header-zone';
 function App() {
   return (
 	<React.Fragment>
-		<Router>
-			<header>
-				<OurHeader/>
-			</header>
-			<div className='Menu'>
-				<OurMenu/>
-			</div>
-			<div className='Adaptable'>
+			<Router>
+				<header>
+					<OurHeader/>
+				</header>
+				<div className='Menu'>
+					<OurMenu/>
+				</div>
+				<div className='Adaptable'>
+					
+					<Routes>
+						<Route path="/chat" element={<Chat/>} />
+						<Route path="/friends" element={<Friends/>} />
+						<Route path="/" element={<Home />} />
+						<Route path="/matchhistory" element={<MatchHistory/>} />
+						<Route path="/play" element={<Play/>} />
+						<Route path="/profile" element={<Profile/>} />
+						<Route path="/specamatch" element={<SpecAMatch/>} />
+						<Route path="/stats" element={<Stats/>} />
+						<Route path="/pleaseconnect" element={<PleaseConnect/>} />
+						<Route path="/signon" element={<SignOn/>} />
+					</Routes>
+				</div>
+			</Router>
 
-				<Routes>
-					<Route path="/chat" element={<Chat/>} />
-					<Route path="/friends" element={<Friends/>} />
-					<Route path="/" element={<Home />} />
-					<Route path="/matchhistory" element={<MatchHistory/>} />
-					<Route path="/play" element={<Play/>} />
-					<Route path="/profile" element={<Profile/>} />
-					<Route path="/specamatch" element={<SpecAMatch/>} />
-					<Route path="/stats" element={<Stats/>} />
-					<Route path="/pleaseconnect" element={<PleaseConnect/>} />
-					<Route path="/signon" element={<SignOn/>} />
-				</Routes>
-			</div>
-		</Router>
 	</React.Fragment>
 	
   );

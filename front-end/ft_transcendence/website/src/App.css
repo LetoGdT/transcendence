@@ -1,25 +1,34 @@
 .Header {
-  background-color: #61dafb;
+  background-color: #646cffaa;
   display: flex;
   justify-content: flex-end;
   margin: 30px;
 }
 
 .Adaptable{
-  background-color: #61fbda;
+  background-color:#000000;
+  color: antiquewhite;
 }
 
 .Friends{
   display: flex;
   flex-wrap: wrap;
+  background-color: DodgerBlue;
+  justify-content: center;
 }
 
-.Friends > div{
+.A-friend{
+  background-color: #f1f1f1;
   width: 100px;
-  margin: 10px;
+  margin: 2px;
   text-align: center;
-  line-height: 75px;
-  font-size: 30px;
+  font-size: 18px;
+}
+
+.Avatar{
+  background-color: antiquewhite;
+  max-width: 100;
+  height: auto;
 }
 
 .Menu {

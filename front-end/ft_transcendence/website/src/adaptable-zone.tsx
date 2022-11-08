@@ -18,10 +18,14 @@ export function Friends(){
 	return(
 		<div className='friends'>
 			Friends
-			si user non connecter renvoyer vers /pleaseconnect
-			<div>
-				<img className='avatar' src='./tmp/link_botw_avatar.jpg'></img>
+			si user non connecté renvoyer vers /pleaseconnect
+			<div className='a-friend'>
+				
 				friend 1
+			</div>
+			<div>
+				
+				friend 2
 			</div>
 		</div>
 	);
@@ -100,9 +104,9 @@ export function SignOn(){
 	return(
 		<div className='App'>
 			To register you need to apply to a 42 campus and valid the piscine. Good luck, have fun.
-			<Link to="https://admissions.42lyon.fr/users/sign_in">
+			<a href="https://admissions.42lyon.fr/users/sign_in">
 				<Button variant='text' size='large'>42</Button>			
-			</Link>
+			</a>
 		</div>
 	);
 }
