@@ -8,4 +8,5 @@
 		<li>@mui https://mui.com/</li>
 		<li>CSS Flexbox container https://www.w3schools.com/css/css3_flexbox_container.asp</li>
 	</ul>
+	<li>Axios + react https://www.freecodecamp.org/french/news/comment-utiliser-axios-avec-react-le-guide-complet-2021/</li>
 </div>

@@ -5,17 +5,60 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var Api42_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Api42 = exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const axios_1 = require("@nestjs/axios");
 const config_1 = require("@nestjs/config");
+const jwt_1 = require("@nestjs/jwt");
+const typeorm_1 = require("@nestjs/typeorm");
 const rxjs_1 = require("rxjs");
+const typeorm_2 = require("typeorm");
+const randtoken = require("rand-token");
+const user_entity_1 = require("../typeorm/user.entity");
 let AuthService = class AuthService {
+    constructor(userRepository, jwtService) {
+        this.userRepository = userRepository;
+        this.jwtService = jwtService;
+    }
+    verifyToken(token) {
+        try {
+            this.jwtService.verify(token, { ignoreExpiration: false });
+            return true;
+        }
+        catch (err) {
+            return false;
+        }
+    }
+    async tokenOwner(token) {
+        const decoded = this.jwtService.decode(token);
+        return await this.userRepository.createQueryBuilder("user")
+            .where("user.id = :id", { id: decoded.sub })
+            .getOne();
+    }
+    async createTokens(id) {
+        const user = await this.userRepository.findOne({ where: { id: id } });
+        const payload = { username: user.username, sub: user.id };
+        const access_token = await this.jwtService.sign(payload);
+        const refresh_token = randtoken.generate(16);
+        const expires = new Date();
+        expires.setDate(expires.getDate() + 6);
+        this.userRepository.update(id, { refresh_token: refresh_token, refresh_expires: expires.toDateString() });
+        return { access_token: access_token, refresh_token: refresh_token };
+    }
 };
 AuthService = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        jwt_1.JwtService])
 ], AuthService);
 exports.AuthService = AuthService;
 let Api42 = Api42_1 = class Api42 {

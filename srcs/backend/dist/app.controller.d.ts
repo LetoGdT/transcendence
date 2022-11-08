@@ -1,5 +1,5 @@
-import { AppService } from './app.service';
 import { Request } from 'express';
+import { AppService } from './app.service';
 export declare class AppController {
     private readonly appService;
     private readonly logger;
@@ -8,4 +8,5 @@ export declare class AppController {
         plain: string;
         pass: string;
     }, request: Request): string;
+    test(): string;
 }

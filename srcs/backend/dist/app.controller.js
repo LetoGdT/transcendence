@@ -15,25 +15,40 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppController = void 0;
 const common_1 = require("@nestjs/common");
 const app_service_1 = require("./app.service");
+const auth_exceptions_filter_1 = require("./filters/auth-exceptions.filter");
+const jwt_guard_1 = require("./guards/jwt.guard");
+const auth_interceptor_1 = require("./auth/auth.interceptor");
 let AppController = class AppController {
     constructor(appService) {
         this.appService = appService;
         this.logger = new common_1.Logger(app_service_1.AppService.name);
     }
     getHello(query, request) {
-        if (request.cookies && 'auth_cookie' in request.cookies && request.cookies.auth_cookie.length > 0)
-            return "You are logged in";
-        return "You are not logged in";
+        if (request.user)
+            return ('Hello ' + request.user['username']);
+        return '<a href="http://localhost:3000/log">Login</a>';
+    }
+    test() {
+        return ('Coucou');
     }
 };
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.Get)(''),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
     __param(0, (0, common_1.Query)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", String)
 ], AppController.prototype, "getHello", null);
+__decorate([
+    (0, common_1.Get)('/test'),
+    (0, common_1.UseGuards)(jwt_guard_1.JwtAuthGuard),
+    (0, common_1.UseFilters)(auth_exceptions_filter_1.RedirectToLoginFilter),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AppController.prototype, "test", null);
 AppController = __decorate([
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [app_service_1.AppService])

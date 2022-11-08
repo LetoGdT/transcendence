@@ -7,13 +7,14 @@ services:
         environment:
             POSTGRES_USER: ${POSTGRES_USER:-postgres}
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+            POSTGRES_DB: 'ft_transcendence'
             PGDATA: /data/postgres
         volumes:
             - postgres:/data/postgres
         ports:
             - "5432:5432"
         networks:
-            - postgres
+            - ft_transcendence
         restart: unless-stopped
 
     pgadmin:
@@ -29,7 +30,7 @@ services:
         ports:
             - "${PGADMIN_PORT:-5050}:80"
         networks:
-            - postgres
+            - ft_transcendence
         restart: unless-stopped
 
     nestjs:
@@ -40,6 +41,8 @@ services:
         restart: unless-stopped
         volumes:
             - nestjs:/usr/src/app
+        networks:
+            - ft_transcendence
 
 volumes:
     nestjs:
@@ -62,5 +65,5 @@ volumes:
             o: bind
 
 networks:
-    postgres:
+    ft_transcendence:
         driver: bridge
