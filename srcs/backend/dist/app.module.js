@@ -17,6 +17,7 @@ const app_service_1 = require("./app.service");
 const auth_module_1 = require("./auth/auth.module");
 const users_module_1 = require("./users/users.module");
 const user_entity_1 = require("./typeorm/user.entity");
+const messages_module_1 = require("./messages/messages.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -42,7 +43,8 @@ AppModule = __decorate([
             serve_static_1.ServeStaticModule.forRoot({
                 rootPath: (0, path_1.resolve)(__dirname, '..', 'build'),
                 exclude: ['/api*, /log, /logout, /callback'],
-            })
+            }),
+            messages_module_1.MessagesModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

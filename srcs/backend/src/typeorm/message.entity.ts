@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Max, IsDate } from 'class-validator';
+import { User } from './user.entity';
 
 @Entity()
 export class Message
@@ -11,17 +12,11 @@ export class Message
 	@Max(1000000000000)
 	id: number;
 
-	@Column({
-		nullable: false,
-		unique: false,
-	})
-	sender_id: number;
+	@ManyToOne(() => User)
+    sender: User
 
-	@Column({
-		nullable: false,
-		unique: false,
-	})
-	receiver_id: number;
+    @ManyToOne(() => User)
+    recipient: User
 
 	@Column({
 		nullable: false,
@@ -35,4 +30,11 @@ export class Message
 		unique: false,
 	})
 	sent_date: string;
+
+	@IsDate()
+	@Column({
+		nullable: false,
+		unique: false,
+	})
+	received_date: string;
 }

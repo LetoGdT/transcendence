@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { User } from './typeorm/user.entity'
+import { MessagesModule } from './messages/messages.module';
 
 @Module(
 	{
@@ -34,7 +35,8 @@ import { User } from './typeorm/user.entity'
 			ServeStaticModule.forRoot({
 				rootPath: resolve(__dirname, '..', 'build'),
 				exclude: ['/api*, /log, /logout, /callback'],
-			})
+			}),
+			MessagesModule
 		],
 		controllers: [AppController],
 		providers: [AppService],
