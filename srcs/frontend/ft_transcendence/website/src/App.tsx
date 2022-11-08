@@ -6,7 +6,7 @@ import { Home } from './adaptable-zone';
 import { Play, SpecAMatch} from './adaptable-zone';
 import { Chat } from './adaptable-zone';
 import { Friends, MatchHistory, Profile, Stats } from './adaptable-zone';
-import { PleaseConnect } from './adaptable-zone';
+import { PleaseConnect, SignOn } from './adaptable-zone';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 
 import { OurHeader } from './header-zone';
@@ -34,6 +34,7 @@ function App() {
 					<Route path="/specamatch" element={<SpecAMatch/>} />
 					<Route path="/stats" element={<Stats/>} />
 					<Route path="/pleaseconnect" element={<PleaseConnect/>} />
+					<Route path="/signon" element={<SignOn/>} />
 				</Routes>
 			</div>
 		</Router>
