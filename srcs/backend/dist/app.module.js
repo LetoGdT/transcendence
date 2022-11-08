@@ -40,7 +40,8 @@ AppModule = __decorate([
                 inject: [config_1.ConfigService],
             }),
             serve_static_1.ServeStaticModule.forRoot({
-                rootPath: (0, path_1.join)(__dirname, '..', '..', 'frontend', 'public'),
+                rootPath: (0, path_1.resolve)(__dirname, '..', 'build'),
+                exclude: ['/api*, /log, /logout, /callback'],
             })
         ],
         controllers: [app_controller_1.AppController],

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
+import { resolve } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -32,8 +32,8 @@ import { User } from './typeorm/user.entity'
 			inject: [ConfigService],
 			}),
 			ServeStaticModule.forRoot({
-				rootPath: join(__dirname, '..', '..', 'frontend', 'public'),
-				// serveRoot: 'src'
+				rootPath: resolve(__dirname, '..', 'build'),
+				exclude: ['/api*, /log, /logout, /callback'],
 			})
 		],
 		controllers: [AppController],

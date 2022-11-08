@@ -15,6 +15,8 @@ services:
 
     react:
         container_name: react
+        ports:
+            - "9999:3000"
         build: ./srcs/frontend/
         restart: unless-stopped
         volumes:
