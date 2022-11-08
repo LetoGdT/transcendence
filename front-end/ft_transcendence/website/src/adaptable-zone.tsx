@@ -16,9 +16,13 @@ export function Chat(){
 
 export function Friends(){
 	return(
-		<div>
+		<div className='friends'>
 			Friends
 			si user non connecter renvoyer vers /pleaseconnect
+			<div>
+				<img className='avatar' src='./tmp/link_botw_avatar.jpg'></img>
+				friend 1
+			</div>
 		</div>
 	);
 }
