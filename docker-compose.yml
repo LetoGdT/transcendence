@@ -1,6 +1,27 @@
 version: "3.8"
 
 services:
+    nestjs:
+        container_name: nestjs
+        ports:
+            - "3000:3000"
+        build: ./srcs/backend/
+        restart: unless-stopped
+        volumes:
+            - nestjs:/usr/src/app
+            - react:/usr/src/frontend
+        networks:
+            - ft_transcendence
+
+    react:
+        container_name: react
+        build: ./srcs/frontend/
+        restart: unless-stopped
+        volumes:
+            - react:/usr/src/frontend
+        networks:
+            - ft_transcendence
+
     postgres:
         container_name: postgres
         image: postgres
@@ -33,23 +54,18 @@ services:
             - ft_transcendence
         restart: unless-stopped
 
-    nestjs:
-        container_name: nestjs
-        ports:
-            - "3000:3000"
-        build: ./srcs/backend/
-        restart: unless-stopped
-        volumes:
-            - nestjs:/usr/src/app
-        networks:
-            - ft_transcendence
-
 volumes:
     nestjs:
         driver: local
         driver_opts:
             type: none
             device: ./srcs/backend
+            o: bind
+    react:
+        driver: local
+        driver_opts:
+            type: none
+            device: ./srcs/frontend/ft_transcendence/website
             o: bind
     postgres:
         driver: local

@@ -13,25 +13,25 @@ import { AuthInterceptor } from './auth/auth.interceptor'
 @Controller()
 export class AppController
 {
-	private readonly logger = new Logger(AppService.name)
+	// private readonly logger = new Logger(AppService.name)
 
-	constructor(private readonly appService: AppService) {}
+	// constructor(private readonly appService: AppService) {}
 
-	@Get('')
-	@UseInterceptors(AuthInterceptor)
-	getHello(@Query() query: { plain: string, pass: string },
-		@Req() request: Request): string
-	{
-		if (request.user)
-			return ('Hello ' + request.user['username']);
-		return '<a href="http://localhost:3000/log">Login</a>';
-	}
+	// @Get('')
+	// @UseInterceptors(AuthInterceptor)
+	// getHello(@Query() query: { plain: string, pass: string },
+	// 	@Req() request: Request): string
+	// {
+	// 	if (request.user)
+	// 		return ('Hello ' + request.user['username']);
+	// 	return '<a href="http://localhost:3000/log">Login</a>';
+	// }
 
-	@Get('/test')
-	@UseGuards(JwtAuthGuard)
-	@UseFilters(RedirectToLoginFilter)
-	test()
-	{
-		return ('Coucou')
-	}
+	// @Get('/test')
+	// @UseGuards(JwtAuthGuard)
+	// @UseFilters(RedirectToLoginFilter)
+	// test()
+	// {
+	// 	return ('Coucou')
+	// }
 }
