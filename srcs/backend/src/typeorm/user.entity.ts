@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { Max, IsDate } from 'class-validator';
 
 @Entity()
 export class User
@@ -8,6 +9,7 @@ export class User
 		type: 'bigint',
 		name: 'user_id',
 	})
+	@Max(1000000000000)
 	id: number;
 
 	@Column({
@@ -43,6 +45,7 @@ export class User
 	})
 	refresh_token: string;
 
+	@IsDate()
 	@Exclude({ toPlainOnly: true })
 	@Column({
 		nullable: true,

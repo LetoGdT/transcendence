@@ -1,4 +1,4 @@
-import { Expose, Exclude } from 'class-transformer';
+import { Exclude } from 'class-transformer';
 
 export class CreateUserDto
 {
@@ -8,7 +8,6 @@ export class CreateUserDto
 	image_url: string;
 }
 
-@Expose()
 export class UpdateUserDto
 {
 	username: string;

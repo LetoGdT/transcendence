@@ -9,44 +9,36 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PageOptionsDto = exports.Order = void 0;
+exports.UserQueryFilterDto = void 0;
 const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
-var Order;
-(function (Order) {
-    Order["ASC"] = "ASC";
-    Order["DESC"] = "DESC";
-})(Order = exports.Order || (exports.Order = {}));
-class PageOptionsDto {
-    constructor() {
-        this.order = Order.ASC;
-        this.page = 1;
-        this.take = 5;
-    }
-    get skip() {
-        return (this.page - 1) * this.take;
-    }
+class UserQueryFilterDto {
 }
 __decorate([
-    (0, class_validator_1.IsEnum)(Order),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.Min)(1),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], UserQueryFilterDto.prototype, "id", void 0);
+__decorate([
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.Min)(1),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], UserQueryFilterDto.prototype, "uid", void 0);
+__decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], PageOptionsDto.prototype, "order", void 0);
+], UserQueryFilterDto.prototype, "username", void 0);
 __decorate([
-    (0, class_transformer_1.Type)(() => Number),
-    (0, class_validator_1.IsInt)(),
-    (0, class_validator_1.Min)(1),
-    (0, class_validator_1.Max)(1000000000000),
     (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", Number)
-], PageOptionsDto.prototype, "page", void 0);
+    __metadata("design:type", String)
+], UserQueryFilterDto.prototype, "email", void 0);
 __decorate([
-    (0, class_transformer_1.Type)(() => Number),
-    (0, class_validator_1.IsInt)(),
-    (0, class_validator_1.Min)(1),
-    (0, class_validator_1.Max)(50),
     (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", Number)
-], PageOptionsDto.prototype, "take", void 0);
-exports.PageOptionsDto = PageOptionsDto;
-//# sourceMappingURL=page-options.dto.js.map
+    __metadata("design:type", String)
+], UserQueryFilterDto.prototype, "image_url", void 0);
+exports.UserQueryFilterDto = UserQueryFilterDto;
+//# sourceMappingURL=query-filters.dto.js.map

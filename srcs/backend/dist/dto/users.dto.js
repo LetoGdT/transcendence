@@ -14,8 +14,8 @@ const class_transformer_1 = require("class-transformer");
 class CreateUserDto {
 }
 exports.CreateUserDto = CreateUserDto;
-let UpdateUserDto = class UpdateUserDto {
-};
+class UpdateUserDto {
+}
 __decorate([
     (0, class_transformer_1.Exclude)(),
     __metadata("design:type", String)
@@ -24,8 +24,5 @@ __decorate([
     (0, class_transformer_1.Exclude)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "refresh_expires", void 0);
-UpdateUserDto = __decorate([
-    (0, class_transformer_1.Expose)()
-], UpdateUserDto);
 exports.UpdateUserDto = UpdateUserDto;
 //# sourceMappingURL=users.dto.js.map

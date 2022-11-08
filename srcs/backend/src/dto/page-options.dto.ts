@@ -3,8 +3,8 @@ import { IsEnum, IsInt, IsOptional, Max, Min } from "class-validator";
 
 export enum Order
 {
-  ASC = "ASC",
-  DESC = "DESC",
+	ASC = "ASC",
+	DESC = "DESC",
 }
 
 export class PageOptionsDto
@@ -16,6 +16,7 @@ export class PageOptionsDto
 	@Type(() => Number)
 	@IsInt()
 	@Min(1)
+	@Max(1000000000000)
 	@IsOptional()
 	readonly page?: number = 1;
 
