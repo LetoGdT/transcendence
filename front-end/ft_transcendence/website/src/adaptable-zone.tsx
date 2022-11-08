@@ -4,6 +4,8 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
+import { Link } from 'react-router-dom'
+
 export function Chat(){
 	return(
 		<div>
@@ -80,10 +82,23 @@ export function PleaseConnect(){
 				direction="column"
 				justifyContent="center"
 				spacing={0.5}
-				>
-				<Button variant="text" size='small'>Sign On</Button>
+			>
+				<Link to='/signon'>
+					<Button variant="text" size='small'>Sign On</Button>
+				</Link>
 				<Button variant="text" size='small'>Log In</Button>
 			</Stack>
+		</div>
+	);
+}
+
+export function SignOn(){
+	return(
+		<div className='App'>
+			To register you need to apply to a 42 campus and valid the piscine. Good luck, have fun.
+			<Link to="https://admissions.42lyon.fr/users/sign_in">
+				<Button variant='text' size='large'>42</Button>			
+			</Link>
 		</div>
 	);
 }

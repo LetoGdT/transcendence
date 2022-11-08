@@ -4,6 +4,8 @@ import * as React from 'react';
 
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
+import { SignOn } from './adaptable-zone';
+import { Link } from 'react-router-dom';
 
 function AvatarZone(){
 	let isLogIn: boolean = false;
@@ -14,8 +16,10 @@ function AvatarZone(){
 					direction="column"
 					justifyContent="center"
 					spacing={0.5}
-					>
-					<Button variant="text" size='small'>Sign On</Button>
+				>
+					<Link to='/signon'>
+						<Button variant="text" size='small'>Sign On</Button>
+					</Link>
 					<Button variant="text" size='small'>Log In</Button>
 				</Stack>
 			</React.Fragment>
