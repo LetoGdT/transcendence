@@ -24,11 +24,11 @@ __decorate([
     __metadata("design:type", Number)
 ], Message.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User),
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, { nullable: false }),
     __metadata("design:type", user_entity_1.User)
 ], Message.prototype, "sender", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User),
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, { nullable: false }),
     __metadata("design:type", user_entity_1.User)
 ], Message.prototype, "recipient", void 0);
 __decorate([
@@ -43,6 +43,7 @@ __decorate([
     (0, typeorm_1.Column)({
         nullable: false,
         unique: false,
+        default: Date()
     }),
     __metadata("design:type", String)
 ], Message.prototype, "sent_date", void 0);
@@ -51,6 +52,7 @@ __decorate([
     (0, typeorm_1.Column)({
         nullable: false,
         unique: false,
+        default: Date()
     }),
     __metadata("design:type", String)
 ], Message.prototype, "received_date", void 0);

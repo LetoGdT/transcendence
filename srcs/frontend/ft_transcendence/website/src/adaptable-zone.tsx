@@ -57,8 +57,11 @@ export function Profile(){
 		<div>
 			Profile ou settings
 			si user non connecter renvoyer vers /pleaseconnect
+			<Link to='/api/users/me'>
+				<Button variant="text" size='small'>test</Button>
+			</Link>
 		</div>
-	);
+		);
 }
 
 export function SpecAMatch(){

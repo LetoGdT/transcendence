@@ -7,7 +7,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { User } from './typeorm/user.entity'
+import { User } from './typeorm/user.entity';
+import { Message } from './typeorm/message.entity';
 import { MessagesModule } from './messages/messages.module';
 
 @Module(
@@ -26,7 +27,7 @@ import { MessagesModule } from './messages/messages.module';
 					username: configService.get('DB_USERNAME'),
 					password: configService.get('DB_PASSWORD'),
 					database: configService.get('DB_NAME'),
-					entities: [User],
+					entities: [User, Message],
 					synchronize: true,
 				}
 			),

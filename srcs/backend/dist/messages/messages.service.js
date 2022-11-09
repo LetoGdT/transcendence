@@ -17,9 +17,30 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const message_entity_1 = require("../typeorm/message.entity");
+const page_dto_1 = require("../dto/page.dto");
+const page_meta_dto_1 = require("../dto/page-meta.dto");
 let MessagesService = class MessagesService {
-    constructor(userRepository) {
-        this.userRepository = userRepository;
+    constructor(messageRepository) {
+        this.messageRepository = messageRepository;
+    }
+    async getMessages(pageOptionsDto) {
+        const queryBuilder = this.messageRepository.createQueryBuilder("message");
+        queryBuilder
+            .orderBy("message.id", pageOptionsDto.order)
+            .skip(pageOptionsDto.skip)
+            .take(pageOptionsDto.take);
+        const itemCount = await queryBuilder.getCount();
+        const { entities } = await queryBuilder.getRawAndEntities();
+        const pageMetaDto = new page_meta_dto_1.PageMetaDto({ itemCount, pageOptionsDto });
+        return new page_dto_1.PageDto(entities, pageMetaDto);
+    }
+    async createMessage(sender, recipient, content) {
+        const newMessage = this.messageRepository.create({
+            sender: sender,
+            recipient: recipient,
+            content: content
+        });
+        return this.messageRepository.save(newMessage);
     }
 };
 MessagesService = __decorate([

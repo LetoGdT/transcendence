@@ -12,10 +12,10 @@ export class Message
 	@Max(1000000000000)
 	id: number;
 
-	@ManyToOne(() => User)
+	@ManyToOne(() => User, { nullable: false })
     sender: User
 
-    @ManyToOne(() => User)
+    @ManyToOne(() => User, { nullable: false })
     recipient: User
 
 	@Column({
@@ -28,6 +28,7 @@ export class Message
 	@Column({
 		nullable: false,
 		unique: false,
+		default: Date()
 	})
 	sent_date: string;
 
@@ -35,6 +36,7 @@ export class Message
 	@Column({
 		nullable: false,
 		unique: false,
+		default: Date()
 	})
 	received_date: string;
 }
