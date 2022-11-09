@@ -55,6 +55,9 @@ let UsersService = class UsersService {
             throw new common_1.BadRequestException(`id must not be greater than ${this.IdMax}`);
         return this.userRepository.findOne({ where: { id: id } });
     }
+    async getOneByLogin(username) {
+        return this.userRepository.findOne({ where: { username: username } });
+    }
     async getOneByRefresh(refresh) {
         return this.userRepository.findOne({ where: { refresh_token: refresh } });
     }

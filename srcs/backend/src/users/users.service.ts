@@ -51,11 +51,19 @@ export class UsersService
 	}
 
 	// Get a user (using a general User dto)
+	// IMPORTANT: NEVER use when id might be undefined, or it returns the first
+	// user of the db
 	async getOneById(id: number): Promise<User>
 	{
 		if (id > this.IdMax)
 			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
 		return this.userRepository.findOne({ where: { id: id } });
+	}
+
+	// Don't use, it has security vulnerability
+	async getOneByLogin(username: string)
+	{
+		return this.userRepository.findOne({ where: { username: username } });
 	}
 
 	async getOneByRefresh(refresh: string): Promise<User>
