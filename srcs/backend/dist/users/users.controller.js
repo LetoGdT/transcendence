@@ -24,6 +24,7 @@ let UsersController = class UsersController {
         this.usersService = usersService;
     }
     async getAllUsers(pageOptionsDto, userQueryFilterDto) {
+        console.log('hi');
         return this.usersService.getUsers(pageOptionsDto, userQueryFilterDto);
     }
     currentUser(req) {
