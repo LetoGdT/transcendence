@@ -53,7 +53,7 @@ export function Play(){
 }
 
 export function Profile(){
-	fetch("http://localhost:3000/api/users/me", { credentials: 'include' })
+	fetch("http://localhost:9999/api/users/me", { credentials: 'include' })
 	.then(response => response.text())
 	.then(response => console.log(response))
 	.catch(error => console.log("Erreur : " + error));

@@ -33,10 +33,10 @@ import { MessagesModule } from './messages/messages.module';
 			),
 			inject: [ConfigService],
 			}),
-			ServeStaticModule.forRoot({
-				rootPath: resolve(__dirname, '..', 'build'),
-				exclude: ['/api*, /log, /logout, /callback'],
-			}),
+			// ServeStaticModule.forRoot({
+			// 	rootPath: resolve(__dirname, '..', 'build'),
+			// 	exclude: ['/api*, /log, /logout, /callback'],
+			// }),
 			MessagesModule
 		],
 		controllers: [AppController],
