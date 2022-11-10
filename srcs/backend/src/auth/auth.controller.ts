@@ -37,7 +37,7 @@ export class AuthController
 		if (uid == undefined || secret == undefined)
 			throw new HttpException('42API credentials not set. Did you forget to create .env ?',
 				HttpStatus.INTERNAL_SERVER_ERROR);
-		let redirect_uri: string = 'http://localhost:3000/callback';
+		let redirect_uri: string = 'http://localhost:9999/callback';
 		let state: string = randomBytes(32).toString("hex");
 		this.state = state;
 		let url = `${host}?client_id=${uid}&redirect_uri=${redirect_uri}&response_type=code&scope=public&state=${state}`;

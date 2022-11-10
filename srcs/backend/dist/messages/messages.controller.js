@@ -23,8 +23,14 @@ let MessagesController = class MessagesController {
         this.messagesService = messagesService;
         this.usersService = usersService;
     }
-    async getMessages(pageOptionsDto) {
-        return this.messagesService.getMessages(pageOptionsDto);
+    async getMessages(pageOptionsDto, req, q) {
+        return this.messagesService.getMessages(pageOptionsDto, req.user);
+    }
+    async getMessagesAsSender(pageOptionsDto, req) {
+        return this.messagesService.getMessages(pageOptionsDto, req.user, { as_recipient: true });
+    }
+    async getMessagesAsRecipient(pageOptionsDto, req) {
+        return this.messagesService.getMessages(pageOptionsDto, req.user, { as_sender: true });
     }
     async createMessage(body, req) {
         const sender = req.user;
@@ -35,11 +41,35 @@ let MessagesController = class MessagesController {
 };
 __decorate([
     (0, common_1.Get)(),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
     __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Req)()),
+    __param(2, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [page_options_dto_1.PageOptionsDto]),
+    __metadata("design:paramtypes", [page_options_dto_1.PageOptionsDto, Object, Object]),
     __metadata("design:returntype", Promise)
 ], MessagesController.prototype, "getMessages", null);
+__decorate([
+    (0, common_1.Get)('/as_sender'),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [page_options_dto_1.PageOptionsDto, Object]),
+    __metadata("design:returntype", Promise)
+], MessagesController.prototype, "getMessagesAsSender", null);
+__decorate([
+    (0, common_1.Get)('/as_recipient'),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [page_options_dto_1.PageOptionsDto, Object]),
+    __metadata("design:returntype", Promise)
+], MessagesController.prototype, "getMessagesAsRecipient", null);
 __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),

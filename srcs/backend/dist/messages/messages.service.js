@@ -23,9 +23,21 @@ let MessagesService = class MessagesService {
     constructor(messageRepository) {
         this.messageRepository = messageRepository;
     }
-    async getMessages(pageOptionsDto) {
+    async getMessages(pageOptionsDto, user, options) {
         const queryBuilder = this.messageRepository.createQueryBuilder("message");
         queryBuilder
+            .where(new typeorm_2.Brackets(qb => {
+            qb.where("message.sender = :user_id", { user_id: user.id })
+                .orWhere("message.recipient = :user_id", { user_id: user.id });
+        }))
+            .andWhere(options && options.as_sender == true
+            ? 'message.sender = :user_id'
+            : 'TRUE', { user_id: user.id })
+            .andWhere(options && options.as_recipient == true
+            ? 'message.recipient = :user_id'
+            : 'TRUE', { user_id: user.id })
+            .leftJoinAndSelect('message.sender', 'sender')
+            .leftJoinAndSelect('message.recipient', 'recipient')
             .orderBy("message.id", pageOptionsDto.order)
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take);

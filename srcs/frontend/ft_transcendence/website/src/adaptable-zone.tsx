@@ -54,8 +54,8 @@ export function Play(){
 
 export function Profile(){
 	fetch("http://localhost:9999/api/users/me", { credentials: 'include' })
-	.then(response => response.text())
-	.then(response => console.log(response))
+	.then(response => response.json())
+	.then(response => console.log(response['username']))
 	.catch(error => console.log("Erreur : " + error));
 	return(
 		<div>r

@@ -7,7 +7,9 @@ export declare class MessagesController {
     private readonly messagesService;
     private readonly usersService;
     constructor(messagesService: MessagesService, usersService: UsersService);
-    getMessages(pageOptionsDto: PageOptionsDto): Promise<PageDto<Message>>;
+    getMessages(pageOptionsDto: PageOptionsDto, req: any, q: any): Promise<PageDto<Message>>;
+    getMessagesAsSender(pageOptionsDto: PageOptionsDto, req: any): Promise<PageDto<Message>>;
+    getMessagesAsRecipient(pageOptionsDto: PageOptionsDto, req: any): Promise<PageDto<Message>>;
     createMessage(body: {
         recipient: string;
         content: string;

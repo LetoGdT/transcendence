@@ -6,6 +6,9 @@ import { PageOptionsDto } from "../dto/page-options.dto";
 export declare class MessagesService {
     private readonly messageRepository;
     constructor(messageRepository: Repository<Message>);
-    getMessages(pageOptionsDto: PageOptionsDto): Promise<PageDto<Message>>;
+    getMessages(pageOptionsDto: PageOptionsDto, user: User, options?: {
+        as_sender?: boolean;
+        as_recipient?: boolean;
+    }): Promise<PageDto<Message>>;
     createMessage(sender: User, recipient: User, content: string): Promise<Message>;
 }

@@ -72,7 +72,7 @@ let Api42 = Api42_1 = class Api42 {
             grant_type: 'authorization_code',
             client_id: this.configService.get('UID'),
             client_secret: this.configService.get('SECRET'),
-            redirect_uri: 'http://localhost:3000/callback',
+            redirect_uri: 'http://localhost:9999/callback',
             code: auth_code
         });
         const checkResult = await (await (0, rxjs_1.lastValueFrom)(checkResultObservable)).data;

@@ -24,11 +24,12 @@ __decorate([
     __metadata("design:type", Number)
 ], Message.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, { nullable: false }),
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, { nullable: false, eager: true }),
+    (0, typeorm_1.JoinColumn)(),
     __metadata("design:type", user_entity_1.User)
 ], Message.prototype, "sender", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, { nullable: false }),
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, { nullable: false, eager: true }),
     __metadata("design:type", user_entity_1.User)
 ], Message.prototype, "recipient", void 0);
 __decorate([

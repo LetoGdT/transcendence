@@ -1,5 +1,5 @@
 import {
-	Controller, Get, Post, Put, Param, ParseIntPipe, NotFoundException,
+	Controller, Get, Post, Put, Param, ParseIntPipe, NotFoundException, UseGuards,
 	BadRequestException, UnauthorizedException, ClassSerializerInterceptor, UseInterceptors, Query, Req
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -9,6 +9,7 @@ import { PageOptionsDto } from "../dto/page-options.dto";
 import { UpdateUserDto } from '../dto/users.dto';
 import { UserQueryFilterDto } from '../dto/query-filters.dto';
 import { AuthInterceptor } from '../auth/auth.interceptor';
+import { JwtAuthGuard } from '../guards/jwt.guard';
 
 @Controller('users')
 export class UsersController
@@ -17,10 +18,10 @@ export class UsersController
 
 	@Get('/')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	async getAllUsers(@Query() pageOptionsDto: PageOptionsDto,
 		@Query() userQueryFilterDto: UserQueryFilterDto): Promise<PageDto<User>>
 	{
-		console.log('hi');
 		return this.usersService.getUsers(pageOptionsDto, userQueryFilterDto);
 	}
 

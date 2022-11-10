@@ -19,12 +19,12 @@ const page_options_dto_1 = require("../dto/page-options.dto");
 const users_dto_1 = require("../dto/users.dto");
 const query_filters_dto_1 = require("../dto/query-filters.dto");
 const auth_interceptor_1 = require("../auth/auth.interceptor");
+const jwt_guard_1 = require("../guards/jwt.guard");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
     }
     async getAllUsers(pageOptionsDto, userQueryFilterDto) {
-        console.log('hi');
         return this.usersService.getUsers(pageOptionsDto, userQueryFilterDto);
     }
     currentUser(req) {
@@ -45,6 +45,7 @@ let UsersController = class UsersController {
 __decorate([
     (0, common_1.Get)('/'),
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseGuards)(jwt_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Query)()),
     __param(1, (0, common_1.Query)()),
     __metadata("design:type", Function),
