@@ -20,6 +20,7 @@ export class UsersController
 	async getAllUsers(@Query() pageOptionsDto: PageOptionsDto,
 		@Query() userQueryFilterDto: UserQueryFilterDto): Promise<PageDto<User>>
 	{
+		console.log('hi');
 		return this.usersService.getUsers(pageOptionsDto, userQueryFilterDto);
 	}
 

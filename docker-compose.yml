@@ -4,7 +4,7 @@ services:
     nestjs:
         container_name: nestjs
         ports:
-            - "3000:3000"
+            - "9999:3000"
         build: ./srcs/backend/
         restart: unless-stopped
         volumes:
@@ -16,7 +16,7 @@ services:
     react:
         container_name: react
         ports:
-            - "9999:3000"
+            - "3000:3000"
         build: ./srcs/frontend/
         restart: unless-stopped
         volumes:

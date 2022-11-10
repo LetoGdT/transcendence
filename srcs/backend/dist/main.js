@@ -15,6 +15,7 @@ async function bootstrap() {
     });
     app.useGlobalFilters(new http_exception_filter_1.NotFoundExceptionFilter());
     app.useGlobalPipes(new common_1.ValidationPipe({ transform: true }));
+    app.enableCors({ origin: 'http://localhost:3000', credentials: true });
     app.use(cookieParser());
     await app.listen(3000);
 }

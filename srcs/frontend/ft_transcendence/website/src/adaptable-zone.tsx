@@ -53,17 +53,24 @@ export function Play(){
 		<div>
 			Play
 		</div>
-	);
+		);
 }
 
 export function Profile(){
+	fetch("http://localhost:9999/api/users/me", { credentials: 'include' })
+	.then(response => response.text())
+	.then(response => console.log(response))
+	.catch(error => console.log("Erreur : " + error));
 	return(
-		<div>
+		<div>r
 			Profile ou settings
 			si user non connecter renvoyer vers /pleaseconnect
+<<<<<<< HEAD
 			<Link to='/api/users/me'>
 				<Button variant='text' size='small'>test</Button>
 			</Link>
+=======
+>>>>>>> api
 		</div>
 	);
 }
