@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Brackets } from 'typeorm';
 import { Message } from '../typeorm/message.entity';
 import { User } from '../typeorm/user.entity';
+import { UserSelectDto } from '../dto/messages.dto';
 import { PageDto } from "../dto/page.dto";
 import { PageMetaDto } from "../dto/page-meta.dto";
 import { MessageQueryFilterDto } from '../dto/query-filters.dto';
@@ -15,18 +16,24 @@ export class MessagesService
 	constructor(@InjectRepository(Message) private readonly messageRepository: Repository<Message>) {}
 
 	async getMessages(pageOptionsDto: PageOptionsDto,
-		// messageQueryFilterDto: MessageQueryFilterDto,
-		// userQueryFilterDto: UserQueryFilterDto,
+		messageQueryFilterDto: MessageQueryFilterDto,
+		userSelectDto: UserSelectDto,
 		user: User,
-		options?: { as_sender?: boolean, as_recipient?: boolean },): Promise<PageDto<Message>>
+		options?: { as_sender?: boolean, as_recipient?: boolean }): Promise<PageDto<Message>>
 	{
 		const queryBuilder = this.messageRepository.createQueryBuilder("message");
 
 		queryBuilder
-			// .where(pageOptionsDto['id'] != null
-			// 	? 'message.id = :id'
-			// 	: 'TRUE', { id: messageQueryFilterDto.id })
-			.where(new Brackets(qb => {
+			.where(messageQueryFilterDto.id != null
+				? 'message.id = :id'
+				: 'TRUE', { id: messageQueryFilterDto.id })
+			.andWhere(userSelectDto.sender_id != null
+				? 'message.sender = :sender_id'
+				: 'TRUE', { sender_id: userSelectDto.sender_id })
+			.andWhere(userSelectDto.recipient_id != null
+				? 'message.recipient = :recipient_id'
+				: 'TRUE', { recipient_id: userSelectDto.recipient_id })
+			.andWhere(new Brackets(qb => {
 				qb.where("message.sender = :user_id", { user_id: user.id })
 				.orWhere("message.recipient = :user_id", { user_id: user.id })
 			}))

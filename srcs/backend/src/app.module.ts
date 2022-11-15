@@ -3,13 +3,12 @@ import {TypeOrmModule} from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { resolve } from 'path';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { User } from './typeorm/user.entity';
 import { Message } from './typeorm/message.entity';
 import { MessagesModule } from './messages/messages.module';
+import { PrivatesModule } from './privates/privates.module';
 
 @Module(
 	{
@@ -37,10 +36,11 @@ import { MessagesModule } from './messages/messages.module';
 			// 	rootPath: resolve(__dirname, '..', 'build'),
 			// 	exclude: ['/api*, /log, /logout, /callback'],
 			// }),
-			MessagesModule
+			MessagesModule,
+			PrivatesModule
 		],
-		controllers: [AppController],
-		providers: [AppService],
+		// controllers: [AppController],
+		// providers: [AppService],
 	}
 )
 export class AppModule {}

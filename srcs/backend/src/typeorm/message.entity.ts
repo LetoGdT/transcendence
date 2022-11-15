@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn } from 'typeorm';
 import { Max, IsDate } from 'class-validator';
 import { User } from './user.entity';
 
@@ -13,7 +13,6 @@ export class Message
 	id: number;
 
 	@ManyToOne(() => User, { nullable: false, eager: true })
-	@JoinColumn()
     sender: User
 
     @ManyToOne(() => User, { nullable: false, eager: true })
@@ -27,17 +26,19 @@ export class Message
 
 	@IsDate()
 	@Column({
+		type: 'timestamptz',
 		nullable: false,
 		unique: false,
-		default: Date()
+		default: () => 'CURRENT_TIMESTAMP'
 	})
-	sent_date: string;
+	sent_date: Date;
 
 	@IsDate()
 	@Column({
-		nullable: false,
+		type: 'timestamptz',
+		nullable: true,
 		unique: false,
-		default: Date()
+		// default: () => 'CURRENT_TIMESTAMP'
 	})
-	received_date: string;
+	received_date: Date;
 }

@@ -25,7 +25,6 @@ __decorate([
 ], Message.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => user_entity_1.User, { nullable: false, eager: true }),
-    (0, typeorm_1.JoinColumn)(),
     __metadata("design:type", user_entity_1.User)
 ], Message.prototype, "sender", void 0);
 __decorate([
@@ -42,20 +41,21 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsDate)(),
     (0, typeorm_1.Column)({
+        type: 'timestamptz',
         nullable: false,
         unique: false,
-        default: Date()
+        default: () => 'CURRENT_TIMESTAMP'
     }),
-    __metadata("design:type", String)
+    __metadata("design:type", Date)
 ], Message.prototype, "sent_date", void 0);
 __decorate([
     (0, class_validator_1.IsDate)(),
     (0, typeorm_1.Column)({
-        nullable: false,
+        type: 'timestamptz',
+        nullable: true,
         unique: false,
-        default: Date()
     }),
-    __metadata("design:type", String)
+    __metadata("design:type", Date)
 ], Message.prototype, "received_date", void 0);
 Message = __decorate([
     (0, typeorm_1.Entity)()

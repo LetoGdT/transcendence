@@ -34,20 +34,12 @@ export class MessageQueryFilterDto
 	@IsOptional()
 	id: number;
 
-	@ValidateNested()
+	@IsDate()
 	@IsOptional()
-	sender: User
-
-	@ValidateNested()
-	@IsOptional()
-	recipient: User
+	sent_date: Date;
 
 	@IsDate()
 	@IsOptional()
-	sent_date: string;
-
-	@IsDate()
-	@IsOptional()
-	received_date: string;
+	received_date: Date;
 
 }
