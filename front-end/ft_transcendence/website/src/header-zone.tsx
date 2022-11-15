@@ -32,7 +32,7 @@ function AvatarZone(){
 					justifyContent="center"
 					spacing={0.5}
 					>
-					recup avatar
+					<img src='link_botw_banniere.jpg' alt='banniere'></img>
 					<Button variant="text" size='small'>Log Out</Button>
 
 				</Stack>
