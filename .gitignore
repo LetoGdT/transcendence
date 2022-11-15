@@ -35,3 +35,8 @@ tests.py
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+#Credentials
+.env
+srcs/backend/.env
+**.env**
