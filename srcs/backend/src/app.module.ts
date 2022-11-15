@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { User } from './typeorm/user.entity';
 import { Message } from './typeorm/message.entity';
+import { PrivateMessage } from './typeorm/private-message.entity';
 import { MessagesModule } from './messages/messages.module';
 import { PrivatesModule } from './privates/privates.module';
 
@@ -26,7 +27,7 @@ import { PrivatesModule } from './privates/privates.module';
 					username: configService.get('DB_USERNAME'),
 					password: configService.get('DB_PASSWORD'),
 					database: configService.get('DB_NAME'),
-					entities: [User, Message],
+					entities: [User, Message, PrivateMessage],
 					synchronize: true,
 				}
 			),

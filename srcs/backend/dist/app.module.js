@@ -14,6 +14,7 @@ const auth_module_1 = require("./auth/auth.module");
 const users_module_1 = require("./users/users.module");
 const user_entity_1 = require("./typeorm/user.entity");
 const message_entity_1 = require("./typeorm/message.entity");
+const private_message_entity_1 = require("./typeorm/private-message.entity");
 const messages_module_1 = require("./messages/messages.module");
 const privates_module_1 = require("./privates/privates.module");
 let AppModule = class AppModule {
@@ -33,7 +34,7 @@ AppModule = __decorate([
                     username: configService.get('DB_USERNAME'),
                     password: configService.get('DB_PASSWORD'),
                     database: configService.get('DB_NAME'),
-                    entities: [user_entity_1.User, message_entity_1.Message],
+                    entities: [user_entity_1.User, message_entity_1.Message, private_message_entity_1.PrivateMessage],
                     synchronize: true,
                 }),
                 inject: [config_1.ConfigService],

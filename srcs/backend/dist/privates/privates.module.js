@@ -10,10 +10,12 @@ exports.PrivatesModule = void 0;
 const common_1 = require("@nestjs/common");
 const privates_controller_1 = require("./privates.controller");
 const privates_service_1 = require("./privates.service");
+const messages_module_1 = require("../messages/messages.module");
 let PrivatesModule = class PrivatesModule {
 };
 PrivatesModule = __decorate([
     (0, common_1.Module)({
+        imports: [messages_module_1.MessagesModule],
         controllers: [privates_controller_1.PrivatesController],
         providers: [privates_service_1.PrivatesService]
     })
