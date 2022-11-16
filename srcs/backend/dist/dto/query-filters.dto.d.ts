@@ -7,6 +7,6 @@ export declare class UserQueryFilterDto {
 }
 export declare class MessageQueryFilterDto {
     id: number;
-    sent_date: Date;
-    received_date: Date;
+    start_at: Date;
+    end_at: Date;
 }

@@ -22,7 +22,7 @@ const page_meta_dto_1 = require("../dto/page-meta.dto");
 let UsersService = class UsersService {
     constructor(userRepository) {
         this.userRepository = userRepository;
-        this.IdMax = 1000000000000;
+        this.IdMax = 9223372036854775807;
     }
     async getUsers(pageOptionsDto, userQueryFilterDto) {
         const queryBuilder = this.userRepository.createQueryBuilder("user");

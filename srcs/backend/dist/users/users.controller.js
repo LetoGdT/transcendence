@@ -63,7 +63,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "currentUser", null);
 __decorate([
-    (0, common_1.Put)('/me'),
+    (0, common_1.Patch)('/me'),
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
     (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
     __param(0, (0, common_1.Query)()),

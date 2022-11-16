@@ -6,8 +6,8 @@ import { User } from '../typeorm/user.entity';
 import { UserSelectDto } from '../dto/messages.dto';
 import { PageDto } from "../dto/page.dto";
 import { PageMetaDto } from "../dto/page-meta.dto";
-import { MessageQueryFilterDto } from '../dto/query-filters.dto';
 import { PageOptionsDto } from "../dto/page-options.dto";
+import { MessageQueryFilterDto } from '../dto/query-filters.dto';
 
 
 @Injectable()
@@ -27,6 +27,12 @@ export class MessagesService
 			.where(messageQueryFilterDto.id != null
 				? 'message.id = :id'
 				: 'TRUE', { id: messageQueryFilterDto.id })
+			.andWhere(messageQueryFilterDto.start_at != null
+				? 'message.sent_date > :start_at'
+				: 'TRUE', { start_at: messageQueryFilterDto.start_at })
+			.andWhere(messageQueryFilterDto.end_at != null
+				? 'message.sent_date < :end_at'
+				: 'TRUE', { end_at: messageQueryFilterDto.end_at })
 			.andWhere(userSelectDto.sender_id != null
 				? 'message.sender = :sender_id'
 				: 'TRUE', { sender_id: userSelectDto.sender_id })
@@ -45,7 +51,7 @@ export class MessagesService
 				: 'TRUE', { user_id: user.id })
 			.leftJoinAndSelect('message.sender', 'sender')
 			.leftJoinAndSelect('message.recipient', 'recipient')
-			.orderBy("message.id", pageOptionsDto.order)
+			.orderBy('message.sent_date', 'ASC')
 			.skip(pageOptionsDto.skip)
 			.take(pageOptionsDto.take);
 

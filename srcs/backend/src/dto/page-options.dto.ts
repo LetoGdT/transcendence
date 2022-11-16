@@ -16,7 +16,7 @@ export class PageOptionsDto
 	@Type(() => Number)
 	@IsInt()
 	@Min(1)
-	@Max(1000000000000)
+	@Max(9223372036854775807)
 	@IsOptional()
 	readonly page?: number = 1;
 

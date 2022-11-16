@@ -20,7 +20,6 @@ __decorate([
         type: 'bigint',
         name: 'message_id',
     }),
-    (0, class_validator_1.Max)(1000000000000),
     __metadata("design:type", Number)
 ], Message.prototype, "id", void 0);
 __decorate([

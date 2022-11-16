@@ -13,7 +13,7 @@ import { PageOptionsDto } from "../dto/page-options.dto";
 @Injectable()
 export class UsersService
 {
-	IdMax: number = 1000000000000;
+	IdMax: number = 9223372036854775807;
 
 	constructor(@InjectRepository(User) private readonly userRepository: Repository<User>) {}
 

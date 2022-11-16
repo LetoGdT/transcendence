@@ -9,7 +9,6 @@ export class Message
 		type: 'bigint',
 		name: 'message_id',
 	})
-	@Max(1000000000000)
 	id: number;
 
 	@ManyToOne(() => User, { nullable: false, eager: true })
@@ -35,6 +34,8 @@ export class Message
 	})
 	sent_date: Date;
 
+	// This is not implemented for now, but this could be used
+	// for qualiy of life improvements
 	@IsDate()
 	@Column({
 		type: 'timestamptz',

@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PrivateMessage = void 0;
 const typeorm_1 = require("typeorm");
-const class_validator_1 = require("class-validator");
 const message_entity_1 = require("./message.entity");
 let PrivateMessage = class PrivateMessage {
 };
@@ -20,7 +19,6 @@ __decorate([
         type: 'bigint',
         name: 'message_id',
     }),
-    (0, class_validator_1.Max)(1000000000000),
     __metadata("design:type", Number)
 ], PrivateMessage.prototype, "id", void 0);
 __decorate([

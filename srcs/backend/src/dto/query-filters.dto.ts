@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsInt, IsOptional, IsDate, Min, ValidateNested } from "class-validator";
+import { IsInt, IsOptional, IsDate, Min, Max, ValidateNested } from "class-validator";
 import { User } from '../typeorm/user.entity';
 
 export class UserQueryFilterDto
@@ -7,6 +7,7 @@ export class UserQueryFilterDto
 	@Type(() => Number)
 	@IsInt()
 	@Min(1)
+	@Max(9223372036854775807)
 	@IsOptional()
 	id: number;
 
@@ -31,15 +32,17 @@ export class MessageQueryFilterDto
 	@Type(() => Number)
 	@IsInt()
 	@Min(1)
+	@Max(9223372036854775807)
 	@IsOptional()
 	id: number;
 
+	@Type(() => Date)
 	@IsDate()
 	@IsOptional()
-	sent_date: Date;
+	start_at: Date;
 
+	@Type(() => Date)
 	@IsDate()
 	@IsOptional()
-	received_date: Date;
-
+	end_at: Date;
 }

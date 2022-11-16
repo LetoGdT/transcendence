@@ -8,14 +8,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PrivatesModule = void 0;
 const common_1 = require("@nestjs/common");
+const typeorm_1 = require("@nestjs/typeorm");
 const privates_controller_1 = require("./privates.controller");
 const privates_service_1 = require("./privates.service");
 const messages_module_1 = require("../messages/messages.module");
+const private_message_entity_1 = require("../typeorm/private-message.entity");
 let PrivatesModule = class PrivatesModule {
 };
 PrivatesModule = __decorate([
     (0, common_1.Module)({
-        imports: [messages_module_1.MessagesModule],
+        imports: [typeorm_1.TypeOrmModule.forFeature([private_message_entity_1.PrivateMessage]), messages_module_1.MessagesModule],
         controllers: [privates_controller_1.PrivatesController],
         providers: [privates_service_1.PrivatesService]
     })

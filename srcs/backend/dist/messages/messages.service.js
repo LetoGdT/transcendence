@@ -29,6 +29,12 @@ let MessagesService = class MessagesService {
             .where(messageQueryFilterDto.id != null
             ? 'message.id = :id'
             : 'TRUE', { id: messageQueryFilterDto.id })
+            .andWhere(messageQueryFilterDto.start_at != null
+            ? 'message.sent_date > :start_at'
+            : 'TRUE', { start_at: messageQueryFilterDto.start_at })
+            .andWhere(messageQueryFilterDto.end_at != null
+            ? 'message.sent_date < :end_at'
+            : 'TRUE', { end_at: messageQueryFilterDto.end_at })
             .andWhere(userSelectDto.sender_id != null
             ? 'message.sender = :sender_id'
             : 'TRUE', { sender_id: userSelectDto.sender_id })
@@ -47,7 +53,7 @@ let MessagesService = class MessagesService {
             : 'TRUE', { user_id: user.id })
             .leftJoinAndSelect('message.sender', 'sender')
             .leftJoinAndSelect('message.recipient', 'recipient')
-            .orderBy("message.id", pageOptionsDto.order)
+            .orderBy('message.sent_date', 'ASC')
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take);
         const itemCount = await queryBuilder.getCount();

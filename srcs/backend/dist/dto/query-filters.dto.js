@@ -18,6 +18,7 @@ __decorate([
     (0, class_transformer_1.Type)(() => Number),
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.Min)(1),
+    (0, class_validator_1.Max)(9223372036854775807),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], UserQueryFilterDto.prototype, "id", void 0);
@@ -47,18 +48,21 @@ __decorate([
     (0, class_transformer_1.Type)(() => Number),
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.Min)(1),
+    (0, class_validator_1.Max)(9223372036854775807),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], MessageQueryFilterDto.prototype, "id", void 0);
 __decorate([
+    (0, class_transformer_1.Type)(() => Date),
     (0, class_validator_1.IsDate)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Date)
-], MessageQueryFilterDto.prototype, "sent_date", void 0);
+], MessageQueryFilterDto.prototype, "start_at", void 0);
 __decorate([
+    (0, class_transformer_1.Type)(() => Date),
     (0, class_validator_1.IsDate)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Date)
-], MessageQueryFilterDto.prototype, "received_date", void 0);
+], MessageQueryFilterDto.prototype, "end_at", void 0);
 exports.MessageQueryFilterDto = MessageQueryFilterDto;
 //# sourceMappingURL=query-filters.dto.js.map
