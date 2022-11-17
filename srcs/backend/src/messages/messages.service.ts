@@ -72,4 +72,11 @@ export class MessagesService
 		});
 		return this.messageRepository.save(newMessage);
 	}
+
+	// This function needs to be used if you are ABSOLUTELY SURE the message is valid and checked.
+	// This is just because it seems you can't delete on cascade with unidirectionnal relations.
+	async deleteMessage(message: Message)
+	{
+		this.messageRepository.remove(message);
+	}
 }

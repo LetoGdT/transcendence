@@ -11,17 +11,44 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateUserDto = exports.CreateUserDto = void 0;
 const class_transformer_1 = require("class-transformer");
+const class_validator_1 = require("class-validator");
 class CreateUserDto {
 }
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateUserDto.prototype, "username", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateUserDto.prototype, "email", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateUserDto.prototype, "image_url", void 0);
 exports.CreateUserDto = CreateUserDto;
 class UpdateUserDto {
 }
 __decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "username", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "email", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], UpdateUserDto.prototype, "image_url", void 0);
+__decorate([
     (0, class_transformer_1.Exclude)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "refresh_token", void 0);
 __decorate([
     (0, class_transformer_1.Exclude)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "refresh_expires", void 0);
 exports.UpdateUserDto = UpdateUserDto;

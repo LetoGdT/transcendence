@@ -16,17 +16,24 @@ exports.PrivatesService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
+const users_service_1 = require("../users/users.service");
+const messages_service_1 = require("../messages/messages.service");
 const private_message_entity_1 = require("../typeorm/private-message.entity");
 const page_dto_1 = require("../dto/page.dto");
 const page_meta_dto_1 = require("../dto/page-meta.dto");
 let PrivatesService = class PrivatesService {
-    constructor(privatesRepository) {
+    constructor(privatesRepository, usersService, messagesService) {
         this.privatesRepository = privatesRepository;
+        this.usersService = usersService;
+        this.messagesService = messagesService;
+        this.IdMax = Number.MAX_SAFE_INTEGER;
     }
     async getMessages(pageOptionsDto) {
         const queryBuilder = this.privatesRepository.createQueryBuilder("private");
         queryBuilder
-            .leftJoinAndSelect('private.recipient', 'recipient')
+            .leftJoinAndSelect('private.message', 'message')
+            .leftJoinAndSelect('message.recipient', 'recipient')
+            .leftJoinAndSelect('message.sender', 'sender')
             .orderBy('private.id', pageOptionsDto.order)
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take);
@@ -35,11 +42,50 @@ let PrivatesService = class PrivatesService {
         const pageMetaDto = new page_meta_dto_1.PageMetaDto({ itemCount, pageOptionsDto });
         return new page_dto_1.PageDto(entities, pageMetaDto);
     }
+    async createMessage(postPrivateDto, sender) {
+        let recipient;
+        if (postPrivateDto.recipient_id != null)
+            recipient = await this.usersService.getOneById(postPrivateDto.recipient_id);
+        else if (postPrivateDto.recipient_name != null)
+            recipient = await this.usersService.getOneByLogin(postPrivateDto.recipient_name);
+        else
+            throw new common_1.HttpException('Neither login or id were provided', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+        if (recipient == null)
+            throw new common_1.BadRequestException('User not found');
+        const message = await this.messagesService.createMessage(sender, recipient, postPrivateDto.content);
+        const privateMessage = new private_message_entity_1.PrivateMessage();
+        privateMessage.message = message;
+        return this.privatesRepository.save(privateMessage);
+    }
+    async updateMessage(id, updateMessageDto) {
+        if (id > this.IdMax)
+            throw new common_1.BadRequestException(`id must not be greater than ${this.IdMax}`);
+        return await this.privatesRepository.update(id, updateMessageDto);
+    }
+    async deleteMessage(id, user) {
+        const queryBuilder = this.privatesRepository.createQueryBuilder("private");
+        queryBuilder
+            .leftJoinAndSelect('private.message', 'message')
+            .leftJoinAndSelect('message.recipient', 'recipient')
+            .leftJoinAndSelect('message.sender', 'sender')
+            .where("private.id = :id", { id: id })
+            .andWhere("message.sender = :user_id", { user_id: user.id });
+        const items = await queryBuilder.getManyAndCount();
+        if (items[1] === 1) {
+            const ret = await this.privatesRepository.remove(items[0][0]);
+            await this.messagesService.deleteMessage(items[0][0].message);
+            return items[0][0];
+        }
+        else
+            throw new common_1.BadRequestException('Couldn\'t delete message');
+    }
 };
 PrivatesService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(private_message_entity_1.PrivateMessage)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        users_service_1.UsersService,
+        messages_service_1.MessagesService])
 ], PrivatesService);
 exports.PrivatesService = PrivatesService;
 //# sourceMappingURL=privates.service.js.map

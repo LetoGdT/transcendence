@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const messages_service_1 = require("../messages/messages.service");
 const privates_service_1 = require("./privates.service");
 const page_options_dto_1 = require("../dto/page-options.dto");
+const private_messages_dto_1 = require("../dto/private-messages.dto");
 const auth_interceptor_1 = require("../auth/auth.interceptor");
 let PrivatesController = class PrivatesController {
     constructor(privatesService, messagesService) {
@@ -24,14 +25,20 @@ let PrivatesController = class PrivatesController {
         this.messagesService = messagesService;
     }
     getPrivateMessages(pageOptionsDto, req) {
+        return this.privatesService.getMessages(pageOptionsDto);
     }
-    createPrivateMessage() {
-        return null;
+    createPrivateMessage(postPrivateDto, req) {
+        return this.privatesService.createMessage(postPrivateDto, req.user);
     }
-    updatePrivateMessage() {
-        return null;
+    createPrivateMessageFromRecipientName(recipient, body, req) {
+        const postPrivateDto = { recipient_name: recipient, content: body.content };
+        return this.privatesService.createMessage(postPrivateDto, req.user);
     }
-    deletePrivateMessage() {
+    updatePrivateMessage(id, updateMessageDto, req) {
+        return this.privatesService.updateMessage(id, updateMessageDto);
+    }
+    deletePrivateMessage(id, req) {
+        return this.privatesService.deleteMessage(id, req.user);
     }
 };
 __decorate([
@@ -42,24 +49,48 @@ __decorate([
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [page_options_dto_1.PageOptionsDto, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], PrivatesController.prototype, "getPrivateMessages", null);
 __decorate([
     (0, common_1.Post)(),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [private_messages_dto_1.PostPrivateDto, Object]),
     __metadata("design:returntype", void 0)
 ], PrivatesController.prototype, "createPrivateMessage", null);
 __decorate([
-    (0, common_1.Patch)(),
+    (0, common_1.Post)('/:recipient'),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Param)('recipient')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:returntype", void 0)
+], PrivatesController.prototype, "createPrivateMessageFromRecipientName", null);
+__decorate([
+    (0, common_1.Patch)('/:id'),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Query)()),
+    __param(2, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, private_messages_dto_1.UpdateMessageDto, Object]),
     __metadata("design:returntype", void 0)
 ], PrivatesController.prototype, "updatePrivateMessage", null);
 __decorate([
-    (0, common_1.Delete)(),
+    (0, common_1.Delete)('/:id'),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", void 0)
 ], PrivatesController.prototype, "deletePrivateMessage", null);
 PrivatesController = __decorate([

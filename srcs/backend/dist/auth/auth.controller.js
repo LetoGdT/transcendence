@@ -41,9 +41,7 @@ let AuthController = class AuthController {
         let state = (0, crypto_1.randomBytes)(32).toString("hex");
         this.state = state;
         let url = `${host}?client_id=${uid}&redirect_uri=${redirect_uri}&response_type=code&scope=public&state=${state}`;
-        return {
-            url: url
-        };
+        return { url: url };
     }
     async getCode(query, res) {
         if (!query.code || !this.state)

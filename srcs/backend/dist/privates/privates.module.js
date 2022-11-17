@@ -12,12 +12,14 @@ const typeorm_1 = require("@nestjs/typeorm");
 const privates_controller_1 = require("./privates.controller");
 const privates_service_1 = require("./privates.service");
 const messages_module_1 = require("../messages/messages.module");
+const auth_module_1 = require("../auth/auth.module");
+const users_module_1 = require("../users/users.module");
 const private_message_entity_1 = require("../typeorm/private-message.entity");
 let PrivatesModule = class PrivatesModule {
 };
 PrivatesModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([private_message_entity_1.PrivateMessage]), messages_module_1.MessagesModule],
+        imports: [typeorm_1.TypeOrmModule.forFeature([private_message_entity_1.PrivateMessage]), messages_module_1.MessagesModule, auth_module_1.AuthModule, users_module_1.UsersModule],
         controllers: [privates_controller_1.PrivatesController],
         providers: [privates_service_1.PrivatesService]
     })

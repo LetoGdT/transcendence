@@ -40,8 +40,6 @@ import { PrivatesModule } from './privates/privates.module';
 			MessagesModule,
 			PrivatesModule
 		],
-		// controllers: [AppController],
-		// providers: [AppService],
 	}
 )
 export class AppModule {}

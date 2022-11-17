@@ -13,4 +13,5 @@ export declare class MessagesService {
         as_recipient?: boolean;
     }): Promise<PageDto<Message>>;
     createMessage(sender: User, recipient: User, content: string): Promise<Message>;
+    deleteMessage(message: Message): Promise<void>;
 }

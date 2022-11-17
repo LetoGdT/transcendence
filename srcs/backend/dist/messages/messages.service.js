@@ -69,6 +69,9 @@ let MessagesService = class MessagesService {
         });
         return this.messageRepository.save(newMessage);
     }
+    async deleteMessage(message) {
+        this.messageRepository.remove(message);
+    }
 };
 MessagesService = __decorate([
     (0, common_1.Injectable)(),

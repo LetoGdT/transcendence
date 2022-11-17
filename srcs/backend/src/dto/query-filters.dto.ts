@@ -7,7 +7,7 @@ export class UserQueryFilterDto
 	@Type(() => Number)
 	@IsInt()
 	@Min(1)
-	@Max(9223372036854775807)
+	@Max(Number.MAX_SAFE_INTEGER)
 	@IsOptional()
 	id: number;
 
@@ -32,7 +32,7 @@ export class MessageQueryFilterDto
 	@Type(() => Number)
 	@IsInt()
 	@Min(1)
-	@Max(9223372036854775807)
+	@Max(Number.MAX_SAFE_INTEGER)
 	@IsOptional()
 	id: number;
 

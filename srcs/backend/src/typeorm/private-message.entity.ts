@@ -7,11 +7,11 @@ export class PrivateMessage
 {
 	@PrimaryGeneratedColumn({
 		type: 'bigint',
-		name: 'message_id',
+		name: 'privateMessage_id',
 	})
 	id: number;
 
-	@OneToOne(() => Message)
+	@OneToOne(() => Message, { eager: true })
 	@JoinColumn()
 	message: Message
 }

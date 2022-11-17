@@ -17,12 +17,12 @@ let PrivateMessage = class PrivateMessage {
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)({
         type: 'bigint',
-        name: 'message_id',
+        name: 'privateMessage_id',
     }),
     __metadata("design:type", Number)
 ], PrivateMessage.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.OneToOne)(() => message_entity_1.Message),
+    (0, typeorm_1.OneToOne)(() => message_entity_1.Message, { eager: true }),
     (0, typeorm_1.JoinColumn)(),
     __metadata("design:type", message_entity_1.Message)
 ], PrivateMessage.prototype, "message", void 0);
