@@ -13,6 +13,7 @@ exports.Message = void 0;
 const typeorm_1 = require("typeorm");
 const class_validator_1 = require("class-validator");
 const user_entity_1 = require("./user.entity");
+const channel_entity_1 = require("./channel.entity");
 let Message = class Message {
 };
 __decorate([
@@ -58,6 +59,11 @@ __decorate([
     }),
     __metadata("design:type", Date)
 ], Message.prototype, "received_date", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, typeorm_1.ManyToOne)(() => channel_entity_1.Channel, (channel) => channel.messages),
+    __metadata("design:type", channel_entity_1.Channel)
+], Message.prototype, "channel", void 0);
 Message = __decorate([
     (0, typeorm_1.Entity)()
 ], Message);

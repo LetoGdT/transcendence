@@ -96,7 +96,7 @@ export class PrivatesService
 	{
 		if (id > this.IdMax)
 			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
-		
+
 		const queryBuilder = this.privatesRepository.createQueryBuilder("private");
 		
 		queryBuilder
