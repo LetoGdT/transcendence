@@ -6,6 +6,8 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import { Link } from 'react-router-dom';
 
+import Banniere from './link_botw_banniere.jpg';
+
 function AvatarZone(){
 	let isLogIn: boolean = false;
 	if (isLogIn === false){
@@ -32,7 +34,7 @@ function AvatarZone(){
 					justifyContent="center"
 					spacing={0.5}
 					>
-					<img src='link_botw_banniere.jpg' alt='banniere'></img>
+					<img src={Banniere} alt='banniere'></img>
 					<Button variant="text" size='small'>Log Out</Button>
 
 				</Stack>
