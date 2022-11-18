@@ -28,12 +28,40 @@ let PrivatesService = class PrivatesService {
         this.messagesService = messagesService;
         this.IdMax = Number.MAX_SAFE_INTEGER;
     }
-    async getMessages(pageOptionsDto) {
+    async getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, user, options) {
         const queryBuilder = this.privatesRepository.createQueryBuilder("private");
         queryBuilder
             .leftJoinAndSelect('private.message', 'message')
             .leftJoinAndSelect('message.recipient', 'recipient')
             .leftJoinAndSelect('message.sender', 'sender')
+            .where(messageQueryFilterDto.id != null
+            ? 'private.id = :id'
+            : 'TRUE', { id: messageQueryFilterDto.id })
+            .andWhere(messageQueryFilterDto.message_id != null
+            ? 'message.id = :message_id'
+            : 'TRUE', { message_id: messageQueryFilterDto.message_id })
+            .andWhere(messageQueryFilterDto.start_at != null
+            ? 'message.sent_date > :start_at'
+            : 'TRUE', { start_at: messageQueryFilterDto.start_at })
+            .andWhere(messageQueryFilterDto.end_at != null
+            ? 'message.sent_date < :end_at'
+            : 'TRUE', { end_at: messageQueryFilterDto.end_at })
+            .andWhere(userSelectDto.sender_id != null
+            ? 'message.sender = :sender_id'
+            : 'TRUE', { sender_id: userSelectDto.sender_id })
+            .andWhere(userSelectDto.recipient_id != null
+            ? 'message.recipient = :recipient_id'
+            : 'TRUE', { recipient_id: userSelectDto.recipient_id })
+            .andWhere(new typeorm_2.Brackets(qb => {
+            qb.where("message.sender = :user_id", { user_id: user.id })
+                .orWhere("message.recipient = :user_id", { user_id: user.id });
+        }))
+            .andWhere(options && options.as_sender == true
+            ? 'message.recipient = :user_id'
+            : 'TRUE', { user_id: user.id })
+            .andWhere(options && options.as_recipient == true
+            ? 'message.sender = :user_id'
+            : 'TRUE', { user_id: user.id })
             .orderBy('private.id', pageOptionsDto.order)
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take);
@@ -57,12 +85,9 @@ let PrivatesService = class PrivatesService {
         privateMessage.message = message;
         return this.privatesRepository.save(privateMessage);
     }
-    async updateMessage(id, updateMessageDto) {
+    async updateMessage(id, updateMessageDto, user) {
         if (id > this.IdMax)
             throw new common_1.BadRequestException(`id must not be greater than ${this.IdMax}`);
-        return await this.privatesRepository.update(id, updateMessageDto);
-    }
-    async deleteMessage(id, user) {
         const queryBuilder = this.privatesRepository.createQueryBuilder("private");
         queryBuilder
             .leftJoinAndSelect('private.message', 'message')
@@ -71,13 +96,30 @@ let PrivatesService = class PrivatesService {
             .where("private.id = :id", { id: id })
             .andWhere("message.sender = :user_id", { user_id: user.id });
         const items = await queryBuilder.getManyAndCount();
-        if (items[1] === 1) {
-            const ret = await this.privatesRepository.remove(items[0][0]);
-            await this.messagesService.deleteMessage(items[0][0].message);
-            return items[0][0];
-        }
-        else
+        if (items[1] !== 1)
+            throw new common_1.BadRequestException('Couldn\'t update message');
+        const priv = items[0][0];
+        priv.message.content = updateMessageDto.content;
+        console.log(priv);
+        await this.messagesService.updateMessage(priv.message);
+        return priv;
+    }
+    async deleteMessage(id, user) {
+        if (id > this.IdMax)
+            throw new common_1.BadRequestException(`id must not be greater than ${this.IdMax}`);
+        const queryBuilder = this.privatesRepository.createQueryBuilder("private");
+        queryBuilder
+            .leftJoinAndSelect('private.message', 'message')
+            .leftJoinAndSelect('message.recipient', 'recipient')
+            .leftJoinAndSelect('message.sender', 'sender')
+            .where("private.id = :id", { id: id })
+            .andWhere("message.sender = :user_id", { user_id: user.id });
+        const items = await queryBuilder.getManyAndCount();
+        if (items[1] !== 1)
             throw new common_1.BadRequestException('Couldn\'t delete message');
+        const ret = await this.privatesRepository.remove(items[0][0]);
+        await this.messagesService.deleteMessage(items[0][0].message);
+        return items[0][0];
     }
 };
 PrivatesService = __decorate([

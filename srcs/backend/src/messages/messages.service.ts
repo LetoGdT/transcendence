@@ -24,6 +24,8 @@ export class MessagesService
 		const queryBuilder = this.messageRepository.createQueryBuilder("message");
 
 		queryBuilder
+			.leftJoinAndSelect('message.sender', 'sender')
+			.leftJoinAndSelect('message.recipient', 'recipient')
 			.where(messageQueryFilterDto.id != null
 				? 'message.id = :id'
 				: 'TRUE', { id: messageQueryFilterDto.id })
@@ -44,14 +46,12 @@ export class MessagesService
 				.orWhere("message.recipient = :user_id", { user_id: user.id })
 			}))
 			.andWhere(options && options.as_sender == true
-				? 'message.sender = :user_id'
-				: 'TRUE', { user_id: user.id })
-			.andWhere(options && options.as_recipient == true
 				? 'message.recipient = :user_id'
 				: 'TRUE', { user_id: user.id })
-			.leftJoinAndSelect('message.sender', 'sender')
-			.leftJoinAndSelect('message.recipient', 'recipient')
-			.orderBy('message.sent_date', 'ASC')
+			.andWhere(options && options.as_recipient == true
+				? 'message.sender = :user_id'
+				: 'TRUE', { user_id: user.id })
+			.orderBy('message.sent_date', pageOptionsDto.order)
 			.skip(pageOptionsDto.skip)
 			.take(pageOptionsDto.take);
 
@@ -71,6 +71,12 @@ export class MessagesService
 			content: content
 		});
 		return this.messageRepository.save(newMessage);
+	}
+
+	// Doesn't check if the message is valid, only to be used when it is
+	async updateMessage(message: Message)
+	{
+		return this.messageRepository.save(message);
 	}
 
 	// This function needs to be used if you are ABSOLUTELY SURE the message is valid and checked.

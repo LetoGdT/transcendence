@@ -26,6 +26,8 @@ let MessagesService = class MessagesService {
     async getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, user, options) {
         const queryBuilder = this.messageRepository.createQueryBuilder("message");
         queryBuilder
+            .leftJoinAndSelect('message.sender', 'sender')
+            .leftJoinAndSelect('message.recipient', 'recipient')
             .where(messageQueryFilterDto.id != null
             ? 'message.id = :id'
             : 'TRUE', { id: messageQueryFilterDto.id })
@@ -46,14 +48,12 @@ let MessagesService = class MessagesService {
                 .orWhere("message.recipient = :user_id", { user_id: user.id });
         }))
             .andWhere(options && options.as_sender == true
-            ? 'message.sender = :user_id'
-            : 'TRUE', { user_id: user.id })
-            .andWhere(options && options.as_recipient == true
             ? 'message.recipient = :user_id'
             : 'TRUE', { user_id: user.id })
-            .leftJoinAndSelect('message.sender', 'sender')
-            .leftJoinAndSelect('message.recipient', 'recipient')
-            .orderBy('message.sent_date', 'ASC')
+            .andWhere(options && options.as_recipient == true
+            ? 'message.sender = :user_id'
+            : 'TRUE', { user_id: user.id })
+            .orderBy('message.sent_date', pageOptionsDto.order)
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take);
         const itemCount = await queryBuilder.getCount();
@@ -68,6 +68,9 @@ let MessagesService = class MessagesService {
             content: content
         });
         return this.messageRepository.save(newMessage);
+    }
+    async updateMessage(message) {
+        return this.messageRepository.save(message);
     }
     async deleteMessage(message) {
         this.messageRepository.remove(message);

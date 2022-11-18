@@ -8,7 +8,7 @@ import { PageOptionsDto } from '../dto/page-options.dto';
 import { UserSelectDto } from '../dto/messages.dto';
 import { Message } from '../typeorm/message.entity';
 import { AuthInterceptor } from '../auth/auth.interceptor';
-import { MessageQueryFilterDto, UserQueryFilterDto } from '../dto/query-filters.dto';
+import { MessageQueryFilterDto } from '../dto/query-filters.dto';
 
 // Probably removable after
 import { UsersService } from '../users/users.service';
@@ -39,7 +39,7 @@ export class MessagesController
 		@Query() userSelectDto: UserSelectDto,
 		@Req() req): Promise<PageDto<Message>>
 	{
-		return this.messagesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user, { as_recipient: true });
+		return this.messagesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user, { as_sender: true });
 	}
 
 	@Get('/as_recipient')
@@ -50,7 +50,7 @@ export class MessagesController
 		@Query() userSelectDto: UserSelectDto,
 		@Req() req): Promise<PageDto<Message>>
 	{
-		return this.messagesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user, { as_sender: true });
+		return this.messagesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user, { as_recipient: true });
 	}
 
 	// This shouldn't exist, this is for testing the creation of messages

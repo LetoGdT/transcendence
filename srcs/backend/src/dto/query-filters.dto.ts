@@ -36,6 +36,13 @@ export class MessageQueryFilterDto
 	@IsOptional()
 	id: number;
 
+	@Type(() => Number)
+	@IsInt()
+	@Min(1)
+	@Max(Number.MAX_SAFE_INTEGER)
+	@IsOptional()
+	message_id?: number;
+
 	@Type(() => Date)
 	@IsDate()
 	@IsOptional()

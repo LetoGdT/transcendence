@@ -6,10 +6,12 @@ import {
 import { MessagesService } from '../messages/messages.service';
 import { PrivatesService } from './privates.service';
 import { PrivateMessage } from '../typeorm/private-message.entity';
+import { AuthInterceptor } from '../auth/auth.interceptor';
 import { PageDto } from "../dto/page.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
 import { PostPrivateDto, UpdateMessageDto } from '../dto/private-messages.dto';
-import { AuthInterceptor } from '../auth/auth.interceptor';
+import { MessageQueryFilterDto } from '../dto/query-filters.dto';
+import { UserSelectDto } from '../dto/messages.dto';
 
 @Controller('privmsg')
 export class PrivatesController
@@ -21,9 +23,33 @@ export class PrivatesController
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
 	getPrivateMessages(@Query() pageOptionsDto: PageOptionsDto,
+		@Query() messageQueryFilterDto: MessageQueryFilterDto,
+		@Query() userSelectDto: UserSelectDto,
 		@Req() req): Promise<PageDto<PrivateMessage>>
 	{
-		return this.privatesService.getMessages(pageOptionsDto);
+		return this.privatesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user);
+	}
+
+	@Get('/as_sender')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	getPrivateMessagesAsSender(@Query() pageOptionsDto: PageOptionsDto,
+		@Query() messageQueryFilterDto: MessageQueryFilterDto,
+		@Query() userSelectDto: UserSelectDto,
+		@Req() req): Promise<PageDto<PrivateMessage>>
+	{
+		return this.privatesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user, { as_sender: true });
+	}
+
+	@Get('/as_recipient')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	getPrivateMessagesAsRecipient(@Query() pageOptionsDto: PageOptionsDto,
+		@Query() messageQueryFilterDto: MessageQueryFilterDto,
+		@Query() userSelectDto: UserSelectDto,
+		@Req() req): Promise<PageDto<PrivateMessage>>
+	{
+		return this.privatesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user, { as_recipient: true });
 	}
 
 	@Post()
@@ -53,7 +79,7 @@ export class PrivatesController
 		@Query() updateMessageDto: UpdateMessageDto,
 		@Req() req)
 	{
-		return this.privatesService.updateMessage(id, updateMessageDto);
+		return this.privatesService.updateMessage(id, updateMessageDto, req.user);
 	}
 
 	@Delete('/:id')

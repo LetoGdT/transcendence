@@ -29,10 +29,10 @@ let MessagesController = class MessagesController {
         return this.messagesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user);
     }
     async getMessagesAsSender(pageOptionsDto, messageQueryFilterDto, userSelectDto, req) {
-        return this.messagesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user, { as_recipient: true });
+        return this.messagesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user, { as_sender: true });
     }
     async getMessagesAsRecipient(pageOptionsDto, messageQueryFilterDto, userSelectDto, req) {
-        return this.messagesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user, { as_sender: true });
+        return this.messagesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user, { as_recipient: true });
     }
     async createMessage(body, req) {
         const sender = req.user;

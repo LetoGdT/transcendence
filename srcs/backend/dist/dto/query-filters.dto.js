@@ -53,6 +53,14 @@ __decorate([
     __metadata("design:type", Number)
 ], MessageQueryFilterDto.prototype, "id", void 0);
 __decorate([
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.Min)(1),
+    (0, class_validator_1.Max)(Number.MAX_SAFE_INTEGER),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], MessageQueryFilterDto.prototype, "message_id", void 0);
+__decorate([
     (0, class_transformer_1.Type)(() => Date),
     (0, class_validator_1.IsDate)(),
     (0, class_validator_1.IsOptional)(),

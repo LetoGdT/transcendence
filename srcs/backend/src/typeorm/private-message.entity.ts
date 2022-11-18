@@ -13,5 +13,5 @@ export class PrivateMessage
 
 	@OneToOne(() => Message, { eager: true })
 	@JoinColumn()
-	message: Message
+	message: Message;
 }
