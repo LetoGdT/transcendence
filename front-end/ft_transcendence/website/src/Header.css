@@ -1,0 +1,65 @@
+.Header {
+	background-color: #64ff98aa;
+	display: flex;
+	align-items: center;
+	justify-content:end;
+	
+  }
+  
+  .Banniere {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	vertical-align: middle;
+	max-height: 250px;
+  }
+  
+  .Avatar-zone {
+	background-color: antiquewhite;
+	flex-direction: column;
+	display: flex;
+	justify-content: center;
+	align-items: center; 
+	height: 100%;
+	width: 250px;
+  }
+  
+  .Avatar-zone-img {
+	max-width: 200px;
+	height: auto;
+  }
+  
+  .Avatar-zone-buttons {
+	background-color: antiquewhite;
+	flex-direction: column;
+	display: flex;
+	justify-content: center;
+	align-items: center; 
+  }
+
+  @media (max-width: 800px) {
+  .Header {
+    background-color: #267941aa;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content:center;
+  }
+  .Banniere, {
+    display: flex;
+    justify-content: center;
+    vertical-align: middle;
+    max-height: 250px;
+  }
+  .Avatar-zone-img {
+	max-width: 50px;
+	height: auto;
+  }
+  .Avatar-zone-buttons {
+    background-color: antiquewhite;
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
