@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 
 import Banniere from './link_botw_banniere.jpg';
 import Avatar from './link_botw_avatar.jpg';
+import Logo42blanc from './logo_42_white.png';
 
 function AvatarZone(){
 	let isLogIn: boolean = false;
@@ -44,6 +45,9 @@ function AvatarZone(){
 export function OurHeader(){
 	return(
 		<div className='Header'>
+			<div>
+				<img src={Logo42blanc} alt='42 logo blanc' className='Logo42'></img>
+			</div>
 			<div className='Banniere'>
 				<img src={Banniere} alt='banniere'></img><img src={Banniere} alt='banniere'></img>
 			</div>

@@ -37,6 +37,11 @@
 	align-items: center; 
   }
 
+  .Logo42 {
+    max-width: 200px;
+    height: auto;
+  }
+
   @media (max-width: 800px) {
   .Header {
     /* background-color: #267941aa; */
