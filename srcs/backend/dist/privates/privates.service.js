@@ -100,7 +100,6 @@ let PrivatesService = class PrivatesService {
             throw new common_1.BadRequestException('Couldn\'t update message');
         const priv = items[0][0];
         priv.message.content = updateMessageDto.content;
-        console.log(priv);
         await this.messagesService.updateMessage(priv.message);
         return priv;
     }
