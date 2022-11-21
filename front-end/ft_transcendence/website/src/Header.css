@@ -1,8 +1,8 @@
 .Header {
-	background-color: #69ff64aa;
+	/* background-color: #69ff64aa; */
 	display: flex;
 	align-items: center;
-	justify-content:end;
+	justify-content: flex-end;
 	
   }
   
@@ -15,7 +15,7 @@
   }
   
   .Avatar-zone {
-	background-color: antiquewhite;
+	/* background-color: antiquewhite; */
 	flex-direction: column;
 	display: flex;
 	justify-content: center;
@@ -30,7 +30,7 @@
   }
   
   .Avatar-zone-buttons {
-	background-color: antiquewhite;
+	/* background-color: antiquewhite; */
 	flex-direction: column;
 	display: flex;
 	justify-content: center;
@@ -39,7 +39,7 @@
 
   @media (max-width: 800px) {
   .Header {
-    background-color: #267941aa;
+    /* background-color: #267941aa; */
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -56,7 +56,7 @@
 	height: auto;
   }
   .Avatar-zone-buttons {
-    background-color: antiquewhite;
+    /* background-color: antiquewhite; */
     flex-direction: row;
     display: flex;
     justify-content: center;

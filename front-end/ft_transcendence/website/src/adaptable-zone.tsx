@@ -21,50 +21,176 @@ export function Friends(){
 		<React.Fragment>
 			<h1>Friends</h1>
 			<div className='Friend-container'>
-				<div className='Friend-container-div'>
-					<div>
-						<img src={Avatar} alt ='Amigo 1' className='Friend-avatar'></img>
+				<Link to="/profile">
+					<div className='Friend-container-div'>
+						<div>
+							<img src={Avatar} alt ={'Amigo 1'+'\'s avatar'} className='Friend-avatar'></img>
+						</div>
+						<div>
+							Amigo 1
+						</div>
 					</div>
-					<div>
-						Amigo 1
+				</Link>
+				<Link to="/profile">
+					<div className='Friend-container-div'>
+						<div>
+							<img src={Avatar} alt ={'Amigo 2'+'\'s avatar'} className='Friend-avatar'></img>
+						</div>
+						<div>
+							Amigo 2
+						</div>
 					</div>
-				</div>
-				<div className='Friend-container-div'>
-					<div>
-						<img src={Avatar} alt ='Amigo 2' className='Friend-avatar'></img>
-					</div>
-					<div>
-						Amigo 2
-					</div>
-				</div>
+				</Link>
 			</div>
 		</React.Fragment>
 	);
 }
 
-// export class Friends extends React.Component {
-// 	constructor(props: any) {
-// 		super(props);
-// 		this.state = {
+/*
+	il me faudrait une structure avec :
+	le pseudo du proprio du compte
+	le lien vers son avatar
+	une map pour ses friends (key = id du friend, value = structure similaire du friend)
+	la liste des matchs
+	+
+	toute autres info que le proprio pourrait voulair modifier ou qu'on pourrait montrer
+*/
+
+/*
+export class Friends extends React.Component {
+	constructor(props: any) {
+		super(props);
+		this.state = {
 			
-// 		};
-// 	}
-// }
+		};
+	}
+
+	render() {
+		
+	const friends = ((id) => {
+		return (
+			<div className='Friend-container-div'>
+				 <div>
+					 <img src={Avatar} alt ={'???'+'\'s avatar'} className='Friend-avatar'></img>
+				 </div>
+				 <div>
+					 ???
+				 </div>
+			 </div>
+		);
+	})
+			
+		return(
+			<React.Fragment>
+				<h1>Friends</h1>
+				<div className='Friend-container'>
+					{friends}
+				</div>
+			</React.Fragment>
+		);
+	}
+}
+*/
 
 export function Home(){
 	return(
 		<div>
 			<h1>Home</h1>
+			<p>Ici on peut mettre ce qu'on veut.
+				Je verrai bien un resumé de ce que propose ce site, avec le nombre de users enregistrés, le nombre de users connecté en ce moment et le nombre de users en jeu (inclu en attente de match).
+			</p>
 		</div>
 	);
 }
 
+/*
+	il me faudrait une liste avec :
+	score du player
+	pseudo de l'adversaire
+	si l'adversaire est un friend
+	score de l'adversaire
+*/
+
 export function MatchHistory(){
 	return(
-		<div>
-			MatchHistory
-			si user non connecter renvoyer vers /pleaseconnect
-		</div>
+		<React.Fragment>
+			<h1>Your Matchs History</h1>
+			<p>si user non connecter renvoyer vers /pleaseconnect</p>
+			<div className='Match-container'>
+				<div className='Match-container-div'>
+					<div className='Match-Resultat'>
+						Victory
+					</div>
+					<div className='Match-Summary'>
+						<div className='Match-Player-score'>
+							<div>You</div>
+							<div className='Match-Player-points'>7</div>
+						</div>
+						<div className='Match-VS'>
+							VS
+						</div>
+						<div className='Match-Player-score'>
+							<div>Opponent</div>
+							<div className='Match-Player-points'>5</div>
+						</div>
+					</div>
+				</div>
+				<div className='Match-container-div'>
+					<div className='Match-Resultat'>
+						Defeat
+					</div>
+					<div className='Match-Summary'>
+						<div className='Match-Player-score'>
+							<div>You</div>
+							<div className='Match-Player-points'>7</div>
+						</div>
+						<div className='Match-VS'>
+							VS
+						</div>
+						<div className='Match-Player-score'>
+							<div>Opponent</div>
+							<div className='Match-Player-points'>8</div>
+						</div>
+					</div>
+				</div>
+				<div className='Match-container-div'>
+					<div className='Match-Resultat'>
+						Draw
+					</div>
+					<div className='Match-Summary'>
+						<div className='Match-Player-score'>
+							<div>You</div>
+							<div className='Match-Player-points'>5</div>
+						</div>
+						<div className='Match-VS'>
+							VS
+						</div>
+						<div className='Match-Player-score'>
+							<div>Opponent</div>
+							<div className='Match-Player-points'>5</div>
+						</div>
+					</div>
+				</div>
+				<div className='Match-container-div'>
+					<div className='Match-Resultat'>
+						Victory
+					</div>
+					<div className='Match-Summary'>
+						<div className='Match-Player-score'>
+							<div>You</div>
+							<div className='Match-Player-points'>7</div>
+						</div>
+						<div className='Match-VS'>
+							VS
+						</div>
+						<div className='Match-Player-score'>
+							<div>Opponent</div>
+							<div className='Match-Player-points'>5</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</React.Fragment>
 	);
 }
 
@@ -79,8 +205,9 @@ export function Play(){
 export function Profile(){
 	return(
 		<div>
-			Profile ou settings
-			si user non connecter renvoyer vers /pleaseconnect
+			<h1>Profile ou settings</h1>
+			<p>si user non connecter renvoyer vers /pleaseconnect</p>
+			<p>si on a cliqué sur l'avatar ou le pseudo de quelqu'un d'autre, ça affiche le profile de cette personne</p>
 		</div>
 	);
 }
@@ -96,7 +223,7 @@ export function SpecAMatch(){
 export function Stats(){
 	return(
 		<div>
-			Stats (du user ou d'un friends)
+			<h1>Stats (du user ou d'un friends)</h1>
 			si user non connecter renvoyer vers /pleaseconnect
 		</div>
 	);

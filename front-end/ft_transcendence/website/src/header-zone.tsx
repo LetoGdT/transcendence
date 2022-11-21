@@ -26,7 +26,7 @@ function AvatarZone(){
 			</div>
 		);
 	}
-	// else 
+	else 
 	{
 		return(
 			<div className='Avatar-zone'>
