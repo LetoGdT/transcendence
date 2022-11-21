@@ -4,7 +4,9 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+
+import Avatar from './link_botw_avatar.jpg';
 
 export function Chat(){
 	return(
@@ -16,20 +18,38 @@ export function Chat(){
 
 export function Friends(){
 	return(
-		<div className='friends'>
-			Friends
-			si user non connecté renvoyer vers /pleaseconnect
-			<div className='a-friend'>
-				
-				friend 1
+		<React.Fragment>
+			<h1>Friends</h1>
+			<div className='Friend-container'>
+				<div className='Friend-container-div'>
+					<div>
+						<img src={Avatar} alt ='Amigo 1' className='Friend-avatar'></img>
+					</div>
+					<div>
+						Amigo 1
+					</div>
+				</div>
+				<div className='Friend-container-div'>
+					<div>
+						<img src={Avatar} alt ='Amigo 2' className='Friend-avatar'></img>
+					</div>
+					<div>
+						Amigo 2
+					</div>
+				</div>
 			</div>
-			<div>
-				
-				friend 2
-			</div>
-		</div>
+		</React.Fragment>
 	);
 }
+
+// export class Friends extends React.Component {
+// 	constructor(props: any) {
+// 		super(props);
+// 		this.state = {
+			
+// 		};
+// 	}
+// }
 
 export function Home(){
 	return(

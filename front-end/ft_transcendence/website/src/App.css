@@ -11,13 +11,34 @@
 }
 
 .menu_button:hover { /*permet un ombrage quand pointé a reutiliser pour le menu :3*/
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 2em #000dfcaa);
 }
 
 .Adaptable{
   background-color:#000000;
   color: antiquewhite;
+  height: 100%;
 }
+
+.Friend-container{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.Friend-container-div{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+}
+
+.Friend-avatar{
+  max-width: 100px;
+	height: auto;
+}
+
 .App {
   text-align: center;
 }

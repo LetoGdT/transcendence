@@ -1,5 +1,5 @@
 .Header {
-	background-color: #64ff98aa;
+	background-color: #69ff64aa;
 	display: flex;
 	align-items: center;
 	justify-content:end;
@@ -57,7 +57,7 @@
   }
   .Avatar-zone-buttons {
     background-color: antiquewhite;
-    flex-direction: column;
+    flex-direction: row;
     display: flex;
     justify-content: center;
     align-items: center;
