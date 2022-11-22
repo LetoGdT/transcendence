@@ -1,36 +1,60 @@
-import { Controller, Get, Post, Param, ParseIntPipe, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+	Controller, Get, Post, Patch, Param, ParseIntPipe,
+	NotFoundException, UseGuards, BadRequestException,
+	UnauthorizedException, ClassSerializerInterceptor,
+	UseInterceptors, Query, Req
+} from '@nestjs/common';
 import { UsersService } from './users.service';
-import { ReturnUserDto } from '../dto/users.dto';
+import { User } from '../typeorm/user.entity';
+import { PageDto } from "../dto/page.dto";
+import { PageOptionsDto } from "../dto/page-options.dto";
+import { UpdateUserDto } from '../dto/users.dto';
+import { UserQueryFilterDto } from '../dto/query-filters.dto';
+import { AuthInterceptor } from '../auth/auth.interceptor';
+import { JwtAuthGuard } from '../guards/jwt.guard';
 
 @Controller('users')
 export class UsersController
 {
 	constructor(private readonly usersService: UsersService) {}
 
-	@Get()
-	async getAllUsers(): Promise<ReturnUserDto[]>
+	@Get('/')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
+	async getAllUsers(@Query() pageOptionsDto: PageOptionsDto,
+		@Query() userQueryFilterDto: UserQueryFilterDto): Promise<PageDto<User>>
 	{
-		let users: ReturnUserDto[] = await this.usersService.getAll();
+		return this.usersService.getUsers(pageOptionsDto, userQueryFilterDto);
+	}
 
-		// Remove anything associated with the user's refresh token.
-		return users.map(({ id, login, email, image_url }) => ({ id, login, email, image_url }));
+	@Get('/me')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	currentUser(@Req() req)
+	{
+		return req.user;
+	}
+
+	@Patch('/me')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	async updateUser(@Query() updateUserDto: UpdateUserDto,
+		@Req() req)
+	{
+		if (Object.keys(updateUserDto).length === 0)
+			throw new BadRequestException('Empty parameters');
+		return await this.usersService.updateOne(req.user.id, updateUserDto);
 	}
 
 	@Get(':id')
-	async getUserById(@Param('id', ParseIntPipe) id: number): Promise<ReturnUserDto>
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	async getUserById(@Param('id', ParseIntPipe) id: number): Promise<User>
 	{
-		try
-		{
-			var user: ReturnUserDto = await this.usersService.getOneById(id);
-		}
-
-		catch (err)
-		{
-			console.log(err);
-			throw new BadRequestException('Number too large');
-		}
+		var user: User = await this.usersService.getOneById(id);
 		if (user == null)
 			throw new NotFoundException('User id was not found');
-		return { id: user.id, login: user.login, email: user.email, image_url: user.image_url }
+		return user;
 	}
 }
+

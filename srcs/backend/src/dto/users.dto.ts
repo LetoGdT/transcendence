@@ -1,14 +1,36 @@
+import { Exclude } from 'class-transformer';
+import { IsNotEmpty } from 'class-validator';
+
 export class CreateUserDto
 {
-	login: string;
+	uid: number;
+
+	@IsNotEmpty()
+	username: string;
+
+	@IsNotEmpty()
 	email: string;
+
+	@IsNotEmpty()
 	image_url: string;
 }
 
-export class ReturnUserDto
+export class UpdateUserDto
 {
-	id: number
-	login: string;
+	@IsNotEmpty()
+	username: string;
+	
+	@IsNotEmpty()
 	email: string;
+	
+	@IsNotEmpty()
 	image_url: string;
+
+	@Exclude()
+	@IsNotEmpty()
+	refresh_token: string;
+
+	@Exclude()
+	@IsNotEmpty()
+	refresh_expires: string;
 }

@@ -22,7 +22,8 @@ export class AuthService
 	{
 		try
 		{
-			this.jwtService.verify(token, { ignoreExpiration: false });
+			// Change this to true to expire tokens in prod
+			this.jwtService.verify(token, { ignoreExpiration: true });
 			return true;
 		}
 		catch (err)
@@ -35,15 +36,17 @@ export class AuthService
 	// Doesn't check the token validity, so use with caution !
 	async tokenOwner(token: string): Promise<User>
 	{
-		const login = this.jwtService.decode(token) as { username: string };
-		return await this.userRepository.findOne({ where: { login: login.username }});
+		const decoded = this.jwtService.decode(token) as { username: string, sub: number };
+		return await this.userRepository.createQueryBuilder("user")
+			.where("user.id = :id", { id: decoded.sub })
+			.getOne();
 	}
 
 	// Returns a new token/refresh pair
 	async createTokens(id: number): Promise<{ access_token: string, refresh_token: string }>
 	{
 		const user = await this.userRepository.findOne({where: { id: id }});
-		const payload = { username: user.login, sub: user.id };
+		const payload = { username: user.username, sub: user.id };
 		const access_token = await this.jwtService.sign(payload);
 		const refresh_token = randtoken.generate(16);
 		const expires = new Date();
@@ -73,7 +76,7 @@ export class Api42
 				grant_type: 'authorization_code',
 				client_id: this.configService.get<string>('UID'),
 				client_secret: this.configService.get<string>('SECRET'),
-				redirect_uri: 'http://localhost:3000/callback',
+				redirect_uri: 'http://localhost:9999/callback',
 				code: auth_code
 			},
 		);

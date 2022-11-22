@@ -37,13 +37,11 @@ export class AuthController
 		if (uid == undefined || secret == undefined)
 			throw new HttpException('42API credentials not set. Did you forget to create .env ?',
 				HttpStatus.INTERNAL_SERVER_ERROR);
-		let redirect_uri: string = 'http://localhost:3000/callback';
+		let redirect_uri: string = 'http://localhost:9999/callback';
 		let state: string = randomBytes(32).toString("hex");
 		this.state = state;
 		let url = `${host}?client_id=${uid}&redirect_uri=${redirect_uri}&response_type=code&scope=public&state=${state}`;
-		return {
-			url: url
-		};
+		return { url: url };
 	}
 
 	@Get('/callback')
@@ -56,10 +54,8 @@ export class AuthController
 			throw new HttpException('CSRF attempt detected !', HttpStatus.FORBIDDEN);
 		let api = new Api42();
 		await api.setToken(query.code);
-		if (!(await api.isTokenValid()))
-			await api.refreshToken();
-		let me: CreateUserDto = await api.get('/v2/me');
-		const user: User = await this.usersService.addUser(me);
+		let me = await api.get('/v2/me');
+		const user: User = await this.usersService.addUser({ uid: me.id, username: me.login, email: me.email, image_url: me.image_url });
 		const { access_token, refresh_token } = await this.authService.createTokens(user.id);
 		res.cookie('access_token', access_token,
 			{
@@ -85,7 +81,8 @@ export class AuthController
 	logout(@Res({ passthrough: true }) res: Response,
 			@Req() req)
 	{
-		this.usersService.updateOne(req.user.id, { refresh_expires: Date() });
+		req.user.refresh_expires = Date();
+		this.usersService.updateOne(req.user.id, req.user);
 		res.clearCookie('access_token',
 			{
 				httpOnly: true,		// Prevent xss
@@ -95,9 +92,9 @@ export class AuthController
 		);
 		res.clearCookie('refresh_token',
 			{
-				httpOnly: true,		// Prevent xss
-				sameSite: 'lax',	// Prevent CSRF
-				secure: true,		// Just info for the browser
+				httpOnly: true,
+				sameSite: 'lax',
+				secure: true,
 			}
 		);
 		return (res.redirect('/'));

@@ -30,7 +30,7 @@ let AuthService = class AuthService {
     }
     verifyToken(token) {
         try {
-            this.jwtService.verify(token, { ignoreExpiration: false });
+            this.jwtService.verify(token, { ignoreExpiration: true });
             return true;
         }
         catch (err) {
@@ -38,12 +38,14 @@ let AuthService = class AuthService {
         }
     }
     async tokenOwner(token) {
-        const login = this.jwtService.decode(token);
-        return await this.userRepository.findOne({ where: { login: login.username } });
+        const decoded = this.jwtService.decode(token);
+        return await this.userRepository.createQueryBuilder("user")
+            .where("user.id = :id", { id: decoded.sub })
+            .getOne();
     }
     async createTokens(id) {
         const user = await this.userRepository.findOne({ where: { id: id } });
-        const payload = { username: user.login, sub: user.id };
+        const payload = { username: user.username, sub: user.id };
         const access_token = await this.jwtService.sign(payload);
         const refresh_token = randtoken.generate(16);
         const expires = new Date();
@@ -70,7 +72,7 @@ let Api42 = Api42_1 = class Api42 {
             grant_type: 'authorization_code',
             client_id: this.configService.get('UID'),
             client_secret: this.configService.get('SECRET'),
-            redirect_uri: 'http://localhost:3000/callback',
+            redirect_uri: 'http://localhost:9999/callback',
             code: auth_code
         });
         const checkResult = await (await (0, rxjs_1.lastValueFrom)(checkResultObservable)).data;

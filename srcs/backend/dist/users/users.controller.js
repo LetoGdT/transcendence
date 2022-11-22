@@ -15,35 +15,67 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
 const users_service_1 = require("./users.service");
+const page_options_dto_1 = require("../dto/page-options.dto");
+const users_dto_1 = require("../dto/users.dto");
+const query_filters_dto_1 = require("../dto/query-filters.dto");
+const auth_interceptor_1 = require("../auth/auth.interceptor");
+const jwt_guard_1 = require("../guards/jwt.guard");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
     }
-    async getAllUsers() {
-        let users = await this.usersService.getAll();
-        return users.map(({ id, login, email, image_url }) => ({ id, login, email, image_url }));
+    async getAllUsers(pageOptionsDto, userQueryFilterDto) {
+        return this.usersService.getUsers(pageOptionsDto, userQueryFilterDto);
+    }
+    currentUser(req) {
+        return req.user;
+    }
+    async updateUser(updateUserDto, req) {
+        if (Object.keys(updateUserDto).length === 0)
+            throw new common_1.BadRequestException('Empty parameters');
+        return await this.usersService.updateOne(req.user.id, updateUserDto);
     }
     async getUserById(id) {
-        try {
-            var user = await this.usersService.getOneById(id);
-        }
-        catch (err) {
-            console.log(err);
-            throw new common_1.BadRequestException('Number too large');
-        }
+        var user = await this.usersService.getOneById(id);
         if (user == null)
             throw new common_1.NotFoundException('User id was not found');
-        return { id: user.id, login: user.login, email: user.email, image_url: user.image_url };
+        return user;
     }
 };
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.Get)('/'),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseGuards)(jwt_guard_1.JwtAuthGuard),
+    __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [page_options_dto_1.PageOptionsDto,
+        query_filters_dto_1.UserQueryFilterDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getAllUsers", null);
 __decorate([
+    (0, common_1.Get)('/me'),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "currentUser", null);
+__decorate([
+    (0, common_1.Patch)('/me'),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [users_dto_1.UpdateUserDto, Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateUser", null);
+__decorate([
     (0, common_1.Get)(':id'),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),

@@ -11,6 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typeorm_1 = require("typeorm");
+const class_transformer_1 = require("class-transformer");
+const class_validator_1 = require("class-validator");
 let User = class User {
 };
 __decorate([
@@ -23,10 +25,18 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)({
         nullable: false,
+        unique: true,
+    }),
+    __metadata("design:type", Number)
+], User.prototype, "uid", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        nullable: false,
         default: '',
+        unique: true,
     }),
     __metadata("design:type", String)
-], User.prototype, "login", void 0);
+], User.prototype, "username", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         name: 'email_address',
@@ -43,6 +53,7 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "image_url", void 0);
 __decorate([
+    (0, class_transformer_1.Exclude)({ toPlainOnly: true }),
     (0, typeorm_1.Column)({
         nullable: true,
         default: '',
@@ -50,6 +61,8 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "refresh_token", void 0);
 __decorate([
+    (0, class_validator_1.IsDate)(),
+    (0, class_transformer_1.Exclude)({ toPlainOnly: true }),
     (0, typeorm_1.Column)({
         nullable: true,
         default: '',

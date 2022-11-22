@@ -1,4 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude } from 'class-transformer';
+import { IsDate } from 'class-validator';
 
 @Entity()
 export class User
@@ -11,9 +13,16 @@ export class User
 
 	@Column({
 		nullable: false,
-		default: '',
+		unique: true,
 	})
-	login: string;
+	uid: number;
+
+	@Column({
+		nullable: false,
+		default: '',
+		unique: true,
+	})
+	username: string;
 
 	@Column({
 		name: 'email_address',
@@ -28,12 +37,15 @@ export class User
 	})
 	image_url: string;
 
+	@Exclude({ toPlainOnly: true })
 	@Column({
 		nullable: true,
 		default: '',
 	})
 	refresh_token: string;
 
+	@IsDate()
+	@Exclude({ toPlainOnly: true })
 	@Column({
 		nullable: true,
 		default: '',
