@@ -111,10 +111,13 @@ export function Home(){
 
 /*
 	il me faudrait une liste avec :
-	score du player
-	pseudo de l'adversaire
-	si l'adversaire est un friend
-	score de l'adversaire
+		score du player
+		pseudo de l'adversaire
+		si l'adversaire est un friend
+		score de l'adversaire
+	une autre (???) avec :
+		niveau fait
+		reussite ? score ?
 */
 
 export function MatchHistory(){
@@ -189,13 +192,6 @@ export function Play(){
 		</div>
 	);
 }
-
-/*
-on affiche :
-avatar - modifiable
-pseudo - modifiable
-activer auth 2FA
-*/
 
 const SettingsTextField = styled(TextField)({
 	'& input:valid + fieldset': {
@@ -383,6 +379,17 @@ export function SpecAMatch(){
 		</div>
 	);
 }
+
+/*
+	avatar, pseudo
+	stats : -> petit graph circulaire ?
+		nombre de victoire
+		nombre de defaites
+		nombre de draw ?
+		rang, niveaux
+		hauts faits
+		si c'est la page d'un autre : bouton ajouter/retirer ami
+*/
 
 export function Profile(){
 	return(
