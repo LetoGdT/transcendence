@@ -2,8 +2,8 @@
 	/* background-color: #69ff64aa; */
 	display: flex;
 	align-items: center;
-	justify-content: flex-end;
-	
+	justify-content: center;
+  width: 100%;
   }
   
   .Banniere {
@@ -27,6 +27,7 @@
   .Avatar-zone-img {
 	max-width: 200px;
 	height: auto;
+  max-height: 210px;
   }
   
   .Avatar-zone-buttons {
@@ -34,7 +35,12 @@
 	flex-direction: column;
 	display: flex;
 	justify-content: center;
-	align-items: center; 
+	align-items: center;
+  
+  }
+
+  .Avatar-zone-1button {
+  margin: 2px;
   }
 
   .Logo42 {

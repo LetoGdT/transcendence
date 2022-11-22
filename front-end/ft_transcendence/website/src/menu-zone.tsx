@@ -153,13 +153,13 @@ export function OurMenu() {
 			<Link to="/friends">
 				<MenuItem onClick={handleCloseProfile}>Friends</MenuItem>
 			</Link>
-			<Link to="/stats">
-				<MenuItem onClick={handleCloseProfile}>Stats</MenuItem>
+			<Link to="/profile">
+				<MenuItem onClick={handleCloseProfile}>Profile</MenuItem>
 			</Link>
 			<Link to="/matchhistory">
 				<MenuItem onClick={handleCloseProfile}>Match history</MenuItem>
 			</Link>
-			<Link to="/profile">
+			<Link to="/settings">
 				<MenuItem onClick={handleCloseProfile}>Settings</MenuItem>
 			</Link>
 		</Menu>

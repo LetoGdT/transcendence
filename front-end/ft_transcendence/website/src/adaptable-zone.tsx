@@ -8,6 +8,9 @@ import { Link } from 'react-router-dom';
 
 import Avatar from './link_botw_avatar.jpg';
 
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+
 export function Chat(){
 	return(
 		<div>
@@ -202,13 +205,62 @@ export function Play(){
 	);
 }
 
-export function Profile(){
+/*
+on affiche :
+avatar - modifiable
+pseudo - modifiable
+activer auth 2FA
+*/
+
+export function Settings(){
 	return(
-		<div>
-			<h1>Profile ou settings</h1>
+		<React.Fragment>
+			<h1>Settings</h1>
 			<p>si user non connecter renvoyer vers /pleaseconnect</p>
-			<p>si on a cliqué sur l'avatar ou le pseudo de quelqu'un d'autre, ça affiche le profile de cette personne</p>
-		</div>
+			<div className='Settings-container'>
+				<h2>Your avatar</h2>
+				<div className='Settings-container-div-lvl1'>
+					<div className='Settings-container-div-lvl2'>
+						<img src={Avatar} alt='your avatar' className='Settings-avatar-img'></img>
+					</div>
+					<div className='Settings-container-div-lvl2'>
+						mettre un truc pour upload une nouvelle image
+						<Box
+							component="form"
+							sx={{
+								"& .MuiTextField-root": { m: 1, width: "25ch" }
+							}}
+							noValidate
+							autoComplete="off"
+						>
+							<div>
+								<TextField
+									label="New Avatar"
+									id="outlined-size-small"
+									defaultValue="Please select a new avatar"
+									size="small"
+								/>
+							</div>
+						</Box>
+					</div>
+				</div>
+				<h2>Your Alias</h2>
+				<div className='Settings-container-div-lvl1'>
+					<div className='Settings-container-div-lvl2'>
+						User's Pseudo
+					</div>
+					<div className='Settings-container-div-lvl2'>
+						mettre quelque chose pour changer le pseudo
+					</div>
+				</div>
+				<h2>2FA - 2 Fractor Authentification</h2>
+				<div className='Settings-container-div-lvl1'>
+					<div className='Settings-container-div-lvl2'>
+						Mettre un genre d'interrupteur pour activer ou desactiver le 2FA
+					</div>
+				</div>
+			</div>
+		</React.Fragment>
 	);
 }
 
@@ -220,11 +272,12 @@ export function SpecAMatch(){
 	);
 }
 
-export function Stats(){
+export function Profile(){
 	return(
 		<div>
-			<h1>Stats (du user ou d'un friends)</h1>
-			si user non connecter renvoyer vers /pleaseconnect
+			<h1>Profile - Stats (du user ou d'un friends)</h1>
+			<p>si user non connecter renvoyer vers /pleaseconnect</p>
+			<p>si on a cliqué sur l'avatar ou le pseudo de quelqu'un d'autre, ça affiche le profile de cette personne</p>
 		</div>
 	);
 }
