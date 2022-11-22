@@ -18,6 +18,7 @@
   background-color:#000000;
   color: antiquewhite;
   height: 100%;
+  margin: 5px;
 }
 
 .Friend-container{
@@ -89,6 +90,29 @@
   line-height: 69px;
   text-align: center;
 }
+
+.Settings-container{
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  margin: 20px;
+}
+
+.Settings-container-div-lvl1{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  margin: 5px;
+}
+.Settings-container-div-lvl2{
+  margin: 5px;
+}
+
+.Settings-avatar-img {
+	max-width: 200px;
+	height: auto;
+  max-height: 210px;
+  }
 
 .App {
   text-align: center;
