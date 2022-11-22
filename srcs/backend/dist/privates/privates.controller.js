@@ -35,6 +35,9 @@ let PrivatesController = class PrivatesController {
     getPrivateMessagesAsRecipient(pageOptionsDto, messageQueryFilterDto, userSelectDto, req) {
         return this.privatesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user, { as_recipient: true });
     }
+    getConversations(req) {
+        return this.privatesService.getConversations(req.user);
+    }
     createPrivateMessage(postPrivateDto, req) {
         return this.privatesService.createMessage(postPrivateDto, req.user);
     }
@@ -91,6 +94,15 @@ __decorate([
         messages_dto_1.UserSelectDto, Object]),
     __metadata("design:returntype", Promise)
 ], PrivatesController.prototype, "getPrivateMessagesAsRecipient", null);
+__decorate([
+    (0, common_1.Get)('/conversations'),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], PrivatesController.prototype, "getConversations", null);
 __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),

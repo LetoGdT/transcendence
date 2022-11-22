@@ -21,4 +21,3 @@ export class ChannelUser
 	@ManyToOne(() => Channel, (channel) => channel.users)
 	channel: Channel
 }
-

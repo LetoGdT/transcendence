@@ -19,6 +19,7 @@ export declare class PrivatesService {
         as_recipient?: boolean;
     }): Promise<PageDto<PrivateMessage>>;
     createMessage(postPrivateDto: PostPrivateDto, sender: User): Promise<PrivateMessage>;
+    getConversations(user: User): Promise<PrivateMessage[]>;
     updateMessage(id: number, updateMessageDto: UpdateMessageDto, user: User): Promise<PrivateMessage>;
     deleteMessage(id: number, user: User): Promise<PrivateMessage>;
 }

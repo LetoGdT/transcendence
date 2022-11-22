@@ -27,6 +27,10 @@ let ChannelsController = class ChannelsController {
     createChannel(postChannelDto, req) {
         return this.channelsService.createChannel(postChannelDto, req.user);
     }
+    getChannelUsers() {
+    }
+    getChannelbanlist() {
+    }
     updateChannel() {
     }
     joinChannel(id, req) {
@@ -55,6 +59,22 @@ __decorate([
     __metadata("design:paramtypes", [channels_dto_1.PostChannelDto, Object]),
     __metadata("design:returntype", void 0)
 ], ChannelsController.prototype, "createChannel", null);
+__decorate([
+    (0, common_1.Get)('/:id/users'),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], ChannelsController.prototype, "getChannelUsers", null);
+__decorate([
+    (0, common_1.Get)('/:id/banlist'),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], ChannelsController.prototype, "getChannelbanlist", null);
 __decorate([
     (0, common_1.Patch)('/:id'),
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),

@@ -36,7 +36,7 @@ export class Channel
 
 	@ManyToMany(() => User, { eager: true })
 	@JoinColumn()
-	banned: User[];
+	banlist: User[];
 
 	@Column({
 		nullable: true,

@@ -28,6 +28,22 @@ export class ChannelsController
 		return this.channelsService.createChannel(postChannelDto, req.user);
 	}
 
+	@Get('/:id/users')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	getChannelUsers()
+	{
+
+	}
+
+	@Get('/:id/banlist')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	getChannelbanlist()
+	{
+		
+	}
+
 	@Patch('/:id')
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)

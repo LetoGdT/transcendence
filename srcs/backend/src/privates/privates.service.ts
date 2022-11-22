@@ -62,7 +62,7 @@ export class PrivatesService
 			.andWhere(options && options.as_recipient == true
 				? 'message.sender = :user_id'
 				: 'TRUE', { user_id: user.id })
-			.orderBy('private.id', pageOptionsDto.order)
+			.orderBy('message.sent_date', pageOptionsDto.order)
 			.skip(pageOptionsDto.skip)
 			.take(pageOptionsDto.take);
 
@@ -90,6 +90,24 @@ export class PrivatesService
 		const privateMessage = new PrivateMessage()
 		privateMessage.message = message;
 		return this.privatesRepository.save(privateMessage);
+	}
+
+	async getConversations(user: User)
+	{
+		const queryBuilder = this.privatesRepository.createQueryBuilder("private");
+
+		queryBuilder
+			.leftJoinAndSelect('private.message', 'message')
+			.leftJoinAndSelect('message.recipient', 'recipient')
+			.leftJoinAndSelect('message.sender', 'sender')
+			.where(new Brackets(qb => {
+				qb.where("message.sender = :user_id", { user_id: user.id })
+				.orWhere("message.recipient = :user_id", { user_id: user.id })
+			}))
+			.distinctOn(['sender', 'recipient']);
+
+		// console.log();
+		return await queryBuilder.getMany();
 	}
 
 	async updateMessage(id: number, updateMessageDto: UpdateMessageDto, user: User)

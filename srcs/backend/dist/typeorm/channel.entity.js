@@ -53,7 +53,7 @@ __decorate([
     (0, typeorm_1.ManyToMany)(() => user_entity_1.User, { eager: true }),
     (0, typeorm_1.JoinColumn)(),
     __metadata("design:type", Array)
-], Channel.prototype, "banned", void 0);
+], Channel.prototype, "banlist", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         nullable: true,
