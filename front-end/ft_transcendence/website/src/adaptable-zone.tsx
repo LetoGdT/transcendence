@@ -192,6 +192,42 @@ export function MatchHistory(){
 						</div>
 					</div>
 				</div>
+				<div className='Match-container-div'>
+					<div className='Match-Resultat'>
+						Defeat
+					</div>
+					<div className='Match-Summary'>
+						<div className='Match-Player-score'>
+							<div>You</div>
+							<div className='Match-Player-points'>7</div>
+						</div>
+						<div className='Match-VS'>
+							VS
+						</div>
+						<div className='Match-Player-score'>
+							<div>Opponent</div>
+							<div className='Match-Player-points'>8</div>
+						</div>
+					</div>
+				</div>
+				<div className='Match-container-div'>
+					<div className='Match-Resultat'>
+						Draw
+					</div>
+					<div className='Match-Summary'>
+						<div className='Match-Player-score'>
+							<div>You</div>
+							<div className='Match-Player-points'>5</div>
+						</div>
+						<div className='Match-VS'>
+							VS
+						</div>
+						<div className='Match-Player-score'>
+							<div>Opponent</div>
+							<div className='Match-Player-points'>5</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</React.Fragment>
 	);

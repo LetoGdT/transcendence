@@ -1,7 +1,10 @@
 .Menu {
+  position: sticky;
+  top: 0px;
   width: 500;
   justify-content: center;
   display: flex;
+  background-color: #3d3f44;
 }
 
 .Menu_button {

@@ -159,7 +159,7 @@ function AvatarZone(){
 export function OurHeader(){
 	return(
 		<div className='Header'>
-			<div>
+			<div className='Logo'>
 				<img src={Logo42blanc} alt='42 logo blanc' className='Logo42'></img>
 			</div>
 			<div className='Banniere'>
