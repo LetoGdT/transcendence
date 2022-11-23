@@ -1,5 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany, JoinColumn, JoinTable, ManyToMany } from 'typeorm';
-import { IsNotEmpty, MaxLength } from 'class-validator';
+import { IsNotEmpty, MaxLength, MinLength, IsAscii } from 'class-validator';
+import { Exclude } from 'class-transformer';
 import { User } from './user.entity';
 import { Message } from './message.entity';
 import { ChannelUser } from './channel-user.entity';
@@ -13,7 +14,7 @@ export class Channel
 	})
 	id: number;
 
-	@IsNotEmpty()
+	@MinLength(3)
 	@MaxLength(20)
 	@Column({
 		nullable: false,
@@ -38,6 +39,10 @@ export class Channel
 	@JoinColumn()
 	banlist: User[];
 
+	@Exclude({ toPlainOnly: true })
+	@IsAscii()
+	@MinLength(8)
+	@MaxLength(40)
 	@Column({
 		nullable: true,
 		unique: false,

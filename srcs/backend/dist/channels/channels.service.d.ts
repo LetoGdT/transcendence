@@ -1,11 +1,19 @@
 import { Repository } from 'typeorm';
 import { Channel } from '../typeorm/channel.entity';
 import { User } from '../typeorm/user.entity';
+import { ChannelUser } from '../typeorm/channel-user.entity';
 import { PostChannelDto } from '../dto/channels.dto';
+import { PatchChannelDto } from '../dto/channels.dto';
+import { PageDto } from "../dto/page.dto";
+import { PageOptionsDto } from "../dto/page-options.dto";
 export declare class ChannelsService {
     private readonly channelRepository;
-    constructor(channelRepository: Repository<Channel>);
-    getChannels(): Promise<Channel[]>;
+    private readonly channelUserRepository;
+    IdMax: number;
+    constructor(channelRepository: Repository<Channel>, channelUserRepository: Repository<ChannelUser>);
+    getChannels(pageOptionsDto: PageOptionsDto, user: User): Promise<PageDto<Channel>>;
+    getChannelUsers(pageOptionsDto: PageOptionsDto, id: number, user: User): Promise<PageDto<ChannelUser>>;
     createChannel(postChannelDto: PostChannelDto, requester: User): Promise<Channel>;
-    joinChannel(id: number, requester: User): Promise<Channel>;
+    updateChannel(id: number, patchChannelDto: PatchChannelDto, user: User): Promise<Channel>;
+    joinChannel(id: number, requester: User, password?: string): Promise<Channel>;
 }

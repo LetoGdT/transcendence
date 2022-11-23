@@ -13,11 +13,12 @@ const auth_module_1 = require("../auth/auth.module");
 const channels_controller_1 = require("./channels.controller");
 const channels_service_1 = require("./channels.service");
 const channel_entity_1 = require("../typeorm/channel.entity");
+const channel_user_entity_1 = require("../typeorm/channel-user.entity");
 let ChannelsModule = class ChannelsModule {
 };
 ChannelsModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([channel_entity_1.Channel]), auth_module_1.AuthModule],
+        imports: [typeorm_1.TypeOrmModule.forFeature([channel_entity_1.Channel]), typeorm_1.TypeOrmModule.forFeature([channel_user_entity_1.ChannelUser]), auth_module_1.AuthModule],
         controllers: [channels_controller_1.ChannelsController],
         providers: [channels_service_1.ChannelsService]
     })

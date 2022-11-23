@@ -18,16 +18,40 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const channel_entity_1 = require("../typeorm/channel.entity");
 const channel_user_entity_1 = require("../typeorm/channel-user.entity");
+const page_dto_1 = require("../dto/page.dto");
+const page_meta_dto_1 = require("../dto/page-meta.dto");
+const bcrypt = require("bcrypt");
 let ChannelsService = class ChannelsService {
-    constructor(channelRepository) {
+    constructor(channelRepository, channelUserRepository) {
         this.channelRepository = channelRepository;
+        this.channelUserRepository = channelUserRepository;
+        this.IdMax = Number.MAX_SAFE_INTEGER;
     }
-    async getChannels() {
+    async getChannels(pageOptionsDto, user) {
         const queryBuilder = this.channelRepository.createQueryBuilder('channel');
         queryBuilder
             .leftJoinAndSelect('channel.users', 'users')
-            .leftJoinAndSelect('users.user', 'user');
-        return queryBuilder.getMany();
+            .leftJoinAndSelect('users.user', 'user')
+            .orderBy('channel.id', pageOptionsDto.order)
+            .skip(pageOptionsDto.skip)
+            .take(pageOptionsDto.take);
+        const itemCount = await queryBuilder.getCount();
+        const { entities } = await queryBuilder.getRawAndEntities();
+        const pageMetaDto = new page_meta_dto_1.PageMetaDto({ itemCount, pageOptionsDto });
+        return new page_dto_1.PageDto(entities, pageMetaDto);
+    }
+    async getChannelUsers(pageOptionsDto, id, user) {
+        const queryBuilder = this.channelUserRepository.createQueryBuilder('channelUser');
+        queryBuilder
+            .leftJoinAndSelect('channelUser.user', 'user')
+            .where('channelUser.channel = :id', { id: id })
+            .orderBy('channelUser.id', pageOptionsDto.order)
+            .skip(pageOptionsDto.skip)
+            .take(pageOptionsDto.take);
+        const itemCount = await queryBuilder.getCount();
+        const { entities } = await queryBuilder.getRawAndEntities();
+        const pageMetaDto = new page_meta_dto_1.PageMetaDto({ itemCount, pageOptionsDto });
+        return new page_dto_1.PageDto(entities, pageMetaDto);
     }
     async createChannel(postChannelDto, requester) {
         const owner = new channel_user_entity_1.ChannelUser();
@@ -40,25 +64,70 @@ let ChannelsService = class ChannelsService {
         });
         return this.channelRepository.save(newChannel);
     }
-    async joinChannel(id, requester) {
-        const newUser = new channel_user_entity_1.ChannelUser();
-        newUser.user = requester;
-        newUser.role = 'None';
+    async updateChannel(id, patchChannelDto, user) {
         const queryBuilder = this.channelRepository.createQueryBuilder('channel');
         queryBuilder
             .leftJoinAndSelect('channel.users', 'users')
-            .leftJoinAndSelect('users.user', 'user');
+            .leftJoinAndSelect('users.user', 'user')
+            .where('channel.id = :id', { id: id });
         const channel = await queryBuilder.getOne();
+        if (channel == null)
+            throw new common_1.BadRequestException('Channel not found');
+        let channelUser = null;
+        for (let tmp_channelUser of channel.users) {
+            if (JSON.stringify(tmp_channelUser.user) === JSON.stringify(user)) {
+                channelUser = tmp_channelUser;
+                break;
+            }
+        }
+        if (channelUser.role === 'None')
+            throw new common_1.HttpException('You are not a channel administrator', common_1.HttpStatus.FORBIDDEN);
+        channel.status = patchChannelDto.status;
+        if (channel.status == 'protected') {
+            if (patchChannelDto.password == null)
+                throw new common_1.BadRequestException('A password is expected for protected channels');
+            channel.password = await bcrypt.hash(patchChannelDto.password, 10);
+        }
+        else
+            channel.password = null;
+        return this.channelRepository.save(channel);
+    }
+    async joinChannel(id, requester, password) {
+        if (id > this.IdMax)
+            throw new common_1.BadRequestException(`id must not be greater than ${this.IdMax}`);
+        const queryBuilder = this.channelRepository.createQueryBuilder('channel');
+        queryBuilder
+            .leftJoinAndSelect('channel.users', 'users')
+            .leftJoinAndSelect('users.user', 'user')
+            .where('channel.id = :id', { id: id });
+        const channel = await queryBuilder.getOne();
+        if (channel == null)
+            throw new common_1.BadRequestException('Channel not found');
+        if (channel.status == 'private')
+            throw new common_1.BadRequestException('This channel is private');
+        if (channel.status == 'protected') {
+            const isMatch = await bcrypt.compare(password, channel.password);
+            if (!isMatch)
+                throw new common_1.BadRequestException('Passwords don\'t match');
+        }
+        for (let channelUser of channel.users) {
+            if (channelUser.user == requester)
+                return channel;
+        }
+        const newUser = new channel_user_entity_1.ChannelUser();
+        newUser.user = requester;
+        newUser.role = 'None';
         channel.users.push(newUser);
         console.log(channel);
         console.log(channel.users);
-        return this.channelRepository.save(channel);
     }
 };
 ChannelsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(channel_entity_1.Channel)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectRepository)(channel_user_entity_1.ChannelUser)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository])
 ], ChannelsService);
 exports.ChannelsService = ChannelsService;
 //# sourceMappingURL=channels.service.js.map

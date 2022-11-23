@@ -92,6 +92,14 @@ export class PrivatesService
 		return this.privatesRepository.save(privateMessage);
 	}
 
+	// select distinct id from (
+	// 	select distinct senderId as id, recipientId from message
+	// 		where recipientId = "user_id"
+	// 	inner join (
+	// 		select senderId, distinct recipientId as id from message
+	// 			where senderId = "user_id") as messages_sent
+	// on true) as foo
+
 	async getConversations(user: User)
 	{
 		const queryBuilder = this.privatesRepository.createQueryBuilder("private");

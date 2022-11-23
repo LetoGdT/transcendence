@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Channel = void 0;
 const typeorm_1 = require("typeorm");
 const class_validator_1 = require("class-validator");
+const class_transformer_1 = require("class-transformer");
 const user_entity_1 = require("./user.entity");
 const message_entity_1 = require("./message.entity");
 const channel_user_entity_1 = require("./channel-user.entity");
@@ -25,7 +26,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Channel.prototype, "id", void 0);
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.MinLength)(3),
     (0, class_validator_1.MaxLength)(20),
     (0, typeorm_1.Column)({
         nullable: false,
@@ -55,6 +56,10 @@ __decorate([
     __metadata("design:type", Array)
 ], Channel.prototype, "banlist", void 0);
 __decorate([
+    (0, class_transformer_1.Exclude)({ toPlainOnly: true }),
+    (0, class_validator_1.IsAscii)(),
+    (0, class_validator_1.MinLength)(8),
+    (0, class_validator_1.MaxLength)(40),
     (0, typeorm_1.Column)({
         nullable: true,
         unique: false,

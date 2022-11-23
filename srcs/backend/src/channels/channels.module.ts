@@ -4,9 +4,10 @@ import { AuthModule } from '../auth/auth.module';
 import { ChannelsController } from './channels.controller';
 import { ChannelsService } from './channels.service';
 import { Channel } from '../typeorm/channel.entity';
+import { ChannelUser } from '../typeorm/channel-user.entity';
 
 @Module({
-	imports: [TypeOrmModule.forFeature([Channel]), AuthModule],
+	imports: [TypeOrmModule.forFeature([Channel]), TypeOrmModule.forFeature([ChannelUser]), AuthModule],
 	controllers: [ChannelsController],
 	providers: [ChannelsService]
 })
