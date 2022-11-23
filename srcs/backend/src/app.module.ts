@@ -13,6 +13,7 @@ import { ChannelUser } from './typeorm/channel-user.entity';
 import { MessagesModule } from './messages/messages.module';
 import { PrivatesModule } from './privates/privates.module';
 import { ChannelsModule } from './channels/channels.module';
+import { WebsocketModule } from './websocket/websocket.module';
 
 @Module(
 	{
@@ -42,7 +43,8 @@ import { ChannelsModule } from './channels/channels.module';
 			// }),
 			MessagesModule,
 			PrivatesModule,
-			ChannelsModule
+			ChannelsModule,
+			WebsocketModule
 		],
 	}
 )

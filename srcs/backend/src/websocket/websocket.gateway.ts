@@ -7,18 +7,28 @@ import {WebSocketGateway,
 import {Server,
 		Socket,
 } from 'socket.io';
+import { AuthService } from '../auth/auth.service';
+
 interface Connection {
 	user: string;
 	client: Socket;
 }
 
-@WebSocketGateway()
-export class MySocket implements OnGatewayConnection{
+@WebSocketGateway(9998)
+export class MySocketGateway implements OnGatewayConnection{
+	constructor(private readonly auth: AuthService) {}
 	@WebSocketServer()
 	server: Server;
 	clients: [Connection];
 
-	handleConnection(client: Socket) {
+	async handleConnection(client: Socket) {
+		// Vérification du token de l’utilisateur
+		// Si le token est invalide, la socket est de fermée de suite
+		if(!this.auth.verifyToken(client.request.headers.cookie))
+			client.disconnect();
+		let token = client.request.headers.cookie;
+		let user = await this.auth.tokenOwner(token);
+		console.log(user);
 	}
 
 	@SubscribeMessage('newMessage')

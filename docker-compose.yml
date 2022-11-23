@@ -5,6 +5,7 @@ services:
         container_name: nestjs
         ports:
             - "9999:9999"
+            - "9998:9998"
         build: ./srcs/backend/
         restart: unless-stopped
         volumes:
@@ -61,25 +62,25 @@ volumes:
         driver: local
         driver_opts:
             type: none
-            device: ./srcs/backend
+            device: /Users/lgaudet-/Documents/transcendence/srcs/backend
             o: bind
     react:
         driver: local
         driver_opts:
             type: none
-            device: ./srcs/frontend/ft_transcendence/website
+            device: /Users/lgaudet-/Documents/transcendence/srcs/frontend/ft_transcendence/website
             o: bind
     postgres:
         driver: local
         driver_opts:
             type: none
-            device: ./srcs/db/postgres
+            device: /Users/lgaudet-/Documents/transcendence/srcs/db/postgres
             o: bind
     pgadmin:
         driver: local
         driver_opts:
             type: none
-            device: ./srcs/db/pgadmin
+            device: /Users/lgaudet-/Documents/transcendence/srcs/db/pgadmin
             o: bind
 
 networks:
