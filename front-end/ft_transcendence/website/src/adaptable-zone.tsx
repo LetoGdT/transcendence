@@ -382,16 +382,6 @@ export function SpecAMatch(){
 	);
 }
 
-/*
-	avatar, pseudo
-	stats : -> petit graph circulaire ?
-		nombre de victoire
-		nombre de defaites
-		nombre de draw ?
-		hauts faits
-		si c'est la page d'un autre : bouton ajouter/retirer ami
-*/
-
 const AddButton = styled(Button)({
 	boxShadow: 'none',
 	textTransform: 'none',
