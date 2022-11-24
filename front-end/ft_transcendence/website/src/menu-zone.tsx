@@ -27,9 +27,9 @@ export function OurMenu() {
 	const handleClickHome = (event: React.MouseEvent<HTMLButtonElement>) => {
 		setAnchorElHome(event.currentTarget);
 	};
-	const handleCloseHome = () => {
-		setAnchorElHome(null);
-	};
+	// const handleCloseHome = () => {
+	// 	setAnchorElHome(null);
+	// };
 	const handleClickPong = (event: React.MouseEvent<HTMLButtonElement>) => {
 		setAnchorElPong(event.currentTarget);
 	};
@@ -39,9 +39,9 @@ export function OurMenu() {
 	const handleClickChat = (event: React.MouseEvent<HTMLButtonElement>) => {
 		setAnchorElChat(event.currentTarget);
 	};
-	const handleCloseChat = () => {
-		setAnchorElChat(null);
-	};
+	// const handleCloseChat = () => {
+	// 	setAnchorElChat(null);
+	// };
 	const handleClickProfile = (event: React.MouseEvent<HTMLButtonElement>) => {
 		setAnchorElProfile(event.currentTarget);
 	};
@@ -153,13 +153,13 @@ export function OurMenu() {
 			<Link to="/friends">
 				<MenuItem onClick={handleCloseProfile}>Friends</MenuItem>
 			</Link>
-			<Link to="/stats">
-				<MenuItem onClick={handleCloseProfile}>Stats</MenuItem>
+			<Link to="/profile">
+				<MenuItem onClick={handleCloseProfile}>Profile</MenuItem>
 			</Link>
 			<Link to="/matchhistory">
 				<MenuItem onClick={handleCloseProfile}>Match history</MenuItem>
 			</Link>
-			<Link to="/profile">
+			<Link to="/settings">
 				<MenuItem onClick={handleCloseProfile}>Settings</MenuItem>
 			</Link>
 		</Menu>

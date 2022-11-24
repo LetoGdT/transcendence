@@ -1,0 +1,10 @@
+import './App.css';
+export declare function Chat(): any;
+export declare function Friends(): any;
+export declare function Home(): any;
+export declare function MatchHistory(): any;
+export declare function Play(): any;
+export declare function Profile(): any;
+export declare function SpecAMatch(): any;
+export declare function Stats(): any;
+export declare function PleaseConnect(): any;

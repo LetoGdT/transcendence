@@ -30,7 +30,7 @@ let AuthService = class AuthService {
     }
     verifyToken(token) {
         try {
-            this.jwtService.verify(token, { ignoreExpiration: false });
+            this.jwtService.verify(token, { ignoreExpiration: true });
             return true;
         }
         catch (err) {
