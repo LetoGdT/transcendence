@@ -6,6 +6,7 @@ import {
 import { ChannelsService } from './channels.service';
 import { AuthInterceptor } from '../auth/auth.interceptor';
 import { Channel } from '../typeorm/channel.entity';
+import { ChannelUser } from '../typeorm/channel-user.entity';
 import { PageDto } from "../dto/page.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
 import { PostChannelDto } from '../dto/channels.dto';
@@ -29,12 +30,12 @@ export class ChannelsController
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
 	createChannel(@Body() postChannelDto: PostChannelDto,
-		@Req() req)
+		@Req() req): Promise<Channel>
 	{
 		return this.channelsService.createChannel(postChannelDto, req.user);
 	}
 
-	@Get('/:id/banlist')
+	@Get('/:channel_id/banlist')
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
 	getChannelbanlist()
@@ -42,48 +43,54 @@ export class ChannelsController
 		
 	}
 
-	@Patch('/:id')
+	@Patch('/:channel_id')
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	updateChannel(@Param('id', ParseIntPipe) id: number,
+	updateChannel(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Query() patchChannelDto: PatchChannelDto,
-		@Req() req)
+		@Req() req): Promise<Channel>
 	{
-		return this.channelsService.updateChannel(id, patchChannelDto, req.user)
+		return this.channelsService.updateChannel(channel_id, patchChannelDto, req.user)
 	}
 
-	@Get('/:id/users')
+	@Get('/:channel_id/users')
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
 	getChannelUsers(@Query() pageOptionsDto: PageOptionsDto,
-		@Param('id', ParseIntPipe) id: number,
+		@Param('channel_id', ParseIntPipe) channel_id: number,
+		@Req() req): Promise<PageDto<ChannelUser>>
+	{
+		return this.channelsService.getChannelUsers(pageOptionsDto, channel_id, req.user)
+	}
+
+	@Post('/:channel_id/users')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	joinChannel(@Param('channel_id', ParseIntPipe) channel_id: number,
+		@Body() body: { password: string },
+		@Req() req): Promise<Channel>
+	{
+		return this.channelsService.joinChannel(channel_id, req.user, body.password);
+	}
+
+	@Patch('/:channel_id/users/:user_id')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	changeUserPermissions(@Param('channel_id', ParseIntPipe) channel_id: number,
+		@Param('user_id', ParseIntPipe) user_id: number,
+		@Query() patchChannelUser: { role: 'None' | 'Admin' | 'Owner' },
 		@Req() req)
 	{
-		return this.channelsService.getChannelUsers(pageOptionsDto, id, req.user)
+		return this.channelsService.updateChannelUser(channel_id, user_id, req.user, patchChannelUser.role);
 	}
 
-	@Post('/:id/users')
+	@Delete('/:channel_id/users/:user_id')
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	joinChannel(@Param('id', ParseIntPipe) id: number,
+	leaveChannel(@Param('channel_id', ParseIntPipe) channel_id: number,
+		@Param('user_id', ParseIntPipe) user_id: number,
 		@Req() req)
 	{
-		return this.channelsService.joinChannel(id, req.user);
-	}
-
-	@Patch('/:id/users')
-	@UseInterceptors(ClassSerializerInterceptor)
-	@UseInterceptors(AuthInterceptor)
-	changeUserPermissions()
-	{
-
-	}
-
-	@Delete('/:id/users')
-	@UseInterceptors(ClassSerializerInterceptor)
-	@UseInterceptors(AuthInterceptor)
-	leaveChannel()
-	{
-
+		return this.channelsService.deleteChannelUser(channel_id, user_id, req.user)
 	}
 }

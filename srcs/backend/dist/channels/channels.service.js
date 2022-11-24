@@ -26,6 +26,11 @@ let ChannelsService = class ChannelsService {
         this.channelRepository = channelRepository;
         this.channelUserRepository = channelUserRepository;
         this.IdMax = Number.MAX_SAFE_INTEGER;
+        this.permissions = new Map([
+            ["Owner", 2],
+            ["Admin", 1],
+            ["None", 0],
+        ]);
     }
     async getChannels(pageOptionsDto, user) {
         const queryBuilder = this.channelRepository.createQueryBuilder('channel');
@@ -106,20 +111,88 @@ let ChannelsService = class ChannelsService {
         if (channel.status == 'private')
             throw new common_1.BadRequestException('This channel is private');
         if (channel.status == 'protected') {
+            if (password == null)
+                throw new common_1.BadRequestException('A password is expected for protected channels');
             const isMatch = await bcrypt.compare(password, channel.password);
             if (!isMatch)
-                throw new common_1.BadRequestException('Passwords don\'t match');
+                throw new common_1.HttpException('Passwords don\'t match', common_1.HttpStatus.FORBIDDEN);
         }
         for (let channelUser of channel.users) {
-            if (channelUser.user == requester)
+            if (JSON.stringify(channelUser.user) == JSON.stringify(requester))
                 return channel;
         }
         const newUser = new channel_user_entity_1.ChannelUser();
         newUser.user = requester;
         newUser.role = 'None';
         channel.users.push(newUser);
-        console.log(channel);
-        console.log(channel.users);
+        return this.channelRepository.save(channel);
+    }
+    async updateChannelUser(channel_id, user_id, user, role) {
+        if (channel_id > this.IdMax || user_id > this.IdMax)
+            throw new common_1.BadRequestException(`id must not be greater than ${this.IdMax}`);
+        const queryBuilder = this.channelRepository.createQueryBuilder('channel');
+        queryBuilder
+            .leftJoinAndSelect('channel.users', 'users')
+            .leftJoinAndSelect('users.user', 'user')
+            .where('channel.id = :channel_id', { channel_id: channel_id });
+        const channel = await queryBuilder.getOne();
+        let requester = null;
+        let toChange = null;
+        for (let channelUser of channel.users) {
+            if (JSON.stringify(channelUser.user) == JSON.stringify(user))
+                requester = channelUser;
+            if (channelUser.id == user_id)
+                toChange = channelUser;
+        }
+        if (requester == null)
+            throw new common_1.HttpException('You are not in this channel', common_1.HttpStatus.FORBIDDEN);
+        if (toChange == null)
+            throw new common_1.BadRequestException('User not found');
+        if (channel == null)
+            throw new common_1.BadRequestException('Channel not found');
+        if (requester.id == toChange.id)
+            throw new common_1.BadRequestException('You can\'t modify your own role !');
+        const toChangeIndex = channel.users.findIndex((user) => {
+            return user.id === toChange.id;
+        });
+        if (this.permissions.get(requester.role) > this.permissions.get(toChange.role)
+            && this.permissions.get(role) <= this.permissions.get(requester.role))
+            channel.users[toChangeIndex].role = role;
+        return this.channelRepository.save(channel);
+    }
+    async deleteChannelUser(channel_id, user_id, user) {
+        if (channel_id > this.IdMax || user_id > this.IdMax)
+            throw new common_1.BadRequestException(`id must not be greater than ${this.IdMax}`);
+        const queryBuilder = this.channelRepository.createQueryBuilder('channel');
+        queryBuilder
+            .leftJoinAndSelect('channel.users', 'users')
+            .leftJoinAndSelect('users.user', 'user')
+            .where('channel.id = :channel_id', { channel_id: channel_id });
+        const channel = await queryBuilder.getOne();
+        let requester = null;
+        let toDelete = null;
+        for (let channelUser of channel.users) {
+            if (JSON.stringify(channelUser.user) == JSON.stringify(user))
+                requester = channelUser;
+            if (channelUser.id == user_id)
+                toDelete = channelUser;
+        }
+        if (requester == null)
+            throw new common_1.HttpException('You are not in this channel', common_1.HttpStatus.FORBIDDEN);
+        if (toDelete == null)
+            throw new common_1.BadRequestException('User not found');
+        if (channel == null)
+            throw new common_1.BadRequestException('Channel not found');
+        const toDeleteIndex = channel.users.findIndex((user) => {
+            return user.id === toDelete.id;
+        });
+        if (requester.id == toDelete.id
+            || this.permissions.get(requester.role) > this.permissions.get(toDelete.role)) {
+            channel.users.splice(toDeleteIndex, 1);
+            await this.channelUserRepository.remove(toDelete);
+            return this.channelRepository.save(channel);
+        }
+        throw new common_1.HttpException('You can\'t delete a user with a higher role', common_1.HttpStatus.FORBIDDEN);
     }
 };
 ChannelsService = __decorate([

@@ -31,18 +31,20 @@ let ChannelsController = class ChannelsController {
     }
     getChannelbanlist() {
     }
-    updateChannel(id, patchChannelDto, req) {
-        return this.channelsService.updateChannel(id, patchChannelDto, req.user);
+    updateChannel(channel_id, patchChannelDto, req) {
+        return this.channelsService.updateChannel(channel_id, patchChannelDto, req.user);
     }
-    getChannelUsers(pageOptionsDto, id, req) {
-        return this.channelsService.getChannelUsers(pageOptionsDto, id, req.user);
+    getChannelUsers(pageOptionsDto, channel_id, req) {
+        return this.channelsService.getChannelUsers(pageOptionsDto, channel_id, req.user);
     }
-    joinChannel(id, req) {
-        return this.channelsService.joinChannel(id, req.user);
+    joinChannel(channel_id, body, req) {
+        return this.channelsService.joinChannel(channel_id, req.user, body.password);
     }
-    changeUserPermissions() {
+    changeUserPermissions(channel_id, user_id, patchChannelUser, req) {
+        return this.channelsService.updateChannelUser(channel_id, user_id, req.user, patchChannelUser.role);
     }
-    leaveChannel() {
+    leaveChannel(channel_id, user_id, req) {
+        return this.channelsService.deleteChannelUser(channel_id, user_id, req.user);
     }
 };
 __decorate([
@@ -63,10 +65,10 @@ __decorate([
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [channels_dto_1.PostChannelDto, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], ChannelsController.prototype, "createChannel", null);
 __decorate([
-    (0, common_1.Get)('/:id/banlist'),
+    (0, common_1.Get)('/:channel_id/banlist'),
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
     (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
     __metadata("design:type", Function),
@@ -74,51 +76,59 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], ChannelsController.prototype, "getChannelbanlist", null);
 __decorate([
-    (0, common_1.Patch)('/:id'),
+    (0, common_1.Patch)('/:channel_id'),
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
     (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(0, (0, common_1.Param)('channel_id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Query)()),
     __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, channels_dto_2.PatchChannelDto, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], ChannelsController.prototype, "updateChannel", null);
 __decorate([
-    (0, common_1.Get)('/:id/users'),
+    (0, common_1.Get)('/:channel_id/users'),
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
     (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
     __param(0, (0, common_1.Query)()),
-    __param(1, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Param)('channel_id', common_1.ParseIntPipe)),
     __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [page_options_dto_1.PageOptionsDto, Number, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], ChannelsController.prototype, "getChannelUsers", null);
 __decorate([
-    (0, common_1.Post)('/:id/users'),
+    (0, common_1.Post)('/:channel_id/users'),
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
     (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
-    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
-    __param(1, (0, common_1.Req)()),
+    __param(0, (0, common_1.Param)('channel_id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [Number, Object, Object]),
+    __metadata("design:returntype", Promise)
 ], ChannelsController.prototype, "joinChannel", null);
 __decorate([
-    (0, common_1.Patch)('/:id/users'),
+    (0, common_1.Patch)('/:channel_id/users/:user_id'),
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
     (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Param)('channel_id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Param)('user_id', common_1.ParseIntPipe)),
+    __param(2, (0, common_1.Query)()),
+    __param(3, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Number, Number, Object, Object]),
     __metadata("design:returntype", void 0)
 ], ChannelsController.prototype, "changeUserPermissions", null);
 __decorate([
-    (0, common_1.Delete)('/:id/users'),
+    (0, common_1.Delete)('/:channel_id/users/:user_id'),
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
     (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Param)('channel_id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Param)('user_id', common_1.ParseIntPipe)),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Number, Number, Object]),
     __metadata("design:returntype", void 0)
 ], ChannelsController.prototype, "leaveChannel", null);
 ChannelsController = __decorate([
