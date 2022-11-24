@@ -8,6 +8,7 @@
 		<li>@mui https://mui.com/</li>
 		<li>CSS Flexbox container https://www.w3schools.com/css/css3_flexbox_container.asp</li>
 		<li> Menu sticky : https://www.pierre-giraud.com/html-css-apprendre-coder-cours/creation-menu-horizontal-sticky/</li>
+		<li>Pie charts : https://www.react-google-charts.com/</li>
 	</ul>
 	<li>Axios + react https://www.freecodecamp.org/french/news/comment-utiliser-axios-avec-react-le-guide-complet-2021/</li>
 </div>

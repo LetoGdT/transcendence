@@ -14,6 +14,8 @@ import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 
+import { Chart } from "react-google-charts";
+
 export function Chat(){
 	return(
 		<div>
@@ -386,18 +388,150 @@ export function SpecAMatch(){
 		nombre de victoire
 		nombre de defaites
 		nombre de draw ?
-		rang, niveaux
 		hauts faits
 		si c'est la page d'un autre : bouton ajouter/retirer ami
 */
 
+const AddButton = styled(Button)({
+	boxShadow: 'none',
+	textTransform: 'none',
+	fontSize: 16,
+	padding: '6px 12px',
+	border: '1px solid',
+	lineHeight: 1.5,
+	backgroundColor: '#646464',
+	borderColor: '#646464',
+	fontFamily: [
+		'-apple-system',
+		'BlinkMacSystemFont',
+		'"Segoe UI"',
+		'Roboto',
+		'"Helvetica Neue"',
+		'Arial',
+		'sans-serif',
+		'"Apple Color Emoji"',
+		'"Segoe UI Emoji"',
+		'"Segoe UI Symbol"',
+	].join(','),
+	'&:hover': {
+		backgroundColor: '#3b9b3b',
+		borderColor: '#646464',
+		boxShadow: 'none',
+	},
+	'&:active': {
+		boxShadow: 'none',
+		backgroundColor: '#4a7a4a',
+		borderColor: '#646464',
+	},
+	'&:focus': {
+		xShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
+	},
+});
+
+const RemoveButton = styled(Button)({
+	boxShadow: 'none',
+	textTransform: 'none',
+	fontSize: 16,
+	padding: '6px 12px',
+	border: '1px solid',
+	lineHeight: 1.5,
+	backgroundColor: '#646464',
+	borderColor: '#646464',
+	fontFamily: [
+		'-apple-system',
+		'BlinkMacSystemFont',
+		'"Segoe UI"',
+		'Roboto',
+		'"Helvetica Neue"',
+		'Arial',
+		'sans-serif',
+		'"Apple Color Emoji"',
+		'"Segoe UI Emoji"',
+		'"Segoe UI Symbol"',
+	].join(','),
+	'&:hover': {
+		backgroundColor: '#bb1d03',
+		borderColor: '#646464',
+		boxShadow: 'none',
+	},
+	'&:active': {
+		boxShadow: 'none',
+		backgroundColor: '#891d03',
+		borderColor: '#646464',
+	},
+	'&:focus': {
+		boxShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
+	},  
+});
+
+export const data = [
+	["Result", "nb"],
+	["Victories", 11],
+	["Defeats", 5],
+	["Draws", 2],
+];
+  
+export const options = {
+	title: "Your matches' results",
+	backgroundColor: 'black',
+	colors: ['#009900', '#cc0000', '#646464'],
+	legend: {textStyle: {color: 'gray', fontSize: '15'}}
+};
+
 export function Profile(){
 	return(
-		<div>
+		<React.Fragment>
 			<h1>Profile - Stats (du user ou d'un friends)</h1>
 			<p>si user non connecter renvoyer vers /pleaseconnect</p>
 			<p>si on a cliqué sur l'avatar ou le pseudo de quelqu'un d'autre, ça affiche le profile de cette personne</p>
-		</div>
+			<div className='Profile-container'>
+				<div className='Profile-Alias'>
+					<div className='Profile-Alias-div'>Alias</div>
+					<div className='Profile-Alias-div'><AddButton variant="contained" disableRipple>Add to Friends</AddButton></div>
+					<div className='Profile-Alias-div'><RemoveButton variant="contained" disableRipple>Remove from Friends</RemoveButton></div>
+				</div>
+				<div className='Profile-container-row-lvl1'>
+					<div className='Profile-Avatar'>
+						<img src={Avatar} alt="alias' avatar" className='Settings-avatar-img'></img>
+					</div>
+					<div className='Profile-Pie-Charts'>
+						<Chart
+							chartType="PieChart"
+							data={data}
+							options={options}
+							width={"100%"}
+							height={"400"}
+						/>
+					</div>
+				</div>
+				<div>
+					<div className='Profile-game-info'>
+						<div><b>Rank:</b> Silver</div>
+						<div><b>Level:</b> 10</div>
+					</div>
+					<h4>Achievements</h4>
+					<div className='Profile-achievement-container'>
+						<div className='Profile-achievement-container-div'>
+							<div>
+								<img src={Avatar} alt='achievement 1' className='Profile-achievement-container-div-img'></img>
+							</div>
+							<div>
+								Achivement 1
+							</div>
+						</div>
+						<div className='Profile-achievement-container-div'>
+							<div>
+								<img src={Avatar} alt='achievement 2' className='Profile-achievement-container-div-img'></img>
+							</div>
+							<div>
+								Achivement 2
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</React.Fragment>
 	);
 }
 
