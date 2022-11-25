@@ -63,11 +63,10 @@ export class MessagesService
 		return new PageDto(entities, pageMetaDto);
 	}
 
-	async createMessage(sender: User, recipient: User, content: string)
+	async createMessage(sender: User, content: string)
 	{
 		const newMessage : Message = this.messageRepository.create({
 			sender: sender,
-			recipient: recipient,
 			content: content
 		});
 		return this.messageRepository.save(newMessage);

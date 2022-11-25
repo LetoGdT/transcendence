@@ -155,10 +155,27 @@ let ChannelsService = class ChannelsService {
         const toChangeIndex = channel.users.findIndex((user) => {
             return user.id === toChange.id;
         });
+        const requesterIndex = channel.users.findIndex((user) => {
+            return user.id === requester.id;
+        });
         if (this.permissions.get(requester.role) > this.permissions.get(toChange.role)
-            && this.permissions.get(role) <= this.permissions.get(requester.role))
+            && this.permissions.get(role) <= this.permissions.get(requester.role)) {
             channel.users[toChangeIndex].role = role;
-        return this.channelRepository.save(channel);
+            if (role == 'Owner')
+                channel.users[requesterIndex].role = 'Admin';
+            return this.channelRepository.save(channel);
+        }
+        throw new common_1.HttpException('You don\'t have permissions to execute this action', common_1.HttpStatus.FORBIDDEN);
+    }
+    findToPromote(users) {
+        let toPromoteIndex = users.findIndex((user) => {
+            return user.role === 'Admin';
+        });
+        if (toPromoteIndex !== -1)
+            return toPromoteIndex;
+        return users.findIndex((user) => {
+            return user.role === 'None';
+        });
     }
     async deleteChannelUser(channel_id, user_id, user) {
         if (channel_id > this.IdMax || user_id > this.IdMax)
@@ -188,11 +205,18 @@ let ChannelsService = class ChannelsService {
         });
         if (requester.id == toDelete.id
             || this.permissions.get(requester.role) > this.permissions.get(toDelete.role)) {
+            if (channel.users.length === 1) {
+                await queryBuilder.delete().where("id = :id", { id: channel_id }).execute();
+                channel.users = [];
+                return channel;
+            }
             channel.users.splice(toDeleteIndex, 1);
+            if (toDelete.role == 'Owner')
+                channel.users[this.findToPromote(channel.users)].role = 'Owner';
             await this.channelUserRepository.remove(toDelete);
             return this.channelRepository.save(channel);
         }
-        throw new common_1.HttpException('You can\'t delete a user with a higher role', common_1.HttpStatus.FORBIDDEN);
+        throw new common_1.HttpException('You can\'t delete a user with a higher or equal role', common_1.HttpStatus.FORBIDDEN);
     }
 };
 ChannelsService = __decorate([

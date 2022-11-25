@@ -9,8 +9,7 @@ import { Channel } from '../typeorm/channel.entity';
 import { ChannelUser } from '../typeorm/channel-user.entity';
 import { PageDto } from "../dto/page.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
-import { PostChannelDto } from '../dto/channels.dto';
-import { PatchChannelDto } from '../dto/channels.dto';
+import { PostChannelDto, PatchChannelDto, PatchChannelUserDto } from '../dto/channels.dto';
 
 @Controller('channels')
 export class ChannelsController
@@ -33,14 +32,6 @@ export class ChannelsController
 		@Req() req): Promise<Channel>
 	{
 		return this.channelsService.createChannel(postChannelDto, req.user);
-	}
-
-	@Get('/:channel_id/banlist')
-	@UseInterceptors(ClassSerializerInterceptor)
-	@UseInterceptors(AuthInterceptor)
-	getChannelbanlist()
-	{
-		
 	}
 
 	@Patch('/:channel_id')
@@ -78,10 +69,10 @@ export class ChannelsController
 	@UseInterceptors(AuthInterceptor)
 	changeUserPermissions(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Param('user_id', ParseIntPipe) user_id: number,
-		@Query() patchChannelUser: { role: 'None' | 'Admin' | 'Owner' },
+		@Query() patchChannelUserDto: PatchChannelUserDto,
 		@Req() req)
 	{
-		return this.channelsService.updateChannelUser(channel_id, user_id, req.user, patchChannelUser.role);
+		return this.channelsService.updateChannelUser(channel_id, user_id, req.user, patchChannelUserDto.role);
 	}
 
 	@Delete('/:channel_id/users/:user_id')
@@ -92,5 +83,70 @@ export class ChannelsController
 		@Req() req)
 	{
 		return this.channelsService.deleteChannelUser(channel_id, user_id, req.user)
+	}
+
+	@Get('/:channel_id/messages')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	getChannelMessages()
+	{
+
+	}
+
+	@Get('/:channel_id/messages/as_sender')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	getChannelMessagesAsSender()
+	{
+
+	}
+
+	@Get('/:channel_id/messages/as_recipient')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	getChannelMessagesAsRecipient()
+	{
+
+	}
+
+	@Post('/:channel_id/messages')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	createChannelMessage()
+	{
+
+	}
+
+	@Patch('/:channel_id/messages/:id')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	updateChannelMessage()
+	{
+
+	}
+	
+	@Delete('/:channel_id/messages/:id')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	deleteChannelMessage()
+	{
+
+	}
+
+	@Get('/conversations')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	getConversations()
+	{
+
+	}
+
+
+	@Get('/:channel_id/banlist')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	getChannelbanlist()
+	{
+		
 	}
 }

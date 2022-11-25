@@ -61,10 +61,9 @@ let MessagesService = class MessagesService {
         const pageMetaDto = new page_meta_dto_1.PageMetaDto({ itemCount, pageOptionsDto });
         return new page_dto_1.PageDto(entities, pageMetaDto);
     }
-    async createMessage(sender, recipient, content) {
+    async createMessage(sender, content) {
         const newMessage = this.messageRepository.create({
             sender: sender,
-            recipient: recipient,
             content: content
         });
         return this.messageRepository.save(newMessage);

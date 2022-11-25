@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PrivateMessage = void 0;
 const typeorm_1 = require("typeorm");
 const message_entity_1 = require("./message.entity");
+const user_entity_1 = require("./user.entity");
 let PrivateMessage = class PrivateMessage {
 };
 __decorate([
@@ -21,6 +22,11 @@ __decorate([
     }),
     __metadata("design:type", Number)
 ], PrivateMessage.prototype, "id", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, { nullable: true, eager: true }),
+    (0, typeorm_1.JoinColumn)(),
+    __metadata("design:type", user_entity_1.User)
+], PrivateMessage.prototype, "recipient", void 0);
 __decorate([
     (0, typeorm_1.OneToOne)(() => message_entity_1.Message, { eager: true }),
     (0, typeorm_1.JoinColumn)(),

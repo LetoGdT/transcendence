@@ -18,5 +18,6 @@ export declare class ChannelsService {
     updateChannel(id: number, patchChannelDto: PatchChannelDto, user: User): Promise<Channel>;
     joinChannel(id: number, requester: User, password: string): Promise<Channel>;
     updateChannelUser(channel_id: number, user_id: number, user: User, role: 'None' | 'Admin' | 'Owner'): Promise<Channel>;
+    findToPromote(users: ChannelUser[]): number;
     deleteChannelUser(channel_id: number, user_id: number, user: User): Promise<Channel>;
 }

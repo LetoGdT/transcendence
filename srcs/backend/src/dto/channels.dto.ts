@@ -1,4 +1,5 @@
-import { IsNotEmpty, MaxLength, MinLength, Matches, IsOptional, IsAscii } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, MaxLength, MinLength, Matches, IsOptional, IsAscii, IsIn } from 'class-validator';
 
 export class PostChannelDto
 {
@@ -10,6 +11,7 @@ export class PostChannelDto
 
 export class PatchChannelDto
 {
+	@IsIn(['public', 'private', 'protected'])
 	status: 'public' | 'private' | 'protected';
 
 	@IsOptional()
@@ -17,4 +19,16 @@ export class PatchChannelDto
 	@MinLength(8)
 	@MaxLength(40)
 	password: string;
+}
+
+export class PatchChannelUserDto
+{
+	@IsIn(['None', 'Admin', 'Owner'])
+	role: 'None' | 'Admin' | 'Owner';
+}
+
+export class PostChannelMessageDto
+{
+	@IsNotEmpty()
+	content: string;
 }

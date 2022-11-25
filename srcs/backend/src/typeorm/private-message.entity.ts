@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToOne, JoinColumn, ManyToOne } from 'typeorm';
 import { Message } from './message.entity';
+import { User } from './user.entity';
 
 
 @Entity()
@@ -10,6 +11,10 @@ export class PrivateMessage
 		name: 'privateMessage_id',
 	})
 	id: number;
+
+	@ManyToOne(() => User, { nullable: true, eager: true })
+	@JoinColumn()
+	recipient: User
 
 	@OneToOne(() => Message, { eager: true })
 	@JoinColumn()

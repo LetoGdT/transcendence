@@ -28,6 +28,7 @@ __decorate([
 __decorate([
     (0, class_validator_1.MinLength)(3),
     (0, class_validator_1.MaxLength)(20),
+    (0, class_validator_1.Matches)('^[ A-Za-z0-9_\\-!?]*$'),
     (0, typeorm_1.Column)({
         nullable: false,
         unique: true,
@@ -35,8 +36,11 @@ __decorate([
     __metadata("design:type", String)
 ], Channel.prototype, "name", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => channel_user_entity_1.ChannelUser, (channelUser) => channelUser.channel, { cascade: true }),
-    (0, typeorm_1.JoinColumn)(),
+    (0, typeorm_1.OneToMany)(() => channel_user_entity_1.ChannelUser, (channelUser) => channelUser.channel, {
+        eager: true,
+        onDelete: 'CASCADE',
+        cascade: true
+    }),
     __metadata("design:type", Array)
 ], Channel.prototype, "users", void 0);
 __decorate([
@@ -45,6 +49,7 @@ __decorate([
     __metadata("design:type", Array)
 ], Channel.prototype, "messages", void 0);
 __decorate([
+    (0, class_validator_1.IsIn)(['public', 'private', 'protected']),
     (0, typeorm_1.Column)({
         default: 'private',
     }),

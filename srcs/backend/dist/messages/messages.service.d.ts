@@ -12,7 +12,7 @@ export declare class MessagesService {
         as_sender?: boolean;
         as_recipient?: boolean;
     }): Promise<PageDto<Message>>;
-    createMessage(sender: User, recipient: User, content: string): Promise<Message>;
+    createMessage(sender: User, content: string): Promise<Message>;
     updateMessage(message: Message): Promise<Message>;
     deleteMessage(message: Message): Promise<void>;
 }

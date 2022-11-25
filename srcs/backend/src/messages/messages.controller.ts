@@ -52,16 +52,4 @@ export class MessagesController
 	{
 		return this.messagesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user, { as_recipient: true });
 	}
-
-	// This shouldn't exist, this is for testing the creation of messages
-	@Post()
-	@UseInterceptors(AuthInterceptor)
-	async createMessage(@Body() body: { recipient: string, content: string },
-		@Req() req)
-	{
-		const sender: User = req.user;
-		console.log(body.recipient);
-		const recipient: User = await this.usersService.getOneByLogin(body.recipient);
-		return this.messagesService.createMessage(sender, recipient, body.content);
-	}
 }

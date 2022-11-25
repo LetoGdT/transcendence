@@ -5,3 +5,9 @@ export declare class PatchChannelDto {
     status: 'public' | 'private' | 'protected';
     password: string;
 }
+export declare class PatchChannelUserDto {
+    role: 'None' | 'Admin' | 'Owner';
+}
+export declare class PostChannelMessageDto {
+    content: string;
+}
