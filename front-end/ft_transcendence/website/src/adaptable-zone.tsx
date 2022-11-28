@@ -292,83 +292,92 @@ export function Settings(){
 			<h1>Settings</h1>
 			<p>si user non connecter renvoyer vers /pleaseconnect</p>
 			<div className='Settings-container'>
-				<h2>Your avatar</h2>
 				<div className='Settings-container-div-lvl1'>
 					<div className='Settings-container-div-lvl2'>
-						<img src={Avatar} alt='your avatar' className='Settings-avatar-img'></img>
+						<h2>Your avatar</h2>
+						<div className='Settings-container-div-lvl3'>
+							<div className='Settings-container-div-lvl4'>
+								<img src={Avatar} alt='your avatar' className='Settings-avatar-img'></img>
+							</div>
+							<div className='Settings-container-div-lvl4'>
+								<Box
+									component="form"
+									noValidate
+									sx={{
+										display: 'grid',
+										gap: 2,
+									}}
+								>
+									<SettingsTextField
+										label="New avatar"
+										InputLabelProps={{
+										sx:{
+											color:"white",
+										}
+										}}
+										required
+										variant="outlined"
+										defaultValue="*.jpg or *.png"
+										sx={{ input: { color: 'grey' } }}
+										id="validation-outlined-input"
+										/>
+								</Box>
+							</div>
+							<div className='Settings-container-div-lvl4'>
+								<SettingsButton variant="contained" disableRipple>Browse</SettingsButton>
+							</div>
+						</div>
 					</div>
 					<div className='Settings-container-div-lvl2'>
-						<Box
-							component="form"
-							noValidate
-							sx={{
-								display: 'grid',
-								gap: 2,
-							}}
-						>
-							<SettingsTextField
-								label="New avatar"
-								InputLabelProps={{
-								sx:{
-									color:"white",
-								}
-								}}
-								required
-								variant="outlined"
-								defaultValue="*.jpg or *.png"
-								sx={{ input: { color: 'grey' } }}
-								id="validation-outlined-input"
-							/>
-						</Box>
+						<h2>Your alias</h2>
+						<div className='Settings-container-div-lvl3'>
+							<div className='Settings-container-div-lvl4'>
+								User's alias
+							</div>
+							<div className='Settings-container-div-lvl4'>
+							<Box
+									component="form"
+									noValidate
+									sx={{
+										display: 'grid',
+										gap: 2,
+									}}
+								>
+									<SettingsTextField
+										label="New alias"
+										InputLabelProps={{
+										sx:{
+											color:"white",
+										}
+										}}
+										required
+										variant="outlined"
+										defaultValue="ex: Toto"
+										sx={{ input: { color: 'grey' } }}
+										id="validation-outlined-input"
+									/>
+								</Box>
+							</div>
+						</div>
 					</div>
 					<div className='Settings-container-div-lvl2'>
-						<SettingsButton variant="contained" disableRipple>Browse</SettingsButton>
+						<h2>2FA - 2 Fractor Authentification</h2>
+						<div className='Settings-container-div-lvl3'>
+							<div className='Settings-container-div-lvl4'>
+								<Stack direction="row" spacing={1} alignItems="center">
+									<Typography color="common.white">Off</Typography>
+										<TwoFASwitch defaultChecked inputProps={{ 'aria-label': 'ant design' }} />
+									<Typography color="common.white">On</Typography>
+								</Stack>
+							</div>
+						</div>
 					</div>
+						
 				</div>
-				<h2>Your alias</h2>
-				<div className='Settings-container-div-lvl1'>
-					<div className='Settings-container-div-lvl2'>
-						User's alias
-					</div>
-					<div className='Settings-container-div-lvl2'>
-					<Box
-							component="form"
-							noValidate
-							sx={{
-								display: 'grid',
-								gap: 2,
-							}}
-						>
-							<SettingsTextField
-								label="New alias"
-								InputLabelProps={{
-								sx:{
-									color:"white",
-								}
-								}}
-								required
-								variant="outlined"
-								defaultValue="ex: Toto"
-								sx={{ input: { color: 'grey' } }}
-								id="validation-outlined-input"
-							/>
-						</Box>
-					</div>
-				</div>
-				<h2>2FA - 2 Fractor Authentification</h2>
-				<div className='Settings-container-div-lvl1'>
-					<div className='Settings-container-div-lvl2'>
-						<Stack direction="row" spacing={1} alignItems="center">
-							<Typography color="common.white">Off</Typography>
-								<TwoFASwitch defaultChecked inputProps={{ 'aria-label': 'ant design' }} />
-							<Typography color="common.white">On</Typography>
-						</Stack>
-					</div>
-				</div>
-				<div className='Settings-container-div-lvl1'>
+				<div>
 					<SettingsButton variant="contained" disableRipple>Validate change(s)</SettingsButton>
 				</div>
-					*Fill in the field is not required
+				*Fill in the field is not required.
 			</div>
 		</React.Fragment>
 	);
