@@ -1,16 +1,19 @@
 import { Injectable, BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Brackets } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 import { Channel } from '../typeorm/channel.entity';
-// import { ChannelUser } from '../typeorm/channel-user.entity';
 import { User } from '../typeorm/user.entity';
 import { ChannelUser } from '../typeorm/channel-user.entity';
+import { Message } from '../typeorm/message.entity';
 import { PostChannelDto } from '../dto/channels.dto';
 import { PatchChannelDto } from '../dto/channels.dto';
 import { PageDto } from "../dto/page.dto";
 import { PageMetaDto } from "../dto/page-meta.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
-import * as bcrypt from 'bcrypt';
+import { MessageQueryFilterDto } from '../dto/query-filters.dto';
+import { PostPrivateDto, UpdateMessageDto } from '../dto/private-messages.dto';
+import { UserSelectDto } from '../dto/messages.dto';
 
 @Injectable()
 export class ChannelsService
@@ -284,5 +287,43 @@ export class ChannelsService
 		}
 
 		throw new HttpException('You can\'t delete a user with a higher or equal role', HttpStatus.FORBIDDEN);
+	}
+
+	async getChannelMessages(pageOptionsDto: PageOptionsDto,
+		messageQueryFilterDto: MessageQueryFilterDto,
+		userSelectDto: UserSelectDto,
+		user: User,
+		options?: { as_sender?: boolean, as_recipient?: boolean })//: Promise<PageDto<Message>>
+	{
+		const queryBuilder = this.channelRepository.createQueryBuilder("channel");
+
+		queryBuilder
+			.leftJoinAndSelect('channel.message', 'message')
+			.leftJoinAndSelect('message.sender', 'sender')
+			.where(messageQueryFilterDto.id != null
+				? 'channel.id = :id'
+				: 'TRUE', { id: messageQueryFilterDto.id })
+			.andWhere(messageQueryFilterDto.message_id != null
+				? 'message.id = :message_id'
+				: 'TRUE', { message_id: messageQueryFilterDto.message_id })
+			.andWhere(messageQueryFilterDto.start_at != null
+				? 'message.sent_date > :start_at'
+				: 'TRUE', { start_at: messageQueryFilterDto.start_at })
+			.andWhere(messageQueryFilterDto.end_at != null
+				? 'message.sent_date < :end_at'
+				: 'TRUE', { end_at: messageQueryFilterDto.end_at })
+			.andWhere(userSelectDto.sender_id != null
+				? 'message.sender = :sender_id'
+				: 'TRUE', { sender_id: userSelectDto.sender_id })
+			.orderBy('message.sent_date', pageOptionsDto.order)
+			.skip(pageOptionsDto.skip)
+			.take(pageOptionsDto.take);
+
+		const itemCount = await queryBuilder.getCount();
+		const { entities } = await queryBuilder.getRawAndEntities();
+
+		const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
+
+		return new PageDto(entities, pageMetaDto);
 	}
 }

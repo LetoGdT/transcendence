@@ -4,6 +4,8 @@ import { ChannelUser } from '../typeorm/channel-user.entity';
 import { PageDto } from "../dto/page.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
 import { PostChannelDto, PatchChannelDto, PatchChannelUserDto } from '../dto/channels.dto';
+import { MessageQueryFilterDto } from '../dto/query-filters.dto';
+import { UserSelectDto } from '../dto/messages.dto';
 export declare class ChannelsController {
     private readonly channelsService;
     constructor(channelsService: ChannelsService);
@@ -16,7 +18,7 @@ export declare class ChannelsController {
     }, req: any): Promise<Channel>;
     changeUserPermissions(channel_id: number, user_id: number, patchChannelUserDto: PatchChannelUserDto, req: any): Promise<Channel>;
     leaveChannel(channel_id: number, user_id: number, req: any): Promise<Channel>;
-    getChannelMessages(): void;
+    getChannelMessages(pageOptionsDto: PageOptionsDto, messageQueryFilterDto: MessageQueryFilterDto, userSelectDto: UserSelectDto, req: any): Promise<PageDto<Channel>>;
     getChannelMessagesAsSender(): void;
     getChannelMessagesAsRecipient(): void;
     createChannelMessage(): void;

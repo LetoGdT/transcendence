@@ -18,6 +18,8 @@ const channels_service_1 = require("./channels.service");
 const auth_interceptor_1 = require("../auth/auth.interceptor");
 const page_options_dto_1 = require("../dto/page-options.dto");
 const channels_dto_1 = require("../dto/channels.dto");
+const query_filters_dto_1 = require("../dto/query-filters.dto");
+const messages_dto_1 = require("../dto/messages.dto");
 let ChannelsController = class ChannelsController {
     constructor(channelsService) {
         this.channelsService = channelsService;
@@ -43,7 +45,8 @@ let ChannelsController = class ChannelsController {
     leaveChannel(channel_id, user_id, req) {
         return this.channelsService.deleteChannelUser(channel_id, user_id, req.user);
     }
-    getChannelMessages() {
+    getChannelMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req) {
+        return this.channelsService.getChannelMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user);
     }
     getChannelMessagesAsSender() {
     }
@@ -140,8 +143,14 @@ __decorate([
     (0, common_1.Get)('/:channel_id/messages'),
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
     (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Query)()),
+    __param(2, (0, common_1.Query)()),
+    __param(3, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [page_options_dto_1.PageOptionsDto,
+        query_filters_dto_1.MessageQueryFilterDto,
+        messages_dto_1.UserSelectDto, Object]),
     __metadata("design:returntype", void 0)
 ], ChannelsController.prototype, "getChannelMessages", null);
 __decorate([

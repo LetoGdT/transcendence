@@ -10,6 +10,9 @@ import { ChannelUser } from '../typeorm/channel-user.entity';
 import { PageDto } from "../dto/page.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
 import { PostChannelDto, PatchChannelDto, PatchChannelUserDto } from '../dto/channels.dto';
+import { PostPrivateDto, UpdateMessageDto } from '../dto/private-messages.dto';
+import { MessageQueryFilterDto } from '../dto/query-filters.dto';
+import { UserSelectDto } from '../dto/messages.dto';
 
 @Controller('channels')
 export class ChannelsController
@@ -41,7 +44,7 @@ export class ChannelsController
 		@Query() patchChannelDto: PatchChannelDto,
 		@Req() req): Promise<Channel>
 	{
-		return this.channelsService.updateChannel(channel_id, patchChannelDto, req.user)
+		return this.channelsService.updateChannel(channel_id, patchChannelDto, req.user);
 	}
 
 	@Get('/:channel_id/users')
@@ -51,7 +54,7 @@ export class ChannelsController
 		@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Req() req): Promise<PageDto<ChannelUser>>
 	{
-		return this.channelsService.getChannelUsers(pageOptionsDto, channel_id, req.user)
+		return this.channelsService.getChannelUsers(pageOptionsDto, channel_id, req.user);
 	}
 
 	@Post('/:channel_id/users')
@@ -88,9 +91,12 @@ export class ChannelsController
 	@Get('/:channel_id/messages')
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	getChannelMessages()
+	getChannelMessages(@Query() pageOptionsDto: PageOptionsDto,
+		@Query() messageQueryFilterDto: MessageQueryFilterDto,
+		@Query() userSelectDto: UserSelectDto,
+		@Req() req)
 	{
-
+		return this.channelsService.getChannelMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user);
 	}
 
 	@Get('/:channel_id/messages/as_sender')

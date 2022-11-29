@@ -16,11 +16,11 @@ exports.ChannelsService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
+const bcrypt = require("bcrypt");
 const channel_entity_1 = require("../typeorm/channel.entity");
 const channel_user_entity_1 = require("../typeorm/channel-user.entity");
 const page_dto_1 = require("../dto/page.dto");
 const page_meta_dto_1 = require("../dto/page-meta.dto");
-const bcrypt = require("bcrypt");
 let ChannelsService = class ChannelsService {
     constructor(channelRepository, channelUserRepository) {
         this.channelRepository = channelRepository;
@@ -217,6 +217,34 @@ let ChannelsService = class ChannelsService {
             return this.channelRepository.save(channel);
         }
         throw new common_1.HttpException('You can\'t delete a user with a higher or equal role', common_1.HttpStatus.FORBIDDEN);
+    }
+    async getChannelMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, user, options) {
+        const queryBuilder = this.channelRepository.createQueryBuilder("channel");
+        queryBuilder
+            .leftJoinAndSelect('channel.message', 'message')
+            .leftJoinAndSelect('message.sender', 'sender')
+            .where(messageQueryFilterDto.id != null
+            ? 'channel.id = :id'
+            : 'TRUE', { id: messageQueryFilterDto.id })
+            .andWhere(messageQueryFilterDto.message_id != null
+            ? 'message.id = :message_id'
+            : 'TRUE', { message_id: messageQueryFilterDto.message_id })
+            .andWhere(messageQueryFilterDto.start_at != null
+            ? 'message.sent_date > :start_at'
+            : 'TRUE', { start_at: messageQueryFilterDto.start_at })
+            .andWhere(messageQueryFilterDto.end_at != null
+            ? 'message.sent_date < :end_at'
+            : 'TRUE', { end_at: messageQueryFilterDto.end_at })
+            .andWhere(userSelectDto.sender_id != null
+            ? 'message.sender = :sender_id'
+            : 'TRUE', { sender_id: userSelectDto.sender_id })
+            .orderBy('message.sent_date', pageOptionsDto.order)
+            .skip(pageOptionsDto.skip)
+            .take(pageOptionsDto.take);
+        const itemCount = await queryBuilder.getCount();
+        const { entities } = await queryBuilder.getRawAndEntities();
+        const pageMetaDto = new page_meta_dto_1.PageMetaDto({ itemCount, pageOptionsDto });
+        return new page_dto_1.PageDto(entities, pageMetaDto);
     }
 };
 ChannelsService = __decorate([

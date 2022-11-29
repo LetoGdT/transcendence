@@ -6,6 +6,8 @@ import { PostChannelDto } from '../dto/channels.dto';
 import { PatchChannelDto } from '../dto/channels.dto';
 import { PageDto } from "../dto/page.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
+import { MessageQueryFilterDto } from '../dto/query-filters.dto';
+import { UserSelectDto } from '../dto/messages.dto';
 export declare class ChannelsService {
     private readonly channelRepository;
     private readonly channelUserRepository;
@@ -20,4 +22,8 @@ export declare class ChannelsService {
     updateChannelUser(channel_id: number, user_id: number, user: User, role: 'None' | 'Admin' | 'Owner'): Promise<Channel>;
     findToPromote(users: ChannelUser[]): number;
     deleteChannelUser(channel_id: number, user_id: number, user: User): Promise<Channel>;
+    getChannelMessages(pageOptionsDto: PageOptionsDto, messageQueryFilterDto: MessageQueryFilterDto, userSelectDto: UserSelectDto, user: User, options?: {
+        as_sender?: boolean;
+        as_recipient?: boolean;
+    }): Promise<PageDto<Channel>>;
 }
