@@ -30,7 +30,7 @@ export class Channel
 	})
 	users: ChannelUser[];
 
-	@OneToMany(() => Message, (message) => message.channel)
+	@OneToMany(() => Message, (message) => message.channel, { cascade: true, eager: true })
 	@JoinColumn()
 	messages: Message[];
 

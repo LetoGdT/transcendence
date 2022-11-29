@@ -18,6 +18,7 @@ __decorate([
     (0, class_transformer_1.Type)(() => Number),
     (0, class_validator_1.Min)(1),
     (0, class_validator_1.Max)(Number.MAX_SAFE_INTEGER),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], PostPrivateDto.prototype, "recipient_id", void 0);
 __decorate([

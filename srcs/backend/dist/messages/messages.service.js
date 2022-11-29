@@ -27,7 +27,6 @@ let MessagesService = class MessagesService {
         const queryBuilder = this.messageRepository.createQueryBuilder("message");
         queryBuilder
             .leftJoinAndSelect('message.sender', 'sender')
-            .leftJoinAndSelect('message.recipient', 'recipient')
             .where(messageQueryFilterDto.id != null
             ? 'message.id = :id'
             : 'TRUE', { id: messageQueryFilterDto.id })
@@ -40,19 +39,36 @@ let MessagesService = class MessagesService {
             .andWhere(userSelectDto.sender_id != null
             ? 'message.sender = :sender_id'
             : 'TRUE', { sender_id: userSelectDto.sender_id })
-            .andWhere(userSelectDto.recipient_id != null
-            ? 'message.recipient = :recipient_id'
-            : 'TRUE', { recipient_id: userSelectDto.recipient_id })
-            .andWhere(new typeorm_2.Brackets(qb => {
-            qb.where("message.sender = :user_id", { user_id: user.id })
-                .orWhere("message.recipient = :user_id", { user_id: user.id });
-        }))
-            .andWhere(options && options.as_sender == true
-            ? 'message.recipient = :user_id'
-            : 'TRUE', { user_id: user.id })
-            .andWhere(options && options.as_recipient == true
+            .andWhere("message.sender = :user_id", { user_id: user.id })
+            .andWhere(options != null && options.as_sender === true
             ? 'message.sender = :user_id'
             : 'TRUE', { user_id: user.id })
+            .orderBy('message.sent_date', pageOptionsDto.order)
+            .skip(pageOptionsDto.skip)
+            .take(pageOptionsDto.take);
+        const itemCount = await queryBuilder.getCount();
+        const { entities } = await queryBuilder.getRawAndEntities();
+        const pageMetaDto = new page_meta_dto_1.PageMetaDto({ itemCount, pageOptionsDto });
+        return new page_dto_1.PageDto(entities, pageMetaDto);
+    }
+    async getChannelMessages(channel_id, pageOptionsDto, messageQueryFilterDto, userSelectDto, user, as_sender) {
+        const queryBuilder = this.messageRepository.createQueryBuilder("message");
+        queryBuilder
+            .leftJoinAndSelect('message.sender', 'sender')
+            .leftJoinAndSelect('message.channel', 'channel')
+            .where('channel.id = :channel_id', { channel_id: channel_id })
+            .andWhere(messageQueryFilterDto.id != null
+            ? 'message.id = :id'
+            : 'TRUE', { id: messageQueryFilterDto.id })
+            .andWhere(messageQueryFilterDto.start_at != null
+            ? 'message.sent_date > :start_at'
+            : 'TRUE', { start_at: messageQueryFilterDto.start_at })
+            .andWhere(messageQueryFilterDto.end_at != null
+            ? 'message.sent_date < :end_at'
+            : 'TRUE', { end_at: messageQueryFilterDto.end_at })
+            .andWhere(userSelectDto.sender_id != null
+            ? 'message.sender = :sender_id'
+            : 'TRUE', { sender_id: userSelectDto.sender_id })
             .orderBy('message.sent_date', pageOptionsDto.order)
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take);
@@ -69,6 +85,14 @@ let MessagesService = class MessagesService {
         return this.messageRepository.save(newMessage);
     }
     async updateMessage(message) {
+        return this.messageRepository.save(message);
+    }
+    async updateMessageFromId(id, content) {
+        const queryBuilder = this.messageRepository.createQueryBuilder("message");
+        const message = await queryBuilder
+            .where('message.id = :id', { id: id })
+            .getOne();
+        message.content = content;
         return this.messageRepository.save(message);
     }
     async deleteMessage(message) {

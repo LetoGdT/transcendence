@@ -6,6 +6,7 @@ import { Channel } from '../typeorm/channel.entity';
 import { User } from '../typeorm/user.entity';
 import { ChannelUser } from '../typeorm/channel-user.entity';
 import { Message } from '../typeorm/message.entity';
+import { MessagesService } from '../messages/messages.service';
 import { PostChannelDto } from '../dto/channels.dto';
 import { PatchChannelDto } from '../dto/channels.dto';
 import { PageDto } from "../dto/page.dto";
@@ -26,7 +27,8 @@ export class ChannelsService
 	]);
 
 	constructor(@InjectRepository(Channel) private readonly channelRepository: Repository<Channel>,
-		@InjectRepository(ChannelUser) private readonly channelUserRepository: Repository<ChannelUser>)
+		@InjectRepository(ChannelUser) private readonly channelUserRepository: Repository<ChannelUser>,
+		private readonly messagesService: MessagesService)
 		{}
 
 	async getChannels(pageOptionsDto: PageOptionsDto, user: User): Promise<PageDto<Channel>>
@@ -289,41 +291,132 @@ export class ChannelsService
 		throw new HttpException('You can\'t delete a user with a higher or equal role', HttpStatus.FORBIDDEN);
 	}
 
-	async getChannelMessages(pageOptionsDto: PageOptionsDto,
+	async getChannelMessages(channel_id: number,
+		pageOptionsDto: PageOptionsDto,
 		messageQueryFilterDto: MessageQueryFilterDto,
 		userSelectDto: UserSelectDto,
 		user: User,
-		options?: { as_sender?: boolean, as_recipient?: boolean })//: Promise<PageDto<Message>>
+		as_sender?: boolean): Promise<PageDto<Message>>
 	{
-		const queryBuilder = this.channelRepository.createQueryBuilder("channel");
+		return await this.messagesService.getChannelMessages(channel_id, pageOptionsDto,
+			messageQueryFilterDto, userSelectDto, user, as_sender);
+	}
+
+	async createChannelMessage(channel_id: number, postPrivateDto: PostPrivateDto, sender: User)
+	{
+		if (channel_id > this.IdMax)
+			throw new BadRequestException(`channel_id must not be greater than ${this.IdMax}`);
+
+		const queryBuilder = this.channelRepository.createQueryBuilder('channel');
 
 		queryBuilder
-			.leftJoinAndSelect('channel.message', 'message')
-			.leftJoinAndSelect('message.sender', 'sender')
-			.where(messageQueryFilterDto.id != null
-				? 'channel.id = :id'
-				: 'TRUE', { id: messageQueryFilterDto.id })
-			.andWhere(messageQueryFilterDto.message_id != null
-				? 'message.id = :message_id'
-				: 'TRUE', { message_id: messageQueryFilterDto.message_id })
-			.andWhere(messageQueryFilterDto.start_at != null
-				? 'message.sent_date > :start_at'
-				: 'TRUE', { start_at: messageQueryFilterDto.start_at })
-			.andWhere(messageQueryFilterDto.end_at != null
-				? 'message.sent_date < :end_at'
-				: 'TRUE', { end_at: messageQueryFilterDto.end_at })
-			.andWhere(userSelectDto.sender_id != null
-				? 'message.sender = :sender_id'
-				: 'TRUE', { sender_id: userSelectDto.sender_id })
-			.orderBy('message.sent_date', pageOptionsDto.order)
-			.skip(pageOptionsDto.skip)
-			.take(pageOptionsDto.take);
+			.leftJoinAndSelect('channel.users', 'users')
+			.leftJoinAndSelect('channel.messages', 'messages')
+			.leftJoinAndSelect('users.user', 'user')
+			.where('channel.id = :channel_id', { channel_id: channel_id });
 
-		const itemCount = await queryBuilder.getCount();
-		const { entities } = await queryBuilder.getRawAndEntities();
+		const channel = await queryBuilder.getOne();
 
-		const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
+		if (channel == null)
+			throw new HttpException('Not found', HttpStatus.NOT_FOUND);
 
-		return new PageDto(entities, pageMetaDto);
+		let senderIndex: number = channel.users.findIndex((user) => {
+			return user.user.id === sender.id;
+		});
+
+		if (senderIndex === -1)
+			throw new HttpException('You are not in this channel', HttpStatus.FORBIDDEN);
+
+		const newMessage : Message = new Message();
+
+		newMessage.sender = sender;
+		newMessage.content = postPrivateDto.content;
+
+		channel.messages.push(newMessage);
+		return this.channelRepository.save(channel);
+	}
+
+	async updateChannelMessage(channel_id: number, message_id: number,
+		updateMessageDto: UpdateMessageDto, sender: User)
+	{
+		if (channel_id > this.IdMax)
+			throw new BadRequestException(`channel_id must not be greater than ${this.IdMax}`);
+
+		const queryBuilder = this.channelRepository.createQueryBuilder('channel');
+
+		queryBuilder
+			.leftJoinAndSelect('channel.users', 'users')
+			.leftJoinAndSelect('channel.messages', 'messages')
+			.leftJoinAndSelect('users.user', 'user')
+			.where('channel.id = :channel_id', { channel_id: channel_id });
+
+		const channel = await queryBuilder.getOne();
+
+		if (channel == null)
+			throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
+
+		let senderIndex: number = channel.users.findIndex((user) => {
+			return user.user.id === sender.id;
+		});
+
+		if (senderIndex === -1)
+			throw new HttpException('You are not in this channel', HttpStatus.FORBIDDEN);
+
+		let messageIndex: number = channel.messages.findIndex((message) => {
+			return message.id == message_id;
+		});
+
+		if (messageIndex === -1)
+			throw new HttpException('Message not found', HttpStatus.NOT_FOUND);
+
+		if (channel.messages[messageIndex].sender.id != sender.id)
+			throw new HttpException('You can only modify your own messages', HttpStatus.FORBIDDEN);
+
+		return this.messagesService.updateMessageFromId(message_id, updateMessageDto.content);
+	}
+
+	async deleteChannelMessage(channel_id: number, message_id: number, sender: User)
+	{
+		if (channel_id > this.IdMax)
+			throw new BadRequestException(`channel_id must not be greater than ${this.IdMax}`);
+
+		const queryBuilder = this.channelRepository.createQueryBuilder('channel');
+
+		queryBuilder
+			.leftJoinAndSelect('channel.users', 'users')
+			.leftJoinAndSelect('channel.messages', 'messages')
+			.leftJoinAndSelect('messages.sender', 'sender')
+			.leftJoinAndSelect('users.user', 'user')
+			.where('channel.id = :channel_id', { channel_id: channel_id });
+
+		const channel = await queryBuilder.getOne();
+
+		if (channel == null)
+			throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
+
+		let senderIndex: number = channel.users.findIndex((user) => {
+			return user.user.id === sender.id;
+		});
+
+		if (senderIndex === -1)
+			throw new HttpException('You are not in this channel', HttpStatus.FORBIDDEN);
+
+		let messageIndex: number = channel.messages.findIndex((message) => {
+			return message.id == message_id;
+		});
+
+		if (messageIndex === -1)
+			throw new HttpException('Message not found', HttpStatus.NOT_FOUND);
+
+		console.log(channel.messages[messageIndex])
+
+		if (channel.messages[messageIndex].sender.id != sender.id)
+			throw new HttpException('You can only delete your own messages', HttpStatus.FORBIDDEN);
+
+		await this.messagesService.deleteMessage(channel.messages[messageIndex]);
+		
+		channel.messages.splice(messageIndex, 1);
+
+		return this.channelRepository.save(channel);
 	}
 }

@@ -18,6 +18,7 @@ const channels_service_1 = require("./channels.service");
 const auth_interceptor_1 = require("../auth/auth.interceptor");
 const page_options_dto_1 = require("../dto/page-options.dto");
 const channels_dto_1 = require("../dto/channels.dto");
+const private_messages_dto_1 = require("../dto/private-messages.dto");
 const query_filters_dto_1 = require("../dto/query-filters.dto");
 const messages_dto_1 = require("../dto/messages.dto");
 let ChannelsController = class ChannelsController {
@@ -45,18 +46,20 @@ let ChannelsController = class ChannelsController {
     leaveChannel(channel_id, user_id, req) {
         return this.channelsService.deleteChannelUser(channel_id, user_id, req.user);
     }
-    getChannelMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req) {
-        return this.channelsService.getChannelMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user);
+    getChannelMessages(channel_id, pageOptionsDto, messageQueryFilterDto, userSelectDto, req) {
+        return this.channelsService.getChannelMessages(channel_id, pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user);
     }
-    getChannelMessagesAsSender() {
+    getChannelMessagesAsSender(channel_id, pageOptionsDto, messageQueryFilterDto, userSelectDto, req) {
+        return this.channelsService.getChannelMessages(channel_id, pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user, true);
     }
-    getChannelMessagesAsRecipient() {
+    createChannelMessage(channel_id, postPrivateDto, req) {
+        return this.channelsService.createChannelMessage(channel_id, postPrivateDto, req.user);
     }
-    createChannelMessage() {
+    updateChannelMessage(channel_id, message_id, updateMessageDto, req) {
+        return this.channelsService.updateChannelMessage(channel_id, message_id, updateMessageDto, req.user);
     }
-    updateChannelMessage() {
-    }
-    deleteChannelMessage() {
+    deleteChannelMessage(channel_id, message_id, req) {
+        return this.channelsService.deleteChannelMessage(channel_id, message_id, req.user);
     }
     getConversations() {
     }
@@ -143,12 +146,13 @@ __decorate([
     (0, common_1.Get)('/:channel_id/messages'),
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
     (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
-    __param(0, (0, common_1.Query)()),
+    __param(0, (0, common_1.Param)('channel_id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Query)()),
     __param(2, (0, common_1.Query)()),
-    __param(3, (0, common_1.Req)()),
+    __param(3, (0, common_1.Query)()),
+    __param(4, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [page_options_dto_1.PageOptionsDto,
+    __metadata("design:paramtypes", [Number, page_options_dto_1.PageOptionsDto,
         query_filters_dto_1.MessageQueryFilterDto,
         messages_dto_1.UserSelectDto, Object]),
     __metadata("design:returntype", void 0)
@@ -157,40 +161,49 @@ __decorate([
     (0, common_1.Get)('/:channel_id/messages/as_sender'),
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
     (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Param)('channel_id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Query)()),
+    __param(2, (0, common_1.Query)()),
+    __param(3, (0, common_1.Query)()),
+    __param(4, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Number, page_options_dto_1.PageOptionsDto,
+        query_filters_dto_1.MessageQueryFilterDto,
+        messages_dto_1.UserSelectDto, Object]),
     __metadata("design:returntype", void 0)
 ], ChannelsController.prototype, "getChannelMessagesAsSender", null);
-__decorate([
-    (0, common_1.Get)('/:channel_id/messages/as_recipient'),
-    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
-    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], ChannelsController.prototype, "getChannelMessagesAsRecipient", null);
 __decorate([
     (0, common_1.Post)('/:channel_id/messages'),
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
     (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Param)('channel_id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Number, private_messages_dto_1.PostPrivateDto, Object]),
     __metadata("design:returntype", void 0)
 ], ChannelsController.prototype, "createChannelMessage", null);
 __decorate([
-    (0, common_1.Patch)('/:channel_id/messages/:id'),
+    (0, common_1.Patch)('/:channel_id/messages/:message_id'),
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
     (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Param)('channel_id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Param)('message_id', common_1.ParseIntPipe)),
+    __param(2, (0, common_1.Query)()),
+    __param(3, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Number, Number, private_messages_dto_1.UpdateMessageDto, Object]),
     __metadata("design:returntype", void 0)
 ], ChannelsController.prototype, "updateChannelMessage", null);
 __decorate([
-    (0, common_1.Delete)('/:channel_id/messages/:id'),
+    (0, common_1.Delete)('/:channel_id/messages/:message_id'),
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
     (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Param)('channel_id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Param)('message_id', common_1.ParseIntPipe)),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Number, Number, Object]),
     __metadata("design:returntype", void 0)
 ], ChannelsController.prototype, "deleteChannelMessage", null);
 __decorate([

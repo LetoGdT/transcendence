@@ -91,52 +91,58 @@ export class ChannelsController
 	@Get('/:channel_id/messages')
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	getChannelMessages(@Query() pageOptionsDto: PageOptionsDto,
+	getChannelMessages(@Param('channel_id', ParseIntPipe) channel_id: number,
+		@Query() pageOptionsDto: PageOptionsDto,
 		@Query() messageQueryFilterDto: MessageQueryFilterDto,
 		@Query() userSelectDto: UserSelectDto,
 		@Req() req)
 	{
-		return this.channelsService.getChannelMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user);
+		return this.channelsService.getChannelMessages(channel_id, pageOptionsDto, messageQueryFilterDto,
+			userSelectDto, req.user);
 	}
 
 	@Get('/:channel_id/messages/as_sender')
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	getChannelMessagesAsSender()
+	getChannelMessagesAsSender(@Param('channel_id', ParseIntPipe) channel_id: number,
+		@Query() pageOptionsDto: PageOptionsDto,
+		@Query() messageQueryFilterDto: MessageQueryFilterDto,
+		@Query() userSelectDto: UserSelectDto,
+		@Req() req)
 	{
-
-	}
-
-	@Get('/:channel_id/messages/as_recipient')
-	@UseInterceptors(ClassSerializerInterceptor)
-	@UseInterceptors(AuthInterceptor)
-	getChannelMessagesAsRecipient()
-	{
-
+		return this.channelsService.getChannelMessages(channel_id, pageOptionsDto, messageQueryFilterDto,
+			userSelectDto, req.user, true);
 	}
 
 	@Post('/:channel_id/messages')
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	createChannelMessage()
+	createChannelMessage(@Param('channel_id', ParseIntPipe) channel_id: number,
+		@Body() postPrivateDto: PostPrivateDto,
+		@Req() req)
 	{
-
+		return this.channelsService.createChannelMessage(channel_id, postPrivateDto, req.user);
 	}
 
-	@Patch('/:channel_id/messages/:id')
+	@Patch('/:channel_id/messages/:message_id')
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	updateChannelMessage()
+	updateChannelMessage(@Param('channel_id', ParseIntPipe) channel_id: number,
+		@Param('message_id', ParseIntPipe) message_id: number,
+		@Query() updateMessageDto: UpdateMessageDto,
+		@Req() req)
 	{
-
+		return this.channelsService.updateChannelMessage(channel_id, message_id, updateMessageDto, req.user)
 	}
 	
-	@Delete('/:channel_id/messages/:id')
+	@Delete('/:channel_id/messages/:message_id')
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	deleteChannelMessage()
+	deleteChannelMessage(@Param('channel_id', ParseIntPipe) channel_id: number,
+		@Param('message_id', ParseIntPipe) message_id: number,
+		@Req() req)
 	{
-
+		return this.channelsService.deleteChannelMessage(channel_id, message_id, req.user)
 	}
 
 	@Get('/conversations')
