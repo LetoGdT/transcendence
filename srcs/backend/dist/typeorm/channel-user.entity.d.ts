@@ -4,5 +4,6 @@ export declare class ChannelUser {
     id: number;
     user: User;
     role: 'None' | 'Admin' | 'Owner';
+    is_muted: Boolean;
     channel: Channel;
 }

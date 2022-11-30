@@ -7,6 +7,7 @@ import { PostChannelDto, PatchChannelDto, PatchChannelUserDto } from '../dto/cha
 import { PostPrivateDto, UpdateMessageDto } from '../dto/private-messages.dto';
 import { MessageQueryFilterDto } from '../dto/query-filters.dto';
 import { UserSelectDto } from '../dto/messages.dto';
+import { ChannelBanQueryFilterDto, PostChannelBanDto, UpdateChannelBanDto } from '../dto/channel-ban.dto';
 export declare class ChannelsController {
     private readonly channelsService;
     constructor(channelsService: ChannelsService);
@@ -25,5 +26,8 @@ export declare class ChannelsController {
     updateChannelMessage(channel_id: number, message_id: number, updateMessageDto: UpdateMessageDto, req: any): Promise<import("../typeorm/message.entity").Message>;
     deleteChannelMessage(channel_id: number, message_id: number, req: any): Promise<Channel>;
     getConversations(): void;
-    getChannelbanlist(): void;
+    getChannelBanlist(channel_id: number, pageOptionsDto: PageOptionsDto, channelBanQueryFilterDto: ChannelBanQueryFilterDto): Promise<PageDto<import("../typeorm/channel-ban.entity").ChannelBan>>;
+    banChannelUser(channel_id: number, postChannelBanDto: PostChannelBanDto, req: any): Promise<Channel>;
+    updateChannelBan(channel_id: number, ban_id: number, updateChannelBanDto: UpdateChannelBanDto, req: any): Promise<Channel>;
+    unbanChannelUser(channel_id: number, ban_id: number, req: any): Promise<Channel>;
 }

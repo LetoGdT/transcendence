@@ -35,6 +35,14 @@ __decorate([
     __metadata("design:type", String)
 ], ChannelUser.prototype, "role", void 0);
 __decorate([
+    (0, class_validator_1.IsBoolean)(),
+    (0, typeorm_1.Column)({
+        nullable: false,
+        default: false
+    }),
+    __metadata("design:type", Boolean)
+], ChannelUser.prototype, "is_muted", void 0);
+__decorate([
     (0, typeorm_1.ManyToOne)(() => channel_entity_1.Channel, (channel) => channel.users, { onDelete: 'CASCADE' }),
     __metadata("design:type", channel_entity_1.Channel)
 ], ChannelUser.prototype, "channel", void 0);

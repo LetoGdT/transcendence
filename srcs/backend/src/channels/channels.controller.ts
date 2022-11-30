@@ -13,6 +13,7 @@ import { PostChannelDto, PatchChannelDto, PatchChannelUserDto } from '../dto/cha
 import { PostPrivateDto, UpdateMessageDto } from '../dto/private-messages.dto';
 import { MessageQueryFilterDto } from '../dto/query-filters.dto';
 import { UserSelectDto } from '../dto/messages.dto';
+import { ChannelBanQueryFilterDto, PostChannelBanDto, UpdateChannelBanDto } from '../dto/channel-ban.dto';
 
 @Controller('channels')
 export class ChannelsController
@@ -75,7 +76,7 @@ export class ChannelsController
 		@Query() patchChannelUserDto: PatchChannelUserDto,
 		@Req() req)
 	{
-		return this.channelsService.updateChannelUser(channel_id, user_id, req.user, patchChannelUserDto.role);
+		return this.channelsService.updateChannelUser(channel_id, user_id, req.user, patchChannelUserDto);
 	}
 
 	@Delete('/:channel_id/users/:user_id')
@@ -157,8 +158,41 @@ export class ChannelsController
 	@Get('/:channel_id/banlist')
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	getChannelbanlist()
+	getChannelBanlist(@Param('channel_id', ParseIntPipe) channel_id: number,
+		@Query() pageOptionsDto: PageOptionsDto,
+		@Query() channelBanQueryFilterDto: ChannelBanQueryFilterDto,)
 	{
-		
+		return this.channelsService.getChannelBanlist(channel_id, pageOptionsDto, channelBanQueryFilterDto);
+	}
+
+	@Post('/:channel_id/banlist')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	banChannelUser(@Param('channel_id', ParseIntPipe) channel_id: number,
+		@Body() postChannelBanDto: PostChannelBanDto,
+		@Req() req)
+	{
+		return this.channelsService.banChannelUser(channel_id, postChannelBanDto, req.user);
+	}
+
+	@Patch('/:channel_id/banlist/:ban_id')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	updateChannelBan(@Param('channel_id', ParseIntPipe) channel_id: number,
+		@Param('ban_id', ParseIntPipe) ban_id: number,
+		@Query() updateChannelBanDto: UpdateChannelBanDto,
+		@Req() req)
+	{
+		return this.channelsService.updateChannelBan(channel_id, ban_id, updateChannelBanDto, req.user);
+	}
+
+	@Delete('/:channel_id/banlist/:ban_id')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	unbanChannelUser(@Param('channel_id', ParseIntPipe) channel_id: number,
+		@Param('ban_id', ParseIntPipe) ban_id: number,
+		@Req() req)
+	{
+		return this.channelsService.deleteChannelBan(channel_id, ban_id, req.user);
 	}
 }

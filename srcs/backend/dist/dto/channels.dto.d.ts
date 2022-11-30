@@ -7,6 +7,7 @@ export declare class PatchChannelDto {
 }
 export declare class PatchChannelUserDto {
     role: 'None' | 'Admin' | 'Owner';
+    is_muted: Boolean;
 }
 export declare class PostChannelMessageDto {
     content: string;

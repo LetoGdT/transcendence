@@ -4,6 +4,7 @@ import { Exclude } from 'class-transformer';
 import { User } from './user.entity';
 import { Message } from './message.entity';
 import { ChannelUser } from './channel-user.entity';
+import { ChannelBan } from '../typeorm/channel-ban.entity';
 
 @Entity()
 export class Channel
@@ -40,9 +41,12 @@ export class Channel
 	})
 	status: 'public' | 'private' | 'protected';
 
-	@ManyToMany(() => User, { eager: true })
-	@JoinColumn()
-	banlist: User[];
+	@OneToMany(() => ChannelBan, (channelBan) => channelBan.channel, {
+		eager: true,
+		onDelete: 'CASCADE',
+		cascade: true
+	})
+	banlist: ChannelBan[];
 
 	@Exclude({ toPlainOnly: true })
 	@IsAscii()

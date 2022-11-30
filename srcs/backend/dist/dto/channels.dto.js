@@ -38,8 +38,14 @@ class PatchChannelUserDto {
 }
 __decorate([
     (0, class_validator_1.IsIn)(['None', 'Admin', 'Owner']),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], PatchChannelUserDto.prototype, "role", void 0);
+__decorate([
+    (0, class_validator_1.IsBoolean)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Boolean)
+], PatchChannelUserDto.prototype, "is_muted", void 0);
 exports.PatchChannelUserDto = PatchChannelUserDto;
 class PostChannelMessageDto {
 }

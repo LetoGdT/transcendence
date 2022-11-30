@@ -7,14 +7,15 @@ import { User } from '../typeorm/user.entity';
 import { ChannelUser } from '../typeorm/channel-user.entity';
 import { Message } from '../typeorm/message.entity';
 import { MessagesService } from '../messages/messages.service';
-import { PostChannelDto } from '../dto/channels.dto';
-import { PatchChannelDto } from '../dto/channels.dto';
+import { PostChannelDto, PatchChannelUserDto, PatchChannelDto } from '../dto/channels.dto';
 import { PageDto } from "../dto/page.dto";
 import { PageMetaDto } from "../dto/page-meta.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
 import { MessageQueryFilterDto } from '../dto/query-filters.dto';
 import { PostPrivateDto, UpdateMessageDto } from '../dto/private-messages.dto';
 import { UserSelectDto } from '../dto/messages.dto';
+import { ChannelBanQueryFilterDto, PostChannelBanDto, UpdateChannelBanDto } from '../dto/channel-ban.dto';
+import { ChannelBan } from '../typeorm/channel-ban.entity';
 
 @Injectable()
 export class ChannelsService
@@ -28,6 +29,7 @@ export class ChannelsService
 
 	constructor(@InjectRepository(Channel) private readonly channelRepository: Repository<Channel>,
 		@InjectRepository(ChannelUser) private readonly channelUserRepository: Repository<ChannelUser>,
+		@InjectRepository(ChannelBan) private readonly channelBanRepository: Repository<ChannelBan>,
 		private readonly messagesService: MessagesService)
 		{}
 
@@ -37,7 +39,9 @@ export class ChannelsService
 
 		queryBuilder
 			.leftJoinAndSelect('channel.users', 'users')
-			.leftJoinAndSelect('users.user', 'user')
+			.leftJoinAndSelect('users.user', 'channelUser')
+			.leftJoinAndSelect('channel.banlist', 'banlist')
+			.leftJoinAndSelect('banlist.user', 'channelBan')
 			.orderBy('channel.id', pageOptionsDto.order)
 			.skip(pageOptionsDto.skip)
 			.take(pageOptionsDto.take);
@@ -155,10 +159,22 @@ export class ChannelsService
 				throw new HttpException('Passwords don\'t match', HttpStatus.FORBIDDEN);
 		}
 
+		let bannedIndex: number = channel.banlist.findIndex((users) => {
+			return users.user.id == requester.id;
+		});
+
+		if (bannedIndex !== -1)
+		{
+			const bannedUser = channel.banlist[bannedIndex];
+			if (bannedUser.unban_date == null || bannedUser.unban_date > new Date())
+				throw new HttpException('You are banned from this channel', HttpStatus.FORBIDDEN);
+			this.channelBanRepository.remove(bannedUser);
+		}
+
 		for (let channelUser of channel.users)
 		{
 			if (JSON.stringify(channelUser.user) == JSON.stringify(requester))
-				return channel;
+				throw new BadRequestException('You are already in this channel');
 		}
 
 		const newUser = new ChannelUser();
@@ -170,7 +186,7 @@ export class ChannelsService
 	}
 
 	async updateChannelUser(channel_id: number, user_id: number, user: User,
-		role: 'None' | 'Admin' | 'Owner')
+		patchChannelUserDto: PatchChannelUserDto)
 	{
 		if (channel_id > this.IdMax || user_id > this.IdMax)
 			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
@@ -212,15 +228,23 @@ export class ChannelsService
 			return user.id === requester.id;
 		});
 
-		if (this.permissions.get(requester.role) > this.permissions.get(toChange.role)
-			&& this.permissions.get(role) <= this.permissions.get(requester.role))
+		if (patchChannelUserDto.role != null
+			&& this.permissions.get(requester.role) > this.permissions.get(toChange.role)
+			&& this.permissions.get(patchChannelUserDto.role) <= this.permissions.get(requester.role))
 		{
-			channel.users[toChangeIndex].role = role;
-			if (role == 'Owner')
+			channel.users[toChangeIndex].role = patchChannelUserDto.role;
+			if (patchChannelUserDto.role == 'Owner')
 				channel.users[requesterIndex].role = 'Admin';
-			return this.channelRepository.save(channel);
 		}
-		throw new HttpException('You don\'t have permissions to execute this action', HttpStatus.FORBIDDEN);
+		else
+			throw new HttpException('You don\'t have permissions to execute this action', HttpStatus.FORBIDDEN);
+		if (patchChannelUserDto.is_muted != null
+			&& this.permissions.get(requester.role) > this.permissions.get(toChange.role))
+			channel.users[toChangeIndex].is_muted = patchChannelUserDto.is_muted;
+		else
+			throw new HttpException('You don\'t have permissions to execute this action', HttpStatus.FORBIDDEN);
+
+		return this.channelRepository.save(channel);
 	}
 
 	findToPromote(users: ChannelUser[]): number
@@ -327,6 +351,9 @@ export class ChannelsService
 		if (senderIndex === -1)
 			throw new HttpException('You are not in this channel', HttpStatus.FORBIDDEN);
 
+		if (channel.users[senderIndex].is_muted == true)
+			throw new HttpException('You are muted on this channel', HttpStatus.FORBIDDEN);
+
 		const newMessage : Message = new Message();
 
 		newMessage.sender = sender;
@@ -408,8 +435,6 @@ export class ChannelsService
 		if (messageIndex === -1)
 			throw new HttpException('Message not found', HttpStatus.NOT_FOUND);
 
-		console.log(channel.messages[messageIndex])
-
 		if (channel.messages[messageIndex].sender.id != sender.id)
 			throw new HttpException('You can only delete your own messages', HttpStatus.FORBIDDEN);
 
@@ -417,6 +442,185 @@ export class ChannelsService
 		
 		channel.messages.splice(messageIndex, 1);
 
+		return this.channelRepository.save(channel);
+	}
+
+	async getChannelBanlist(channel_id: number, pageOptionsDto: PageOptionsDto,
+		channelBanQueryFilterDto: ChannelBanQueryFilterDto): Promise<PageDto<ChannelBan>>
+	{
+		if (channel_id > this.IdMax)
+			throw new BadRequestException(`channel_id must not be greater than ${this.IdMax}`);
+
+		const queryBuilder = this.channelBanRepository.createQueryBuilder('channelBan');
+
+		queryBuilder
+			.leftJoinAndSelect('channelBan.user', 'user')
+			.leftJoinAndSelect('channelBan.channel', 'channel')
+			.where('channel.id = :channel_id', { channel_id: channel_id })
+			.andWhere(channelBanQueryFilterDto.user_id != null
+				? 'user.id = :id'
+				: 'TRUE', { id: channelBanQueryFilterDto.user_id })
+			.andWhere(channelBanQueryFilterDto.start_at != null
+				? 'channelBan.unban_date > :start_at'
+				: 'TRUE', { start_at: channelBanQueryFilterDto.start_at })
+			.andWhere(channelBanQueryFilterDto.end_at != null
+				? 'channelBan.unban_date < :end_at'
+				: 'TRUE', { end_at: channelBanQueryFilterDto.end_at })
+			.orderBy('channelBan.unban_date', pageOptionsDto.order)
+			.skip(pageOptionsDto.skip)
+			.take(pageOptionsDto.take);
+
+		const itemCount = await queryBuilder.getCount();
+		const { entities } = await queryBuilder.getRawAndEntities();
+
+		const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
+
+		return new PageDto(entities, pageMetaDto);
+	}
+
+	async banChannelUser(channel_id: number, postChannelBanDto: PostChannelBanDto, user: User)
+	{
+		if (channel_id > this.IdMax)
+			throw new BadRequestException(`channel_id must not be greater than ${this.IdMax}`);
+
+		const queryBuilder = this.channelRepository.createQueryBuilder('channel');
+
+		queryBuilder
+			.leftJoinAndSelect('channel.users', 'users')
+			.leftJoinAndSelect('users.user', 'user')
+			.leftJoinAndSelect('channel.banlist', 'banlist')
+			.where('channel.id = :channel_id', { channel_id: channel_id });
+
+		const channel = await queryBuilder.getOne();
+
+		if (channel == null)
+			throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
+
+		let bannedIndex: number = channel.banlist.findIndex((users) => {
+			return users.user.id == postChannelBanDto.user_id;
+		});
+
+		if (bannedIndex !== -1)
+			throw new BadRequestException('User is already banned');
+
+		const users = channel.users;
+
+		let userIndex: number = users.findIndex((users) => {
+			return users.user.id === user.id;
+		});
+
+		if (userIndex === -1)
+			throw new HttpException('You are not in this channel', HttpStatus.FORBIDDEN);
+
+		let toBanIndex: number = users.findIndex((users) => {
+			return users.user.id == postChannelBanDto.user_id;
+		});
+
+		if (toBanIndex === -1)
+			throw new HttpException('User was not found', HttpStatus.NOT_FOUND);
+
+		if (toBanIndex === userIndex)
+			throw new BadRequestException('You can\'t ban yourself !');
+
+		if (this.permissions[users[userIndex].role] <= this.permissions[users[toBanIndex].role])
+			throw new HttpException('You can\'t ban a user with a higher or equal role', HttpStatus.FORBIDDEN);
+
+		const bannedUser = new ChannelBan();
+
+		bannedUser.user = users[toBanIndex].user;
+		bannedUser.unban_date = postChannelBanDto.unban_date;
+
+		channel.banlist.push(bannedUser);
+		channel.users.splice(toBanIndex, 1);
+		return this.channelRepository.save(channel);
+	}
+
+	async updateChannelBan(channel_id: number, ban_id: number, updateChannelBanDto: UpdateChannelBanDto, user: User)
+	{
+		if (channel_id > this.IdMax)
+			throw new BadRequestException(`channel_id must not be greater than ${this.IdMax}`);
+
+		const queryBuilder = this.channelRepository.createQueryBuilder('channel');
+
+		queryBuilder
+			.leftJoinAndSelect('channel.users', 'users')
+			.leftJoinAndSelect('users.user', 'user')
+			.leftJoinAndSelect('channel.banlist', 'banlist')
+			.where('channel.id = :channel_id', { channel_id: channel_id });
+
+		const channel = await queryBuilder.getOne();
+
+		if (channel == null)
+			throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
+
+		const banlist = channel.banlist;
+
+		let userIndex: number = channel.users.findIndex((users) => {
+			return users.user.id === user.id;
+		});
+
+		if (userIndex === -1)
+			throw new HttpException('You are not in this channel', HttpStatus.FORBIDDEN);
+
+		let bannedIndex: number = banlist.findIndex((users) => {
+			return users.id == ban_id;
+		});
+
+		if (bannedIndex === -1)
+			throw new HttpException('User ban was not found', HttpStatus.NOT_FOUND);
+
+		if (banlist[bannedIndex].id === user.id)
+			throw new BadRequestException('You can\'t unban yourself !');
+
+		if (this.permissions[channel.users[userIndex].role] < this.permissions['Admin'])
+			throw new HttpException('You need to be admin or owner to edit a ban', HttpStatus.FORBIDDEN);
+
+		channel.banlist[bannedIndex].unban_date = updateChannelBanDto.unban_date;
+		return this.channelRepository.save(channel);
+	}
+
+	async deleteChannelBan(channel_id: number, ban_id: number, user: User)
+	{
+		if (channel_id > this.IdMax)
+			throw new BadRequestException(`channel_id must not be greater than ${this.IdMax}`);
+
+		const queryBuilder = this.channelRepository.createQueryBuilder('channel');
+
+		queryBuilder
+			.leftJoinAndSelect('channel.users', 'users')
+			.leftJoinAndSelect('users.user', 'user')
+			.leftJoinAndSelect('channel.banlist', 'banlist')
+			.where('channel.id = :channel_id', { channel_id: channel_id });
+
+		const channel = await queryBuilder.getOne();
+
+		if (channel == null)
+			throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
+
+		const banlist = channel.banlist;
+
+		let userIndex: number = channel.users.findIndex((users) => {
+			return users.user.id === user.id;
+		});
+
+		if (userIndex === -1)
+			throw new HttpException('You are not in this channel', HttpStatus.FORBIDDEN);
+
+		let bannedIndex: number = banlist.findIndex((users) => {
+			return users.id == ban_id;
+		});
+
+		if (bannedIndex === -1)
+			throw new HttpException('User ban was not found', HttpStatus.NOT_FOUND);
+
+		if (banlist[bannedIndex].id === user.id)
+			throw new BadRequestException('You can\'t unban yourself !');
+
+		if (this.permissions[channel.users[userIndex].role] < this.permissions['Admin'])
+			throw new HttpException('You need to be admin or owner to edit a ban', HttpStatus.FORBIDDEN);
+
+		this.channelBanRepository.remove(banlist[bannedIndex]);
+		channel.banlist.splice(bannedIndex, 1);
 		return this.channelRepository.save(channel);
 	}
 }

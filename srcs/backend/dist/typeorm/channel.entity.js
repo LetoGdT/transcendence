@@ -13,9 +13,9 @@ exports.Channel = void 0;
 const typeorm_1 = require("typeorm");
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
-const user_entity_1 = require("./user.entity");
 const message_entity_1 = require("./message.entity");
 const channel_user_entity_1 = require("./channel-user.entity");
+const channel_ban_entity_1 = require("../typeorm/channel-ban.entity");
 let Channel = class Channel {
 };
 __decorate([
@@ -56,8 +56,11 @@ __decorate([
     __metadata("design:type", String)
 ], Channel.prototype, "status", void 0);
 __decorate([
-    (0, typeorm_1.ManyToMany)(() => user_entity_1.User, { eager: true }),
-    (0, typeorm_1.JoinColumn)(),
+    (0, typeorm_1.OneToMany)(() => channel_ban_entity_1.ChannelBan, (channelBan) => channelBan.channel, {
+        eager: true,
+        onDelete: 'CASCADE',
+        cascade: true
+    }),
     __metadata("design:type", Array)
 ], Channel.prototype, "banlist", void 0);
 __decorate([

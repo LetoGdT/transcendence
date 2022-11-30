@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty, MaxLength, MinLength, Matches, IsOptional, IsAscii, IsIn } from 'class-validator';
+import { IsNotEmpty, MaxLength, MinLength, Matches, IsOptional, IsAscii, IsIn, IsBoolean } from 'class-validator';
 
 export class PostChannelDto
 {
@@ -24,7 +24,12 @@ export class PatchChannelDto
 export class PatchChannelUserDto
 {
 	@IsIn(['None', 'Admin', 'Owner'])
+	@IsOptional()
 	role: 'None' | 'Admin' | 'Owner';
+
+	@IsBoolean()
+	@IsOptional()
+	is_muted: Boolean
 }
 
 export class PostChannelMessageDto

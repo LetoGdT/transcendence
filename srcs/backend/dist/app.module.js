@@ -17,6 +17,7 @@ const message_entity_1 = require("./typeorm/message.entity");
 const private_message_entity_1 = require("./typeorm/private-message.entity");
 const channel_entity_1 = require("./typeorm/channel.entity");
 const channel_user_entity_1 = require("./typeorm/channel-user.entity");
+const channel_ban_entity_1 = require("./typeorm/channel-ban.entity");
 const messages_module_1 = require("./messages/messages.module");
 const privates_module_1 = require("./privates/privates.module");
 const channels_module_1 = require("./channels/channels.module");
@@ -37,7 +38,7 @@ AppModule = __decorate([
                     username: configService.get('DB_USERNAME'),
                     password: configService.get('DB_PASSWORD'),
                     database: configService.get('DB_NAME'),
-                    entities: [user_entity_1.User, message_entity_1.Message, private_message_entity_1.PrivateMessage, channel_entity_1.Channel, channel_user_entity_1.ChannelUser],
+                    entities: [user_entity_1.User, message_entity_1.Message, private_message_entity_1.PrivateMessage, channel_entity_1.Channel, channel_user_entity_1.ChannelUser, channel_ban_entity_1.ChannelBan,],
                     synchronize: true,
                 }),
                 inject: [config_1.ConfigService],

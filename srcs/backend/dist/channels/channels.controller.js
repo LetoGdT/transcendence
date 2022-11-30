@@ -21,6 +21,7 @@ const channels_dto_1 = require("../dto/channels.dto");
 const private_messages_dto_1 = require("../dto/private-messages.dto");
 const query_filters_dto_1 = require("../dto/query-filters.dto");
 const messages_dto_1 = require("../dto/messages.dto");
+const channel_ban_dto_1 = require("../dto/channel-ban.dto");
 let ChannelsController = class ChannelsController {
     constructor(channelsService) {
         this.channelsService = channelsService;
@@ -41,7 +42,7 @@ let ChannelsController = class ChannelsController {
         return this.channelsService.joinChannel(channel_id, req.user, body.password);
     }
     changeUserPermissions(channel_id, user_id, patchChannelUserDto, req) {
-        return this.channelsService.updateChannelUser(channel_id, user_id, req.user, patchChannelUserDto.role);
+        return this.channelsService.updateChannelUser(channel_id, user_id, req.user, patchChannelUserDto);
     }
     leaveChannel(channel_id, user_id, req) {
         return this.channelsService.deleteChannelUser(channel_id, user_id, req.user);
@@ -63,7 +64,17 @@ let ChannelsController = class ChannelsController {
     }
     getConversations() {
     }
-    getChannelbanlist() {
+    getChannelBanlist(channel_id, pageOptionsDto, channelBanQueryFilterDto) {
+        return this.channelsService.getChannelBanlist(channel_id, pageOptionsDto, channelBanQueryFilterDto);
+    }
+    banChannelUser(channel_id, postChannelBanDto, req) {
+        return this.channelsService.banChannelUser(channel_id, postChannelBanDto, req.user);
+    }
+    updateChannelBan(channel_id, ban_id, updateChannelBanDto, req) {
+        return this.channelsService.updateChannelBan(channel_id, ban_id, updateChannelBanDto, req.user);
+    }
+    unbanChannelUser(channel_id, ban_id, req) {
+        return this.channelsService.deleteChannelBan(channel_id, ban_id, req.user);
     }
 };
 __decorate([
@@ -218,10 +229,48 @@ __decorate([
     (0, common_1.Get)('/:channel_id/banlist'),
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
     (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Param)('channel_id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Query)()),
+    __param(2, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Number, page_options_dto_1.PageOptionsDto,
+        channel_ban_dto_1.ChannelBanQueryFilterDto]),
     __metadata("design:returntype", void 0)
-], ChannelsController.prototype, "getChannelbanlist", null);
+], ChannelsController.prototype, "getChannelBanlist", null);
+__decorate([
+    (0, common_1.Post)('/:channel_id/banlist'),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Param)('channel_id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, channel_ban_dto_1.PostChannelBanDto, Object]),
+    __metadata("design:returntype", void 0)
+], ChannelsController.prototype, "banChannelUser", null);
+__decorate([
+    (0, common_1.Patch)('/:channel_id/banlist/:ban_id'),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Param)('channel_id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Param)('ban_id', common_1.ParseIntPipe)),
+    __param(2, (0, common_1.Query)()),
+    __param(3, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number, channel_ban_dto_1.UpdateChannelBanDto, Object]),
+    __metadata("design:returntype", void 0)
+], ChannelsController.prototype, "updateChannelBan", null);
+__decorate([
+    (0, common_1.Delete)('/:channel_id/banlist/:ban_id'),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Param)('channel_id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Param)('ban_id', common_1.ParseIntPipe)),
+    __param(2, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number, Object]),
+    __metadata("design:returntype", void 0)
+], ChannelsController.prototype, "unbanChannelUser", null);
 ChannelsController = __decorate([
     (0, common_1.Controller)('channels'),
     __metadata("design:paramtypes", [channels_service_1.ChannelsService])
