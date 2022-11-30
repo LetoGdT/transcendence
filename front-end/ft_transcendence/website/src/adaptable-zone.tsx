@@ -16,6 +16,23 @@ import Typography from '@mui/material/Typography';
 
 import { Chart } from "react-google-charts";
 
+import axios from 'axios';
+
+
+
+export class adaptableZone extends React.Component{
+	constructor(props){
+		super(props);
+		this.state = {
+			value: null,
+		};
+	}
+
+	render(){
+		return(<div></div>);
+	}
+}
+
 export function Chat(){
 	return(
 		<div>

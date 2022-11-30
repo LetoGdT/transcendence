@@ -65,12 +65,6 @@ export function Profile(){
 		<div>r
 			Profile ou settings
 			si user non connecter renvoyer vers /pleaseconnect
-<<<<<<< HEAD
-			<Link to='/api/users/me'>
-				<Button variant='text' size='small'>test</Button>
-			</Link>
-=======
->>>>>>> api
 		</div>
 	);
 }
