@@ -9,6 +9,7 @@ import { AuthModule } from '../auth/auth.module';
 @Module({
 	imports: [TypeOrmModule.forFeature([Message]), UsersModule, AuthModule],
 	controllers: [MessagesController],
-	providers: [MessagesService]
+	providers: [MessagesService],
+	exports: [MessagesService]
 })
 export class MessagesModule {}

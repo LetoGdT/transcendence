@@ -3,13 +3,17 @@ import {TypeOrmModule} from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { resolve } from 'path';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { User } from './typeorm/user.entity';
 import { Message } from './typeorm/message.entity';
+import { PrivateMessage } from './typeorm/private-message.entity';
+import { Channel } from './typeorm/channel.entity';
+import { ChannelUser } from './typeorm/channel-user.entity';
+import { ChannelBan } from './typeorm/channel-ban.entity';
 import { MessagesModule } from './messages/messages.module';
+import { PrivatesModule } from './privates/privates.module';
+import { ChannelsModule } from './channels/channels.module';
 
 @Module(
 	{
@@ -27,7 +31,7 @@ import { MessagesModule } from './messages/messages.module';
 					username: configService.get('DB_USERNAME'),
 					password: configService.get('DB_PASSWORD'),
 					database: configService.get('DB_NAME'),
-					entities: [User, Message],
+					entities: [User, Message, PrivateMessage, Channel, ChannelUser, ChannelBan,],
 					synchronize: true,
 				}
 			),
@@ -37,10 +41,10 @@ import { MessagesModule } from './messages/messages.module';
 			// 	rootPath: resolve(__dirname, '..', 'build'),
 			// 	exclude: ['/api*, /log, /logout, /callback'],
 			// }),
-			MessagesModule
+			MessagesModule,
+			PrivatesModule,
+			ChannelsModule
 		],
-		controllers: [AppController],
-		providers: [AppService],
 	}
 )
 export class AppModule {}

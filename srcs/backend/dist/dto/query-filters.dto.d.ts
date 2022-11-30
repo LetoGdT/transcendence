@@ -1,4 +1,3 @@
-import { User } from '../typeorm/user.entity';
 export declare class UserQueryFilterDto {
     id: number;
     uid: number;
@@ -8,8 +7,7 @@ export declare class UserQueryFilterDto {
 }
 export declare class MessageQueryFilterDto {
     id: number;
-    sender: User;
-    recipient: User;
-    sent_date: string;
-    received_date: string;
+    message_id?: number;
+    start_at: Date;
+    end_at: Date;
 }

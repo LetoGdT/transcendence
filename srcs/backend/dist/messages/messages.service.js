@@ -23,10 +23,27 @@ let MessagesService = class MessagesService {
     constructor(messageRepository) {
         this.messageRepository = messageRepository;
     }
-    async getMessages(pageOptionsDto) {
+    async getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, user, options) {
         const queryBuilder = this.messageRepository.createQueryBuilder("message");
         queryBuilder
-            .orderBy("message.id", pageOptionsDto.order)
+            .leftJoinAndSelect('message.sender', 'sender')
+            .where(messageQueryFilterDto.id != null
+            ? 'message.id = :id'
+            : 'TRUE', { id: messageQueryFilterDto.id })
+            .andWhere(messageQueryFilterDto.start_at != null
+            ? 'message.sent_date > :start_at'
+            : 'TRUE', { start_at: messageQueryFilterDto.start_at })
+            .andWhere(messageQueryFilterDto.end_at != null
+            ? 'message.sent_date < :end_at'
+            : 'TRUE', { end_at: messageQueryFilterDto.end_at })
+            .andWhere(userSelectDto.sender_id != null
+            ? 'message.sender = :sender_id'
+            : 'TRUE', { sender_id: userSelectDto.sender_id })
+            .andWhere("message.sender = :user_id", { user_id: user.id })
+            .andWhere(options != null && options.as_sender === true
+            ? 'message.sender = :user_id'
+            : 'TRUE', { user_id: user.id })
+            .orderBy('message.sent_date', pageOptionsDto.order)
             .skip(pageOptionsDto.skip)
             .take(pageOptionsDto.take);
         const itemCount = await queryBuilder.getCount();
@@ -34,13 +51,52 @@ let MessagesService = class MessagesService {
         const pageMetaDto = new page_meta_dto_1.PageMetaDto({ itemCount, pageOptionsDto });
         return new page_dto_1.PageDto(entities, pageMetaDto);
     }
-    async createMessage(sender, recipient, content) {
+    async getChannelMessages(channel_id, pageOptionsDto, messageQueryFilterDto, userSelectDto, user, as_sender) {
+        const queryBuilder = this.messageRepository.createQueryBuilder("message");
+        queryBuilder
+            .leftJoinAndSelect('message.sender', 'sender')
+            .leftJoinAndSelect('message.channel', 'channel')
+            .where('channel.id = :channel_id', { channel_id: channel_id })
+            .andWhere(messageQueryFilterDto.id != null
+            ? 'message.id = :id'
+            : 'TRUE', { id: messageQueryFilterDto.id })
+            .andWhere(messageQueryFilterDto.start_at != null
+            ? 'message.sent_date > :start_at'
+            : 'TRUE', { start_at: messageQueryFilterDto.start_at })
+            .andWhere(messageQueryFilterDto.end_at != null
+            ? 'message.sent_date < :end_at'
+            : 'TRUE', { end_at: messageQueryFilterDto.end_at })
+            .andWhere(userSelectDto.sender_id != null
+            ? 'message.sender = :sender_id'
+            : 'TRUE', { sender_id: userSelectDto.sender_id })
+            .orderBy('message.sent_date', pageOptionsDto.order)
+            .skip(pageOptionsDto.skip)
+            .take(pageOptionsDto.take);
+        const itemCount = await queryBuilder.getCount();
+        const { entities } = await queryBuilder.getRawAndEntities();
+        const pageMetaDto = new page_meta_dto_1.PageMetaDto({ itemCount, pageOptionsDto });
+        return new page_dto_1.PageDto(entities, pageMetaDto);
+    }
+    async createMessage(sender, content) {
         const newMessage = this.messageRepository.create({
             sender: sender,
-            recipient: recipient,
             content: content
         });
         return this.messageRepository.save(newMessage);
+    }
+    async updateMessage(message) {
+        return this.messageRepository.save(message);
+    }
+    async updateMessageFromId(id, content) {
+        const queryBuilder = this.messageRepository.createQueryBuilder("message");
+        const message = await queryBuilder
+            .where('message.id = :id', { id: id })
+            .getOne();
+        message.content = content;
+        return this.messageRepository.save(message);
+    }
+    async deleteMessage(message) {
+        this.messageRepository.remove(message);
     }
 };
 MessagesService = __decorate([

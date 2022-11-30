@@ -1,4 +1,4 @@
-import { Logger, Injectable, BadRequestException } from '@nestjs/common';
+import { Logger, Injectable, BadRequestException, HttpStatus, HttpException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import { User } from '../typeorm/user.entity';
@@ -13,7 +13,7 @@ import { PageOptionsDto } from "../dto/page-options.dto";
 @Injectable()
 export class UsersService
 {
-	IdMax: number = 1000000000000;
+	IdMax: number = Number.MAX_SAFE_INTEGER;
 
 	constructor(@InjectRepository(User) private readonly userRepository: Repository<User>) {}
 
@@ -55,19 +55,24 @@ export class UsersService
 	// user of the db
 	async getOneById(id: number): Promise<User>
 	{
+		if (id == null)
+			throw new HttpException('id is undefined', HttpStatus.INTERNAL_SERVER_ERROR);
 		if (id > this.IdMax)
 			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
 		return this.userRepository.findOne({ where: { id: id } });
 	}
 
-	// Don't use, it has security vulnerability
-	async getOneByLogin(username: string)
+	async getOneByLogin(username: string): Promise<User>
 	{
+		if (username == null)
+			throw new HttpException('username is undefined', HttpStatus.INTERNAL_SERVER_ERROR);
 		return this.userRepository.findOne({ where: { username: username } });
 	}
 
 	async getOneByRefresh(refresh: string): Promise<User>
 	{
+		if (refresh == null)
+			throw new HttpException('refresh is undefined', HttpStatus.INTERNAL_SERVER_ERROR);
 		return this.userRepository.findOne({ where: { refresh_token: refresh } });
 	}
 
