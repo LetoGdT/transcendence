@@ -16,22 +16,22 @@ import Typography from '@mui/material/Typography';
 
 import { Chart } from "react-google-charts";
 
-import axios from 'axios';
+// import axios from 'axios';
 
 
 
-export class adaptableZone extends React.Component{
-	constructor(props){
-		super(props);
-		this.state = {
-			value: null,
-		};
-	}
+// export class adaptableZone extends React.Component{
+// 	constructor(props){
+// 		super(props);
+// 		this.state = {//en attendant de recup les info du back
+// 			value: null,
+// 		};
+// 	}
 
-	render(){
-		return(<div></div>);
-	}
-}
+// 	render(){
+// 		return(<div></div>);
+// 	}
+// }
 
 export function Chat(){
 	return(
@@ -576,6 +576,17 @@ export function SignOn(){
 			<a href="https://admissions.42lyon.fr/users/sign_in">
 				<Button variant='text' size='large'>42</Button>			
 			</a>
+		</div>
+	);
+}
+
+export function Test(){
+	fetch("http://localhost:6000/api/users/me", { credentials: 'include' })
+	.then(response => response.text())
+	.then(response => console.log(response))
+	.catch(error => console.log("Erreur : " + error));
+	return(
+		<div><h1>Test</h1>
 		</div>
 	);
 }
