@@ -25,7 +25,7 @@ export declare class ChannelsController {
     createChannelMessage(channel_id: number, postPrivateDto: PostPrivateDto, req: any): Promise<Channel>;
     updateChannelMessage(channel_id: number, message_id: number, updateMessageDto: UpdateMessageDto, req: any): Promise<import("../typeorm/message.entity").Message>;
     deleteChannelMessage(channel_id: number, message_id: number, req: any): Promise<Channel>;
-    getConversations(): void;
+    getConversations(pageOptionsDto: PageOptionsDto, req: any): Promise<void>;
     getChannelBanlist(channel_id: number, pageOptionsDto: PageOptionsDto, channelBanQueryFilterDto: ChannelBanQueryFilterDto): Promise<PageDto<import("../typeorm/channel-ban.entity").ChannelBan>>;
     banChannelUser(channel_id: number, postChannelBanDto: PostChannelBanDto, req: any): Promise<Channel>;
     updateChannelBan(channel_id: number, ban_id: number, updateChannelBanDto: UpdateChannelBanDto, req: any): Promise<Channel>;

@@ -149,9 +149,10 @@ export class ChannelsController
 	@Get('/conversations')
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	getConversations()
+	getConversations(@Query() pageOptionsDto: PageOptionsDto,
+		@Req() req)
 	{
-
+		return this.channelsService.getConversations(pageOptionsDto, req.user)
 	}
 
 

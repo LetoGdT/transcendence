@@ -13,6 +13,7 @@ exports.User = void 0;
 const typeorm_1 = require("typeorm");
 const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
+const channel_user_entity_1 = require("./channel-user.entity");
 let User = class User {
 };
 __decorate([
@@ -30,6 +31,9 @@ __decorate([
     __metadata("design:type", Number)
 ], User.prototype, "uid", void 0);
 __decorate([
+    (0, class_validator_1.MinLength)(3),
+    (0, class_validator_1.MaxLength)(20),
+    (0, class_validator_1.Matches)('^[ A-Za-z0-9_\\-!?]*$'),
     (0, typeorm_1.Column)({
         nullable: false,
         default: '',
@@ -38,6 +42,7 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "username", void 0);
 __decorate([
+    (0, class_validator_1.IsEmail)(),
     (0, typeorm_1.Column)({
         name: 'email_address',
         nullable: false,
@@ -52,6 +57,14 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], User.prototype, "image_url", void 0);
+__decorate([
+    (0, class_validator_1.IsIn)(['online', 'offline', 'in-game']),
+    (0, typeorm_1.Column)({
+        nullable: false,
+        default: 'online',
+    }),
+    __metadata("design:type", String)
+], User.prototype, "status", void 0);
 __decorate([
     (0, class_transformer_1.Exclude)({ toPlainOnly: true }),
     (0, typeorm_1.Column)({
@@ -69,6 +82,10 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], User.prototype, "refresh_expires", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => channel_user_entity_1.ChannelUser, (channelUser) => channelUser.user),
+    __metadata("design:type", channel_user_entity_1.ChannelUser)
+], User.prototype, "channelUsers", void 0);
 User = __decorate([
     (0, typeorm_1.Entity)()
 ], User);

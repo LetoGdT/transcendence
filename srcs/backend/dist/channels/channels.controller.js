@@ -62,7 +62,8 @@ let ChannelsController = class ChannelsController {
     deleteChannelMessage(channel_id, message_id, req) {
         return this.channelsService.deleteChannelMessage(channel_id, message_id, req.user);
     }
-    getConversations() {
+    getConversations(pageOptionsDto, req) {
+        return this.channelsService.getConversations(pageOptionsDto, req.user);
     }
     getChannelBanlist(channel_id, pageOptionsDto, channelBanQueryFilterDto) {
         return this.channelsService.getChannelBanlist(channel_id, pageOptionsDto, channelBanQueryFilterDto);
@@ -221,8 +222,10 @@ __decorate([
     (0, common_1.Get)('/conversations'),
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
     (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [page_options_dto_1.PageOptionsDto, Object]),
     __metadata("design:returntype", void 0)
 ], ChannelsController.prototype, "getConversations", null);
 __decorate([

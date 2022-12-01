@@ -5,7 +5,7 @@ export class PostChannelDto
 {
 	@MinLength(3)
 	@MaxLength(20)
-	@Matches('^[ A-Za-z0-9_\\-!?]*$')
+	@Matches('^[ A-Za-z0-9_\\-!?\']*$')
 	name: string;
 }
 

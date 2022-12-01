@@ -25,8 +25,7 @@ __decorate([
 ], ChannelUser.prototype, "id", void 0);
 __decorate([
     (0, class_validator_1.ValidateNested)(),
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, { eager: true }),
-    (0, typeorm_1.JoinColumn)(),
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.channelUsers, { eager: true }),
     __metadata("design:type", user_entity_1.User)
 ], ChannelUser.prototype, "user", void 0);
 __decorate([

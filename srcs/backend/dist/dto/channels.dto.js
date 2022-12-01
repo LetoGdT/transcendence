@@ -16,7 +16,7 @@ class PostChannelDto {
 __decorate([
     (0, class_validator_1.MinLength)(3),
     (0, class_validator_1.MaxLength)(20),
-    (0, class_validator_1.Matches)('^[ A-Za-z0-9_\\-!?]*$'),
+    (0, class_validator_1.Matches)('^[ A-Za-z0-9_\\-!?\']*$'),
     __metadata("design:type", String)
 ], PostChannelDto.prototype, "name", void 0);
 exports.PostChannelDto = PostChannelDto;

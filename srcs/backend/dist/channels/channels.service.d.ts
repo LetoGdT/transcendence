@@ -32,6 +32,7 @@ export declare class ChannelsService {
     createChannelMessage(channel_id: number, postPrivateDto: PostPrivateDto, sender: User): Promise<Channel>;
     updateChannelMessage(channel_id: number, message_id: number, updateMessageDto: UpdateMessageDto, sender: User): Promise<Message>;
     deleteChannelMessage(channel_id: number, message_id: number, sender: User): Promise<Channel>;
+    getConversations(pageOptionsDto: PageOptionsDto, user: User): Promise<void>;
     getChannelBanlist(channel_id: number, pageOptionsDto: PageOptionsDto, channelBanQueryFilterDto: ChannelBanQueryFilterDto): Promise<PageDto<ChannelBan>>;
     banChannelUser(channel_id: number, postChannelBanDto: PostChannelBanDto, user: User): Promise<Channel>;
     updateChannelBan(channel_id: number, ban_id: number, updateChannelBanDto: UpdateChannelBanDto, user: User): Promise<Channel>;
