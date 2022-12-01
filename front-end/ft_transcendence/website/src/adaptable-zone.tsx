@@ -15,6 +15,7 @@ import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 
 import { Chart } from "react-google-charts";
+import { response } from 'express';
 
 // import axios from 'axios';
 
@@ -580,13 +581,64 @@ export function SignOn(){
 	);
 }
 
-export function Test(){
-	fetch("http://localhost:6000/api/users/me", { credentials: 'include' })
-	.then(response => response.text())
-	.then(response => console.log(response))
-	.catch(error => console.log("Erreur : " + error));
-	return(
-		<div><h1>Test</h1>
-		</div>
-	);
+// var users: any;
+
+// export function Test(){
+// 	fetch("http://localhost:9999/api/users", { credentials: 'include' })
+// 	// .then(response => {response.text()})//original
+// 	// .then (response => {//avec max
+// 		// console.log(response.text());
+// 	// })
+// 	.then(response => console.log(response))//original
+// 	// .then(response => console.log(users))//avec max
+// 	.catch(error => console.log("Erreur : " + error));
+// 	return(
+// 		<div><h1>Test</h1>
+// 		</div>
+// 	);
+// }
+
+export class Test extends React.Component {
+
+	// Constructor 
+	constructor(props: any) {
+		super(props);
+
+		this.state = {
+			items: [],
+			DataisLoaded: false
+		};
+	}
+
+	// ComponentDidMount is used to
+	// execute the code 
+	componentDidMount() {
+		fetch(
+"http://localhost:9999/api/users")
+			.then((res) => res.json())
+			.then((json) => {
+				this.setState({
+					items: json,
+					DataisLoaded: true
+				});
+			})
+	}
+	render() {
+		const { DataisLoaded, items } = this.state;
+		if (!DataisLoaded) return <div>
+			<h1> Pleses wait some time.... </h1> </div> ;
+
+		return (
+			<div className = "App">
+				<h1> Fetch data from an api in react </h1>  {
+					items.map((item: any) => (
+						<ol key = { item.id } >
+							User_Name: { item.username },
+							User_Email: { item.email }
+						</ol>
+					))
+				}
+			</div>
+		);
+	}
 }
