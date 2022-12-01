@@ -76,7 +76,7 @@ export class Api42
 				grant_type: 'authorization_code',
 				client_id: this.configService.get<string>('UID'),
 				client_secret: this.configService.get<string>('SECRET'),
-				redirect_uri: 'http://localhost:3000/callback',
+				redirect_uri: 'http://localhost:9999/callback',
 				code: auth_code
 			},
 		);

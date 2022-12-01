@@ -13,6 +13,7 @@ exports.Message = void 0;
 const typeorm_1 = require("typeorm");
 const class_validator_1 = require("class-validator");
 const user_entity_1 = require("./user.entity");
+const channel_entity_1 = require("./channel.entity");
 let Message = class Message {
 };
 __decorate([
@@ -20,17 +21,13 @@ __decorate([
         type: 'bigint',
         name: 'message_id',
     }),
-    (0, class_validator_1.Max)(1000000000000),
     __metadata("design:type", Number)
 ], Message.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, { nullable: false }),
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, { nullable: false, eager: true }),
+    (0, typeorm_1.JoinColumn)(),
     __metadata("design:type", user_entity_1.User)
 ], Message.prototype, "sender", void 0);
-__decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, { nullable: false }),
-    __metadata("design:type", user_entity_1.User)
-], Message.prototype, "recipient", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         nullable: false,
@@ -41,21 +38,27 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsDate)(),
     (0, typeorm_1.Column)({
+        type: 'timestamptz',
         nullable: false,
         unique: false,
-        default: Date()
+        default: () => 'CURRENT_TIMESTAMP'
     }),
-    __metadata("design:type", String)
+    __metadata("design:type", Date)
 ], Message.prototype, "sent_date", void 0);
 __decorate([
     (0, class_validator_1.IsDate)(),
     (0, typeorm_1.Column)({
-        nullable: false,
+        type: 'timestamptz',
+        nullable: true,
         unique: false,
-        default: Date()
     }),
-    __metadata("design:type", String)
+    __metadata("design:type", Date)
 ], Message.prototype, "received_date", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, typeorm_1.ManyToOne)(() => channel_entity_1.Channel, (channel) => channel.messages, { onDelete: 'CASCADE' }),
+    __metadata("design:type", channel_entity_1.Channel)
+], Message.prototype, "channel", void 0);
 Message = __decorate([
     (0, typeorm_1.Entity)()
 ], Message);

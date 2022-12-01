@@ -37,13 +37,11 @@ let AuthController = class AuthController {
         let secret = this.configService.get('SECRET');
         if (uid == undefined || secret == undefined)
             throw new common_1.HttpException('42API credentials not set. Did you forget to create .env ?', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
-        let redirect_uri = 'http://localhost:3000/callback';
+        let redirect_uri = 'http://localhost:9999/callback';
         let state = (0, crypto_1.randomBytes)(32).toString("hex");
         this.state = state;
         let url = `${host}?client_id=${uid}&redirect_uri=${redirect_uri}&response_type=code&scope=public&state=${state}`;
-        return {
-            url: url
-        };
+        return { url: url };
     }
     async getCode(query, res) {
         if (!query.code || !this.state)
@@ -53,7 +51,7 @@ let AuthController = class AuthController {
         let api = new auth_service_1.Api42();
         await api.setToken(query.code);
         let me = await api.get('/v2/me');
-        const user = await this.usersService.addUser({ uid: me.id, username: me.login, email: me.email, image_url: me.image_url });
+        const user = await this.usersService.addUser({ uid: me.id, username: me.login, email: me.email, image_url: me.image.link });
         const { access_token, refresh_token } = await this.authService.createTokens(user.id);
         res.cookie('access_token', access_token, {
             httpOnly: true,

@@ -20,7 +20,8 @@ MessagesModule = __decorate([
     (0, common_1.Module)({
         imports: [typeorm_1.TypeOrmModule.forFeature([message_entity_1.Message]), users_module_1.UsersModule, auth_module_1.AuthModule],
         controllers: [messages_controller_1.MessagesController],
-        providers: [messages_service_1.MessagesService]
+        providers: [messages_service_1.MessagesService],
+        exports: [messages_service_1.MessagesService]
     })
 ], MessagesModule);
 exports.MessagesModule = MessagesModule;

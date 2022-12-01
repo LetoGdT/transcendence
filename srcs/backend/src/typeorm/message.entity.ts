@@ -1,6 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { Max, IsDate } from 'class-validator';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn } from 'typeorm';
+import { Max, IsDate, IsOptional } from 'class-validator';
 import { User } from './user.entity';
+import { Channel } from './channel.entity';
+import { PrivateMessage } from './private-message.entity';
 
 @Entity()
 export class Message
@@ -9,14 +11,11 @@ export class Message
 		type: 'bigint',
 		name: 'message_id',
 	})
-	@Max(1000000000000)
 	id: number;
 
-	@ManyToOne(() => User, { nullable: false })
-    sender: User
-
-    @ManyToOne(() => User, { nullable: false })
-    recipient: User
+	@ManyToOne(() => User, { nullable: false, eager: true })
+	@JoinColumn()
+	sender: User
 
 	@Column({
 		nullable: false,
@@ -26,17 +25,25 @@ export class Message
 
 	@IsDate()
 	@Column({
+		type: 'timestamptz',
 		nullable: false,
 		unique: false,
-		default: Date()
+		default: () => 'CURRENT_TIMESTAMP'
 	})
-	sent_date: string;
+	sent_date: Date;
 
+	// This is not implemented for now, but this could be used
+	// for quality of life improvements
 	@IsDate()
 	@Column({
-		nullable: false,
+		type: 'timestamptz',
+		nullable: true,
 		unique: false,
-		default: Date()
+		// default: () => 'CURRENT_TIMESTAMP'
 	})
-	received_date: string;
+	received_date: Date;
+
+	@IsOptional()
+	@ManyToOne(() => Channel, (channel) => channel.messages, { onDelete: 'CASCADE' })
+	channel?: Channel;
 }

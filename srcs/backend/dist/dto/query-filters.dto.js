@@ -12,13 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MessageQueryFilterDto = exports.UserQueryFilterDto = void 0;
 const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
-const user_entity_1 = require("../typeorm/user.entity");
 class UserQueryFilterDto {
 }
 __decorate([
     (0, class_transformer_1.Type)(() => Number),
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.Min)(1),
+    (0, class_validator_1.Max)(Number.MAX_SAFE_INTEGER),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], UserQueryFilterDto.prototype, "id", void 0);
@@ -48,28 +48,29 @@ __decorate([
     (0, class_transformer_1.Type)(() => Number),
     (0, class_validator_1.IsInt)(),
     (0, class_validator_1.Min)(1),
+    (0, class_validator_1.Max)(Number.MAX_SAFE_INTEGER),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], MessageQueryFilterDto.prototype, "id", void 0);
 __decorate([
-    (0, class_validator_1.ValidateNested)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.Min)(1),
+    (0, class_validator_1.Max)(Number.MAX_SAFE_INTEGER),
     (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", user_entity_1.User)
-], MessageQueryFilterDto.prototype, "sender", void 0);
+    __metadata("design:type", Number)
+], MessageQueryFilterDto.prototype, "message_id", void 0);
 __decorate([
-    (0, class_validator_1.ValidateNested)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", user_entity_1.User)
-], MessageQueryFilterDto.prototype, "recipient", void 0);
-__decorate([
+    (0, class_transformer_1.Type)(() => Date),
     (0, class_validator_1.IsDate)(),
     (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], MessageQueryFilterDto.prototype, "sent_date", void 0);
+    __metadata("design:type", Date)
+], MessageQueryFilterDto.prototype, "start_at", void 0);
 __decorate([
+    (0, class_transformer_1.Type)(() => Date),
     (0, class_validator_1.IsDate)(),
     (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], MessageQueryFilterDto.prototype, "received_date", void 0);
+    __metadata("design:type", Date)
+], MessageQueryFilterDto.prototype, "end_at", void 0);
 exports.MessageQueryFilterDto = MessageQueryFilterDto;
 //# sourceMappingURL=query-filters.dto.js.map

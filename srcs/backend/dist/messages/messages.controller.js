@@ -16,39 +16,67 @@ exports.MessagesController = void 0;
 const common_1 = require("@nestjs/common");
 const messages_service_1 = require("./messages.service");
 const page_options_dto_1 = require("../dto/page-options.dto");
+const messages_dto_1 = require("../dto/messages.dto");
 const auth_interceptor_1 = require("../auth/auth.interceptor");
+const query_filters_dto_1 = require("../dto/query-filters.dto");
 const users_service_1 = require("../users/users.service");
 let MessagesController = class MessagesController {
     constructor(messagesService, usersService) {
         this.messagesService = messagesService;
         this.usersService = usersService;
     }
-    async getMessages(pageOptionsDto) {
-        return this.messagesService.getMessages(pageOptionsDto);
+    async getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req) {
+        return this.messagesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user);
     }
-    async createMessage(body, req) {
-        const sender = req.user;
-        console.log(body.recipient);
-        const recipient = await this.usersService.getOneByLogin(body.recipient);
-        return this.messagesService.createMessage(sender, recipient, body.content);
+    async getMessagesAsSender(pageOptionsDto, messageQueryFilterDto, userSelectDto, req) {
+        return this.messagesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user, { as_sender: true });
+    }
+    async getMessagesAsRecipient(pageOptionsDto, messageQueryFilterDto, userSelectDto, req) {
+        return this.messagesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user, { as_recipient: true });
     }
 };
 __decorate([
     (0, common_1.Get)(),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
     __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Query)()),
+    __param(2, (0, common_1.Query)()),
+    __param(3, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [page_options_dto_1.PageOptionsDto]),
+    __metadata("design:paramtypes", [page_options_dto_1.PageOptionsDto,
+        query_filters_dto_1.MessageQueryFilterDto,
+        messages_dto_1.UserSelectDto, Object]),
     __metadata("design:returntype", Promise)
 ], MessagesController.prototype, "getMessages", null);
 __decorate([
-    (0, common_1.Post)(),
+    (0, common_1.Get)('/as_sender'),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
     (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Req)()),
+    __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Query)()),
+    __param(2, (0, common_1.Query)()),
+    __param(3, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [page_options_dto_1.PageOptionsDto,
+        query_filters_dto_1.MessageQueryFilterDto,
+        messages_dto_1.UserSelectDto, Object]),
     __metadata("design:returntype", Promise)
-], MessagesController.prototype, "createMessage", null);
+], MessagesController.prototype, "getMessagesAsSender", null);
+__decorate([
+    (0, common_1.Get)('/as_recipient'),
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Query)()),
+    __param(2, (0, common_1.Query)()),
+    __param(3, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [page_options_dto_1.PageOptionsDto,
+        query_filters_dto_1.MessageQueryFilterDto,
+        messages_dto_1.UserSelectDto, Object]),
+    __metadata("design:returntype", Promise)
+], MessagesController.prototype, "getMessagesAsRecipient", null);
 MessagesController = __decorate([
     (0, common_1.Controller)('messages'),
     __metadata("design:paramtypes", [messages_service_1.MessagesService,

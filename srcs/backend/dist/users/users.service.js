@@ -22,7 +22,7 @@ const page_meta_dto_1 = require("../dto/page-meta.dto");
 let UsersService = class UsersService {
     constructor(userRepository) {
         this.userRepository = userRepository;
-        this.IdMax = 1000000000000;
+        this.IdMax = Number.MAX_SAFE_INTEGER;
     }
     async getUsers(pageOptionsDto, userQueryFilterDto) {
         const queryBuilder = this.userRepository.createQueryBuilder("user");
@@ -51,14 +51,20 @@ let UsersService = class UsersService {
         return new page_dto_1.PageDto(entities, pageMetaDto);
     }
     async getOneById(id) {
+        if (id == null)
+            throw new common_1.HttpException('id is undefined', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
         if (id > this.IdMax)
             throw new common_1.BadRequestException(`id must not be greater than ${this.IdMax}`);
         return this.userRepository.findOne({ where: { id: id } });
     }
     async getOneByLogin(username) {
+        if (username == null)
+            throw new common_1.HttpException('username is undefined', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
         return this.userRepository.findOne({ where: { username: username } });
     }
     async getOneByRefresh(refresh) {
+        if (refresh == null)
+            throw new common_1.HttpException('refresh is undefined', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
         return this.userRepository.findOne({ where: { refresh_token: refresh } });
     }
     async updateOne(id, updateUserDto) {

@@ -17,7 +17,7 @@ async function bootstrap() {
     app.useGlobalPipes(new common_1.ValidationPipe({ transform: true }));
     app.enableCors({ origin: 'http://localhost:3000', credentials: true });
     app.use(cookieParser());
-    await app.listen(6000);
+    await app.listen(9999);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map
