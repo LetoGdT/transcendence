@@ -655,36 +655,36 @@ export function SignOn(){
 type resultProps = {
 	email: string;
 	username: string;
-  };
-  
-  export function Test() {
+};
+
+export function Test() {
 	const [data, setResult] = useState<resultProps[]>([]);
-  
+
 	useEffect(() => {
-	  const api = async () => {
-		const data = await fetch("http://localhost:9999/api/users", {
-		  method: "GET"
-		});
-		const jsonData = await data.json();
-		setResult(jsonData.data);
-	  };
-  
-	  api();
+		const api = async () => {
+			const data = await fetch("http://localhost:9999/api/users", {
+				method: "GET"
+			});
+			const jsonData = await data.json();
+			setResult(jsonData.data);
+		};
+
+		api();
 	}, []);
-  
+
 	return (
-	  <div className="App">
-		<h1>
-		  {data.map((value) => {
-			return (
-			  <div>
-				<div>{value.email}</div>
-				<div>{value.username}</div>
-			  </div>
-			);
-		  })}
-		</h1>
-		<h2>Start editing to see some magic happen!</h2>
-	  </div>
+		<div className="App">
+			<h1>
+				{data.map((value) => {
+					return (
+						<div>
+							<div>{value.email}</div>
+							<div>{value.username}</div>
+						</div>
+					);
+		 		 })}
+			</h1>
+			<h2>Start editing to see some magic happen!</h2>
+		</div>
 	);
-  }
+}
