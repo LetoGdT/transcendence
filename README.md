@@ -11,5 +11,5 @@
 		<li>Pie charts : https://www.react-google-charts.com/</li>
 	</ul>
 	<li>Axios + react https://www.freecodecamp.org/french/news/comment-utiliser-axios-avec-react-le-guide-complet-2021/</li>
-	<li>react fetch api : https://www.geeksforgeeks.org/how-to-fetch-data-from-an-api-in-reactjs/</li>
+	<li>ce m'a permi de commencé à recup des données: https://codesandbox.io/s/0z1ex?file=/src/App.tsx:69-797</li>
 </div>
