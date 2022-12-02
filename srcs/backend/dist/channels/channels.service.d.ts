@@ -7,7 +7,7 @@ import { MessagesService } from '../messages/messages.service';
 import { PostChannelDto, PatchChannelUserDto, PatchChannelDto } from '../dto/channels.dto';
 import { PageDto } from "../dto/page.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
-import { MessageQueryFilterDto } from '../dto/query-filters.dto';
+import { MessageQueryFilterDto, ChannelQueryFilterDto } from '../dto/query-filters.dto';
 import { PostPrivateDto, UpdateMessageDto } from '../dto/private-messages.dto';
 import { UserSelectDto } from '../dto/messages.dto';
 import { ChannelBanQueryFilterDto, PostChannelBanDto, UpdateChannelBanDto } from '../dto/channel-ban.dto';
@@ -20,7 +20,7 @@ export declare class ChannelsService {
     IdMax: number;
     permissions: Map<string, number>;
     constructor(channelRepository: Repository<Channel>, channelUserRepository: Repository<ChannelUser>, channelBanRepository: Repository<ChannelBan>, messagesService: MessagesService);
-    getChannels(pageOptionsDto: PageOptionsDto, user: User): Promise<PageDto<Channel>>;
+    getChannels(pageOptionsDto: PageOptionsDto, channelQueryFilterDto: ChannelQueryFilterDto, user: User): Promise<PageDto<Channel>>;
     getChannelUsers(pageOptionsDto: PageOptionsDto, id: number, user: User): Promise<PageDto<ChannelUser>>;
     createChannel(postChannelDto: PostChannelDto, requester: User): Promise<Channel>;
     updateChannel(id: number, patchChannelDto: PatchChannelDto, user: User): Promise<Channel>;
@@ -32,7 +32,7 @@ export declare class ChannelsService {
     createChannelMessage(channel_id: number, postPrivateDto: PostPrivateDto, sender: User): Promise<Channel>;
     updateChannelMessage(channel_id: number, message_id: number, updateMessageDto: UpdateMessageDto, sender: User): Promise<Message>;
     deleteChannelMessage(channel_id: number, message_id: number, sender: User): Promise<Channel>;
-    getConversations(pageOptionsDto: PageOptionsDto, user: User): Promise<void>;
+    getConversations(pageOptionsDto: PageOptionsDto, user: User): Promise<PageDto<Channel>>;
     getChannelBanlist(channel_id: number, pageOptionsDto: PageOptionsDto, channelBanQueryFilterDto: ChannelBanQueryFilterDto): Promise<PageDto<ChannelBan>>;
     banChannelUser(channel_id: number, postChannelBanDto: PostChannelBanDto, user: User): Promise<Channel>;
     updateChannelBan(channel_id: number, ban_id: number, updateChannelBanDto: UpdateChannelBanDto, user: User): Promise<Channel>;

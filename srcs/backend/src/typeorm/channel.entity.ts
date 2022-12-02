@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany, JoinColumn, JoinTable, ManyToMany } from 'typeorm';
-import { IsNotEmpty, MaxLength, MinLength, IsAscii, IsIn, Matches } from 'class-validator';
+import { IsNotEmpty, MaxLength, MinLength, IsAscii, IsIn, Matches, IsDate } from 'class-validator';
 import { Exclude } from 'class-transformer';
 import { User } from './user.entity';
 import { Message } from './message.entity';
@@ -40,6 +40,15 @@ export class Channel
 		default: 'private',
 	})
 	status: 'public' | 'private' | 'protected';
+
+	@Exclude()
+	@IsDate()
+	@Column({
+		type: 'timestamptz',
+		nullable: true,
+		default: null
+	})
+	latest_sent: Date;
 
 	@OneToMany(() => ChannelBan, (channelBan) => channelBan.channel, {
 		eager: true,

@@ -11,7 +11,7 @@ import { PostChannelDto, PatchChannelUserDto, PatchChannelDto } from '../dto/cha
 import { PageDto } from "../dto/page.dto";
 import { PageMetaDto } from "../dto/page-meta.dto";
 import { PageOptionsDto, Order } from "../dto/page-options.dto";
-import { MessageQueryFilterDto } from '../dto/query-filters.dto';
+import { MessageQueryFilterDto, ChannelQueryFilterDto } from '../dto/query-filters.dto';
 import { PostPrivateDto, UpdateMessageDto } from '../dto/private-messages.dto';
 import { UserSelectDto } from '../dto/messages.dto';
 import { ChannelBanQueryFilterDto, PostChannelBanDto, UpdateChannelBanDto } from '../dto/channel-ban.dto';
@@ -33,7 +33,8 @@ export class ChannelsService
 		private readonly messagesService: MessagesService)
 		{}
 
-	async getChannels(pageOptionsDto: PageOptionsDto, user: User): Promise<PageDto<Channel>>
+	async getChannels(pageOptionsDto: PageOptionsDto,
+		channelQueryFilterDto: ChannelQueryFilterDto, user: User): Promise<PageDto<Channel>>
 	{
 		const queryBuilder = this.channelRepository.createQueryBuilder('channel');
 
@@ -42,6 +43,15 @@ export class ChannelsService
 			.leftJoinAndSelect('users.user', 'channelUser')
 			.leftJoinAndSelect('channel.banlist', 'banlist')
 			.leftJoinAndSelect('banlist.user', 'channelBan')
+			.where(channelQueryFilterDto.id != null
+				? 'channel.id = :id'
+				: 'TRUE', { id: channelQueryFilterDto.id })
+			.andWhere(channelQueryFilterDto.username != null
+				? 'channel.username = :username'
+				: 'TRUE', { username: channelQueryFilterDto.username })
+			.andWhere(channelQueryFilterDto.status != null
+				? 'channel.status = :status'
+				: 'TRUE', { status: channelQueryFilterDto.status })
 			.orderBy('channel.id', pageOptionsDto.order)
 			.skip(pageOptionsDto.skip)
 			.take(pageOptionsDto.take);
@@ -369,6 +379,8 @@ export class ChannelsService
 		newMessage.sender = sender;
 		newMessage.content = postPrivateDto.content;
 
+		channel.latest_sent = newMessage.sent_date;
+
 		channel.messages.push(newMessage);
 		return this.channelRepository.save(channel);
 	}
@@ -462,30 +474,20 @@ export class ChannelsService
 		queryBuilder
 			.leftJoinAndSelect('channelUser.user', 'user')
 			.leftJoinAndSelect('channelUser.channel', 'channel')
-			.where('user.id = :id', { id: user.id });
+			.leftJoinAndSelect('channel.users', 'users')
+			.leftJoinAndSelect('channel.banlist', 'banlist')
+			.where('user.id = :id', { id: user.id })
+			.andWhere('channel.latest_sent is not null')
+			.orderBy('channel.latest_sent', pageOptionsDto.order)
+			.skip(pageOptionsDto.skip)
+			.take(pageOptionsDto.take);
 
-		const channelUsers = await queryBuilder.getMany();
+		const itemCount = await queryBuilder.getCount();
+		const { entities } = await queryBuilder.getRawAndEntities();
 
-		const messagePageOptionsDto: PageOptionsDto = new PageOptionsDto();
+		const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
 
-		messagePageOptionsDto.take = 1;
-		messagePageOptionsDto.order = Order.DESC;
-
-		let latest_messages: [number, Date][] = [];
-
-		for (let channelUser of channelUsers)
-		{
-			const message = await this.getChannelMessages(channelUser.channel.id, messagePageOptionsDto,
-				new MessageQueryFilterDto(), new UserSelectDto(), user);
-			if (message.data.length > 0)
-				latest_messages.push([channelUser.channel.id, message.data[0].sent_date]);
-		}
-
-		// latest_messages = latest_messages.sort((message1, message2) => {
-			
-		// })
-
-		console.log(latest_messages);
+		return new PageDto(entities.map(entity => entity.channel), pageMetaDto);
 	}
 
 	async getChannelBanlist(channel_id: number, pageOptionsDto: PageOptionsDto,

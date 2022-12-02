@@ -7,6 +7,7 @@ export declare class Channel {
     users: ChannelUser[];
     messages: Message[];
     status: 'public' | 'private' | 'protected';
+    latest_sent: Date;
     banlist: ChannelBan[];
     password: string;
 }

@@ -26,8 +26,8 @@ let ChannelsController = class ChannelsController {
     constructor(channelsService) {
         this.channelsService = channelsService;
     }
-    getChannels(pageOptionsDto, req) {
-        return this.channelsService.getChannels(pageOptionsDto, req.user);
+    getChannels(pageOptionsDto, channelQueryFilterDto, req) {
+        return this.channelsService.getChannels(pageOptionsDto, channelQueryFilterDto, req.user);
     }
     createChannel(postChannelDto, req) {
         return this.channelsService.createChannel(postChannelDto, req.user);
@@ -83,9 +83,11 @@ __decorate([
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
     (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
     __param(0, (0, common_1.Query)()),
-    __param(1, (0, common_1.Req)()),
+    __param(1, (0, common_1.Query)()),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [page_options_dto_1.PageOptionsDto, Object]),
+    __metadata("design:paramtypes", [page_options_dto_1.PageOptionsDto,
+        query_filters_dto_1.ChannelQueryFilterDto, Object]),
     __metadata("design:returntype", Promise)
 ], ChannelsController.prototype, "getChannels", null);
 __decorate([

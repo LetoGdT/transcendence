@@ -11,7 +11,7 @@ import { PageDto } from "../dto/page.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
 import { PostChannelDto, PatchChannelDto, PatchChannelUserDto } from '../dto/channels.dto';
 import { PostPrivateDto, UpdateMessageDto } from '../dto/private-messages.dto';
-import { MessageQueryFilterDto } from '../dto/query-filters.dto';
+import { MessageQueryFilterDto, ChannelQueryFilterDto } from '../dto/query-filters.dto';
 import { UserSelectDto } from '../dto/messages.dto';
 import { ChannelBanQueryFilterDto, PostChannelBanDto, UpdateChannelBanDto } from '../dto/channel-ban.dto';
 
@@ -24,9 +24,10 @@ export class ChannelsController
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
 	getChannels(@Query() pageOptionsDto: PageOptionsDto,
+		@Query() channelQueryFilterDto: ChannelQueryFilterDto,
 		@Req() req): Promise<PageDto<Channel>>
 	{
-		return this.channelsService.getChannels(pageOptionsDto, req.user);
+		return this.channelsService.getChannels(pageOptionsDto, channelQueryFilterDto, req.user);
 	}
 
 	@Post()

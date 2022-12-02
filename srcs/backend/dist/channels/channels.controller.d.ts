@@ -5,13 +5,13 @@ import { PageDto } from "../dto/page.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
 import { PostChannelDto, PatchChannelDto, PatchChannelUserDto } from '../dto/channels.dto';
 import { PostPrivateDto, UpdateMessageDto } from '../dto/private-messages.dto';
-import { MessageQueryFilterDto } from '../dto/query-filters.dto';
+import { MessageQueryFilterDto, ChannelQueryFilterDto } from '../dto/query-filters.dto';
 import { UserSelectDto } from '../dto/messages.dto';
 import { ChannelBanQueryFilterDto, PostChannelBanDto, UpdateChannelBanDto } from '../dto/channel-ban.dto';
 export declare class ChannelsController {
     private readonly channelsService;
     constructor(channelsService: ChannelsService);
-    getChannels(pageOptionsDto: PageOptionsDto, req: any): Promise<PageDto<Channel>>;
+    getChannels(pageOptionsDto: PageOptionsDto, channelQueryFilterDto: ChannelQueryFilterDto, req: any): Promise<PageDto<Channel>>;
     createChannel(postChannelDto: PostChannelDto, req: any): Promise<Channel>;
     updateChannel(channel_id: number, patchChannelDto: PatchChannelDto, req: any): Promise<Channel>;
     getChannelUsers(pageOptionsDto: PageOptionsDto, channel_id: number, req: any): Promise<PageDto<ChannelUser>>;
@@ -25,7 +25,7 @@ export declare class ChannelsController {
     createChannelMessage(channel_id: number, postPrivateDto: PostPrivateDto, req: any): Promise<Channel>;
     updateChannelMessage(channel_id: number, message_id: number, updateMessageDto: UpdateMessageDto, req: any): Promise<import("../typeorm/message.entity").Message>;
     deleteChannelMessage(channel_id: number, message_id: number, req: any): Promise<Channel>;
-    getConversations(pageOptionsDto: PageOptionsDto, req: any): Promise<void>;
+    getConversations(pageOptionsDto: PageOptionsDto, req: any): Promise<PageDto<Channel>>;
     getChannelBanlist(channel_id: number, pageOptionsDto: PageOptionsDto, channelBanQueryFilterDto: ChannelBanQueryFilterDto): Promise<PageDto<import("../typeorm/channel-ban.entity").ChannelBan>>;
     banChannelUser(channel_id: number, postChannelBanDto: PostChannelBanDto, req: any): Promise<Channel>;
     updateChannelBan(channel_id: number, ban_id: number, updateChannelBanDto: UpdateChannelBanDto, req: any): Promise<Channel>;

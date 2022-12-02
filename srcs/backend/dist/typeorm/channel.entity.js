@@ -56,6 +56,16 @@ __decorate([
     __metadata("design:type", String)
 ], Channel.prototype, "status", void 0);
 __decorate([
+    (0, class_transformer_1.Exclude)(),
+    (0, class_validator_1.IsDate)(),
+    (0, typeorm_1.Column)({
+        type: 'timestamptz',
+        nullable: true,
+        default: null
+    }),
+    __metadata("design:type", Date)
+], Channel.prototype, "latest_sent", void 0);
+__decorate([
     (0, typeorm_1.OneToMany)(() => channel_ban_entity_1.ChannelBan, (channelBan) => channelBan.channel, {
         eager: true,
         onDelete: 'CASCADE',
