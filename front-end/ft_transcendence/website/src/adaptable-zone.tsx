@@ -17,6 +17,8 @@ import Typography from '@mui/material/Typography';
 import { Chart } from "react-google-charts";
 import { response } from 'express';
 
+import { useState, useEffect } from "react";
+
 // import axios from 'axios';
 
 
@@ -585,12 +587,10 @@ export function SignOn(){
 
 // export function Test(){
 // 	fetch("http://localhost:9999/api/users", { credentials: 'include' })
-// 	// .then(response => {response.text()})//original
-// 	// .then (response => {//avec max
-// 		// console.log(response.text());
-// 	// })
+// 	.then(response => {response.text()})//original
+// 	// .then(response => {response.json()})
 // 	.then(response => console.log(response))//original
-// 	// .then(response => console.log(users))//avec max
+// 	// .then(json => console.log(json))
 // 	.catch(error => console.log("Erreur : " + error));
 // 	return(
 // 		<div><h1>Test</h1>
@@ -598,47 +598,93 @@ export function SignOn(){
 // 	);
 // }
 
-export class Test extends React.Component {
+// interface IProps {
+// }
 
-	// Constructor 
-	constructor(props: any) {
-		super(props);
+// interface IState {
+//   items?: any;
+//   DataisLoaded?: boolean;
+// }
 
-		this.state = {
-			items: [],
-			DataisLoaded: false
-		};
-	}
+// export class Test extends React.Component <IProps, IState>{
 
-	// ComponentDidMount is used to
-	// execute the code 
-	componentDidMount() {
-		fetch(
-"http://localhost:9999/api/users")
-			.then((res) => res.json())
-			.then((json) => {
-				this.setState({
-					items: json,
-					DataisLoaded: true
-				});
-			})
-	}
-	render() {
-		const { DataisLoaded, items } = this.state;
-		if (!DataisLoaded) return <div>
-			<h1> Pleses wait some time.... </h1> </div> ;
+// 	// Constructor 
+// 	constructor(props: any) {
+// 		super(props);
 
-		return (
-			<div className = "App">
-				<h1> Fetch data from an api in react </h1>  {
-					items.map((item: any) => (
-						<ol key = { item.id } >
-							User_Name: { item.username },
-							User_Email: { item.email }
-						</ol>
-					))
-				}
-			</div>
-		);
-	}
-}
+// 		this.state = {
+// 			items: [],
+// 			DataisLoaded: false,
+// 		};
+// 	}
+
+// 	// ComponentDidMount is used to
+// 	// execute the code 
+// 	componentDidMount() {
+// 		fetch(
+// "http://localhost:9999/api/users")
+// 			.then((res) => res.json())
+// 			.then((json) => {
+// 				this.setState({
+// 					items: json,
+// 					DataisLoaded: true
+// 				});
+// 			})
+// 	}
+// 	render() {
+// 		const { DataisLoaded, items } = this.state;
+// 		if (!DataisLoaded) return <div>
+// 			<h1> Pleases wait some time.... </h1> </div> ;
+
+// 		return (
+// 			<div className = "App">
+// 				<h1> Fetch data from an api in react </h1>  {
+// 					items((item: any) => (
+// 						<ol key = { item.id } >
+// 							User_Name: { item.username },
+// 							User_Email: { item.email_address }
+// 						</ol>
+// 					))
+// 				}
+// 			</div>
+// 		);
+// 	}
+// }
+
+
+type resultProps = {
+	email: string;
+	username: string;
+  };
+  
+  export function Test() {
+	const [data, setResult] = useState<resultProps[]>([]);
+  
+	useEffect(() => {
+	  const api = async () => {
+		const data = await fetch("http://localhost:9999/api/users", {
+		  method: "GET"
+		});
+		const jsonData = await data.json();
+		setResult(jsonData.data);
+	  };
+  
+	  api();
+	}, []);
+  
+	return (
+	  <div className="App">
+		<h1>
+		  {data.map((value) => {
+			return (
+			  <div>
+				<div>{value.email}</div>
+				<div>{value.username}</div>
+			  </div>
+			);
+		  })}
+		</h1>
+		<h2>Start editing to see some magic happen!</h2>
+	  </div>
+	);
+  }
