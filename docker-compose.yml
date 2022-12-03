@@ -8,21 +8,23 @@ services:
         build: ./srcs/backend/
         restart: unless-stopped
         volumes:
-            - nestjs:/usr/src/app
-            - react:/usr/src/frontend
+            - ./srcs/backend/src:/usr/src/app/src
+            - ./srcs/backend/test:/usr/src/app/test
+            # - nestjs:/usr/src/app
+            # - react:/usr/src/frontend
         networks:
             - ft_transcendence
 
-    react:
-        container_name: react
-        ports:
-            - "3000:3000"
-        build: ./srcs/frontend/
-        restart: unless-stopped
-        volumes:
-            - react:/usr/src/frontend
-        networks:
-            - ft_transcendence
+    # react:
+    #     container_name: react
+    #     ports:
+    #         - "3000:3000"
+    #     build: ./srcs/frontend/
+    #     restart: unless-stopped
+    #     volumes:
+    #         - ./srcs/frontend/ft_transcendence/website/src:/usr/src/app/frontend/ft_transcendence/website/src
+    #     networks:
+    #         - ft_transcendence
 
     postgres:
         container_name: postgres
@@ -34,8 +36,8 @@ services:
             PGDATA: /data/postgres
         volumes:
             - postgres:/data/postgres
-        ports:
-            - "5432:5432"
+        # ports:
+        #     - "5432:5432"
         networks:
             - ft_transcendence
         restart: unless-stopped
@@ -57,18 +59,6 @@ services:
         restart: unless-stopped
 
 volumes:
-    nestjs:
-        driver: local
-        driver_opts:
-            type: none
-            device: ./srcs/backend
-            o: bind
-    react:
-        driver: local
-        driver_opts:
-            type: none
-            device: ./srcs/frontend/ft_transcendence/website
-            o: bind
     postgres:
         driver: local
         driver_opts:
