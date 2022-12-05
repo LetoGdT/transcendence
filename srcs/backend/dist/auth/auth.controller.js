@@ -51,7 +51,7 @@ let AuthController = class AuthController {
         let api = new auth_service_1.Api42();
         await api.setToken(query.code);
         let me = await api.get('/v2/me');
-        const user = await this.usersService.addUser({ uid: me.id, username: me.login, email: me.email, image_url: me.image_url });
+        const user = await this.usersService.addUser({ uid: me.id, username: me.login, email: me.email, image_url: me.image.link });
         const { access_token, refresh_token } = await this.authService.createTokens(user.id);
         res.cookie('access_token', access_token, {
             httpOnly: true,

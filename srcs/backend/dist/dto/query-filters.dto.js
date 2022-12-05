@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.MessageQueryFilterDto = exports.UserQueryFilterDto = void 0;
+exports.ChannelQueryFilterDto = exports.MessageQueryFilterDto = exports.UserQueryFilterDto = void 0;
 const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
 class UserQueryFilterDto {
@@ -73,4 +73,27 @@ __decorate([
     __metadata("design:type", Date)
 ], MessageQueryFilterDto.prototype, "end_at", void 0);
 exports.MessageQueryFilterDto = MessageQueryFilterDto;
+class ChannelQueryFilterDto {
+}
+__decorate([
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsInt)(),
+    (0, class_validator_1.Min)(1),
+    (0, class_validator_1.Max)(Number.MAX_SAFE_INTEGER),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], ChannelQueryFilterDto.prototype, "id", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.MinLength)(3),
+    (0, class_validator_1.MaxLength)(20),
+    (0, class_validator_1.Matches)('^[ A-Za-z0-9_\\-!?]*$'),
+    __metadata("design:type", String)
+], ChannelQueryFilterDto.prototype, "username", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsIn)(['public', 'private', 'protected']),
+    __metadata("design:type", String)
+], ChannelQueryFilterDto.prototype, "status", void 0);
+exports.ChannelQueryFilterDto = ChannelQueryFilterDto;
 //# sourceMappingURL=query-filters.dto.js.map

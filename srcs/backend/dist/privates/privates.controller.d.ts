@@ -13,6 +13,7 @@ export declare class PrivatesController {
     getPrivateMessages(pageOptionsDto: PageOptionsDto, messageQueryFilterDto: MessageQueryFilterDto, userSelectDto: UserSelectDto, req: any): Promise<PageDto<PrivateMessage>>;
     getPrivateMessagesAsSender(pageOptionsDto: PageOptionsDto, messageQueryFilterDto: MessageQueryFilterDto, userSelectDto: UserSelectDto, req: any): Promise<PageDto<PrivateMessage>>;
     getPrivateMessagesAsRecipient(pageOptionsDto: PageOptionsDto, messageQueryFilterDto: MessageQueryFilterDto, userSelectDto: UserSelectDto, req: any): Promise<PageDto<PrivateMessage>>;
+    getConversations(req: any): Promise<PrivateMessage[]>;
     createPrivateMessage(postPrivateDto: PostPrivateDto, req: any): Promise<PrivateMessage>;
     createPrivateMessageFromRecipientName(recipient: string, body: {
         content: string;

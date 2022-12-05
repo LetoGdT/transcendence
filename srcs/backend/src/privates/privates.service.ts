@@ -32,7 +32,7 @@ export class PrivatesService
 
 		queryBuilder
 			.leftJoinAndSelect('private.message', 'message')
-			.leftJoinAndSelect('message.recipient', 'recipient')
+			.leftJoinAndSelect('private.recipient', 'recipient')
 			.leftJoinAndSelect('message.sender', 'sender')
 			.where(messageQueryFilterDto.id != null
 				? 'private.id = :id'
@@ -50,19 +50,19 @@ export class PrivatesService
 				? 'message.sender = :sender_id'
 				: 'TRUE', { sender_id: userSelectDto.sender_id })
 			.andWhere(userSelectDto.recipient_id != null
-				? 'message.recipient = :recipient_id'
+				? 'private.recipient = :recipient_id'
 				: 'TRUE', { recipient_id: userSelectDto.recipient_id })
 			.andWhere(new Brackets(qb => {
 				qb.where("message.sender = :user_id", { user_id: user.id })
-				.orWhere("message.recipient = :user_id", { user_id: user.id })
+				.orWhere("private.recipient = :user_id", { user_id: user.id })
 			}))
 			.andWhere(options && options.as_sender == true
-				? 'message.recipient = :user_id'
+				? 'private.recipient = :user_id'
 				: 'TRUE', { user_id: user.id })
 			.andWhere(options && options.as_recipient == true
 				? 'message.sender = :user_id'
 				: 'TRUE', { user_id: user.id })
-			.orderBy('private.id', pageOptionsDto.order)
+			.orderBy('message.sent_date', pageOptionsDto.order)
 			.skip(pageOptionsDto.skip)
 			.take(pageOptionsDto.take);
 
@@ -86,10 +86,37 @@ export class PrivatesService
 
 		if (recipient == null)
 			throw new BadRequestException('User not found');
-		const message: Message = await this.messagesService.createMessage(sender, recipient, postPrivateDto.content);
-		const privateMessage = new PrivateMessage()
+		const message: Message = await this.messagesService.createMessage(sender, postPrivateDto.content);
+		const privateMessage = new PrivateMessage();
+		privateMessage.recipient = recipient;
 		privateMessage.message = message;
 		return this.privatesRepository.save(privateMessage);
+	}
+
+	// select distinct id from (
+	// 	select distinct senderId as id, recipientId from message
+	// 		where recipientId = "user_id"
+	// 	inner join (
+	// 		select senderId, distinct recipientId as id from message
+	// 			where senderId = "user_id") as messages_sent
+	// on true) as foo
+
+	async getConversations(user: User)
+	{
+		const queryBuilder = this.privatesRepository.createQueryBuilder("private");
+
+		queryBuilder
+			.leftJoinAndSelect('private.message', 'message')
+			.leftJoinAndSelect('private.recipient', 'recipient')
+			.leftJoinAndSelect('message.sender', 'sender')
+			.where(new Brackets(qb => {
+				qb.where("message.sender = :user_id", { user_id: user.id })
+				.orWhere("private.recipient = :user_id", { user_id: user.id })
+			}))
+			.distinctOn(['sender', 'recipient']);
+
+		// console.log();
+		return await queryBuilder.getMany();
 	}
 
 	async updateMessage(id: number, updateMessageDto: UpdateMessageDto, user: User)
@@ -101,7 +128,7 @@ export class PrivatesService
 		
 		queryBuilder
 			.leftJoinAndSelect('private.message', 'message')
-			.leftJoinAndSelect('message.recipient', 'recipient')
+			.leftJoinAndSelect('private.recipient', 'recipient')
 			.leftJoinAndSelect('message.sender', 'sender')
 			.where("private.id = :id", { id: id })
 			.andWhere("message.sender = :user_id", { user_id: user.id });
@@ -127,7 +154,7 @@ export class PrivatesService
 		
 		queryBuilder
 			.leftJoinAndSelect('private.message', 'message')
-			.leftJoinAndSelect('message.recipient', 'recipient')
+			.leftJoinAndSelect('private.recipient', 'recipient')
 			.leftJoinAndSelect('message.sender', 'sender')
 			.where("private.id = :id", { id: id })
 			.andWhere("message.sender = :user_id", { user_id: user.id });

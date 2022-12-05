@@ -15,11 +15,7 @@ export class Message
 
 	@ManyToOne(() => User, { nullable: false, eager: true })
 	@JoinColumn()
-    sender: User
-
-    @ManyToOne(() => User, { nullable: false, eager: true })
-    @JoinColumn()
-    recipient: User
+	sender: User
 
 	@Column({
 		nullable: false,
@@ -37,7 +33,7 @@ export class Message
 	sent_date: Date;
 
 	// This is not implemented for now, but this could be used
-	// for qualiy of life improvements
+	// for quality of life improvements
 	@IsDate()
 	@Column({
 		type: 'timestamptz',
@@ -48,6 +44,6 @@ export class Message
 	received_date: Date;
 
 	@IsOptional()
-	@ManyToOne(() => Channel, (channel) => channel.messages)
+	@ManyToOne(() => Channel, (channel) => channel.messages, { onDelete: 'CASCADE' })
 	channel?: Channel;
 }

@@ -11,3 +11,8 @@ export declare class MessageQueryFilterDto {
     start_at: Date;
     end_at: Date;
 }
+export declare class ChannelQueryFilterDto {
+    id: number;
+    username: string;
+    status: 'public' | 'private' | 'protected';
+}

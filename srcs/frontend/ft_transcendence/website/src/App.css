@@ -1,40 +1,10 @@
-.Header {
-  background-color: #646cffaa;
-  display: flex;
-  justify-content: flex-end;
-  margin: 30px;
-}
-
-.Adaptable{
-  background-color:#000000;
-  color: antiquewhite;
-}
-
-.Friends{
-  display: flex;
-  flex-wrap: wrap;
-  background-color: DodgerBlue;
-  justify-content: center;
-}
-
-.A-friend{
-  background-color: #f1f1f1;
-  width: 100px;
-  margin: 2px;
-  text-align: center;
-  font-size: 18px;
-}
-
-.Avatar{
-  background-color: antiquewhite;
-  max-width: 100;
-  height: auto;
-}
-
 .Menu {
+  position: sticky;
+  top: 0px;
   width: 500;
   justify-content: center;
   display: flex;
+  background-color: #3d3f44;
 }
 
 .Menu_button {
@@ -44,10 +14,169 @@
 }
 
 .menu_button:hover { /*permet un ombrage quand pointé a reutiliser pour le menu :3*/
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 2em #000dfcaa);
 }
 
-.App {
+.Adaptable{
+  background-color:#000000;
+  color: antiquewhite;
+  height: 100%;
+  margin: 5px;
+}
+
+.Friend-container{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.Friend-container-div{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+}
+
+.Friend-avatar{
+  max-width: 100px;
+	height: auto;
+}
+
+.Match-container{
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.Match-container-div{
+  background-color: rgb(30, 32, 32);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 400px;
+  margin: 10px;
+  height: 106px;
+}
+
+.Match-Resultat{
+  display: flex;
+  justify-content: center;
+  font-size: 30px;
+}
+
+.Match-Summary{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  height: 69px;
+}
+
+.Match-Player-score{
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.Match-Player-points{
+  font-size: 40px;
+  width: 188px;
+}
+
+.Match-VS{
+  display: flex;
+  font-size: 20px;
+  margin: 5px;
+  width: 26px;
+  line-height: 69px;
+  text-align: center;
+}
+
+.Settings-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Settings-container-div-lvl1{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-left: 20px;
+  width: 100%;
+  /* justify-content: center; */
+}
+
+.Settings-container-div-lvl2{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-left: 15px;
+}
+
+.Settings-container-div-lvl3{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  margin-left: 5px;
+}
+.Settings-container-div-lvl4{
+  margin-left: 5px;
+}
+
+.Settings-avatar-img {
+	max-width: 200px;
+	height: auto;
+  max-height: 210px;
+}
+
+.Profile-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin: 5px;
+}
+
+.Profile-container-row-lvl1{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  margin: 5px;
+  flex-wrap: wrap;
+}
+
+.Profile-Alias{
+  font-size: 25px;
+  font-weight: bold;
+  display: flex;
+  flex-direction: row;
+}
+.Profile-Alias-div{
+  margin: 5px;
+}
+
+.Profile-achievement-container{
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.Profile-achievement-container-div{
+  display: flex;
+  flex-direction: column;
+  margin: 8px;
+  align-items: center;
+}
+
+.Profile-achievement-container-div-img{
+  height: 40px;
+  width: auto;
+}
+
+.Default {
   text-align: center;
 }
 

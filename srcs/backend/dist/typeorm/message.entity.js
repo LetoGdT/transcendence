@@ -29,11 +29,6 @@ __decorate([
     __metadata("design:type", user_entity_1.User)
 ], Message.prototype, "sender", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, { nullable: false, eager: true }),
-    (0, typeorm_1.JoinColumn)(),
-    __metadata("design:type", user_entity_1.User)
-], Message.prototype, "recipient", void 0);
-__decorate([
     (0, typeorm_1.Column)({
         nullable: false,
         unique: false,
@@ -61,7 +56,7 @@ __decorate([
 ], Message.prototype, "received_date", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
-    (0, typeorm_1.ManyToOne)(() => channel_entity_1.Channel, (channel) => channel.messages),
+    (0, typeorm_1.ManyToOne)(() => channel_entity_1.Channel, (channel) => channel.messages, { onDelete: 'CASCADE' }),
     __metadata("design:type", channel_entity_1.Channel)
 ], Message.prototype, "channel", void 0);
 Message = __decorate([

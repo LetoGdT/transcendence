@@ -25,7 +25,6 @@ export class MessagesService
 
 		queryBuilder
 			.leftJoinAndSelect('message.sender', 'sender')
-			.leftJoinAndSelect('message.recipient', 'recipient')
 			.where(messageQueryFilterDto.id != null
 				? 'message.id = :id'
 				: 'TRUE', { id: messageQueryFilterDto.id })
@@ -38,17 +37,8 @@ export class MessagesService
 			.andWhere(userSelectDto.sender_id != null
 				? 'message.sender = :sender_id'
 				: 'TRUE', { sender_id: userSelectDto.sender_id })
-			.andWhere(userSelectDto.recipient_id != null
-				? 'message.recipient = :recipient_id'
-				: 'TRUE', { recipient_id: userSelectDto.recipient_id })
-			.andWhere(new Brackets(qb => {
-				qb.where("message.sender = :user_id", { user_id: user.id })
-				.orWhere("message.recipient = :user_id", { user_id: user.id })
-			}))
-			.andWhere(options && options.as_sender == true
-				? 'message.recipient = :user_id'
-				: 'TRUE', { user_id: user.id })
-			.andWhere(options && options.as_recipient == true
+			.andWhere("message.sender = :user_id", { user_id: user.id })
+			.andWhere(options != null && options.as_sender === true
 				? 'message.sender = :user_id'
 				: 'TRUE', { user_id: user.id })
 			.orderBy('message.sent_date', pageOptionsDto.order)
@@ -63,11 +53,47 @@ export class MessagesService
 		return new PageDto(entities, pageMetaDto);
 	}
 
-	async createMessage(sender: User, recipient: User, content: string)
+	async getChannelMessages(channel_id: number,
+		pageOptionsDto: PageOptionsDto,
+		messageQueryFilterDto: MessageQueryFilterDto,
+		userSelectDto: UserSelectDto,
+		user: User,
+		as_sender?: boolean): Promise<PageDto<Message>>
+	{
+		const queryBuilder = this.messageRepository.createQueryBuilder("message");
+
+		queryBuilder
+			.leftJoinAndSelect('message.sender', 'sender')
+			.leftJoinAndSelect('message.channel', 'channel')
+			.where('channel.id = :channel_id', { channel_id: channel_id })
+			.andWhere(messageQueryFilterDto.id != null
+				? 'message.id = :id'
+				: 'TRUE', { id: messageQueryFilterDto.id })
+			.andWhere(messageQueryFilterDto.start_at != null
+				? 'message.sent_date > :start_at'
+				: 'TRUE', { start_at: messageQueryFilterDto.start_at })
+			.andWhere(messageQueryFilterDto.end_at != null
+				? 'message.sent_date < :end_at'
+				: 'TRUE', { end_at: messageQueryFilterDto.end_at })
+			.andWhere(userSelectDto.sender_id != null
+				? 'message.sender = :sender_id'
+				: 'TRUE', { sender_id: userSelectDto.sender_id })
+			.orderBy('message.sent_date', pageOptionsDto.order)
+			.skip(pageOptionsDto.skip)
+			.take(pageOptionsDto.take);
+
+		const itemCount = await queryBuilder.getCount();
+		const { entities } = await queryBuilder.getRawAndEntities();
+
+		const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
+
+		return new PageDto(entities, pageMetaDto);
+	}
+
+	async createMessage(sender: User, content: string)
 	{
 		const newMessage : Message = this.messageRepository.create({
 			sender: sender,
-			recipient: recipient,
 			content: content
 		});
 		return this.messageRepository.save(newMessage);
@@ -77,6 +103,19 @@ export class MessagesService
 	async updateMessage(message: Message)
 	{
 		return this.messageRepository.save(message);
+	}
+
+	async updateMessageFromId(id: number, content: string)
+	{
+		const queryBuilder = this.messageRepository.createQueryBuilder("message");
+
+		const message = await queryBuilder
+			.where('message.id = :id', { id: id })
+			.getOne();
+
+		message.content = content;
+
+		return this.messageRepository.save(message)
 	}
 
 	// This function needs to be used if you are ABSOLUTELY SURE the message is valid and checked.

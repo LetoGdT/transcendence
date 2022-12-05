@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChannelUser = void 0;
 const typeorm_1 = require("typeorm");
+const class_validator_1 = require("class-validator");
 const user_entity_1 = require("./user.entity");
 const channel_entity_1 = require("./channel.entity");
 let ChannelUser = class ChannelUser {
@@ -23,16 +24,25 @@ __decorate([
     __metadata("design:type", Number)
 ], ChannelUser.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, { eager: true }),
-    (0, typeorm_1.JoinColumn)(),
+    (0, class_validator_1.ValidateNested)(),
+    (0, typeorm_1.ManyToOne)(() => user_entity_1.User, (user) => user.channelUsers, { eager: true }),
     __metadata("design:type", user_entity_1.User)
 ], ChannelUser.prototype, "user", void 0);
 __decorate([
+    (0, class_validator_1.IsIn)(['None', 'Admin', 'Owner']),
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], ChannelUser.prototype, "role", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => channel_entity_1.Channel, (channel) => channel.users),
+    (0, class_validator_1.IsBoolean)(),
+    (0, typeorm_1.Column)({
+        nullable: false,
+        default: false
+    }),
+    __metadata("design:type", Boolean)
+], ChannelUser.prototype, "is_muted", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => channel_entity_1.Channel, (channel) => channel.users, { onDelete: 'CASCADE' }),
     __metadata("design:type", channel_entity_1.Channel)
 ], ChannelUser.prototype, "channel", void 0);
 ChannelUser = __decorate([

@@ -10,6 +10,7 @@ import { Message } from './typeorm/message.entity';
 import { PrivateMessage } from './typeorm/private-message.entity';
 import { Channel } from './typeorm/channel.entity';
 import { ChannelUser } from './typeorm/channel-user.entity';
+import { ChannelBan } from './typeorm/channel-ban.entity';
 import { MessagesModule } from './messages/messages.module';
 import { PrivatesModule } from './privates/privates.module';
 import { ChannelsModule } from './channels/channels.module';
@@ -31,7 +32,7 @@ import { WebsocketModule } from './websocket/websocket.module';
 					username: configService.get('DB_USERNAME'),
 					password: configService.get('DB_PASSWORD'),
 					database: configService.get('DB_NAME'),
-					entities: [User, Message, PrivateMessage, Channel, ChannelUser],
+					entities: [User, Message, PrivateMessage, Channel, ChannelUser, ChannelBan,],
 					synchronize: true,
 				}
 			),

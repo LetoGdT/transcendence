@@ -34,12 +34,6 @@ let MessagesController = class MessagesController {
     async getMessagesAsRecipient(pageOptionsDto, messageQueryFilterDto, userSelectDto, req) {
         return this.messagesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user, { as_recipient: true });
     }
-    async createMessage(body, req) {
-        const sender = req.user;
-        console.log(body.recipient);
-        const recipient = await this.usersService.getOneByLogin(body.recipient);
-        return this.messagesService.createMessage(sender, recipient, body.content);
-    }
 };
 __decorate([
     (0, common_1.Get)(),
@@ -83,15 +77,6 @@ __decorate([
         messages_dto_1.UserSelectDto, Object]),
     __metadata("design:returntype", Promise)
 ], MessagesController.prototype, "getMessagesAsRecipient", null);
-__decorate([
-    (0, common_1.Post)(),
-    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Req)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", Promise)
-], MessagesController.prototype, "createMessage", null);
 MessagesController = __decorate([
     (0, common_1.Controller)('messages'),
     __metadata("design:paramtypes", [messages_service_1.MessagesService,

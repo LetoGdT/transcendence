@@ -52,6 +52,14 @@ export class PrivatesController
 		return this.privatesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user, { as_recipient: true });
 	}
 
+	@Get('/conversations')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	getConversations(@Req() req)
+	{
+		return this.privatesService.getConversations(req.user);
+	}
+
 	@Post()
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)

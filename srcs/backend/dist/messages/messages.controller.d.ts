@@ -12,8 +12,4 @@ export declare class MessagesController {
     getMessages(pageOptionsDto: PageOptionsDto, messageQueryFilterDto: MessageQueryFilterDto, userSelectDto: UserSelectDto, req: any): Promise<PageDto<Message>>;
     getMessagesAsSender(pageOptionsDto: PageOptionsDto, messageQueryFilterDto: MessageQueryFilterDto, userSelectDto: UserSelectDto, req: any): Promise<PageDto<Message>>;
     getMessagesAsRecipient(pageOptionsDto: PageOptionsDto, messageQueryFilterDto: MessageQueryFilterDto, userSelectDto: UserSelectDto, req: any): Promise<PageDto<Message>>;
-    createMessage(body: {
-        recipient: string;
-        content: string;
-    }, req: any): Promise<Message>;
 }

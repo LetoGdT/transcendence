@@ -12,9 +12,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Channel = void 0;
 const typeorm_1 = require("typeorm");
 const class_validator_1 = require("class-validator");
-const user_entity_1 = require("./user.entity");
+const class_transformer_1 = require("class-transformer");
 const message_entity_1 = require("./message.entity");
 const channel_user_entity_1 = require("./channel-user.entity");
+const channel_ban_entity_1 = require("../typeorm/channel-ban.entity");
 let Channel = class Channel {
 };
 __decorate([
@@ -25,8 +26,9 @@ __decorate([
     __metadata("design:type", Number)
 ], Channel.prototype, "id", void 0);
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.MinLength)(3),
     (0, class_validator_1.MaxLength)(20),
+    (0, class_validator_1.Matches)('^[ A-Za-z0-9_\\-!?]*$'),
     (0, typeorm_1.Column)({
         nullable: false,
         unique: true,
@@ -34,27 +36,48 @@ __decorate([
     __metadata("design:type", String)
 ], Channel.prototype, "name", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => channel_user_entity_1.ChannelUser, (channelUser) => channelUser.channel, { cascade: true }),
-    (0, typeorm_1.JoinColumn)(),
+    (0, typeorm_1.OneToMany)(() => channel_user_entity_1.ChannelUser, (channelUser) => channelUser.channel, {
+        eager: true,
+        onDelete: 'CASCADE',
+        cascade: true
+    }),
     __metadata("design:type", Array)
 ], Channel.prototype, "users", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => message_entity_1.Message, (message) => message.channel),
+    (0, typeorm_1.OneToMany)(() => message_entity_1.Message, (message) => message.channel, { cascade: true, eager: true }),
     (0, typeorm_1.JoinColumn)(),
     __metadata("design:type", Array)
 ], Channel.prototype, "messages", void 0);
 __decorate([
+    (0, class_validator_1.IsIn)(['public', 'private', 'protected']),
     (0, typeorm_1.Column)({
         default: 'private',
     }),
     __metadata("design:type", String)
 ], Channel.prototype, "status", void 0);
 __decorate([
-    (0, typeorm_1.ManyToMany)(() => user_entity_1.User, { eager: true }),
-    (0, typeorm_1.JoinColumn)(),
-    __metadata("design:type", Array)
-], Channel.prototype, "banned", void 0);
+    (0, class_transformer_1.Exclude)(),
+    (0, class_validator_1.IsDate)(),
+    (0, typeorm_1.Column)({
+        type: 'timestamptz',
+        nullable: true,
+        default: null
+    }),
+    __metadata("design:type", Date)
+], Channel.prototype, "latest_sent", void 0);
 __decorate([
+    (0, typeorm_1.OneToMany)(() => channel_ban_entity_1.ChannelBan, (channelBan) => channelBan.channel, {
+        eager: true,
+        onDelete: 'CASCADE',
+        cascade: true
+    }),
+    __metadata("design:type", Array)
+], Channel.prototype, "banlist", void 0);
+__decorate([
+    (0, class_transformer_1.Exclude)({ toPlainOnly: true }),
+    (0, class_validator_1.IsAscii)(),
+    (0, class_validator_1.MinLength)(8),
+    (0, class_validator_1.MaxLength)(40),
     (0, typeorm_1.Column)({
         nullable: true,
         unique: false,

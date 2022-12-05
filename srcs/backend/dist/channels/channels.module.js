@@ -10,14 +10,18 @@ exports.ChannelsModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const auth_module_1 = require("../auth/auth.module");
+const messages_module_1 = require("../messages/messages.module");
 const channels_controller_1 = require("./channels.controller");
 const channels_service_1 = require("./channels.service");
 const channel_entity_1 = require("../typeorm/channel.entity");
+const channel_user_entity_1 = require("../typeorm/channel-user.entity");
+const channel_ban_entity_1 = require("../typeorm/channel-ban.entity");
 let ChannelsModule = class ChannelsModule {
 };
 ChannelsModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([channel_entity_1.Channel]), auth_module_1.AuthModule],
+        imports: [typeorm_1.TypeOrmModule.forFeature([channel_entity_1.Channel, channel_user_entity_1.ChannelUser, channel_ban_entity_1.ChannelBan]),
+            auth_module_1.AuthModule, messages_module_1.MessagesModule],
         controllers: [channels_controller_1.ChannelsController],
         providers: [channels_service_1.ChannelsService]
     })

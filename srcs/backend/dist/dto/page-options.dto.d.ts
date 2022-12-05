@@ -3,8 +3,8 @@ export declare enum Order {
     DESC = "DESC"
 }
 export declare class PageOptionsDto {
-    readonly order?: Order;
-    readonly page?: number;
-    readonly take?: number;
+    order?: Order;
+    page?: number;
+    take?: number;
     get skip(): number;
 }
