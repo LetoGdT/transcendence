@@ -15,16 +15,17 @@ services:
         networks:
             - ft_transcendence
 
-    # react:
-    #     container_name: react
-    #     ports:
-    #         - "3000:3000"
-    #     build: ./srcs/frontend/
-    #     restart: unless-stopped
-    #     volumes:
-    #         - ./srcs/frontend/ft_transcendence/website/src:/usr/src/app/frontend/ft_transcendence/website/src
-    #     networks:
-    #         - ft_transcendence
+    react:
+        container_name: react
+        ports:
+            - "3000:3000"
+        build: ./srcs/frontend/ft_transcendence
+        restart: unless-stopped
+        volumes:
+            - ./srcs/frontend/ft_transcendence/website/src:/usr/src/app/src
+            - ./srcs/frontend/ft_transcendence/website/public:/usr/src/app/public
+        networks:
+            - ft_transcendence
 
     postgres:
         container_name: postgres
@@ -63,13 +64,13 @@ volumes:
         driver: local
         driver_opts:
             type: none
-            device: /home/lucille/transcendence/srcs/db/postgres
+            device: ./db/postgres
             o: bind
     pgadmin:
         driver: local
         driver_opts:
             type: none
-            device: /home/lucille/transcendence/srcs/db/pgadmin
+            device: ./db/pgadmin
             o: bind
 
 networks:
