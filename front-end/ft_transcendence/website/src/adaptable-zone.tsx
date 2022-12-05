@@ -15,6 +15,24 @@ import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 
 import { Chart } from "react-google-charts";
+import { response } from 'express';
+
+// import axios from 'axios';
+
+
+
+// export class adaptableZone extends React.Component{
+// 	constructor(props){
+// 		super(props);
+// 		this.state = {//en attendant de recup les info du back
+// 			value: null,
+// 		};
+// 	}
+
+// 	render(){
+// 		return(<div></div>);
+// 	}
+// }
 
 export function Chat(){
 	return(
@@ -292,83 +310,92 @@ export function Settings(){
 			<h1>Settings</h1>
 			<p>si user non connecter renvoyer vers /pleaseconnect</p>
 			<div className='Settings-container'>
-				<h2>Your avatar</h2>
 				<div className='Settings-container-div-lvl1'>
 					<div className='Settings-container-div-lvl2'>
-						<img src={Avatar} alt='your avatar' className='Settings-avatar-img'></img>
+						<h2>Your avatar</h2>
+						<div className='Settings-container-div-lvl3'>
+							<div className='Settings-container-div-lvl4'>
+								<img src={Avatar} alt='your avatar' className='Settings-avatar-img'></img>
+							</div>
+							<div className='Settings-container-div-lvl4'>
+								<Box
+									component="form"
+									noValidate
+									sx={{
+										display: 'grid',
+										gap: 2,
+									}}
+								>
+									<SettingsTextField
+										label="New avatar"
+										InputLabelProps={{
+										sx:{
+											color:"white",
+										}
+										}}
+										required
+										variant="outlined"
+										defaultValue="*.jpg or *.png"
+										sx={{ input: { color: 'grey' } }}
+										id="validation-outlined-input"
+										/>
+								</Box>
+							</div>
+							<div className='Settings-container-div-lvl4'>
+								<SettingsButton variant="contained" disableRipple>Browse</SettingsButton>
+							</div>
+						</div>
 					</div>
 					<div className='Settings-container-div-lvl2'>
-						<Box
-							component="form"
-							noValidate
-							sx={{
-								display: 'grid',
-								gap: 2,
-							}}
-						>
-							<SettingsTextField
-								label="New avatar"
-								InputLabelProps={{
-								sx:{
-									color:"white",
-								}
-								}}
-								required
-								variant="outlined"
-								defaultValue="*.jpg or *.png"
-								sx={{ input: { color: 'grey' } }}
-								id="validation-outlined-input"
-							/>
-						</Box>
+						<h2>Your alias</h2>
+						<div className='Settings-container-div-lvl3'>
+							<div className='Settings-container-div-lvl4'>
+								User's alias
+							</div>
+							<div className='Settings-container-div-lvl4'>
+							<Box
+									component="form"
+									noValidate
+									sx={{
+										display: 'grid',
+										gap: 2,
+									}}
+								>
+									<SettingsTextField
+										label="New alias"
+										InputLabelProps={{
+										sx:{
+											color:"white",
+										}
+										}}
+										required
+										variant="outlined"
+										defaultValue="ex: Toto"
+										sx={{ input: { color: 'grey' } }}
+										id="validation-outlined-input"
+									/>
+								</Box>
+							</div>
+						</div>
 					</div>
 					<div className='Settings-container-div-lvl2'>
-						<SettingsButton variant="contained" disableRipple>Browse</SettingsButton>
+						<h2>2FA - 2 Fractor Authentification</h2>
+						<div className='Settings-container-div-lvl3'>
+							<div className='Settings-container-div-lvl4'>
+								<Stack direction="row" spacing={1} alignItems="center">
+									<Typography color="common.white">Off</Typography>
+										<TwoFASwitch defaultChecked inputProps={{ 'aria-label': 'ant design' }} />
+									<Typography color="common.white">On</Typography>
+								</Stack>
+							</div>
+						</div>
 					</div>
+						
 				</div>
-				<h2>Your alias</h2>
-				<div className='Settings-container-div-lvl1'>
-					<div className='Settings-container-div-lvl2'>
-						User's alias
-					</div>
-					<div className='Settings-container-div-lvl2'>
-					<Box
-							component="form"
-							noValidate
-							sx={{
-								display: 'grid',
-								gap: 2,
-							}}
-						>
-							<SettingsTextField
-								label="New alias"
-								InputLabelProps={{
-								sx:{
-									color:"white",
-								}
-								}}
-								required
-								variant="outlined"
-								defaultValue="ex: Toto"
-								sx={{ input: { color: 'grey' } }}
-								id="validation-outlined-input"
-							/>
-						</Box>
-					</div>
-				</div>
-				<h2>2FA - 2 Fractor Authentification</h2>
-				<div className='Settings-container-div-lvl1'>
-					<div className='Settings-container-div-lvl2'>
-						<Stack direction="row" spacing={1} alignItems="center">
-							<Typography color="common.white">Off</Typography>
-								<TwoFASwitch defaultChecked inputProps={{ 'aria-label': 'ant design' }} />
-							<Typography color="common.white">On</Typography>
-						</Stack>
-					</div>
-				</div>
-				<div className='Settings-container-div-lvl1'>
+				<div>
 					<SettingsButton variant="contained" disableRipple>Validate change(s)</SettingsButton>
 				</div>
-					*Fill in the field is not required
+				*Fill in the field is not required.
 			</div>
 		</React.Fragment>
 	);
@@ -552,4 +579,66 @@ export function SignOn(){
 			</a>
 		</div>
 	);
+}
+
+// var users: any;
+
+// export function Test(){
+// 	fetch("http://localhost:9999/api/users", { credentials: 'include' })
+// 	// .then(response => {response.text()})//original
+// 	// .then (response => {//avec max
+// 		// console.log(response.text());
+// 	// })
+// 	.then(response => console.log(response))//original
+// 	// .then(response => console.log(users))//avec max
+// 	.catch(error => console.log("Erreur : " + error));
+// 	return(
+// 		<div><h1>Test</h1>
+// 		</div>
+// 	);
+// }
+
+export class Test extends React.Component {
+
+	// Constructor 
+	constructor(props: any) {
+		super(props);
+
+		this.state = {
+			items: [],
+			DataisLoaded: false
+		};
+	}
+
+	// ComponentDidMount is used to
+	// execute the code 
+	componentDidMount() {
+		fetch(
+"http://localhost:9999/api/users")
+			.then((res) => res.json())
+			.then((json) => {
+				this.setState({
+					items: json,
+					DataisLoaded: true
+				});
+			})
+	}
+	render() {
+		const { DataisLoaded, items } = this.state;
+		if (!DataisLoaded) return <div>
+			<h1> Pleses wait some time.... </h1> </div> ;
+
+		return (
+			<div className = "App">
+				<h1> Fetch data from an api in react </h1>  {
+					items.map((item: any) => (
+						<ol key = { item.id } >
+							User_Name: { item.username },
+							User_Email: { item.email }
+						</ol>
+					))
+				}
+			</div>
+		);
+	}
 }
