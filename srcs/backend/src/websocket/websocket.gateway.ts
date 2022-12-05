@@ -35,6 +35,7 @@ export class MySocketGateway implements OnGatewayConnection,
 		let token = client.request.headers.cookie;
 		let user = await this.auth.tokenOwner(token);
 		this.clients.push({user, client});
+		// ajouter ici l’appel api pour modifier la statut de la personne
 		console.log(user.username + " has connected to the websocket");
 	}
 
@@ -43,12 +44,12 @@ export class MySocketGateway implements OnGatewayConnection,
 		if (index != -1) {
 			console.log(this.clients[index].user.username + " has disconnected from the websocket.");
 			this.clients.splice(index, 1);
+		// ajouter ici l’appel api pour modifier la statut de la personne
 		}
 	}
 
 	@SubscribeMessage('newMessage')
 	onNewMessage(client: Socket, @MessageBody() body: any) {
-		console.log(body);
 		// il faut envoyer le message à la bonne personne et le mettre dans la bdd
 	}
 
