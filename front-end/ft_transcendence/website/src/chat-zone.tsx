@@ -266,16 +266,17 @@ export function Chat(){
 					</div>
 					<div className='Chat-TextField'>
 						<div>
-							<Box
-								component="form"
-								noValidate
+							{/* <Box
 								sx={{
 									display: 'grid',
 									gap: 2,
+									maxWidth: '100%',
+									width: 500
 								}}
-							>
+							> */}
 								<MessageTextField
 									label="Message"
+									fullWidth
 									InputLabelProps={{
 									sx:{
 										color:"white",
@@ -287,7 +288,7 @@ export function Chat(){
 									sx={{ input: { color: 'grey' } }}
 									id="validation-outlined-input"
 								/>
-							</Box>
+							{/* </Box> */}
 						</div>
 						<div className='Chat-send-button'>
 							<SendButton variant="contained" disableRipple>Send</SendButton>

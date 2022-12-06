@@ -24,7 +24,8 @@
 .Chat-history{
 	display: flex;
 	flex-direction: column;
-	min-width: 245px;
+	/* min-width: 245px; */
+	min-width: 400px;
 	border-style: solid;
   	border-width: 3px;
 	color: '#646464';
