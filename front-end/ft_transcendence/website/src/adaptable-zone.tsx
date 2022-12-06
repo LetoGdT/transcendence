@@ -23,25 +23,6 @@ import { response } from 'express';
 
 import { useState, useEffect } from "react";
 
-// import axios from 'axios';
-
-
-
-// export class adaptableZone extends React.Component{
-// 	constructor(props){
-// 		super(props);
-// 		this.state = {//en attendant de recup les info du back
-// 			value: null,
-// 		};
-// 	}
-
-// 	render(){
-// 		return(<div></div>);
-// 	}
-// }
-
-
-
 export function Friends(){
 	return(
 		<React.Fragment>
@@ -93,42 +74,6 @@ export function Friends(){
 	la liste des matchs
 	+
 	toute autres info que le proprio pourrait voulair modifier ou qu'on pourrait montrer
-*/
-
-/*
-export class Friends extends React.Component {
-	constructor(props: any) {
-		super(props);
-		this.state = {
-			
-		};
-	}
-
-	render() {
-		
-	const friends = ((id) => {
-		return (
-			<div className='Friend-container-div'>
-				 <div>
-					 <img src={Avatar} alt ={'???'+'\'s avatar'} className='Friend-avatar'></img>
-				 </div>
-				 <div>
-					 ???
-				 </div>
-			 </div>
-		);
-	})
-			
-		return(
-			<React.Fragment>
-				<h1>Friends</h1>
-				<div className='Friend-container'>
-					{friends}
-				</div>
-			</React.Fragment>
-		);
-	}
-}
 */
 
 export function Home(){

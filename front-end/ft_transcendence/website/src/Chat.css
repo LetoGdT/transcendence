@@ -1,0 +1,29 @@
+.Chat-container{
+	display: flex;
+	flex-direction: row;
+}
+
+.Chat-navigate{
+	display: flex;
+	flex-direction: column-reverse;
+}
+
+.Chat-history-container{
+	display: flex;
+	flex-direction: row;
+}
+
+.Chat-history{
+	display: flex;
+	flex-direction: column;
+}
+
+.Chat-TextField{
+	display: flex;
+	flex-direction: row;
+}
+
+.Chat-send-button{
+	display: flex;
+	align-self: center;
+}
