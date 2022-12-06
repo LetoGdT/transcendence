@@ -64,13 +64,13 @@ volumes:
         driver: local
         driver_opts:
             type: none
-            device: ./db/postgres
+            device: ./srcs/db/postgres
             o: bind
     pgadmin:
         driver: local
         driver_opts:
             type: none
-            device: ./db/pgadmin
+            device: ./srcs/db/pgadmin
             o: bind
 
 networks:
