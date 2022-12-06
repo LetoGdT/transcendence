@@ -41,6 +41,15 @@
 .Friend-avatar{
   max-width: 100px;
 	height: auto;
+  display: flex;
+}
+
+.Friend-Name-status{
+  display: flex;
+}
+
+.Friend-name{
+  align-self: center;
 }
 
 .Match-container{
