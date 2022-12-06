@@ -5,7 +5,15 @@
 
 .Chat-navigate{
 	display: flex;
-	flex-direction: column-reverse;
+	flex-direction: column;
+	align-self: flex-start;
+	border-style: solid;
+  	border-width: 3px;
+	color: '#646464';
+	margin-right: 3px;
+	min-height: 200px;
+	
+	
 }
 
 .Chat-history-container{
@@ -16,6 +24,12 @@
 .Chat-history{
 	display: flex;
 	flex-direction: column;
+	min-width: 245px;
+	border-style: solid;
+  	border-width: 3px;
+	color: '#646464';
+	margin-right: 3px;
+	margin-bottom: 8px;
 }
 
 .Chat-TextField{

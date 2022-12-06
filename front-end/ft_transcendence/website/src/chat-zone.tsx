@@ -194,7 +194,7 @@ import Button from '@mui/material/Button';
 // 	);
 // };
 
-const SettingsTextField = styled(TextField)({
+const MessageTextField = styled(TextField)({
 	'& input:valid + fieldset': {
 		borderColor: 'white',
 		borderWidth: 2,
@@ -251,12 +251,14 @@ export function Chat(){
 			<h1>Chat</h1>
 			<div className='Chat-container'>
 				<div className='Chat-navigate'>
-
+					<div>channel 1</div>
+					<div>channel 2</div>
+					<div>Amigo 1</div>
 				</div>
 				<div>
 					<div className='Chat-history-container'>
 						<div className='Chat-history'>
-
+							
 						</div>
 						<div>
 							<img src={scrollImg} alt='waiting from scroll'></img>
@@ -272,8 +274,8 @@ export function Chat(){
 									gap: 2,
 								}}
 							>
-								<SettingsTextField
-									label="New avatar"
+								<MessageTextField
+									label="Message"
 									InputLabelProps={{
 									sx:{
 										color:"white",
@@ -281,10 +283,10 @@ export function Chat(){
 									}}
 									required
 									variant="outlined"
-									defaultValue="*.jpg or *.png"
+									defaultValue="message"
 									sx={{ input: { color: 'grey' } }}
 									id="validation-outlined-input"
-									/>
+								/>
 							</Box>
 						</div>
 						<div className='Chat-send-button'>
