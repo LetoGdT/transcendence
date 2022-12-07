@@ -69,7 +69,7 @@ export class ChannelQueryFilterDto
 	@MinLength(3)
 	@MaxLength(20)
 	@Matches('^[ A-Za-z0-9_\\-!?]*$')
-	username: string;
+	name: string;
 
 	@IsOptional()
 	@IsIn(['public', 'private', 'protected'])

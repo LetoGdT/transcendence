@@ -47,9 +47,9 @@ export class ChannelsService
 			.where(channelQueryFilterDto.id != null
 				? 'channel.id = :id'
 				: 'TRUE', { id: channelQueryFilterDto.id })
-			.andWhere(channelQueryFilterDto.username != null
-				? 'channel.username = :username'
-				: 'TRUE', { username: channelQueryFilterDto.username })
+			.andWhere(channelQueryFilterDto.name != null
+				? 'channel.name = :name'
+				: 'TRUE', { name: channelQueryFilterDto.name })
 			.andWhere(channelQueryFilterDto.status != null
 				? 'channel.status = :status'
 				: 'TRUE', { status: channelQueryFilterDto.status })

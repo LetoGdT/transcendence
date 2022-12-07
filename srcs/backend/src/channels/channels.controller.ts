@@ -16,10 +16,39 @@ import { UserSelectDto } from '../dto/messages.dto';
 import { ChannelBanQueryFilterDto, PostChannelBanDto, UpdateChannelBanDto } from '../dto/channel-ban.dto';
 import { UserQueryFilterDto, ChannelUserQueryFilterDto } from '../dto/query-filters.dto';
 
+/**
+* A channel, where multiple users can communicate.
+* Has a name, and contains a list of users, a list of messages, a banlist,
+* a password and a status.
+* 
+* Notes:
+* 	Linked to ChannelBan, ChannelUser and Message
+**/
+
+
 @Controller('channels')
 export class ChannelsController
 {
 	constructor(private readonly channelsService: ChannelsService) {}
+
+	/**
+	* Get a list of all channels.
+	* 
+	* Args:
+	* 	pageOptionsDto: cf. ../dto/page-options.dto.ts.
+	* 	channelQueryFilterDto:
+	* 		id (Number): The channel's id.
+	* 		name (String): The name of the channel.
+	* 		status (union): The status of the channel (public, private, protected).
+	* 
+	* Return (PageDto<Channel>): A PageDto of channels.
+	* 
+	* Notes:
+	* 	I think it's the time,
+	* 	To hold on rewind,
+	* 	Tear this city down.
+	**/
+	
 
 	@Get()
 	@UseInterceptors(ClassSerializerInterceptor)
@@ -31,6 +60,20 @@ export class ChannelsController
 		return this.channelsService.getChannels(pageOptionsDto, channelQueryFilterDto, req.user);
 	}
 
+	/**
+	* Create a channel.
+	* 
+	* Args:
+	* 	PostChannelDto:
+	* 		name (string): The name of the channel. Can only contain [ A-Za-z0-9_-!?'] (space included).
+	* 
+	* Return:
+	* 	The object newly created.
+	* 
+	* Notes:
+	* 	The channel is set as protected by default.
+	**/
+	
 	@Post()
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
@@ -39,6 +82,20 @@ export class ChannelsController
 	{
 		return this.channelsService.createChannel(postChannelDto, req.user);
 	}
+
+	/**
+	* Create a channel.
+	* 
+	* Args:
+	* 	PostChannelDto:
+	* 		name (string): The name of the channel. Can only contain [ A-Za-z0-9_-!?'] (space included).
+	* 
+	* Return:
+	* 	The object newly created.
+	* 
+	* Notes:
+	* 	The channel is set as protected by default.
+	**/
 
 	@Patch('/:channel_id')
 	@UseInterceptors(ClassSerializerInterceptor)
