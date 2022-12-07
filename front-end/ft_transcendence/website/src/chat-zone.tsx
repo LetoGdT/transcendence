@@ -4,10 +4,11 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 import scrollImg from './scroll-img.png';
 
-import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
+
+
 
 // export const Scrollbar = ({
 // 	children,
@@ -264,16 +265,9 @@ export function Chat(){
 							<img src={scrollImg} alt='waiting from scroll'></img>
 						</div>
 					</div>
-					<div className='Chat-TextField'>
-						<div>
-							{/* <Box
-								sx={{
-									display: 'grid',
-									gap: 2,
-									maxWidth: '100%',
-									width: 500
-								}}
-							> */}
+					<div className='Chat-TextField-send-button'>
+						<div className='Chat-TextField'>
+							
 								<MessageTextField
 									label="Message"
 									fullWidth
@@ -282,13 +276,11 @@ export function Chat(){
 										color:"white",
 									}
 									}}
-									required
+									multiline
 									variant="outlined"
-									defaultValue="message"
 									sx={{ input: { color: 'grey' } }}
-									id="validation-outlined-input"
 								/>
-							{/* </Box> */}
+							
 						</div>
 						<div className='Chat-send-button'>
 							<SendButton variant="contained" disableRipple>Send</SendButton>

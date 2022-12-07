@@ -291,7 +291,7 @@ export function Settings(){
 											color:"white",
 										}
 										}}
-										required
+										
 										variant="outlined"
 										defaultValue="*.jpg or *.png"
 										sx={{ input: { color: 'grey' } }}
@@ -326,7 +326,7 @@ export function Settings(){
 											color:"white",
 										}
 										}}
-										required
+								
 										variant="outlined"
 										defaultValue="ex: Toto"
 										sx={{ input: { color: 'grey' } }}

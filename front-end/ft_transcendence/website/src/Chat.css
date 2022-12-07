@@ -33,9 +33,14 @@
 	margin-bottom: 8px;
 }
 
-.Chat-TextField{
+.Chat-TextField-send-button{
 	display: flex;
 	flex-direction: row;
+}
+
+.Chat-TextField{
+	border-width: 2px;
+	border-color: antiquewhite;
 }
 
 .Chat-send-button{
