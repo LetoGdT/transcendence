@@ -196,13 +196,13 @@ export function Chat(){
 					</div>
 					<div className='Chat-TextField-send-button'>
 						<div className='Chat-TextField'>
-						<TextareaAutosize
-      maxRows={4}
-      aria-label="maximum height"
-      placeholder="Maximum 4 rows"
-      
-      style={{ width: 200, borderRadius: "10px"}}
-    /> 
+							<TextareaAutosize
+								maxRows={4}
+								aria-label="maximum height"
+								placeholder="Message"
+								
+								style={{ width: "100%", borderRadius: "10px"}}
+							/> 
 								{/* <MessageTextField
 									label="Message"
 									fullWidth

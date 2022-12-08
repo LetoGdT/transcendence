@@ -2,6 +2,8 @@
 	display: flex;
 	flex-direction: row;
 	padding: 1em;
+	width: 100%;
+	height: 100%;
 }
 
 .Chat-navigate{
@@ -9,7 +11,7 @@
 	flex-direction: column;
 	align-self: flex-start;
 	margin-right: 3px;
-	min-height: 200px;
+	height: 100%;
 	width: 100px;
 	border-style: solid;
   	border-width: 3px;
@@ -26,34 +28,19 @@
 	max-height: 500px;
 }
 
-.Chat-scrollbar{
-	min-width: 245;
-	height: 600;
-}
-
-.Chat-history{
-	display: flex;
-	flex-direction: column;
-	min-width: 245px;
-	/* min-width: 800px; */
-	border-style: solid;
-  	border-width: 3px;
-	border-color: '#646464';
-	margin-right: 3px;
-	margin-bottom: 8px;
-	height: 100%;
-}
-
 .Chat-TextField-send-button{
 	display: flex;
 	flex-direction: row;
 	margin-top: 8px;
+	width: 100%;
+
 }
 
 .Chat-TextField{
 	border-width: 2px;
 	border-color: antiquewhite;
 	margin-right: 8px;
+	width: 100%;
 }
 
 .Chat-send-button{
@@ -64,7 +51,7 @@
 .Chat-message-from-other-lvl1{
 	display: flex;
 	flex-direction: row;
-	padding-right: 1em;
+	/* padding-right: 1em; */
 }
 
 .Chat-message-from-self-lvl1{
