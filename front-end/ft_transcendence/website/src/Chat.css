@@ -1,25 +1,29 @@
 .Chat-container{
 	display: flex;
 	flex-direction: row;
+	padding: 1em;
 }
 
 .Chat-navigate{
 	display: flex;
 	flex-direction: column;
 	align-self: flex-start;
-	border-style: solid;
-  	border-width: 3px;
-	color: '#646464';
 	margin-right: 3px;
 	min-height: 200px;
-	
-	
-}.Chat-history-container{
-	display: flex;
-	flex-direction: row;
+	width: 100px;
 	border-style: solid;
   	border-width: 3px;
 	border-color: '#646464';
+}
+
+.Chat-history-container{
+	display: flex;
+	flex-direction: column;
+	border-style: solid;
+  	border-width: 3px;
+	border-color: '#646464';
+	overflow: scroll;
+	max-height: 500px;
 }
 
 .Chat-scrollbar{
@@ -30,25 +34,26 @@
 .Chat-history{
 	display: flex;
 	flex-direction: column;
-	/* min-width: 245px; */
-	min-width: 800px;
+	min-width: 245px;
+	/* min-width: 800px; */
 	border-style: solid;
   	border-width: 3px;
 	border-color: '#646464';
 	margin-right: 3px;
 	margin-bottom: 8px;
 	height: 100%;
-
 }
 
 .Chat-TextField-send-button{
 	display: flex;
 	flex-direction: row;
+	margin-top: 8px;
 }
 
 .Chat-TextField{
 	border-width: 2px;
 	border-color: antiquewhite;
+	margin-right: 8px;
 }
 
 .Chat-send-button{
@@ -59,16 +64,14 @@
 .Chat-message-from-other-lvl1{
 	display: flex;
 	flex-direction: row;
-	/* min-width: 245px; */
-	min-width: 500px;
+	padding-right: 1em;
 }
 
 .Chat-message-from-self-lvl1{
 	display: flex;
 	flex-direction: row;
-	/* min-width: 245px; */
-	min-width: 500px;
 	justify-content: flex-end;
+	padding-right: 1em;
 }
 
 .Chat-div-empty{

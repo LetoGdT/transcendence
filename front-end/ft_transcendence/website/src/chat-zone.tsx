@@ -3,12 +3,12 @@ import './Chat.css'
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 import TextField from '@mui/material/TextField';
+import TextareaAutosize from '@mui/material/TextareaAutosize';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 
-import  { Scrollbars } from 'react-custom-scrollbars-2';
-
 import Avatar from './link_botw_avatar.jpg';
+import Banniere from './link_botw_banniere.jpg';
 
 const MessageTextField = styled(TextField)({
 	'& input:valid + fieldset': {
@@ -73,150 +73,149 @@ export function Chat(){
 				</div>
 				<div>
 					<div className='Chat-history-container'>
-						<Scrollbars style={{ width: 500, height: 400 }}>
-							<div className='Chat-message-from-self-lvl1'>
-								<div className='Chat-div-empty'></div>
-								<div className='Chat-message-from-self-lvl2'>
-									message de soi
-								</div>
-								<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
-							</div>
-							<div className='Chat-message-from-other-lvl1'>
-								<img src={Avatar} alt={'other-name'} className='Chat-who'></img>
-								<div className='Chat-message-from-other-lvl2'>
-									message d'autrui
-								</div>
-								<div className='Chat-div-empty'></div>
-							</div>
-							<div className='Chat-message-from-self-lvl1'>
-								<div className='Chat-div-empty'></div>
-								<div className='Chat-message-from-self-lvl2'>
-									message de soi
-								</div>
-								<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
-							</div>
-							<div className='Chat-message-from-self-lvl1'>
-								<div className='Chat-div-empty'></div>
-								<div className='Chat-message-from-self-lvl2'>
-								vraiment très long long long looooooooooooooooooooooooooong long message de soi
-								</div>
-								<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
-							</div>
-							<div className='Chat-message-from-self-lvl1'>
-								<div className='Chat-div-empty'></div>
-								<div className='Chat-message-from-self-lvl2'>
-									message de soi
-								</div>
-								<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
-							</div>
-							<div className='Chat-message-from-other-lvl1'>
-								<img src={Avatar} alt={'other-name'} className='Chat-who'></img>
-								<div className='Chat-message-from-other-lvl2'>
-									vraiment très long long long looooooooooooooooooooooooooong long message d'autrui
-								</div>
-								<div className='Chat-div-empty'></div>
-							</div>
-							<div className='Chat-message-from-other-lvl1'>
-								<img src={Avatar} alt={'other-name'} className='Chat-who'></img>
-								<div className='Chat-message-from-other-lvl2'>
-									message d'autrui
-								</div>
-								<div className='Chat-div-empty'></div>
-							</div>
-							<div className='Chat-message-from-self-lvl1'>
-								<div className='Chat-div-empty'></div>
-								<div className='Chat-message-from-self-lvl2'>
-									message de soi
-								</div>
-								<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
-							</div>
-							<div className='Chat-message-from-other-lvl1'>
-								<img src={Avatar} alt={'other-name'} className='Chat-who'></img>
-								<div className='Chat-message-from-other-lvl2'>
-									message d'autrui
-								</div>
-								<div className='Chat-div-empty'></div>
-							</div>
-							<div className='Chat-message-from-self-lvl1'>
-								<div className='Chat-div-empty'></div>
-								<div className='Chat-message-from-self-lvl2'>
-									message de soi
-								</div>
-								<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
-							</div>
-							<div className='Chat-message-from-other-lvl1'>
-								<img src={Avatar} alt={'other-name'} className='Chat-who'></img>
-								<div className='Chat-message-from-other-lvl2'>
-									message d'autrui
-								</div>
-								<div className='Chat-div-empty'></div>
-							</div>
-							<div className='Chat-message-from-self-lvl1'>
-								<div className='Chat-div-empty'></div>
-								<div className='Chat-message-from-self-lvl2'>
-									message de soi
-								</div>
-								<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
-							</div>
-							<div className='Chat-message-from-other-lvl1'>
-								<img src={Avatar} alt={'other-name'} className='Chat-who'></img>
-								<div className='Chat-message-from-other-lvl2'>
-									message d'autrui
-								</div>
-								<div className='Chat-div-empty'></div>
-							</div>
-							<div className='Chat-message-from-self-lvl1'>
-								<div className='Chat-div-empty'></div>
-								<div className='Chat-message-from-self-lvl2'>
-									message de soi
-								</div>
-								<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
-							</div>
-							<div className='Chat-message-from-other-lvl1'>
-								<img src={Avatar} alt={'other-name'} className='Chat-who'></img>
-								<div className='Chat-message-from-other-lvl2'>
-									message d'autrui
-								</div>
-								<div className='Chat-div-empty'></div>
-							</div>
-							<div className='Chat-message-from-self-lvl1'>
-								<div className='Chat-div-empty'></div>
-								<div className='Chat-message-from-self-lvl2'>
-									message de soi
-								</div>
-								<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
-							</div>
-							<div className='Chat-message-from-other-lvl1'>
-								<img src={Avatar} alt={'other-name'} className='Chat-who'></img>
-								<div className='Chat-message-from-other-lvl2'>
-									message d'autrui
-								</div>
-								<div className='Chat-div-empty'></div>
-							</div>
 
-						</Scrollbars>
-						{/* <div className='Chat-history'>
-							
-						</div>
-						<div>
-							<img src={scrollImg} alt='waiting from scroll'></img>
-						</div> */}
+							<div className='Chat-message-from-self-lvl1'>
+								<div className='Chat-div-empty'></div>
+								<div className='Chat-message-from-self-lvl2'>
+									message de soi
+								</div>
+								<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
+							</div>
+							<div className='Chat-message-from-other-lvl1'>
+								<img src={Banniere} alt={'other-name'} className='Chat-who'></img>
+								<div className='Chat-message-from-other-lvl2'>
+									message d'autrui
+								</div>
+								<div className='Chat-div-empty'></div>
+							</div>
+							<div className='Chat-message-from-self-lvl1'>
+								<div className='Chat-div-empty'></div>
+								<div className='Chat-message-from-self-lvl2'>
+									message de soi
+								</div>
+								<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
+							</div>
+							<div className='Chat-message-from-self-lvl1'>
+								<div className='Chat-div-empty'></div>
+								<div className='Chat-message-from-self-lvl2'>
+									vraiment très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très long long long looooooooooooooooooooooooooong long message de soi
+								</div>
+								<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
+							</div>
+							<div className='Chat-message-from-self-lvl1'>
+								<div className='Chat-div-empty'></div>
+								<div className='Chat-message-from-self-lvl2'>
+									message de soi
+								</div>
+								<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
+							</div>
+							<div className='Chat-message-from-other-lvl1'>
+								<img src={Avatar} alt={'other-name'} className='Chat-who'></img>
+								<div className='Chat-message-from-other-lvl2'>
+									vraiment très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très long long long looooooooooooooooooooooooooong long message d'autrui
+								</div>
+								<div className='Chat-div-empty'></div>
+							</div>
+							<div className='Chat-message-from-other-lvl1'>
+								<img src={Avatar} alt={'other-name'} className='Chat-who'></img>
+								<div className='Chat-message-from-other-lvl2'>
+									message d'autrui
+								</div>
+								<div className='Chat-div-empty'></div>
+							</div>
+							<div className='Chat-message-from-self-lvl1'>
+								<div className='Chat-div-empty'></div>
+								<div className='Chat-message-from-self-lvl2'>
+									message de soi
+								</div>
+								<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
+							</div>
+							<div className='Chat-message-from-other-lvl1'>
+								<img src={Avatar} alt={'other-name'} className='Chat-who'></img>
+								<div className='Chat-message-from-other-lvl2'>
+									message d'autrui
+								</div>
+								<div className='Chat-div-empty'></div>
+							</div>
+							<div className='Chat-message-from-self-lvl1'>
+								<div className='Chat-div-empty'></div>
+								<div className='Chat-message-from-self-lvl2'>
+									message de soi
+								</div>
+								<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
+							</div>
+							<div className='Chat-message-from-other-lvl1'>
+								<img src={Avatar} alt={'other-name'} className='Chat-who'></img>
+								<div className='Chat-message-from-other-lvl2'>
+									message d'autrui
+								</div>
+								<div className='Chat-div-empty'></div>
+							</div>
+							<div className='Chat-message-from-self-lvl1'>
+								<div className='Chat-div-empty'></div>
+								<div className='Chat-message-from-self-lvl2'>
+									message de soi
+								</div>
+								<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
+							</div>
+							<div className='Chat-message-from-other-lvl1'>
+								<img src={Avatar} alt={'other-name'} className='Chat-who'></img>
+								<div className='Chat-message-from-other-lvl2'>
+									message d'autrui
+								</div>
+								<div className='Chat-div-empty'></div>
+							</div>
+							<div className='Chat-message-from-self-lvl1'>
+								<div className='Chat-div-empty'></div>
+								<div className='Chat-message-from-self-lvl2'>
+									message de soi
+								</div>
+								<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
+							</div>
+							<div className='Chat-message-from-other-lvl1'>
+								<img src={Avatar} alt={'other-name'} className='Chat-who'></img>
+								<div className='Chat-message-from-other-lvl2'>
+									message d'autrui
+								</div>
+								<div className='Chat-div-empty'></div>
+							</div>
+							<div className='Chat-message-from-self-lvl1'>
+								<div className='Chat-div-empty'></div>
+								<div className='Chat-message-from-self-lvl2'>
+									message de soi
+								</div>
+								<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
+							</div>
+							<div className='Chat-message-from-other-lvl1'>
+								<img src={Avatar} alt={'other-name'} className='Chat-who'></img>
+								<div className='Chat-message-from-other-lvl2'>
+									message d'autrui
+								</div>
+								<div className='Chat-div-empty'></div>
+							</div>
 					</div>
 					<div className='Chat-TextField-send-button'>
 						<div className='Chat-TextField'>
-							
-								<MessageTextField
+						<TextareaAutosize
+      maxRows={4}
+      aria-label="maximum height"
+      placeholder="Maximum 4 rows"
+      
+      style={{ width: 200, borderRadius: "10px"}}
+    /> 
+								{/* <MessageTextField
 									label="Message"
 									fullWidth
-									InputLabelProps={{
-									sx:{
-										color:"white",
-									}
-									}}
 									multiline
+									InputLabelProps={{
+										sx:{
+											color:"white",
+										}
+									}}
 									variant="outlined"
-									sx={{ input: { color: 'grey' } }}
-								/>
+									// sx={{ input: { color: 'white' } }}
+									style={{ color: "#656565" }}
+								/> */}
 							
 						</div>
 						<div className='Chat-send-button'>
