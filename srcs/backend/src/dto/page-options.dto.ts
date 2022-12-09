@@ -7,25 +7,41 @@ export enum Order
 	DESC = "DESC",
 }
 
+/**
+* Description:
+* 	The dto used to paginate queries. This is implemented on most (if not all)
+* 	get requests, to limit the load on the database and avoid timeouts on queries.
+* 
+* members:
+* 	order (Order): Choose ascending or descending order.
+* 	page (Number): Select the page of data to return (number of items
+* 	depends on take).
+* 	take (Number): Select the number of elements returned by page.
+* 
+* Notes:
+* 	Ruled by secrecy.
+**/
+
+
 export class PageOptionsDto
 {
 	@IsEnum(Order)
 	@IsOptional()
-	readonly order?: Order = Order.ASC;
+	order?: Order = Order.ASC;
 
 	@Type(() => Number)
 	@IsInt()
 	@Min(1)
 	@Max(Number.MAX_SAFE_INTEGER)
 	@IsOptional()
-	readonly page?: number = 1;
+	page?: number = 1;
 
 	@Type(() => Number)
 	@IsInt()
 	@Min(1)
 	@Max(50)
 	@IsOptional()
-	readonly take?: number = 5;
+	take?: number = 5;
 
 	get skip(): number
 	{

@@ -1,28 +1,29 @@
 version: "3.8"
 
 services:
-    # nestjs:
-    #     container_name: nestjs
-    #     ports:
-    #         - "9999:9999"
-    #     build: ./srcs/backend/
-    #     restart: unless-stopped
-    #     volumes:
-    #         - nestjs:/usr/src/app
-    #         - react:/usr/src/frontend
-    #     networks:
-    #         - ft_transcendence
+    nestjs:
+        container_name: nestjs
+        ports:
+            - "9999:9999"
+        build: ./srcs/backend/
+        restart: unless-stopped
+        volumes:
+            - ./srcs/backend/src:/usr/src/app/src
+            - ./srcs/backend/test:/usr/src/app/test
+        networks:
+            - ft_transcendence
 
-    # react:
-    #     container_name: react
-    #     ports:
-    #         - "3000:3000"
-    #     build: ./srcs/frontend/
-    #     restart: unless-stopped
-    #     volumes:
-    #         - react:/usr/src/frontend
-    #     networks:
-    #         - ft_transcendence
+    react:
+        container_name: react
+        ports:
+            - "3000:3000"
+        build: ./srcs/frontend/ft_transcendence
+        restart: unless-stopped
+        volumes:
+            - ./srcs/frontend/ft_transcendence/website/src:/usr/src/app/src
+            - ./srcs/frontend/ft_transcendence/website/public:/usr/src/app/public
+        networks:
+            - ft_transcendence
 
     postgres:
         container_name: postgres
@@ -32,10 +33,8 @@ services:
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
             POSTGRES_DB: 'ft_transcendence'
             PGDATA: /data/postgres
-        # volumes:
-        #     - postgres:/data/postgres
-        ports:
-            - "5432:5432"
+        volumes:
+            - postgres:/data/postgres
         networks:
             - ft_transcendence
         restart: unless-stopped
@@ -47,8 +46,8 @@ services:
             PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
             PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
             PGADMIN_CONFIG_SERVER_MODE: 'False'
-        # volumes:
-        #     - pgadmin:/var/lib/pgadmin
+        volumes:
+            - pgadmin:/var/lib/pgadmin
 
         ports:
             - "${PGADMIN_PORT:-5050}:80"
@@ -56,31 +55,19 @@ services:
             - ft_transcendence
         restart: unless-stopped
 
-# volumes:
-#     nestjs:
-#         driver: local
-#         driver_opts:
-#             type: none
-#             device: ./srcs/backend
-#             o: bind
-#     react:
-#         driver: local
-#         driver_opts:
-#             type: none
-#             device: ./srcs/frontend/ft_transcendence/website
-#             o: bind
-#     postgres:
-#         driver: local
-#         driver_opts:
-#             type: none
-#             device: /home/lucille/transcendence/srcs/db/postgres
-#             o: bind
-#     pgadmin:
-#         driver: local
-#         driver_opts:
-#             type: none
-#             device: /home/lucille/transcendence/srcs/db/pgadmin
-#             o: bind
+volumes:
+    postgres:
+        driver: local
+        driver_opts:
+            type: none
+            device: ./srcs/db/postgres
+            o: bind
+    pgadmin:
+        driver: local
+        driver_opts:
+            type: none
+            device: ./srcs/db/pgadmin
+            o: bind
 
 networks:
     ft_transcendence:

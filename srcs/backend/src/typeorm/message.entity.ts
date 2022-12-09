@@ -2,6 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn
 import { Max, IsDate, IsOptional } from 'class-validator';
 import { User } from './user.entity';
 import { Channel } from './channel.entity';
+import { Conversation } from './conversation.entity';
 import { PrivateMessage } from './private-message.entity';
 
 @Entity()
@@ -46,4 +47,8 @@ export class Message
 	@IsOptional()
 	@ManyToOne(() => Channel, (channel) => channel.messages, { onDelete: 'CASCADE' })
 	channel?: Channel;
+
+	@IsOptional()
+	@ManyToOne(() => Conversation, (conversation) => conversation.messages, { onDelete: 'CASCADE' })
+	conversation?: Conversation;
 }

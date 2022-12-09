@@ -4,10 +4,10 @@ import { OurMenu } from './menu-zone';
 
 import { Home } from './adaptable-zone';
 import { Play, SpecAMatch} from './adaptable-zone';
-import { Chat } from './adaptable-zone';
+import { Chat } from './chat-zone';
 import { Friends, MatchHistory, Settings, Profile } from './adaptable-zone';
 import { PleaseConnect, SignOn } from './adaptable-zone';
-import { Test } from './adaptable-zone';
+// import { Test } from './adaptable-zone';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 
 import { OurHeader } from './header-zone';
@@ -36,7 +36,7 @@ function App() {
 						<Route path="/profile" element={<Profile/>} />
 						<Route path="/pleaseconnect" element={<PleaseConnect/>} />
 						<Route path="/signon" element={<SignOn/>} />
-						<Route path="/test" element={<Test/>} />
+						{/*<Route path="/test" element={<Test/>} />*/}
 					</Routes>
 				</div>
 			</Router>

@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { IsDate } from 'class-validator';
+import { IsDate, IsIn, MinLength, MaxLength, IsEmail, Matches } from 'class-validator';
+import { ChannelUser } from './channel-user.entity';
 
 @Entity()
 export class User
@@ -17,6 +18,9 @@ export class User
 	})
 	uid: number;
 
+	@MinLength(3)
+	@MaxLength(20)
+	@Matches('^[ A-Za-z0-9_\\-!?]*$')
 	@Column({
 		nullable: false,
 		default: '',
@@ -24,6 +28,7 @@ export class User
 	})
 	username: string;
 
+	@IsEmail()
 	@Column({
 		name: 'email_address',
 		nullable: false,
@@ -36,6 +41,13 @@ export class User
 		default: '',
 	})
 	image_url: string;
+
+	@IsIn(['online', 'offline', 'in-game'])
+	@Column({
+		nullable: false,
+		default: 'online',
+	})
+	status: 'online' | 'offline' | 'in-game';
 
 	@Exclude({ toPlainOnly: true })
 	@Column({
@@ -51,4 +63,7 @@ export class User
 		default: '',
 	})
 	refresh_expires: string;
+
+	@OneToMany(() => ChannelUser, (channelUser) => channelUser.user)
+	channelUsers: ChannelUser;
 }

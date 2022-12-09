@@ -9,11 +9,13 @@ import { User } from './typeorm/user.entity';
 import { Message } from './typeorm/message.entity';
 import { PrivateMessage } from './typeorm/private-message.entity';
 import { Channel } from './typeorm/channel.entity';
+import { Conversation } from './typeorm/conversation.entity';
 import { ChannelUser } from './typeorm/channel-user.entity';
 import { ChannelBan } from './typeorm/channel-ban.entity';
 import { MessagesModule } from './messages/messages.module';
 import { PrivatesModule } from './privates/privates.module';
 import { ChannelsModule } from './channels/channels.module';
+import { ConversationsModule } from './conversations/conversations.module';
 
 @Module(
 	{
@@ -31,7 +33,7 @@ import { ChannelsModule } from './channels/channels.module';
 					username: configService.get('DB_USERNAME'),
 					password: configService.get('DB_PASSWORD'),
 					database: configService.get('DB_NAME'),
-					entities: [User, Message, PrivateMessage, Channel, ChannelUser, ChannelBan,],
+					entities: [User, Message, PrivateMessage, Channel, ChannelUser, ChannelBan, Conversation,],
 					synchronize: true,
 				}
 			),
@@ -43,7 +45,8 @@ import { ChannelsModule } from './channels/channels.module';
 			// }),
 			MessagesModule,
 			PrivatesModule,
-			ChannelsModule
+			ChannelsModule,
+			ConversationsModule
 		],
 	}
 )

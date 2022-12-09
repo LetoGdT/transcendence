@@ -13,6 +13,13 @@ import { PostPrivateDto, UpdateMessageDto } from '../dto/private-messages.dto';
 import { MessageQueryFilterDto } from '../dto/query-filters.dto';
 import { UserSelectDto } from '../dto/messages.dto';
 
+/**
+* 						DEPRECATED
+* 
+* 	Use conversations to send private messages instead
+* 
+**/
+
 @Controller('privmsg')
 export class PrivatesController
 {

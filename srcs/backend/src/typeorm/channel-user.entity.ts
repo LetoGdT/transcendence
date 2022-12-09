@@ -13,8 +13,7 @@ export class ChannelUser
 	id: number;
 
 	@ValidateNested()
-	@ManyToOne(() => User, { eager: true })
-	@JoinColumn()
+	@ManyToOne(() => User, (user) => user.channelUsers, { eager: true })
 	user: User;
 
 	@IsIn(['None', 'Admin', 'Owner'])

@@ -3,6 +3,10 @@ srcs/dist
 srcs/node_modules
 /build
 
+# Database
+srcs/db/postgres/**
+**/postgres/**
+
 # Logs
 logs
 *.log

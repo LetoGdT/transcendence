@@ -8,6 +8,9 @@ import { Link } from 'react-router-dom';
 
 import Avatar from './link_botw_avatar.jpg';
 
+import OffLine from './offline.png';
+import OnLine from './online.png';
+import InGame from './ingame.png';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
@@ -19,31 +22,6 @@ import { response } from 'express';
 
 import { useState, useEffect } from "react";
 
-// import axios from 'axios';
-
-
-
-// export class adaptableZone extends React.Component{
-// 	constructor(props){
-// 		super(props);
-// 		this.state = {//en attendant de recup les info du back
-// 			value: null,
-// 		};
-// 	}
-
-// 	render(){
-// 		return(<div></div>);
-// 	}
-// }
-
-export function Chat(){
-	return(
-		<div>
-			<h1>Chat</h1>
-		</div>
-	);
-}
-
 export function Friends(){
 	return(
 		<React.Fragment>
@@ -54,8 +32,9 @@ export function Friends(){
 						<div>
 							<img src={Avatar} alt ={'Amigo 1'+'\'s avatar'} className='Friend-avatar'></img>
 						</div>
-						<div>
-							Amigo 1
+						<div  className='Friend-Name-status'>
+							<div><img src={OnLine} alt={'Online'}></img></div>
+							<div className='Friend-name'>Amigo 1</div>
 						</div>
 					</div>
 				</Link>
@@ -64,8 +43,20 @@ export function Friends(){
 						<div>
 							<img src={Avatar} alt ={'Amigo 2'+'\'s avatar'} className='Friend-avatar'></img>
 						</div>
+						<div  className='Friend-Name-status'>
+							<div><img src={OffLine} alt={'Offline'}></img></div>
+							<div className='Friend-name'>Amigo 2</div>
+						</div>
+					</div>
+				</Link>
+				<Link to="/profile">
+					<div className='Friend-container-div'>
 						<div>
-							Amigo 2
+							<img src={Avatar} alt ={'Amigo 2'+'\'s avatar'} className='Friend-avatar'></img>
+						</div>
+						<div className='Friend-Name-status'>
+							<div><img src={InGame} alt={'In Game'}></img></div>
+							<div className='Friend-name'>Amigo 3</div>
 						</div>
 					</div>
 				</Link>
@@ -82,42 +73,6 @@ export function Friends(){
 	la liste des matchs
 	+
 	toute autres info que le proprio pourrait voulair modifier ou qu'on pourrait montrer
-*/
-
-/*
-export class Friends extends React.Component {
-	constructor(props: any) {
-		super(props);
-		this.state = {
-			
-		};
-	}
-
-	render() {
-		
-	const friends = ((id) => {
-		return (
-			<div className='Friend-container-div'>
-				 <div>
-					 <img src={Avatar} alt ={'???'+'\'s avatar'} className='Friend-avatar'></img>
-				 </div>
-				 <div>
-					 ???
-				 </div>
-			 </div>
-		);
-	})
-			
-		return(
-			<React.Fragment>
-				<h1>Friends</h1>
-				<div className='Friend-container'>
-					{friends}
-				</div>
-			</React.Fragment>
-		);
-	}
-}
 */
 
 export function Home(){
@@ -335,7 +290,6 @@ export function Settings(){
 											color:"white",
 										}
 										}}
-										required
 										variant="outlined"
 										defaultValue="*.jpg or *.png"
 										sx={{ input: { color: 'grey' } }}
@@ -370,7 +324,6 @@ export function Settings(){
 											color:"white",
 										}
 										}}
-										required
 										variant="outlined"
 										defaultValue="ex: Toto"
 										sx={{ input: { color: 'grey' } }}
@@ -635,59 +588,56 @@ export function SignOn(){
 // 	);
 // }
 
-export type TApiResponse = {
-	status: Number;
-	statusText: String;
-	data: any;
-	error: any;
-	loading: Boolean;
-};
+// export type TApiResponse = {
+// 	status: Number;
+// 	statusText: String;
+// 	data: any;
+// 	error: any;
+// 	loading: Boolean;
+// };
 
-export const useApiGet = (url: string): TApiResponse => {
-	const [status, setStatus] = useState<Number>(0);//init pour eviter une erreur
-	const [statusText, setStatusText] = useState<String>('');//idem
-	const [data, setData] = useState<any>();
-	const [error, setError] = useState<any>();
-	const [loading, setLoading] = useState<boolean>(false);
+// export const useApiGet = (url: string): TApiResponse => {
+// 	const [status, setStatus] = useState<Number>(0);//init pour eviter une erreur
+// 	const [statusText, setStatusText] = useState<String>('');//idem
+// 	const [data, setData] = useState<any>();
+// 	const [error, setError] = useState<any>();
+// 	const [loading, setLoading] = useState<boolean>(false);
 
-	const getAPIData = async () => {
-		setLoading(true);
-		try {
-			const apiResponse = await fetch(url);
-			const json = await apiResponse.json();
-			setStatus(apiResponse.status);
-			setStatusText(apiResponse.statusText);
-			setData(json);
-		} catch (error) {
-			setError(error);
-		}
-		setLoading(false);
-	};
+// 	const getAPIData = async () => {
+// 		setLoading(true);
+// 		try {
+// 			const apiResponse = await fetch(url);
+// 			const json = await apiResponse.json();
+// 			setStatus(apiResponse.status);
+// 			setStatusText(apiResponse.statusText);
+// 			setData(json);
+// 		} catch (error) {
+// 			setError(error);
+// 		}
+// 		setLoading(false);
+// 	};
 
-	useEffect(() => {
-		getAPIData();
-	}, []);
+// 	useEffect(() => {
+// 		getAPIData();
+// 	}, []);
 
-	return { status, statusText, data, error, loading };
-};
+// 	return { status, statusText, data, error, loading };
+// };
 
-export function Test() {
+// export function Test() {
 
 
-	// call to the hook
-	const res: TApiResponse = useApiGet(
-	  'http://localhost:9999/api/users'
-	);
+// 	// call to the hook
+// 	const res: TApiResponse = useApiGet(
+// 	  'http://localhost:9999/api/users'
+// 	);
   
-	// print the output
-	if (!res.loading) console.log(res);
-  
-  
-  
-  
-	return (
-		{if (res.loading) {
-			return(<div>true</div>);
-		}}
-	);
-  }
+// 	// print the output
+// 	if (!res.loading) console.log(res);
+
+// 	return (
+// 		{if (res.loading) {
+// 			return(<div>true</div>);
+// 		}}
+// 	);
+//   }
