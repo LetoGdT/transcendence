@@ -5,6 +5,7 @@
   justify-content: center;
   display: flex;
   background-color: #3d3f44;
+  z-index: 2;
 }
 
 .Menu_button {
