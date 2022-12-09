@@ -14,6 +14,7 @@ import { PageOptionsDto, Order } from "../dto/page-options.dto";
 import { MessageQueryFilterDto, ChannelQueryFilterDto } from '../dto/query-filters.dto';
 import { PostPrivateDto, UpdateMessageDto } from '../dto/private-messages.dto';
 import { UserSelectDto } from '../dto/messages.dto';
+import { UserQueryFilterDto, ChannelUserQueryFilterDto } from '../dto/query-filters.dto';
 import { ChannelBanQueryFilterDto, PostChannelBanDto, UpdateChannelBanDto } from '../dto/channel-ban.dto';
 import { ChannelBan } from '../typeorm/channel-ban.entity';
 
@@ -46,9 +47,9 @@ export class ChannelsService
 			.where(channelQueryFilterDto.id != null
 				? 'channel.id = :id'
 				: 'TRUE', { id: channelQueryFilterDto.id })
-			.andWhere(channelQueryFilterDto.username != null
-				? 'channel.username = :username'
-				: 'TRUE', { username: channelQueryFilterDto.username })
+			.andWhere(channelQueryFilterDto.name != null
+				? 'channel.name = :name'
+				: 'TRUE', { name: channelQueryFilterDto.name })
 			.andWhere(channelQueryFilterDto.status != null
 				? 'channel.status = :status'
 				: 'TRUE', { status: channelQueryFilterDto.status })
@@ -64,13 +65,45 @@ export class ChannelsService
 		return new PageDto(entities, pageMetaDto);
 	}
 
-	async getChannelUsers(pageOptionsDto: PageOptionsDto, id: number, user: User): Promise<PageDto<ChannelUser>>
+	async getChannelUsers(pageOptionsDto: PageOptionsDto, userQueryFilterDto: UserQueryFilterDto,
+		channelUserQueryFilterDto: ChannelUserQueryFilterDto,
+		channel_id: number, user: User): Promise<PageDto<ChannelUser>>
 	{
+		const channelQueryBuilder = this.channelRepository.createQueryBuilder('channel');
+
+		channelQueryBuilder
+			.leftJoinAndSelect('channel.users', 'users')
+			.leftJoinAndSelect('users.user', 'user')
+			.where('channel.id = :id', { id: channel_id });
+
+		const channel = await channelQueryBuilder.getOne();
+
+		if (channel == null)
+			throw new BadRequestException('Channel not found');
+
 		const queryBuilder = this.channelUserRepository.createQueryBuilder('channelUser');
 
 		queryBuilder
 			.leftJoinAndSelect('channelUser.user', 'user')
-			.where('channelUser.channel = :id', { id: id })
+			.where('channelUser.channel = :id', { id: channel_id })
+			.andWhere(channelUserQueryFilterDto.role != null
+				? 'channelUser.role = :role'
+				: 'TRUE', { role: channelUserQueryFilterDto.role })
+			.andWhere(userQueryFilterDto.id != null
+				? 'user.id = :id'
+				: 'TRUE', { id: userQueryFilterDto.id })
+			.andWhere(userQueryFilterDto.uid != null
+				? 'user.uid = :uid'
+				: 'TRUE', { uid: userQueryFilterDto.uid })
+			.andWhere(userQueryFilterDto.username != null
+				? 'user.username LIKE :username'
+				: 'TRUE', { username: userQueryFilterDto.username })
+			.andWhere(userQueryFilterDto.email != null
+				? 'user.email LIKE :email'
+				: 'TRUE', { email: userQueryFilterDto.email })
+			.andWhere(userQueryFilterDto.image_url != null
+				? 'user.image_url LIKE :image_url'
+				: 'TRUE', { image_url: userQueryFilterDto.image_url })
 			.orderBy('channelUser.id', pageOptionsDto.order)
 			.skip(pageOptionsDto.skip)
 			.take(pageOptionsDto.take);

@@ -6,7 +6,6 @@ srcs/node_modules
 # Database
 srcs/db/postgres/**
 **/postgres/**
-srcs/db/postgres/
 
 # Logs
 logs

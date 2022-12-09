@@ -1,6 +1,6 @@
 import { Type } from "class-transformer";
 import {
-	IsInt, IsOptional, IsDate, Min, Max, ValidateNested, MinLength, MaxLength, Matches, IsIn
+	IsInt, IsOptional, IsDate, Min, Max, ValidateNested, MinLength, MaxLength, Matches, IsIn, IsNotEmpty
 } from "class-validator";
 import { User } from '../typeorm/user.entity';
 
@@ -69,9 +69,31 @@ export class ChannelQueryFilterDto
 	@MinLength(3)
 	@MaxLength(20)
 	@Matches('^[ A-Za-z0-9_\\-!?]*$')
-	username: string;
+	name: string;
 
 	@IsOptional()
 	@IsIn(['public', 'private', 'protected'])
 	status: 'public' | 'private' | 'protected';
+}
+
+export class ChannelUserQueryFilterDto
+{
+	@Type(() => Number)
+	@IsInt()
+	@Min(1)
+	@Max(Number.MAX_SAFE_INTEGER)
+	@IsOptional()
+	id: number;
+
+	@Type(() => Number)
+	@IsInt()
+	@Min(1)
+	@Max(Number.MAX_SAFE_INTEGER)
+	@IsOptional()
+	user_id: number;
+
+	@IsIn(['Owner', 'Admin', 'None'])
+	@IsNotEmpty()
+	@IsOptional()
+	role: 'Owner' | 'Admin' | 'None';
 }

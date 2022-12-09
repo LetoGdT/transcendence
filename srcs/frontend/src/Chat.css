@@ -1,0 +1,91 @@
+.Chat-container{
+	display: flex;
+	flex-direction: row;
+	padding: 1em;
+	width: 100%;
+	height: 100%;
+}
+
+.Chat-navigate{
+	display: flex;
+	flex-direction: column;
+	align-self: flex-start;
+	margin-right: 3px;
+	height: 100%;
+	width: 100px;
+	border-style: solid;
+  	border-width: 3px;
+	border-color: '#646464';
+}
+
+.Chat-history-container{
+	display: flex;
+	flex-direction: column;
+	border-style: solid;
+  	border-width: 3px;
+	border-color: '#646464';
+	overflow: scroll;
+	max-height: 500px;
+}
+
+.Chat-TextField-send-button{
+	display: flex;
+	flex-direction: row;
+	margin-top: 8px;
+	width: 100%;
+
+}
+
+.Chat-TextField{
+	border-width: 2px;
+	border-color: antiquewhite;
+	margin-right: 8px;
+	width: 100%;
+}
+
+.Chat-send-button{
+	display: flex;
+	align-self: center;
+}
+
+.Chat-message-from-other-lvl1{
+	display: flex;
+	flex-direction: row;
+	/* padding-right: 1em; */
+}
+
+.Chat-message-from-self-lvl1{
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	padding-right: 1em;
+}
+
+.Chat-div-empty{
+	width: 63px;
+}
+
+.Chat-who{
+	width: 40px;
+	border-radius: 50%;
+	height: 40px;
+	align-self: flex-end;
+}
+
+.Chat-message-from-self-lvl2{
+	border-style: solid;
+  	border-width: 3px;
+	margin: 3px;
+	border-radius: 10px 15px 0px 10px;
+	border-color: #3b9b3b;
+	padding: 5px;
+}
+
+.Chat-message-from-other-lvl2{
+	border-style: solid;
+  	border-width: 3px;
+	margin: 3px;
+	border-radius: 10px 15px 10px 0px;
+	border-color: #007dd6;
+	padding: 5px;
+}
