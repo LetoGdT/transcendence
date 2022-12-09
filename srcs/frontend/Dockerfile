@@ -2,7 +2,7 @@ FROM node:16
 
 WORKDIR /usr/src/app
 
-COPY ./website .
+COPY . .
 
 RUN npm i
 
