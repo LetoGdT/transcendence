@@ -163,7 +163,8 @@ export function OurHeader(){
 				<img src={Logo42blanc} alt='42 logo blanc' className='Logo42'></img>
 			</div>
 			<div className='Banniere'>
-				<img src={Banniere} alt='banniere' className='Banniere-img'></img><img src={Banniere} alt='banniere' className='Banniere-img'></img>
+				<img src={Banniere} alt='banniere' className='Banniere-img'></img>
+				{/* <img src={Banniere} alt='banniere' className='Banniere-img'></img> */}
 			</div>
 			<div>
 				<AvatarZone />
