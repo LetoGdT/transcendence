@@ -71,6 +71,10 @@ export class MySocketGateway implements OnGatewayConnection,
 	modifyMessages(client: Socket, @MessageBody() messageId: {id: number}) {
 	}
 
+	@SubscribeMessage('getConversations')
+	modifyMessages(client: Socket) {
+	}
+
 	sendMessage(recipient: Socket) {
 	}
 }
