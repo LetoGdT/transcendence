@@ -15,11 +15,8 @@ import { ChannelBan } from './typeorm/channel-ban.entity';
 import { MessagesModule } from './messages/messages.module';
 import { PrivatesModule } from './privates/privates.module';
 import { ChannelsModule } from './channels/channels.module';
-<<<<<<< HEAD
 import { WebsocketModule } from './websocket/websocket.module';
-=======
 import { ConversationsModule } from './conversations/conversations.module';
->>>>>>> main
 
 @Module(
 	{
@@ -50,11 +47,8 @@ import { ConversationsModule } from './conversations/conversations.module';
 			MessagesModule,
 			PrivatesModule,
 			ChannelsModule,
-<<<<<<< HEAD
-			WebsocketModule
-=======
+			WebsocketModule,
 			ConversationsModule
->>>>>>> main
 		],
 	}
 )

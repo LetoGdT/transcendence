@@ -538,20 +538,6 @@ export function SignOn(){
 
 // var users: any;
 
-// export function Test(){
-// 	fetch("http://localhost:9999/api/users", { credentials: 'include' })
-// 	.then(response => {response.text()})//original
-// 	// .then(response => {response.json()})
-// 	.then(response => console.log(response))//original
-// 	// .then(json => console.log(json))
-// 	.catch(error => console.log("Erreur : " + error));
-// 	return(
-// 		<div><h1>Test</h1>
-// 		</div>
-// 	);
-// }
-
-<<<<<<< HEAD:srcs/frontend/ft_transcendence/website/src/adaptable-zone.tsx
 //export class Test extends React.Component {
 //
 //	// Constructor 
@@ -596,7 +582,6 @@ export function SignOn(){
 //		);
 //	}
 //}
-=======
 // type resultProps = {
 // 	email: string;
 // 	username: string;
@@ -687,4 +672,3 @@ export function SignOn(){
 // 		}}
 // 	);
 //   }
->>>>>>> main:srcs/frontend/src/adaptable-zone.tsx

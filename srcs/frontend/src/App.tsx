@@ -7,11 +7,7 @@ import { Play, SpecAMatch} from './adaptable-zone';
 import { Chat } from './chat-zone';
 import { Friends, MatchHistory, Settings, Profile } from './adaptable-zone';
 import { PleaseConnect, SignOn } from './adaptable-zone';
-<<<<<<< HEAD:srcs/frontend/ft_transcendence/website/src/App.tsx
-//import { Test } from './adaptable-zone';
-=======
 // import { Test } from './adaptable-zone';
->>>>>>> main:srcs/frontend/src/App.tsx
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 
 import { OurHeader } from './header-zone';
@@ -40,11 +36,7 @@ function App() {
 						<Route path="/profile" element={<Profile/>} />
 						<Route path="/pleaseconnect" element={<PleaseConnect/>} />
 						<Route path="/signon" element={<SignOn/>} />
-<<<<<<< HEAD:srcs/frontend/ft_transcendence/website/src/App.tsx
 						{/* <Route path="/test" element={<Test/>} /> */}
-=======
-						{/*<Route path="/test" element={<Test/>} />*/}
->>>>>>> main:srcs/frontend/src/App.tsx
 					</Routes>
 				</div>
 			</Router>
