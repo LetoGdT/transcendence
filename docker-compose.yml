@@ -10,8 +10,6 @@ services:
         volumes:
             - ./srcs/backend/src:/usr/src/app/src
             - ./srcs/backend/test:/usr/src/app/test
-            # - nestjs:/usr/src/app
-            # - react:/usr/src/frontend
         networks:
             - ft_transcendence
 

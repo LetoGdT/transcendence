@@ -68,7 +68,8 @@ export class ConversationsController
 	@Post()
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	createConversation(@Req() req)
+	createConversation(@Req() req
+		@Body() postConversationDto: PostConversationDto)
 	{
 		this.conversationsService.createConversation(req.user);
 	}
