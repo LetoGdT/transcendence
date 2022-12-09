@@ -12,6 +12,7 @@ import { PageOptionsDto } from "../dto/page-options.dto";
 import { PostPrivateDto, UpdateMessageDto } from '../dto/private-messages.dto';
 import { MessageQueryFilterDto } from '../dto/query-filters.dto';
 import { UserSelectDto } from '../dto/messages.dto';
+import { PostConversationDto } from '../dto/conversations.dto';
 
 /**
 * Get a conversation between 2 users (DMs).
@@ -48,9 +49,10 @@ export class ConversationsController
 	@Get()
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	getConversations(@Req() req)
+	getConversations(@Query() pageOptionsDto: PageOptionsDto, 
+		@Req() req)
 	{
-
+		return this.conversationsService.getConversations(pageOptionsDto, req.user);
 	}
 
 	/**
@@ -68,10 +70,10 @@ export class ConversationsController
 	@Post()
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	createConversation(@Req() req
+	async createConversation(@Req() req,
 		@Body() postConversationDto: PostConversationDto)
 	{
-		this.conversationsService.createConversation(req.user);
+		await this.conversationsService.createConversation(req.user, postConversationDto);
 	}
 
 	@Get('/:id/messages')
