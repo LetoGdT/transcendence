@@ -588,56 +588,64 @@ export function SignOn(){
 // 	);
 // }
 
-// export type TApiResponse = {
-// 	status: Number;
-// 	statusText: String;
-// 	data: any;
-// 	error: any;
-// 	loading: Boolean;
-// };
+export type TApiResponse = {
+	status: Number;
+	statusText: String;
+	data: any;
+	error: any;
+	loading: Boolean;
+};
 
-// export const useApiGet = (url: string): TApiResponse => {
-// 	const [status, setStatus] = useState<Number>(0);//init pour eviter une erreur
-// 	const [statusText, setStatusText] = useState<String>('');//idem
-// 	const [data, setData] = useState<any>();
-// 	const [error, setError] = useState<any>();
-// 	const [loading, setLoading] = useState<boolean>(false);
+export const useApiGet = (url: string): TApiResponse => {
+	const [status, setStatus] = useState<Number>(0);//init pour eviter une erreur
+	const [statusText, setStatusText] = useState<String>('');//idem
+	const [data, setData] = useState<any>();
+	const [error, setError] = useState<any>();
+	const [loading, setLoading] = useState<boolean>(false);
 
-// 	const getAPIData = async () => {
-// 		setLoading(true);
-// 		try {
-// 			const apiResponse = await fetch(url);
-// 			const json = await apiResponse.json();
-// 			setStatus(apiResponse.status);
-// 			setStatusText(apiResponse.statusText);
-// 			setData(json);
-// 		} catch (error) {
-// 			setError(error);
-// 		}
-// 		setLoading(false);
-// 	};
+	const getAPIData = async () => {
+		setLoading(true);
+		try {
+			const apiResponse = await fetch(url);
+			const json = await apiResponse.json();
+			setStatus(apiResponse.status);
+			setStatusText(apiResponse.statusText);
+			setData(json);
+		} catch (error) {
+			setError(error);
+		}
+		setLoading(false);
+	};
 
-// 	useEffect(() => {
-// 		getAPIData();
-// 	}, []);
+	useEffect(() => {
+		getAPIData();
+	}, []);
 
-// 	return { status, statusText, data, error, loading };
-// };
+	return { status, statusText, data, error, loading };
+};
 
-// export function Test() {
+export function Test() {
 
 
-// 	// call to the hook
-// 	const res: TApiResponse = useApiGet(
-// 	  'http://localhost:9999/api/users'
-// 	);
+	// call to the hook
+	const res: TApiResponse = useApiGet(
+	  'http://localhost:9999/api/users'
+	);
   
-// 	// print the output
-// 	if (!res.loading) console.log(res);
+	// print the output
+	if (!res.loading) console.log(res);
+	var strres: string;
+	strres = JSON.stringify(res);
+	// var data: string[]; 
+	// const data = JSON.stringify(res.data);
+	console.log(res.data);
+	// var i: number;
+	// i = strres.indexOf("data");
+	// var split1 = strres.split();	
 
-// 	return (
-// 		{if (res.loading) {
-// 			return(<div>true</div>);
-// 		}}
-// 	);
-//   }
+	return(
+		<div>
+			{res.data[0]}
+		</div>
+	);
+}

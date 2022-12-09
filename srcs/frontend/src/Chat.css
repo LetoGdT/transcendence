@@ -16,6 +16,7 @@
 	border-style: solid;
   	border-width: 3px;
 	border-color: '#646464';
+	overflow-x: visible;
 }
 
 .Chat-history-container{
@@ -35,8 +36,6 @@
 	width: 100%;
 	margin-bottom: 3px;
 	justify-content: center;
-	/* margin: 20px; */
-	/* margin-right: 30px; */
 }
 
 .Chat-TextField{
@@ -55,7 +54,6 @@
 .Chat-message-from-other-lvl1{
 	display: flex;
 	flex-direction: row;
-	/* padding-right: 1em; */
 }
 
 .Chat-message-from-self-lvl1{

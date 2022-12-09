@@ -20,9 +20,9 @@ export class UsersController
 	constructor(private readonly usersService: UsersService) {}
 
 	@Get('/')
-	@UseInterceptors(ClassSerializerInterceptor)
-	@UseFilters(RedirectToLoginFilter)
-	@UseGuards(JwtAuthGuard)
+	// @UseInterceptors(ClassSerializerInterceptor)
+	// @UseFilters(RedirectToLoginFilter)
+	// @UseGuards(JwtAuthGuard)
 	async getAllUsers(@Query() pageOptionsDto: PageOptionsDto,
 		@Query() userQueryFilterDto: UserQueryFilterDto): Promise<PageDto<User>>
 	{
