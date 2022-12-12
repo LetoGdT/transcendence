@@ -125,23 +125,23 @@ const LogOutButton = styled(Button)({
 
 function AvatarZone(){
 	let isLogIn: boolean = false;
-	if (isLogIn === false){
-		return(
-			<div className='Avatar-zone'>
-				<div className='Avatar-zone-buttons'>
-					<div className='Avatar-zone-1button'>
-						<Link to='/signon'>
-							<SignOnButton variant="contained" disableRipple>Sign On</SignOnButton>
-						</Link>
-					</div>
-					<div className='Avatar-zone-1button'>
-						<LogInButton variant="contained" disableRipple>Log In</LogInButton>
-					</div>
-				</div>
-			</div>
-		);
-	}
-	else 
+	// if (isLogIn === false){
+	// 	return(
+	// 		<div className='Avatar-zone'>
+	// 			<div className='Avatar-zone-buttons'>
+	// 				<div className='Avatar-zone-1button'>
+	// 					<Link to='/signon'>
+	// 						<SignOnButton variant="contained" disableRipple>Sign On</SignOnButton>
+	// 					</Link>
+	// 				</div>
+	// 				<div className='Avatar-zone-1button'>
+	// 					<LogInButton variant="contained" disableRipple>Log In</LogInButton>
+	// 				</div>
+	// 			</div>
+	// 		</div>
+	// 	);
+	// }
+	// else 
 	{
 		return(
 			<div className='Avatar-zone'>

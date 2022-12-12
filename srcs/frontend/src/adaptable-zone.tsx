@@ -536,116 +536,35 @@ export function SignOn(){
 	);
 }
 
-// var users: any;
-
-// export function Test(){
-// 	fetch("http://localhost:9999/api/users", { credentials: 'include' })
-// 	.then(response => {response.text()})//original
-// 	// .then(response => {response.json()})
-// 	.then(response => console.log(response))//original
-// 	// .then(json => console.log(json))
-// 	.catch(error => console.log("Erreur : " + error));
-// 	return(
-// 		<div><h1>Test</h1>
-// 		</div>
-// 	);
-// }
-
-// type resultProps = {
-// 	email: string;
-// 	username: string;
-// };
-
-// export function Test() {
-// 	const [data, setResult] = useState<resultProps[]>([]);
-
-// 	useEffect(() => {
-// 		const api = async () => {
-// 			const data = await fetch("http://localhost:9999/api/users", {
-// 				method: "GET"
-// 			});
-// 			const jsonData = await data.json();
-// 			setResult(jsonData.data);
-// 		};
-
-// 		api();
-// 	}, []);
-
-// 	return (
-// 		<div className="App">
-// 			<h1>
-// 				{data.map((value) => {
-// 					return (
-// 						<div>
-// 							<div>{value.email}</div>
-// 							<div>{value.username}</div>
-// 						</div>
-// 					);
-// 		 		 })}
-// 			</h1>
-// 			<h2>Start editing to see some magic happen!</h2>
-// 		</div>
-// 	);
-// }
-
-export type TApiResponse = {
-	status: Number;
-	statusText: String;
-	data: any;
-	error: any;
-	loading: Boolean;
+type resultProps = {
+	email: string;
+	username: string;
 };
 
-export const useApiGet = (url: string): TApiResponse => {
-	const [status, setStatus] = useState<Number>(0);//init pour eviter une erreur
-	const [statusText, setStatusText] = useState<String>('');//idem
-	const [data, setData] = useState<any>();
-	const [error, setError] = useState<any>();
-	const [loading, setLoading] = useState<boolean>(false);
-
-	const getAPIData = async () => {
-		setLoading(true);
-		try {
-			const apiResponse = await fetch(url);
-			const json = await apiResponse.json();
-			setStatus(apiResponse.status);
-			setStatusText(apiResponse.statusText);
-			setData(json);
-		} catch (error) {
-			setError(error);
-		}
-		setLoading(false);
-	};
+export function Test () {
+	const [data, setResult] = useState<resultProps>();
 
 	useEffect(() => {
-		getAPIData();
-	}, []);
-
-	return { status, statusText, data, error, loading };
-};
-
-export function Test() {
-
-
-	// call to the hook
-	const res: TApiResponse = useApiGet(
-	  'http://localhost:9999/api/users'
-	);
-  
-	// print the output
-	if (!res.loading) console.log(res);
-	var strres: string;
-	strres = JSON.stringify(res);
-	// var data: string[]; 
-	// const data = JSON.stringify(res.data);
-	console.log(res.data);
-	// var i: number;
-	// i = strres.indexOf("data");
-	// var split1 = strres.split();	
-
-	return(
-		<div>
-			{res.data[0]}
+		const api = async () => {
+		  const data = await fetch("http://localhost:9999/api/users/me", {
+			method: "GET",
+			credentials: 'include'
+		  });
+		  const jsonData = await data.json();
+		  setResult(jsonData);
+		  console.log(jsonData);
+		};
+	
+		api();
+	  }, []);
+	  return (
+		<div className="App">
+		  <h1>
+			{data?.email}
+		  </h1>
+		  <h2>Start editing to see some magic happen!</h2>
 		</div>
-	);
-}
+	  );
+	}
+
+	
