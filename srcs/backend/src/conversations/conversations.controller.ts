@@ -10,9 +10,11 @@ import { AuthInterceptor } from '../auth/auth.interceptor';
 import { PageDto } from "../dto/page.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
 import { PostPrivateDto, UpdateMessageDto } from '../dto/private-messages.dto';
-import { MessageQueryFilterDto } from '../dto/query-filters.dto';
+import { MessageQueryFilterDto, ConversationQueryFilterDto } from '../dto/query-filters.dto';
 import { UserSelectDto } from '../dto/messages.dto';
-import { PostConversationDto } from '../dto/conversations.dto';
+import {
+	PostConversationDto, PostConversationMessageDto, UpdateConversationMessageDto
+} from '../dto/conversations.dto';
 
 /**
 * Get a conversation between 2 users (DMs).
@@ -49,17 +51,18 @@ export class ConversationsController
 	@Get()
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	getConversations(@Query() pageOptionsDto: PageOptionsDto, 
+	getConversations(@Query() pageOptionsDto: PageOptionsDto,
+		@Query() conversationQueryFilterDto: ConversationQueryFilterDto,
 		@Req() req)
 	{
-		return this.conversationsService.getConversations(pageOptionsDto, req.user);
+		return this.conversationsService.getConversations(pageOptionsDto, conversationQueryFilterDto, req.user);
 	}
 
 	/**
 	* Create a conversation.
 	* 
 	* Args:
-	* 	:id (Number): The conversation's id.	
+	* 	:id (Number): The conversation's id.
 	* 
 	* Return: The created conversation.
 	* 
@@ -80,11 +83,13 @@ export class ConversationsController
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
 	getConversationMessages(@Query() pageOptionsDto: PageOptionsDto,
+		@Param('id', ParseIntPipe) id: number,
 		@Query() messageQueryFilterDto: MessageQueryFilterDto,
 		@Query() userSelectDto: UserSelectDto,
-		@Req() req)//: Promise<PageDto<Message>>
+		@Req() req): Promise<PageDto<Message>>
 	{
-		// return this.conversationsService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user);
+		return this.conversationsService.getConversationMessages(pageOptionsDto, id,
+			messageQueryFilterDto, userSelectDto, req.user);
 	}
 
 	/**
@@ -111,11 +116,13 @@ export class ConversationsController
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
 	getConversationMessagesAsSender(@Query() pageOptionsDto: PageOptionsDto,
+		@Param('id', ParseIntPipe) id: number,
 		@Query() messageQueryFilterDto: MessageQueryFilterDto,
 		@Query() userSelectDto: UserSelectDto,
-		@Req() req)//: Promise<PageDto<Message>>
+		@Req() req): Promise<PageDto<Message>>
 	{
-		// return this.conversationsService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user, { as_sender: true });
+		return this.conversationsService.getConversationMessages(pageOptionsDto, id,
+			messageQueryFilterDto, userSelectDto, req.user, { as_sender: true });
 	}
 
 	/**
@@ -142,35 +149,14 @@ export class ConversationsController
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
 	getConversationMessagesAsRecipient(@Query() pageOptionsDto: PageOptionsDto,
+		@Param('id', ParseIntPipe) id: number,
 		@Query() messageQueryFilterDto: MessageQueryFilterDto,
 		@Query() userSelectDto: UserSelectDto,
-		@Req() req)//: Promise<PageDto<Message>>
+		@Req() req): Promise<PageDto<Message>>
 	{
-		// return this.conversationsService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user, { as_recipient: true });
+		return this.conversationsService.getConversationMessages(pageOptionsDto, id,
+			messageQueryFilterDto, userSelectDto, req.user, { as_recipient: true });
 	}
-
-	// /**
-	// * Get the latest conversations of a user
-	// * 
-	// * Args:
-	// * 	:id (Number): The conversation's id.
-	// * 	pageOptionsDto: cf. ../dto/page-options.dto.ts
-	// * 
-	// * Return:
-	// * 	** Return **
-	// * 
-	// * Notes:
-	// * 	** Notes **
-	// **/
-
-	// @Get('/conversations')
-	// @UseInterceptors(ClassSerializerInterceptor)
-	// @UseInterceptors(AuthInterceptor)
-	// getConversations(@Query() pageOptionsDto: PageOptionsDto,
-	// 	@Req() req)
-	// {
-	// 	// return this.conversationsService.getConversations(req.user);
-	// }
 
 	/**
 	* Send a message in the conversation.
@@ -189,10 +175,11 @@ export class ConversationsController
 	@Post('/:id/messages/')
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	createConversationMessage(@Body() postPrivateDto: PostPrivateDto,
+	createConversationMessage(@Body() postConversationMessageDto: PostConversationMessageDto,
+		@Param('id', ParseIntPipe) id: number,
 		@Req() req)
 	{
-		// return this.conversationsService.createMessage(postPrivateDto, req.user);
+		return this.conversationsService.createConversationMessage(postConversationMessageDto, id, req.user);
 	}
 
 	/**
@@ -216,10 +203,12 @@ export class ConversationsController
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
 	updateConversationMessage(@Param('id', ParseIntPipe) id: number,
-		@Query() updateMessageDto: UpdateMessageDto,
+		@Param('message_id', ParseIntPipe) message_id: number,
+		@Query() updateConversationMessageDto: UpdateConversationMessageDto,
 		@Req() req)
 	{
-		// return this.conversationsService.updateMessage(id, updateMessageDto, req.user);
+		return this.conversationsService.updateConversationMessage(updateConversationMessageDto,
+			id, message_id, req.user);
 	}
 
 	/**
@@ -238,8 +227,9 @@ export class ConversationsController
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
 	deleteConversationMessage(@Param('id', ParseIntPipe) id: number,
+		@Param('message_id', ParseIntPipe) message_id: number,
 		@Req() req)
 	{
-		// return this.conversationsService.deleteMessage(id, req.user);
+		return this.conversationsService.deleteConversationMessage(id, message_id, req.user);
 	}
 }

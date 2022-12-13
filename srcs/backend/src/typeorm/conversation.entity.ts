@@ -14,11 +14,11 @@ export class Conversation
 	})
 	id: number;
 
-	@ManyToOne(() => User, { eager: true })
+	@ManyToOne(() => User, { eager: true, nullable: false })
 	@JoinColumn()
 	user1: User;
 
-	@ManyToOne(() => User, { eager: true })
+	@ManyToOne(() => User, { eager: true, nullable: false })
 	@JoinColumn()
 	user2: User;
 

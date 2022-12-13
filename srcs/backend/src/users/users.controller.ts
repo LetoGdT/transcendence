@@ -30,8 +30,8 @@ export class UsersController
 	}
 
 	@Get('/me')
-	// @UseInterceptors(ClassSerializerInterceptor)
-	// @UseInterceptors(AuthInterceptor)
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
 	currentUser(@Req() req)
 	{
 		return req.user;

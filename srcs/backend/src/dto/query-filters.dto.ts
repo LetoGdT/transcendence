@@ -97,3 +97,13 @@ export class ChannelUserQueryFilterDto
 	@IsOptional()
 	role: 'Owner' | 'Admin' | 'None';
 }
+
+export class ConversationQueryFilterDto
+{
+	@Type(() => Number)
+	@IsInt()
+	@Min(1)
+	@Max(Number.MAX_SAFE_INTEGER)
+	@IsOptional()
+	user2_id: number;
+}
