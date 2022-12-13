@@ -18,7 +18,6 @@ import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 
 import { Chart } from "react-google-charts";
-import { response } from 'express';
 
 import { useState, useEffect } from "react";
 
@@ -271,6 +270,7 @@ export function Settings(){
 					<div className='Settings-container-div-lvl2'>
 						<h2>Your avatar</h2>
 						<div className='Settings-container-div-lvl3'>
+										
 							<div className='Settings-container-div-lvl4'>
 								<img src={Avatar} alt='your avatar' className='Settings-avatar-img'></img>
 							</div>
