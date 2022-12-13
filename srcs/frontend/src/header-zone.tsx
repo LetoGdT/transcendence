@@ -12,6 +12,13 @@ import Logo42blanc from './logo_42_white.png';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 
+import { useState, useEffect } from "react";
+
+
+type resultProps = {
+	image_url: string;
+};
+
 const LogInButton = styled(Button)({
 	boxShadow: 'none',
 	width: '100px',
@@ -124,29 +131,44 @@ const LogOutButton = styled(Button)({
 });
 
 function AvatarZone(){
+	const [data, setResult] = useState<resultProps>();
+
+	useEffect(() => {
+		const api = async () => {
+		  const data = await fetch("http://localhost:9999/api/users/me", {
+			method: "GET",
+			credentials: 'include'
+		  });
+		  const jsonData = await data.json();
+		  setResult(jsonData);
+		  console.log(jsonData);
+		};
+	
+		api();
+	  }, []);
 	let isLogIn: boolean = false;
-	if (isLogIn === false){
-		return(
-			<div className='Avatar-zone'>
-				<div className='Avatar-zone-buttons'>
-					<div className='Avatar-zone-1button'>
-						<Link to='/signon'>
-							<SignOnButton variant="contained" disableRipple>Sign On</SignOnButton>
-						</Link>
-					</div>
-					<div className='Avatar-zone-1button'>
-						<LogInButton variant="contained" disableRipple>Log In</LogInButton>
-					</div>
-				</div>
-			</div>
-		);
-	}
-	else 
+	// if (isLogIn === false){
+	// 	return(
+	// 		<div className='Avatar-zone'>
+	// 			<div className='Avatar-zone-buttons'>
+	// 				<div className='Avatar-zone-1button'>
+	// 					<Link to='/signon'>
+	// 						<SignOnButton variant="contained" disableRipple>Sign On</SignOnButton>
+	// 					</Link>
+	// 				</div>
+	// 				<div className='Avatar-zone-1button'>
+	// 					<LogInButton variant="contained" disableRipple>Log In</LogInButton>
+	// 				</div>
+	// 			</div>
+	// 		</div>
+	// 	);
+	// }
+	// else 
 	{
 		return(
 			<div className='Avatar-zone'>
 				<div className='Avatar-zone-img'>
-					<img src={Avatar} alt='avatar' className='Avatar-zone-img'></img>
+					<img src={data?.image_url} alt='avatar' className='Avatar-zone-img'></img>
 				</div>
 				<div className='Avatar-zone-buttons'>
 					<LogOutButton variant="contained" disableRipple>Log Out</LogOutButton>
