@@ -39,6 +39,16 @@
   margin: 10px;
 }
 
+.Friend-Name-status{
+  display: flex;
+  flex-direction: row;
+  /* align-content: center; */
+}
+
+.Friend-name{
+  align-items: center;
+}
+
 .Friend-avatar{
   max-width: 100px;
 	height: auto;
