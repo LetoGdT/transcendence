@@ -37,8 +37,12 @@ export class ConversationsService
 				.orWhere("conversation.user2 = :user_id", { user_id: user.id })
 			}))
 			.andWhere(new Brackets(qb => {
-				qb.where("conversation.user1 = :user2_id", { user2_id: conversationQueryFilterDto.user2_id })
-				.orWhere("conversation.user2 = :user2_id", { user2_id: conversationQueryFilterDto.user2_id })
+				qb.where(conversationQueryFilterDto.user2_id != null
+					? "conversation.user1 = :user2_id"
+					: 'TRUE', { user2_id: conversationQueryFilterDto.user2_id })
+				.orWhere(conversationQueryFilterDto.user2_id != null
+					? "conversation.user2 = :user2_id"
+					: 'TRUE', { user2_id: conversationQueryFilterDto.user2_id })
 			}))
 			.orderBy('conversation.latest_sent', pageOptionsDto.order)
 			.skip(pageOptionsDto.skip)
@@ -97,7 +101,7 @@ export class ConversationsService
 		const count = await this.conversationsRepository.createQueryBuilder('conversation')
 			.leftJoinAndSelect('conversation.user1', 'user1')
 			.leftJoinAndSelect('conversation.user2', 'user2')
-			.where('conversation.id = :conversation_id')
+			.where('conversation.id = :conversation_id', { conversation_id: conversation_id })
 			.andWhere(new Brackets(qb => {
 				qb.where("conversation.user1 = :user_id", { user_id: user.id })
 				.orWhere("conversation.user2 = :user_id", { user_id: user.id })
@@ -153,7 +157,8 @@ export class ConversationsService
 		const queryBuilder = this.conversationsRepository.createQueryBuilder('conversation')
 			.leftJoinAndSelect('conversation.user1', 'user1')
 			.leftJoinAndSelect('conversation.user2', 'user2')
-			.where('conversation.id = :conversation_id')
+			.leftJoinAndSelect('conversation.messages', 'messages')
+			.where('conversation.id = :conversation_id', { conversation_id: conversation_id })
 			.andWhere(new Brackets(qb => {
 				qb.where("conversation.user1 = :user_id", { user_id: user.id })
 				.orWhere("conversation.user2 = :user_id", { user_id: user.id })
@@ -186,7 +191,9 @@ export class ConversationsService
 		const queryBuilder = this.conversationsRepository.createQueryBuilder('conversation')
 			.leftJoinAndSelect('conversation.user1', 'user1')
 			.leftJoinAndSelect('conversation.user2', 'user2')
-			.where('conversation.id = :conversation_id')
+			.leftJoinAndSelect('conversation.messages', 'messages')
+			.leftJoinAndSelect('messages.sender', 'sender')
+			.where('conversation.id = :conversation_id', { conversation_id: conversation_id })
 			.andWhere(new Brackets(qb => {
 				qb.where("conversation.user1 = :user_id", { user_id: user.id })
 				.orWhere("conversation.user2 = :user_id", { user_id: user.id })
@@ -222,7 +229,9 @@ export class ConversationsService
 		const queryBuilder = this.conversationsRepository.createQueryBuilder('conversation')
 			.leftJoinAndSelect('conversation.user1', 'user1')
 			.leftJoinAndSelect('conversation.user2', 'user2')
-			.where('conversation.id = :conversation_id')
+			.leftJoinAndSelect('conversation.messages', 'messages')
+			.leftJoinAndSelect('messages.sender', 'sender')
+			.where('conversation.id = :conversation_id', { conversation_id: conversation_id })
 			.andWhere(new Brackets(qb => {
 				qb.where("conversation.user1 = :user_id", { user_id: user.id })
 				.orWhere("conversation.user2 = :user_id", { user_id: user.id })

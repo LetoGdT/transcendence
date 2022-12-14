@@ -22,7 +22,7 @@ export class Conversation
 	@JoinColumn()
 	user2: User;
 
-	@OneToMany(() => Message, (message) => message.conversation , { eager: true, onDelete: 'CASCADE' })
+	@OneToMany(() => Message, (message) => message.conversation , { eager: true, onDelete: 'CASCADE', cascade: true })
 	@JoinColumn()
 	messages: Message[];
 
