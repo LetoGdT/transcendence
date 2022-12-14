@@ -1,3 +1,5 @@
+// this is a js file, so it would need ts adaptation to work. It's just an example
+
 // Global Variables
 var DIRECTION = {
 	IDLE: 0,

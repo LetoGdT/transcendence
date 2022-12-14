@@ -1,0 +1,3 @@
+https://blog.devoreve.com/2018/06/06/creer-un-pong-en-javascript/ (bon tutoriel, tres clair mais js et non ts. Bon point de depart duquel s'inspirer. correspond au code present dans pong_example2)
+https://www.alsacreations.com/tuto/lire/1484-introduction.html (tuto introductif canvas, bien clair aussi)
+https://codepen.io/salammia/pen/yjOgyB (un autre pong en js, sans tuto, juste le code. Celui-ci fonctionne avec les fleches plutot que la souris. J'ai mis le code dans pong_example)
