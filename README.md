@@ -11,6 +11,9 @@
 		<li>Pie charts : https://www.react-google-charts.com/</li>
 		<li>Scroll bar : https://developer.mozilla.org/fr/docs/Web/CSS/overflow</li>
 	</ul>
+	<ul>pour le chat
+		<li>à regarder pour l'auth des sockets https://wanago.io/2021/01/25/api-nestjs-chat-websockets/</li>
+	</ul>
 	<li>Axios + react https://www.freecodecamp.org/french/news/comment-utiliser-axios-avec-react-le-guide-complet-2021/</li>
 	<li>ce m'a permi de commencé à recup des données: https://codesandbox.io/s/0z1ex?file=/src/App.tsx:69-797</li>
 </div>

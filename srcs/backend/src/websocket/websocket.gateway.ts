@@ -5,8 +5,8 @@ import {WebSocketGateway,
 		MessageBody,
 		WebSocketServer,
 } from '@nestjs/websockets';
-import {Server,
-		Socket,
+import { Server,
+		 Socket,
 } from 'socket.io';
 import { AuthService } from '../auth/auth.service';
 import { User } from '../typeorm/user.entity';
@@ -17,7 +17,7 @@ interface Connection {
 	client: Socket;
 }
 
-@WebSocketGateway(9998)
+@WebSocketGateway(9998, { cors: true })
 export class MySocketGateway implements OnGatewayConnection, 
 										OnGatewayDisconnect {
 	constructor(private readonly auth: AuthService,
@@ -30,8 +30,11 @@ export class MySocketGateway implements OnGatewayConnection,
 	async handleConnection(client: Socket) {
 		// Vérification du token de l’utilisateur
 		// Si le token est invalide, la socket est de fermée de suite
-		if(!this.auth.verifyToken(client.request.headers.cookie))
+		console.log("connection par websocket tentée");
+		if(typeof client.request.headers.cookie === 'undefined' || !this.auth.verifyToken(client.request.headers.cookie)) {
 			client.disconnect();
+			return ;
+		}
 		let token = client.request.headers.cookie;
 		let user = await this.auth.tokenOwner(token);
 		this.clients.push({user, client});
@@ -72,7 +75,7 @@ export class MySocketGateway implements OnGatewayConnection,
 	}
 
 	@SubscribeMessage('getConversations')
-	modifyMessages(client: Socket) {
+	getConversations(client: Socket) {
 	}
 
 	sendMessage(recipient: Socket) {

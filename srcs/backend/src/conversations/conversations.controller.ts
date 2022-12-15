@@ -65,6 +65,7 @@ export class ConversationsController
 	* 	Fish fingers and custard.
 	**/
 
+   /*
 	@Post()
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
@@ -73,6 +74,7 @@ export class ConversationsController
 	{
 		this.conversationsService.createConversation(req.user);
 	}
+	*/
 
 	@Get('/:id/messages')
 	@UseInterceptors(ClassSerializerInterceptor)
