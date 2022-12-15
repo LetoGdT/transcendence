@@ -73,7 +73,7 @@ export function Chat(){
 				</div>
 				<div>
 					<div className='Chat-history-container'>
-						<div className='Chat-message-from-self-lvl1'>
+						{/* <div className='Chat-message-from-self-lvl1'>
 							<div className='Chat-div-empty'></div>
 							<div className='Chat-message-from-self-lvl2'>
 								message de soi
@@ -93,21 +93,21 @@ export function Chat(){
 								message de soi
 							</div>
 							<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
-						</div>
+						</div> */}
 						<div className='Chat-message-from-self-lvl1'>
 							<div className='Chat-div-empty'></div>
 							<div className='Chat-message-from-self-lvl2'>
-								vraiment très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très long long long looooooooooooooooooooooooooong long message de soi
+								vraiment très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très long long long long message de soi
 							</div>
 							<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
 						</div>
-						<div className='Chat-message-from-self-lvl1'>
+						{/* <div className='Chat-message-from-self-lvl1'>
 							<div className='Chat-div-empty'></div>
 							<div className='Chat-message-from-self-lvl2'>
 								message de soi
 							</div>
 							<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
-						</div>
+						</div> */}
 						<div className='Chat-message-from-other-lvl1'>
 							<img src={Avatar} alt={'other-name'} className='Chat-who'></img>
 							<div className='Chat-message-from-other-lvl2'>
@@ -115,7 +115,7 @@ export function Chat(){
 							</div>
 							<div className='Chat-div-empty'></div>
 						</div>
-						<div className='Chat-message-from-other-lvl1'>
+						{/* <div className='Chat-message-from-other-lvl1'>
 							<img src={Avatar} alt={'other-name'} className='Chat-who'></img>
 							<div className='Chat-message-from-other-lvl2'>
 								message d'autrui
@@ -191,7 +191,7 @@ export function Chat(){
 								message d'autrui
 							</div>
 							<div className='Chat-div-empty'></div>
-						</div>
+						</div> */}
 					</div>
 					<div className='Chat-TextField-send-button'>
 						<div className='Chat-TextField'>

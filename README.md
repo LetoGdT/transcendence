@@ -1,5 +1,4 @@
 <div>
-	<p>To see the website, go in front-end/ft_trancendence/website and run "npm run start"</p>
 	<ul>pour le Front-End
 		<li>vite (webpacker): https://vitejs.dev/guide/</li>
 		<li>npm react-dom: https://www.npmjs.com/package/react-dom</li>
@@ -10,6 +9,7 @@
 		<li> Menu sticky : https://www.pierre-giraud.com/html-css-apprendre-coder-cours/creation-menu-horizontal-sticky/</li>
 		<li>Pie charts : https://www.react-google-charts.com/</li>
 		<li>Scroll bar : https://developer.mozilla.org/fr/docs/Web/CSS/overflow</li>
+		<li>Afficher differents trucs en fonction de choses diverses : https://reactjs.org/docs/conditional-rendering.html</li>
 	</ul>
 	<li>Axios + react https://www.freecodecamp.org/french/news/comment-utiliser-axios-avec-react-le-guide-complet-2021/</li>
 	<li>ce m'a permi de commencé à recup des données: https://codesandbox.io/s/0z1ex</li>

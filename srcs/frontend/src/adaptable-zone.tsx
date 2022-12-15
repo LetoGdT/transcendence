@@ -482,7 +482,6 @@ const RemoveButton = styled(Button)({
 	},  
 });
 
-
 export const options = {
 	title: "Your matches' results",
 	backgroundColor: 'black',
