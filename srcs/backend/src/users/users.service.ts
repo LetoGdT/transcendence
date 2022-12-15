@@ -2,7 +2,7 @@ import { Logger, Injectable, BadRequestException, HttpStatus, HttpException } fr
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import { User } from '../typeorm/user.entity';
-import { CreateUserDto, UpdateUserDto } from '../dto/users.dto';
+import { CreateUserDto, UpdateUserDto, CreateUserFriendDto } from '../dto/users.dto';
 import { PageDto } from "../dto/page.dto";
 import { PageMetaDto } from "../dto/page-meta.dto";
 import { UserQueryFilterDto } from '../dto/query-filters.dto';
@@ -92,5 +92,84 @@ export class UsersService
 			return user;
 		const newUser: User = this.userRepository.create(createUserDto);
 		return this.userRepository.save(newUser);
+	}
+
+	async getUserFriends(pageOptionsDto: PageOptionsDto,
+		user: User)
+	{
+		const queryBuilder = this.userRepository.createQueryBuilder("user");
+
+		queryBuilder
+			.leftJoinAndSelect('user.following', 'following')
+			.where('user.id = :id', { id: user.id })
+			.orderBy("user.id", pageOptionsDto.order)
+			.skip(pageOptionsDto.skip)
+			.take(pageOptionsDto.take);
+
+		const itemCount = await queryBuilder.getCount();
+		const { entities } = await queryBuilder.getRawAndEntities();
+
+		const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
+
+		return new PageDto(entities, pageMetaDto);
+	}
+
+	async createUserFriend(user: User, createUserFriendDto: CreateUserFriendDto)
+	{
+		if (user.id == createUserFriendDto.id)
+			throw new BadRequestException('You can\'t be friend with yourself. But love yourself.')
+		const queryBuilder1 = this.userRepository.createQueryBuilder('user');
+
+		queryBuilder1
+			.leftJoinAndSelect('user.following', 'following')
+			.leftJoinAndSelect('user.followers', 'followers')
+			.leftJoinAndSelect('user.invited', 'invited')
+			.where('user.id = :id', { id: user.id });
+
+		user = await queryBuilder1.getOne();
+
+		if (user == null)
+			throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+
+		let toAddIndex: number = user.following.findIndex((users) => {
+			return users.id == createUserFriendDto.id;
+		});
+
+		if (toAddIndex != -1)
+			throw new BadRequestException('You are already friends');
+
+		const queryBuilder2 = this.userRepository.createQueryBuilder('user');
+
+		queryBuilder2
+			.where('user.id = :id', { id: createUserFriendDto.id });
+
+		const newFriend = await queryBuilder2.getOne();
+
+		/**
+		 * 
+		 * Check if user has previously been invited.
+		 * 
+		 **/
+
+		user.following.push(newFriend);
+		user.followers.push(newFriend);
+		return this.userRepository.save(user);
+	}
+
+	async reset(user: User, createUserFriendDto: CreateUserFriendDto)
+	{
+		const queryBuilder1 = this.userRepository.createQueryBuilder('user');
+
+		queryBuilder1
+			.leftJoinAndSelect('user.following', 'following')
+			.leftJoinAndSelect('user.followers', 'followers')
+			.leftJoinAndSelect('user.invited', 'invited')
+			.where('user.id = :id', { id: user.id });
+
+		user = await queryBuilder1.getOne();
+		user.followers = [];
+		user.following = [];
+
+		return this.userRepository.save(user);
 	}
 }

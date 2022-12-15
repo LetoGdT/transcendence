@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { IsDate, IsIn, MinLength, MaxLength, IsEmail, Matches } from 'class-validator';
 import { ChannelUser } from './channel-user.entity';
@@ -63,6 +63,20 @@ export class User
 		default: '',
 	})
 	refresh_expires: string;
+
+	@ManyToMany(() => User, (user) => user.following, { cascade: true })
+	@JoinTable()
+	followers: User[];
+
+	@ManyToMany(() => User, (user) => user.followers)
+	following: User[];
+
+	@ManyToMany(() => User, (user) => user.invited)
+	@JoinTable()
+	invitation: User[];
+
+	@ManyToMany(() => User, (user) => user.invitation, { cascade: true })
+	invited: User[];
 
 	@OneToMany(() => ChannelUser, (channelUser) => channelUser.user)
 	channelUsers: ChannelUser;

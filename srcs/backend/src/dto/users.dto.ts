@@ -1,8 +1,10 @@
 import { Exclude } from 'class-transformer';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, Min, Max } from 'class-validator';
 
 export class CreateUserDto
 {
+	@Min(1)
+	@Max(Number.MAX_SAFE_INTEGER)
 	uid: number;
 
 	@IsNotEmpty()
@@ -33,4 +35,11 @@ export class UpdateUserDto
 	@Exclude()
 	@IsNotEmpty()
 	refresh_expires: string;
+}
+
+export class CreateUserFriendDto
+{
+	// @Min(1)
+	// @Max(Number.MAX_SAFE_INTEGER)
+	id: number;
 }
