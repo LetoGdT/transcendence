@@ -1,0 +1,39 @@
+.Settings-container{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.Settings-container-div-lvl1{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	margin-left: 20px;
+	width: 100%;
+	/* justify-content: center; */
+}
+
+.Settings-container-div-lvl2{
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	margin-left: 15px;
+}
+
+.Settings-container-div-lvl3{
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	margin-left: 5px;
+}
+
+.Settings-container-div-lvl4{
+	margin-left: 5px;
+	align-self: center;
+}
+
+.Settings-avatar-img {
+	max-width: 200px;
+	height: auto;
+	max-height: 210px;
+}

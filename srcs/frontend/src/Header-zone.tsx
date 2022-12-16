@@ -6,7 +6,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 
 import Banniere from './link_botw_banniere.jpg';
-import Avatar from './link_botw_avatar.jpg';
+// import Avatar from './link_botw_avatar.jpg';
 import Logo42blanc from './logo_42_white.png';
 
 import Button from '@mui/material/Button';
@@ -130,7 +130,56 @@ const LogOutButton = styled(Button)({
 	},
 });
 
-function AvatarZone(){
+function UserLogged(){
+	const [data, setResult] = useState<resultProps>();
+
+	useEffect(() => {
+		const api = async () => {
+			const data = await fetch("http://localhost:9999/api/users/me", {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonData = await data.json();
+			setResult(jsonData);
+			console.log(jsonData);
+		};
+	
+		api();
+	}, []);
+	
+	return(
+		<div className='Avatar-zone'>
+			<div className='Avatar-zone-img'>
+				<img src={data?.image_url} alt='avatar' className='Avatar-zone-img'></img>
+			</div>
+			<div className='Avatar-zone-buttons'>
+				<a href='http://localhost:9999/logout'>
+					<LogOutButton variant="contained" disableRipple>Log Out</LogOutButton>
+				</a>
+			</div>
+		</div>
+	);
+}
+
+function UserNotLogged(){
+	return(
+		<div className='Avatar-zone'>
+			<div className='Avatar-zone-buttons'>
+				<div className='Avatar-zone-1button'>
+					<Link to='/signon'>
+						<SignOnButton variant="contained" disableRipple>Sign On</SignOnButton>
+					</Link>
+				</div>
+				<div className='Avatar-zone-1button'>
+					<a href='http://localhost:9000/log'>
+						<LogInButton variant="contained" disableRipple>Log In</LogInButton>
+					</a>
+				</div>
+			</div>
+		</div>
+	);
+}
+function AvatarZone(props:any){
 	const [data, setResult] = useState<resultProps>();
 
 	useEffect(() => {
@@ -145,35 +194,18 @@ function AvatarZone(){
 		};
 	
 		api();
-	  }, []);
-	let isLogIn: boolean = false;
-	// if (isLogIn === false){
-	// 	return(
-	// 		<div className='Avatar-zone'>
-	// 			<div className='Avatar-zone-buttons'>
-	// 				<div className='Avatar-zone-1button'>
-	// 					<Link to='/signon'>
-	// 						<SignOnButton variant="contained" disableRipple>Sign On</SignOnButton>
-	// 					</Link>
-	// 				</div>
-	// 				<div className='Avatar-zone-1button'>
-	// 					<LogInButton variant="contained" disableRipple>Log In</LogInButton>
-	// 				</div>
-	// 			</div>
-	// 		</div>
-	// 	);
-	// }
-	// else 
+	}, []);
+	
+	const isLoggedIn = props.isLoggedIn;
+	if (isLoggedIn){
+		return (
+			<UserLogged />
+		);
+	}
+	else 
 	{
-		return(
-			<div className='Avatar-zone'>
-				<div className='Avatar-zone-img'>
-					<img src={data?.image_url} alt='avatar' className='Avatar-zone-img'></img>
-				</div>
-				<div className='Avatar-zone-buttons'>
-					<LogOutButton variant="contained" disableRipple>Log Out</LogOutButton>
-				</div>
-			</div>
+		return (
+			<UserNotLogged />
 		);
 	}
 }
