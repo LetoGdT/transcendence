@@ -109,6 +109,8 @@ export class UsersService
 		const itemCount = await queryBuilder.getCount();
 		const { entities } = await queryBuilder.getRawAndEntities();
 
+		console.log(entities);
+
 		const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
 
 		return new PageDto(entities, pageMetaDto);
@@ -156,20 +158,8 @@ export class UsersService
 		return this.userRepository.save(user);
 	}
 
-	async reset(user: User, createUserFriendDto: CreateUserFriendDto)
+	async deleteUserFriend(user: User)
 	{
-		const queryBuilder1 = this.userRepository.createQueryBuilder('user');
 
-		queryBuilder1
-			.leftJoinAndSelect('user.following', 'following')
-			.leftJoinAndSelect('user.followers', 'followers')
-			.leftJoinAndSelect('user.invited', 'invited')
-			.where('user.id = :id', { id: user.id });
-
-		user = await queryBuilder1.getOne();
-		user.followers = [];
-		user.following = [];
-
-		return this.userRepository.save(user);
 	}
 }

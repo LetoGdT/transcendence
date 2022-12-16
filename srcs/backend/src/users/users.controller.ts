@@ -75,7 +75,6 @@ export class UsersController
 	async createUserFriend(@Body() createUserFriendDto: CreateUserFriendDto,
 		@Req() req)
 	{
-		// return await this.usersService.reset(req.user, createUserFriendDto)
 		return this.usersService.createUserFriend(req.user, createUserFriendDto);
 	}
 
