@@ -18,11 +18,51 @@ import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 
 import { Chart } from "react-google-charts";
-import { response } from 'express';
 
 import { useState, useEffect } from "react";
 
+type resultProps = {
+	email: string;
+	username: string;
+	image_url: string;
+	rank: number;
+	level: number;
+	achievement: string[];//?
+	//map avec par exemple id = nom de l'achievement, value = url d'une image
+	winNb: number;
+	loseNb: number;
+	drawNb:number;
+	friends: string[];//?
+	//une map pour ses friends (key = id du friend, value = structure similaire du friend)
+	matchHistory: string[];//?
+	/*
+		il me faudrait une liste avec :
+			score du player
+			pseudo de l'adversaire
+			si l'adversaire est un friend
+			score de l'adversaire
+		une autre (???) avec :
+			niveau fait ?
+			reussite ? score ?
+		*/
+};
+
 export function Friends(){
+	const [data, setResult] = useState<resultProps>();
+
+	useEffect(() => {
+		const api = async () => {
+		  const data = await fetch("http://localhost:9999/api/users/me", {
+			method: "GET",
+			credentials: 'include'
+		  });
+		  const jsonData = await data.json();
+		  setResult(jsonData);
+		  console.log(jsonData);
+		};
+	
+		api();
+	  }, []);
 	return(
 		<React.Fragment>
 			<h1>Friends</h1>
@@ -65,16 +105,6 @@ export function Friends(){
 	);
 }
 
-/*
-	il me faudrait une structure avec :
-	le pseudo du proprio du compte
-	le lien vers son avatar
-	une map pour ses friends (key = id du friend, value = structure similaire du friend)
-	la liste des matchs
-	+
-	toute autres info que le proprio pourrait voulair modifier ou qu'on pourrait montrer
-*/
-
 export function Home(){
 	return(
 		<div>
@@ -86,18 +116,22 @@ export function Home(){
 	);
 }
 
-/*
-	il me faudrait une liste avec :
-		score du player
-		pseudo de l'adversaire
-		si l'adversaire est un friend
-		score de l'adversaire
-	une autre (???) avec :
-		niveau fait
-		reussite ? score ?
-*/
-
 export function MatchHistory(){
+	const [data, setResult] = useState<resultProps>();
+
+	useEffect(() => {
+		const api = async () => {
+		  const data = await fetch("http://localhost:9999/api/users/me", {
+			method: "GET",
+			credentials: 'include'
+		  });
+		  const jsonData = await data.json();
+		  setResult(jsonData);
+		  console.log(jsonData);
+		};
+	
+		api();
+	  }, []);
 	return(
 		<React.Fragment>
 			<h1>Your Matchs History</h1>
@@ -262,6 +296,21 @@ const TwoFASwitch = styled(Switch)(({ theme }) => ({
 }));
 
 export function Settings(){
+	const [data, setResult] = useState<resultProps>();
+
+	useEffect(() => {
+		const api = async () => {
+		  const data = await fetch("http://localhost:9999/api/users/me", {
+			method: "GET",
+			credentials: 'include'
+		  });
+		  const jsonData = await data.json();
+		  setResult(jsonData);
+		  console.log(jsonData);
+		};
+	
+		api();
+	  }, []);
 	return(
 		<React.Fragment>
 			<h1>Settings</h1>
@@ -272,7 +321,7 @@ export function Settings(){
 						<h2>Your avatar</h2>
 						<div className='Settings-container-div-lvl3'>
 							<div className='Settings-container-div-lvl4'>
-								<img src={Avatar} alt='your avatar' className='Settings-avatar-img'></img>
+								<img src={data?.image_url} alt='your avatar' className='Settings-avatar-img'></img>
 							</div>
 							<div className='Settings-container-div-lvl4'>
 								<Box
@@ -306,7 +355,7 @@ export function Settings(){
 						<h2>Your alias</h2>
 						<div className='Settings-container-div-lvl3'>
 							<div className='Settings-container-div-lvl4'>
-								User's alias
+								{data?.username}
 							</div>
 							<div className='Settings-container-div-lvl4'>
 							<Box
@@ -436,13 +485,7 @@ const RemoveButton = styled(Button)({
 	},  
 });
 
-export const data = [
-	["Result", "nb"],
-	["Victories", 11],
-	["Defeats", 5],
-	["Draws", 2],
-];
-  
+
 export const options = {
 	title: "Your matches' results",
 	backgroundColor: 'black',
@@ -450,26 +493,50 @@ export const options = {
 	legend: {textStyle: {color: 'gray', fontSize: '15'}}
 };
 
+export const gameData = [
+	["Result", "nb"],
+	// ["Victories", {data?.winNb}],
+	// ["Defeats", {data?.loseNb}],
+	// ["Draws", {data?.drawNb}],
+	["Victories", 11],
+	["Defeats", 5],
+	["Draws", 2],
+];
+
 export function Profile(){
+	const [data, setResult] = useState<resultProps>();
+
+	useEffect(() => {
+		const api = async () => {
+		  const data = await fetch("http://localhost:9999/api/users/me", {
+			method: "GET",
+			credentials: 'include'
+		  });
+		  const jsonData = await data.json();
+		  setResult(jsonData);
+		  console.log(jsonData);
+		};
+	
+		api();
+	  }, []);
 	return(
 		<React.Fragment>
-			<h1>Profile - Stats (du user ou d'un friends)</h1>
+			<h1>Profile - Stats</h1>
 			<p>si user non connecter renvoyer vers /pleaseconnect</p>
-			<p>si on a cliqué sur l'avatar ou le pseudo de quelqu'un d'autre, ça affiche le profile de cette personne</p>
 			<div className='Profile-container'>
 				<div className='Profile-Alias'>
-					<div className='Profile-Alias-div'>Alias</div>
-					<div className='Profile-Alias-div'><AddButton variant="contained" disableRipple>Add to Friends</AddButton></div>
-					<div className='Profile-Alias-div'><RemoveButton variant="contained" disableRipple>Remove from Friends</RemoveButton></div>
+					<div className='Profile-Alias-div'>{data?.username}</div>
+					{/* <div className='Profile-Alias-div'><AddButton variant="contained" disableRipple>Add to Friends</AddButton></div>
+					<div className='Profile-Alias-div'><RemoveButton variant="contained" disableRipple>Remove from Friends</RemoveButton></div> */}
 				</div>
 				<div className='Profile-container-row-lvl1'>
 					<div className='Profile-Avatar'>
-						<img src={Avatar} alt="alias' avatar" className='Settings-avatar-img'></img>
+						<img src={data?.image_url} alt="alias' avatar" className='Settings-avatar-img'></img>
 					</div>
 					<div className='Profile-Pie-Charts'>
 						<Chart
 							chartType="PieChart"
-							data={data}
+							data={gameData}
 							options={options}
 							width={"100%"}
 							height={"400"}
@@ -478,8 +545,8 @@ export function Profile(){
 				</div>
 				<div>
 					<div className='Profile-game-info'>
-						<div><b>Rank:</b> Silver</div>
-						<div><b>Level:</b> 10</div>
+						<div><b>Rank:</b> {data?.rank}</div>
+						<div><b>Level:</b> {data?.level}</div>
 					</div>
 					<h4>Achievements</h4>
 					<div className='Profile-achievement-container'>
@@ -536,108 +603,4 @@ export function SignOn(){
 	);
 }
 
-// var users: any;
-
-// export function Test(){
-// 	fetch("http://localhost:9999/api/users", { credentials: 'include' })
-// 	.then(response => {response.text()})//original
-// 	// .then(response => {response.json()})
-// 	.then(response => console.log(response))//original
-// 	// .then(json => console.log(json))
-// 	.catch(error => console.log("Erreur : " + error));
-// 	return(
-// 		<div><h1>Test</h1>
-// 		</div>
-// 	);
-// }
-
-// type resultProps = {
-// 	email: string;
-// 	username: string;
-// };
-
-// export function Test() {
-// 	const [data, setResult] = useState<resultProps[]>([]);
-
-// 	useEffect(() => {
-// 		const api = async () => {
-// 			const data = await fetch("http://localhost:9999/api/users", {
-// 				method: "GET"
-// 			});
-// 			const jsonData = await data.json();
-// 			setResult(jsonData.data);
-// 		};
-
-// 		api();
-// 	}, []);
-
-// 	return (
-// 		<div className="App">
-// 			<h1>
-// 				{data.map((value) => {
-// 					return (
-// 						<div>
-// 							<div>{value.email}</div>
-// 							<div>{value.username}</div>
-// 						</div>
-// 					);
-// 		 		 })}
-// 			</h1>
-// 			<h2>Start editing to see some magic happen!</h2>
-// 		</div>
-// 	);
-// }
-
-// export type TApiResponse = {
-// 	status: Number;
-// 	statusText: String;
-// 	data: any;
-// 	error: any;
-// 	loading: Boolean;
-// };
-
-// export const useApiGet = (url: string): TApiResponse => {
-// 	const [status, setStatus] = useState<Number>(0);//init pour eviter une erreur
-// 	const [statusText, setStatusText] = useState<String>('');//idem
-// 	const [data, setData] = useState<any>();
-// 	const [error, setError] = useState<any>();
-// 	const [loading, setLoading] = useState<boolean>(false);
-
-// 	const getAPIData = async () => {
-// 		setLoading(true);
-// 		try {
-// 			const apiResponse = await fetch(url);
-// 			const json = await apiResponse.json();
-// 			setStatus(apiResponse.status);
-// 			setStatusText(apiResponse.statusText);
-// 			setData(json);
-// 		} catch (error) {
-// 			setError(error);
-// 		}
-// 		setLoading(false);
-// 	};
-
-// 	useEffect(() => {
-// 		getAPIData();
-// 	}, []);
-
-// 	return { status, statusText, data, error, loading };
-// };
-
-// export function Test() {
-
-
-// 	// call to the hook
-// 	const res: TApiResponse = useApiGet(
-// 	  'http://localhost:9999/api/users'
-// 	);
-  
-// 	// print the output
-// 	if (!res.loading) console.log(res);
-
-// 	return (
-// 		{if (res.loading) {
-// 			return(<div>true</div>);
-// 		}}
-// 	);
-//   }
+	
