@@ -5,9 +5,7 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import { Link } from 'react-router-dom';
-
 import Avatar from './link_botw_avatar.jpg';//a enlever quand plus nec
-
 import OffLine from './offline.png';
 import OnLine from './online.png';
 import InGame from './ingame.png';
@@ -18,6 +16,8 @@ import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 import { Chart } from "react-google-charts";
 import { useState, useEffect } from "react";
+
+import { PleaseConnect } from './adaptable-zone';
 
 type resultProps = {
 	email: string;
@@ -244,4 +244,19 @@ export function Settings(){
 			</div>
 		</React.Fragment>
 	);
+}
+
+export function SettingsZone(){
+	// const isLoggedIn = props.isLoggedIn;
+	// if (isLoggedIn){
+		return (
+			<Settings />
+		);
+	// }
+	// else 
+	// {
+	// 	return (
+	// 		<PleaseConnect />
+	// 	);
+	// }
 }

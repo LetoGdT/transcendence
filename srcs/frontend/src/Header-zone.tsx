@@ -2,7 +2,6 @@ import './App.css'
 import './Header.css'
 import * as React from 'react';
 
-// import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
 
 import Banniere from './link_botw_banniere.jpg';
