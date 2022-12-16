@@ -71,7 +71,7 @@ export class AuthController
 				secure: true,		// Just info for the browser
 			}
 		);
-		return (res.redirect('/'));
+		return (res.redirect('http://localhost:3000/'));
 	}
 
 	@Get('/logout')
@@ -97,7 +97,7 @@ export class AuthController
 				secure: true,
 			}
 		);
-		return (res.redirect('/'));
+		return (res.redirect('http://localhost:3000/'));
 	}
 
 	@Get('/gen_token')

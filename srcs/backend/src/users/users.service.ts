@@ -160,6 +160,6 @@ export class UsersService
 
 	async deleteUserFriend(user: User)
 	{
-
+		
 	}
 }
