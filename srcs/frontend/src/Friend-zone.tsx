@@ -11,6 +11,8 @@ import OnLine from './online.png';
 import InGame from './ingame.png';
 import { useState, useEffect } from "react";
 
+import { PleaseConnect } from './adaptable-zone';
+
 type resultProps = {
 	email: string;
 	username: string;
@@ -93,4 +95,19 @@ export function Friends(){
 			</div>
 		</React.Fragment>
 	);
+}
+
+export function FriendsZone(){
+	// const isLoggedIn = props.isLoggedIn;
+	// if (isLoggedIn){
+		return (
+			<Friends />
+		);
+	// }
+	// else 
+	// {
+	// 	return (
+	// 		<PleaseConnect />
+	// 	);
+	// }
 }

@@ -7,7 +7,7 @@ import { OurMenu } from './Menu-zone';
 import { Home } from './adaptable-zone';
 import { Play, SpecAMatch} from './adaptable-zone';
 import { Chat } from './Chat-zone';
-import { Friends } from './Friend-zone';
+import { FriendsZone } from './Friend-zone';
 import { MatchHistory } from './MatchHistory-zone';
 import { SettingsZone } from './Settings-zone';
 import { ProfileZone, OtherProfile } from './Profile-zone';
@@ -30,7 +30,7 @@ function App() {
 					
 					<Routes>
 						<Route path="/chat" element={<Chat/>} />
-						<Route path="/friends" element={<Friends/>} />
+						<Route path="/friends" element={<FriendsZone/>} />
 						<Route path="/" element={<Home />} />
 						<Route path="/matchhistory" element={<MatchHistory/>} />
 						<Route path="/play" element={<Play/>} />
