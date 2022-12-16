@@ -3,21 +3,13 @@ import './Profile.css'
 
 import * as React from 'react';
 import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
 import { Link } from 'react-router-dom';
-
 import Avatar from './link_botw_avatar.jpg';//a enlever quand plus nec
-
-import OffLine from './offline.png';
-import OnLine from './online.png';
-import InGame from './ingame.png';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
-import Switch from '@mui/material/Switch';
-import Typography from '@mui/material/Typography';
 import { Chart } from "react-google-charts";
 import { useState, useEffect } from "react";
+
+import { PleaseConnect } from './adaptable-zone';
 
 type resultProps = {
 	email: string;
@@ -226,7 +218,6 @@ export function Profile(){
 	return(
 		<React.Fragment>
 			<h1>Profile - Stats</h1>
-			<p>si user non connecter renvoyer vers /pleaseconnect</p>
 			<div className='Profile-container'>
 				<div className='Profile-Alias'>
 					<div className='Profile-Alias-div'>{data?.username}</div>
@@ -276,4 +267,19 @@ export function Profile(){
 			</div>
 		</React.Fragment>
 	);
+}
+
+export function ProfileZone(){
+	// const isLoggedIn = props.isLoggedIn;
+	// if (isLoggedIn){
+		return (
+			<Profile />
+		);
+	// }
+	// else 
+	// {
+	// 	return (
+	// 		<PleaseConnect />
+	// 	);
+	// }
 }

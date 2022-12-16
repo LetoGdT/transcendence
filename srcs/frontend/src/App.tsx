@@ -9,8 +9,8 @@ import { Play, SpecAMatch} from './adaptable-zone';
 import { Chat } from './Chat-zone';
 import { Friends } from './Friend-zone';
 import { MatchHistory } from './MatchHistory-zone';
-import { Settings } from './Settings-zone';
-import { Profile, OtherProfile } from './Profile-zone';
+import { SettingsZone } from './Settings-zone';
+import { ProfileZone, OtherProfile } from './Profile-zone';
 import { SignOn } from './adaptable-zone';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 
@@ -34,10 +34,10 @@ function App() {
 						<Route path="/" element={<Home />} />
 						<Route path="/matchhistory" element={<MatchHistory/>} />
 						<Route path="/play" element={<Play/>} />
-						<Route path="/settings" element={<Settings/>} />
+						<Route path="/settings" element={<SettingsZone/>} />
 						<Route path="/specamatch" element={<SpecAMatch/>} />
 						{/* <Route path="/otherprofile" element={<OtherProfile/>} /> */}
-						<Route path="/profile" element={<Profile/>} />
+						<Route path="/profile" element={<ProfileZone/>} />
 						<Route path="/signon" element={<SignOn/>} />
 					</Routes>
 				</div>

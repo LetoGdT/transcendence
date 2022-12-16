@@ -5,6 +5,8 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from "react";
 
+import { PleaseConnect } from './adaptable-zone';
+
 type resultProps = {
 	email: string;
 	username: string;
@@ -50,7 +52,6 @@ export function MatchHistory(){
 	return(
 		<React.Fragment>
 			<h1>Your Matchs History</h1>
-			<p>si user non connecter renvoyer vers /pleaseconnect</p>
 			<div className='Match-container'>
 				<div className='Match-container-div'>
 					<div className='Match-Resultat'>
@@ -109,4 +110,19 @@ export function MatchHistory(){
 			</div>
 		</React.Fragment>
 	);
+}
+
+export function MatchHistoryZone(){
+	// const isLoggedIn = props.isLoggedIn;
+	// if (isLoggedIn){
+		return (
+			<MatchHistory />
+		);
+	// }
+	// else 
+	// {
+	// 	return (
+	// 		<PleaseConnect />
+	// 	);
+	// }
 }

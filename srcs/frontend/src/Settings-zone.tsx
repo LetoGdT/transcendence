@@ -155,7 +155,6 @@ export function Settings(){
 	return(
 		<React.Fragment>
 			<h1>Settings</h1>
-			<p>si user non connecter renvoyer vers /pleaseconnect</p>
 			<div className='Settings-container'>
 				<div className='Settings-container-div-lvl1'>
 					<div className='Settings-container-div-lvl2'>
