@@ -64,18 +64,28 @@ export class User
 	})
 	refresh_expires: string;
 
-	@ManyToMany(() => User, (user) => user.following, { cascade: true })
+	@ManyToMany(() => User, (user) => user.following, {
+		cascade: true,
+		nullable: false
+	})
 	@JoinTable()
 	followers: User[];
 
-	@ManyToMany(() => User, (user) => user.followers)
+	@ManyToMany(() => User, (user) => user.followers, {
+		nullable: false,
+	})
 	following: User[];
 
-	@ManyToMany(() => User, (user) => user.invited)
+	@ManyToMany(() => User, (user) => user.invited, {
+		cascade: true,
+		nullable: false
+	})
 	@JoinTable()
-	invitation: User[];
+	invitations: User[];
 
-	@ManyToMany(() => User, (user) => user.invitation, { cascade: true })
+	@ManyToMany(() => User, (user) => user.invitations, {
+		nullable: false,
+	})
 	invited: User[];
 
 	@OneToMany(() => ChannelUser, (channelUser) => channelUser.user)
