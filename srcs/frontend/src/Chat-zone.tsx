@@ -10,6 +10,8 @@ import Button from '@mui/material/Button';
 import Avatar from './link_botw_avatar.jpg';
 import Banniere from './link_botw_banniere.jpg';
 
+import { PleaseConnect } from './adaptable-zone';
+
 const MessageTextField = styled(TextField)({
 	'& input:valid + fieldset': {
 		borderColor: 'white',
@@ -211,4 +213,19 @@ export function Chat(){
 			</div>
 		</React.Fragment>
 	);
+}
+
+export function ChatZone(){
+	// const isLoggedIn = props.isLoggedIn;
+	// if (isLoggedIn){
+		return (
+			<Chat />
+		);
+	// }
+	// else 
+	// {
+	// 	return (
+	// 		<PleaseConnect />
+	// 	);
+	// }
 }
