@@ -108,9 +108,10 @@ export class UsersController
 	@Delete('/me/friends/invites/:id')
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	async denyInvitation()
+	async declineInvitation(@Param('user_id', ParseIntPipe) user_id: number,
+		@Req() req)
 	{
-
+		return this.usersService.declineInvitation(req.user, user_id);
 	}
 }
 

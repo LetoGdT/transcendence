@@ -126,12 +126,12 @@ export class UsersService
 		queryBuilder1
 			.leftJoinAndSelect('user.following', 'following')
 			.leftJoinAndSelect('user.followers', 'followers')
-			.leftJoinAndSelect('user.invitations', 'invitations')
+			.leftJoinAndSelect('user.invited', 'invited')
 			.where('user.id = :id', { id: user.id });
 
 		user = await queryBuilder1.getOne();
 
-		let toAddIndex: number = user.following.findIndex((users) => {
+		const toAddIndex: number = user.following.findIndex((users) => {
 			return users.id == createUserFriendDto.id;
 		});
 
@@ -147,6 +147,15 @@ export class UsersService
 
 		if (newFriend == null)
 			throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+
+		const invitationIndex: number = user.invited.findIndex((users) => {
+			return users.id == createUserFriendDto.id;
+		});
+
+		if (invitationIndex == -1)
+			throw new BadRequestException('You were not invited by this user');
+
+		user.invited.splice(invitationIndex, 1);
 
 		/**
 		 * 
@@ -174,7 +183,7 @@ export class UsersService
 
 		user = await queryBuilder.getOne();
 
-		let toRemoveIndex: number = user.following.findIndex((users) => {
+		const toRemoveIndex: number = user.following.findIndex((users) => {
 			return users.id == user_id;
 		});
 
@@ -248,5 +257,27 @@ export class UsersService
 		return this.userRepository.save(user);
 	}
 
-	// async 
+	async declineInvitation(user: User, user_id: number)
+	{
+		if (user_id > this.IdMax)
+			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
+
+		const queryBuilder = this.userRepository.createQueryBuilder('user');
+
+		queryBuilder
+			.leftJoinAndSelect('user.invited', 'invited')
+			.where('user.id = :id', { id: user.id });
+
+		user = await queryBuilder.getOne();
+
+		const toRemoveIndex: number = user.invited.findIndex((users) => {
+			return users.id == user_id;
+		});
+
+		if (toRemoveIndex == -1)
+			throw new BadRequestException('User did not invite you');
+
+		user.invited.splice(toRemoveIndex, 1);
+		return this.userRepository.save(user);
+	}
 }
