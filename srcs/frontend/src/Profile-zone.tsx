@@ -15,13 +15,13 @@ type resultProps = {
 	email: string;
 	username: string;
 	image_url: string;
+	status: string;
 	rank: number;
 	level: number;
 	achievement: string[];//?
 	//map avec par exemple id = nom de l'achievement, value = url d'une image
 	winNb: number;
 	loseNb: number;
-	drawNb:number;
 	friends: string[];//?
 	//une map pour ses friends (key = id du friend, value = structure similaire du friend)
 	matchHistory: string[];//?
@@ -121,24 +121,33 @@ export const gameData = [
 	["Result", "nb"],
 	// ["Victories", {data?.winNb}],
 	// ["Defeats", {data?.loseNb}],
-	// ["Draws", {data?.drawNb}],
-	["Victories", 11],
-	["Defeats", 5],
-	["Draws", 2],
+
+	["Victories", 15],
+	["Defeats", 2],
 ];
 
-export function OtherProfile(pseudo: string){
-	const [data, setResult] = useState<resultProps>();
 
+export function OtherProfile(){
+	const handleClickAdd = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		const response = await fetch('http://localhost:9999/api/users/me/friends', {
+			method: 'POST',
+			credentials: 'include',
+			body: JSON.stringify({ id: 1 })
+		});
+		console.log(response.json());//
+	};
+
+	const [data, setResult] = useState<resultProps>();
+	
 	useEffect(() => {
 		const api = async () => {
-		  const data = await fetch("http://localhost:9999/api/users/" + pseudo, {
+		  const data = await fetch("http://localhost:9999/api/users/1", {
 			method: "GET",
 			credentials: 'include'
 		  });
 		  const jsonData = await data.json();
 		  setResult(jsonData);
-		  console.log(jsonData);
+		  console.log(jsonData);//
 		};
 	
 		api();
@@ -151,7 +160,7 @@ export function OtherProfile(pseudo: string){
 				<div className='Profile-Alias'>
 					<div className='Profile-Alias-div'>{data?.username}</div>
 					{/* <div>{data?.email}</div> */}
-					<div className='Profile-Alias-div'><AddButton variant="contained" disableRipple>Add to Friends</AddButton></div>
+					<div className='Profile-Alias-div'><AddButton variant="contained" disableRipple onClick={handleClickAdd}>Add to Friends</AddButton></div>
 					{/* <div className='Profile-Alias-div'><RemoveButton variant="contained" disableRipple>Remove from Friends</RemoveButton></div> */}
 				</div>
 				<div className='Profile-container-row-lvl1'>
@@ -210,7 +219,7 @@ export function Profile(){
 		  });
 		  const jsonData = await data.json();
 		  setResult(jsonData);
-		  console.log(jsonData);
+		  console.log(jsonData);//
 		};
 	
 		api();

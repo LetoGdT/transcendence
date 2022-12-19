@@ -11,13 +11,13 @@ type resultProps = {
 	email: string;
 	username: string;
 	image_url: string;
+	status: string;
 	rank: number;
 	level: number;
 	achievement: string[];//?
 	//map avec par exemple id = nom de l'achievement, value = url d'une image
 	winNb: number;
 	loseNb: number;
-	drawNb:number;
 	friends: string[];//?
 	//une map pour ses friends (key = id du friend, value = structure similaire du friend)
 	matchHistory: string[];//?

@@ -5,16 +5,11 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import { Link } from 'react-router-dom';
-import Avatar from './link_botw_avatar.jpg';//a enlever quand plus nec
-import OffLine from './offline.png';
-import OnLine from './online.png';
-import InGame from './ingame.png';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
-import { Chart } from "react-google-charts";
 import { useState, useEffect } from "react";
 
 import { PleaseConnect } from './adaptable-zone';
@@ -23,13 +18,13 @@ type resultProps = {
 	email: string;
 	username: string;
 	image_url: string;
+	status: string;
 	rank: number;
 	level: number;
 	achievement: string[];//?
 	//map avec par exemple id = nom de l'achievement, value = url d'une image
 	winNb: number;
 	loseNb: number;
-	drawNb:number;
 	friends: string[];//?
 	//une map pour ses friends (key = id du friend, value = structure similaire du friend)
 	matchHistory: string[];//?

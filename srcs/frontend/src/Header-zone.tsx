@@ -140,7 +140,7 @@ function UserLogged(){
 			});
 			const jsonData = await data.json();
 			setResult(jsonData);
-			console.log(jsonData);
+			console.log(jsonData);//
 		};
 	
 		api();
@@ -183,13 +183,13 @@ function AvatarZone(props:any){
 
 	useEffect(() => {
 		const api = async () => {
-		  const data = await fetch("http://localhost:9999/api/users/me", {
-			method: "GET",
-			credentials: 'include'
-		  });
-		  const jsonData = await data.json();
-		  setResult(jsonData);
-		  console.log(jsonData);
+			const data = await fetch("http://localhost:9999/api/users/me", {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonData = await data.json();
+			setResult(jsonData);
+			console.log(jsonData);//
 		};
 	
 		api();
