@@ -78,13 +78,40 @@ export class UsersController
 		return this.usersService.createUserFriend(req.user, createUserFriendDto);
 	}
 
-	@Delete('/me/friends/user_id')
+	@Delete('/me/friends/:user_id')
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	async deleteUserFriend()
+	async deleteUserFriend(@Param('user_id', ParseIntPipe) user_id: number,
+		@Req() req)
 	{
-
+		return this.usersService.deleteUserFriend(req.user, user_id);
 	}
 
+	@Get('/me/friends/invites')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	async getUserFriendInvitations(@Query() pageOptionsDto: PageOptionsDto,
+		@Req() req)
+	{
+		return this.usersService.getUserFriendInvitations(pageOptionsDto, req.user);
+	}
+
+	@Post('/me/friends/invites')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	async inviteUser(@Body() createUserFriendDto: CreateUserFriendDto,
+		@Req() req)
+	{
+		return this.usersService.inviteUser(req.user, createUserFriendDto);
+	}
+
+	@Delete('/me/friends/invites/:id')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	async declineInvitation(@Param('user_id', ParseIntPipe) user_id: number,
+		@Req() req)
+	{
+		return this.usersService.declineInvitation(req.user, user_id);
+	}
 }
 
