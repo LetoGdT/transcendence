@@ -129,7 +129,7 @@ export const gameData = [
 
 export function OtherProfile(){
 	const handleClickAdd = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('http://localhost:9999/api/users/me/friends', {
+		const response = await fetch('http://localhost:9999/api/users/me/friends/invites', {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -145,7 +145,7 @@ export function OtherProfile(){
 	
 	useEffect(() => {
 		const api = async () => {
-		  const data = await fetch("http://localhost:9999/api/users/1", {
+		  const data = await fetch("http://localhost:9999/api/users/2", {
 			method: "GET",
 			credentials: 'include'
 		  });
@@ -212,8 +212,13 @@ export function OtherProfile(){
 	);
 }
 
+type invitesProps = {
+	invites: string[];
+};
+
 export function Profile(){
 	const [data, setResult] = useState<resultProps>();
+	const [invites, setInvites] = useState<invitesProps>();
 
 	useEffect(() => {
 		const api = async () => {
@@ -224,6 +229,13 @@ export function Profile(){
 		  const jsonData = await data.json();
 		  setResult(jsonData);
 		  console.log(jsonData);//
+		  const invites = await fetch("http://localhost:9999/api/users/me/friends/invites", {
+		  	method: "GET",
+			credentials: 'include'
+		  });
+		  const jsonInvites = await invites.json();
+		  setInvites(jsonInvites);
+		  console.log(jsonInvites);//
 		};
 	
 		api();
