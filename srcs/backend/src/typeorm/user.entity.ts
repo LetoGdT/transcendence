@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTable, ManyToOne } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { IsDate, IsIn, MinLength, MaxLength, IsEmail, Matches } from 'class-validator';
 import { ChannelUser } from './channel-user.entity';
@@ -87,6 +87,9 @@ export class User
 		nullable: false,
 	})
 	invited: User[];
+
+	@ManyToOne(() => User)
+	banlist: User[];
 
 	@OneToMany(() => ChannelUser, (channelUser) => channelUser.user)
 	channelUsers: ChannelUser;
