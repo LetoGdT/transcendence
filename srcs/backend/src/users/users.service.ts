@@ -156,14 +156,6 @@ export class UsersService
 			throw new BadRequestException('You were not invited by this user');
 
 		user.invited.splice(invitationIndex, 1);
-
-		/**
-		 * 
-		 * Check if user has previously been invited
-		 * and remove the invite.
-		 * 
-		 **/
-
 		user.following.push(newFriend);
 		user.followers.push(newFriend);
 		return this.userRepository.save(user);
@@ -278,6 +270,81 @@ export class UsersService
 			throw new BadRequestException('User did not invite you');
 
 		user.invited.splice(toRemoveIndex, 1);
+		return this.userRepository.save(user);
+	}
+
+	async getUserBanlist(pageOptionsDto: PageOptionsDto, user: User)
+	{
+		const queryBuilder = this.userRepository.createQueryBuilder("user");
+
+		queryBuilder
+			.leftJoinAndSelect('user.banlist', 'banlist')
+			.where('user.id = :id', { id: user.id })
+			.select(['user.id', 'banlist'])
+			.orderBy("user.id", pageOptionsDto.order)
+			.skip(pageOptionsDto.skip)
+			.take(pageOptionsDto.take);
+
+		const retUser = await queryBuilder.getOne();
+
+		return retUser.banlist;
+	}
+
+	async banUser(createUserFriendDto: CreateUserFriendDto, user: User)
+	{
+		if (user.id == createUserFriendDto.id)
+			throw new BadRequestException('Do you really want to ban yourself ?!');
+
+		const queryBuilder1 = this.userRepository.createQueryBuilder('user');
+
+		queryBuilder1
+			.leftJoinAndSelect('user.banlist', 'banlist')
+			.where('user.id = :id', { id: user.id });
+
+		user = await queryBuilder1.getOne();
+
+		const toBanIndex: number = user.banlist.findIndex((users) => {
+			return users.id == createUserFriendDto.id;
+		});
+
+		if (toBanIndex != -1)
+			throw new BadRequestException('You already banned this user');
+
+		const queryBuilder2 = this.userRepository.createQueryBuilder('user');
+
+		queryBuilder2
+			.where('user.id = :id', { id: createUserFriendDto.id });
+
+		const newBan = await queryBuilder2.getOne();
+
+		if (newBan == null)
+			throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+
+		user.banlist.push(newBan);
+		return this.userRepository.save(user);
+	}
+
+	async unbanUser(user: User, user_id: number)
+	{
+		if (user_id > this.IdMax)
+			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
+
+		const queryBuilder = this.userRepository.createQueryBuilder('user');
+
+		queryBuilder
+			.leftJoinAndSelect('user.banlist', 'banlist')
+			.where('user.id = :id', { id: user.id });
+
+		user = await queryBuilder.getOne();
+
+		const toRemoveIndex: number = user.banlist.findIndex((users) => {
+			return users.id == user_id;
+		});
+
+		if (toRemoveIndex == -1)
+			throw new BadRequestException('User is not in your banlist');
+
+		user.banlist.splice(toRemoveIndex, 1);
 		return this.userRepository.save(user);
 	}
 }
