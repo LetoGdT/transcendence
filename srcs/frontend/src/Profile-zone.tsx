@@ -130,6 +130,10 @@ export const gameData = [
 export function OtherProfile(){
 	const handleClickAdd = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		const response = await fetch('http://localhost:9999/api/users/me/friends', {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
 			method: 'POST',
 			credentials: 'include',
 			body: JSON.stringify({ id: 1 })
