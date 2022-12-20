@@ -335,33 +335,33 @@ export function Profile(){
 		api();
 	}, []);
 
-	// const handleClickAccept = async (React.MouseEvent<HTMLButtonElement>, uid: number) => {
-	// 	const response = await fetch('http://localhost:9999/api/users/me/friends', {
-	// 		headers: {
-	// 			'Accept': 'application/json',
-	// 			'Content-Type': 'application/json'
-	// 		},
-	// 		method: 'POST',
-	// 		credentials: 'include',
-	// 		body: JSON.stringify({ id: uid })
-	// 	});
-	// 	console.log(response.json());//
-	// };
+	const handleClickAccept = async (React.MouseEvent<HTMLButtonElement>, uid: number) => {
+		const response = await fetch('http://localhost:9999/api/users/me/friends', {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			credentials: 'include',
+			body: JSON.stringify({ id: uid })
+		});
+		console.log(response.json());//
+	};
 
-	// const handleClickReject = async (React.MouseEvent<HTMLButtonElement>, uid: number) => {
-	// 	let urltofetch : string;
-	// 	urltofetch = 'http://localhost:9999/api/users/me/friends/invitations/' + uid;
-	// 	console.log(urltofetch);//
-	// 	const response = await fetch(urltofetch, {
-	// 		headers: {
-	// 			'Accept': 'application/json',
-	// 			'Content-Type': 'application/json'
-	// 		},
-	// 		method: 'DELETE',
-	// 		credentials: 'include',
-	// 	});
-	// 	console.log(response.json());//
-	// };
+	const handleClickReject = async (React.MouseEvent<HTMLButtonElement>, uid: number) => {
+		let urltofetch : string;
+		urltofetch = 'http://localhost:9999/api/users/me/friends/invitations/' + uid;
+		console.log(urltofetch);//
+		const response = await fetch(urltofetch, {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'DELETE',
+			credentials: 'include',
+		});
+		console.log(response.json());//
+	};
 
 	return(
 		<React.Fragment>
@@ -425,14 +425,14 @@ export function Profile(){
 							</div>
 							<div>user 1</div>
 							<div>
-								{/* <IconButton color="success" aria-label="accept" onClick={handleClickAccept(3)}>
+								<IconButton color="success" aria-label="accept" onClick={handleClickAccept(3)}>
 									<CheckIcon />
-								</IconButton> */}
+								</IconButton>
 							</div>
 							<div>
-								{/* <IconButton color="error" aria-label="reject" onClick={handleClickReject(3)}>
+								<IconButton color="error" aria-label="reject" onClick={handleClickReject(3)}>
 									<CloseIcon />
-								</IconButton> */}
+								</IconButton>
 							</div>
 						</div>
 					</div>
