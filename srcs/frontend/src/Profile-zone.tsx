@@ -9,6 +9,11 @@ import { styled } from '@mui/material/styles';
 import { Chart } from "react-google-charts";
 import { useState, useEffect } from "react";
 
+import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
+import CloseIcon from '@mui/icons-material/Close';
+import CheckIcon from '@mui/icons-material/Check';
+
 import { PleaseConnect } from './adaptable-zone';
 
 type resultProps = {
@@ -128,7 +133,7 @@ export const gameData = [
 
 
 export function OtherProfile(){
-	const handleClickAdd = async (event: React.MouseEvent<HTMLButtonElement>) => {
+	const handleClickInvite = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		const response = await fetch('http://localhost:9999/api/users/me/friends/invites', {
 			headers: {
 				'Accept': 'application/json',
@@ -164,7 +169,7 @@ export function OtherProfile(){
 				<div className='Profile-Alias'>
 					<div className='Profile-Alias-div'>{data?.username}</div>
 					{/* <div>{data?.email}</div> */}
-					<div className='Profile-Alias-div'><AddButton variant="contained" disableRipple onClick={handleClickAdd}>Add to Friends</AddButton></div>
+					<div className='Profile-Alias-div'><AddButton variant="contained" disableRipple onClick={handleClickInvite}>Add to Friends</AddButton></div>
 					{/* <div className='Profile-Alias-div'><RemoveButton variant="contained" disableRipple>Remove from Friends</RemoveButton></div> */}
 				</div>
 				<div className='Profile-container-row-lvl1'>
@@ -239,7 +244,33 @@ export function Profile(){
 		};
 	
 		api();
-	  }, []);
+	}, []);
+
+	const handleClickAccept = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		const response = await fetch('http://localhost:9999/api/users/me/friends', {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			credentials: 'include',
+			body: JSON.stringify({ id: 1 })//id du user concerné
+		});
+		console.log(response.json());//
+	};
+
+	const handleClickReject = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		const response = await fetch('http://localhost:9999/api/users/me/friends/invitations/:id', {//ici :id est l'id du user concerné
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'DELETE',
+			credentials: 'include',
+		});
+		console.log(response.json());//
+	};
+
 	return(
 		<React.Fragment>
 			<h1>Profile - Stats</h1>
@@ -287,7 +318,25 @@ export function Profile(){
 							</div>
 						</div>
 					</div>
-
+					<h4>Invitations received</h4>
+					<div>
+						<div className='Profile-invitation-received'>
+							<div>
+								<img src={Avatar} alt="user's avatar" className='Profile-invitation-received-img'></img>
+							</div>
+							<div>user 1</div>
+							<div>
+								<IconButton color="success" aria-label="accept" onClick={handleClickAccept}>
+									<CheckIcon />
+								</IconButton>
+							</div>
+							<div>
+								<IconButton color="error" aria-label="reject" onClick={handleClickReject}>
+									<CloseIcon />
+								</IconButton>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</React.Fragment>

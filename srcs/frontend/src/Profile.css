@@ -48,3 +48,17 @@
 	height: auto;
 	max-height: 210px;
 }
+
+.Profile-invitation-received {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin: 8px;
+}
+
+.Profile-invitation-received-img {
+	width: 40px;
+	border-radius: 50%;
+	height: 40px;
+	margin-right: 5px;
+}
