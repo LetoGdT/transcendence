@@ -10,7 +10,6 @@ import { Chart } from "react-google-charts";
 import { useState, useEffect } from "react";
 
 import IconButton from '@mui/material/IconButton';
-import Stack from '@mui/material/Stack';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 
@@ -115,6 +114,84 @@ const RemoveButton = styled(Button)({
 	},  
 });
 
+const BlockButton = styled(Button)({
+	boxShadow: 'none',
+	textTransform: 'none',
+	fontSize: 16,
+	padding: '6px 12px',
+	border: '1px solid',
+	lineHeight: 1.5,
+	backgroundColor: '#bb1d03',
+	borderColor: '#646464',
+	color: '#000000',
+	fontWeight: 'bold',
+	fontFamily: [
+		'-apple-system',
+		'BlinkMacSystemFont',
+		'"Segoe UI"',
+		'Roboto',
+		'"Helvetica Neue"',
+		'Arial',
+		'sans-serif',
+		'"Apple Color Emoji"',
+		'"Segoe UI Emoji"',
+		'"Segoe UI Symbol"',
+	].join(','),
+	'&:hover': {
+		backgroundColor: '#000000',
+		color: '#bb1d03',
+		borderColor: '#646464',
+		boxShadow: 'none',
+	},
+	'&:active': {
+		boxShadow: 'none',
+		backgroundColor: '#891d03',
+		borderColor: '#646464',
+	},
+	'&:focus': {
+		boxShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
+	},  
+});
+
+const UnblockButton = styled(Button)({
+	boxShadow: 'none',
+	textTransform: 'none',
+	fontSize: 16,
+	padding: '6px 12px',
+	border: '1px solid',
+	lineHeight: 1.5,
+	backgroundColor: '#3b9b3b',
+	borderColor: '#646464',
+	color: '#000000',
+	fontWeight: 'bold',
+	fontFamily: [
+		'-apple-system',
+		'BlinkMacSystemFont',
+		'"Segoe UI"',
+		'Roboto',
+		'"Helvetica Neue"',
+		'Arial',
+		'sans-serif',
+		'"Apple Color Emoji"',
+		'"Segoe UI Emoji"',
+		'"Segoe UI Symbol"',
+	].join(','),
+	'&:hover': {
+		backgroundColor: '#ffffff',
+		borderColor: '#646464',
+		color: '#3b9b3b',
+		boxShadow: 'none',
+	},
+	'&:active': {
+		boxShadow: 'none',
+		backgroundColor: '#4a7a4a',
+		borderColor: '#646464',
+	},
+	'&:focus': {
+		xShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
+	},
+});
+
 export const options = {
 	title: "Your matches' results",
 	backgroundColor: 'black',
@@ -164,13 +241,14 @@ export function OtherProfile(){
 	return(
 		<React.Fragment>
 			<h1>Profile - Stats</h1>
-			<p>si user non connecter renvoyer vers /pleaseconnect</p>
 			<div className='Profile-container'>
 				<div className='Profile-Alias'>
 					<div className='Profile-Alias-div'>{data?.username}</div>
 					{/* <div>{data?.email}</div> */}
 					<div className='Profile-Alias-div'><AddButton variant="contained" disableRipple onClick={handleClickInvite}>Add to Friends</AddButton></div>
-					{/* <div className='Profile-Alias-div'><RemoveButton variant="contained" disableRipple>Remove from Friends</RemoveButton></div> */}
+					<div className='Profile-Alias-div'><RemoveButton variant="contained" disableRipple>Remove from Friends</RemoveButton></div>
+					<div className='Profile-Alias-div'><BlockButton variant="contained" disableRipple>Block user</BlockButton></div>
+					<div className='Profile-Alias-div'><UnblockButton variant="contained" disableRipple>Unblock user</UnblockButton></div>
 				</div>
 				<div className='Profile-container-row-lvl1'>
 					<div className='Profile-Avatar'>
@@ -246,30 +324,33 @@ export function Profile(){
 		api();
 	}, []);
 
-	const handleClickAccept = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('http://localhost:9999/api/users/me/friends', {
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'POST',
-			credentials: 'include',
-			body: JSON.stringify({ id: 1 })//id du user concerné
-		});
-		console.log(response.json());//
-	};
+	// const handleClickAccept = async (React.MouseEvent<HTMLButtonElement>, uid: number) => {
+	// 	const response = await fetch('http://localhost:9999/api/users/me/friends', {
+	// 		headers: {
+	// 			'Accept': 'application/json',
+	// 			'Content-Type': 'application/json'
+	// 		},
+	// 		method: 'POST',
+	// 		credentials: 'include',
+	// 		body: JSON.stringify({ id: uid })
+	// 	});
+	// 	console.log(response.json());//
+	// };
 
-	const handleClickReject = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('http://localhost:9999/api/users/me/friends/invitations/:id', {//ici :id est l'id du user concerné
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'DELETE',
-			credentials: 'include',
-		});
-		console.log(response.json());//
-	};
+	// const handleClickReject = async (React.MouseEvent<HTMLButtonElement>, uid: number) => {
+	// 	let urltofetch : string;
+	// 	urltofetch = 'http://localhost:9999/api/users/me/friends/invitations/' + uid;
+	// 	console.log(urltofetch);//
+	// 	const response = await fetch(urltofetch, {
+	// 		headers: {
+	// 			'Accept': 'application/json',
+	// 			'Content-Type': 'application/json'
+	// 		},
+	// 		method: 'DELETE',
+	// 		credentials: 'include',
+	// 	});
+	// 	console.log(response.json());//
+	// };
 
 	return(
 		<React.Fragment>
@@ -326,14 +407,14 @@ export function Profile(){
 							</div>
 							<div>user 1</div>
 							<div>
-								<IconButton color="success" aria-label="accept" onClick={handleClickAccept}>
+								{/* <IconButton color="success" aria-label="accept" onClick={handleClickAccept(3)}>
 									<CheckIcon />
-								</IconButton>
+								</IconButton> */}
 							</div>
 							<div>
-								<IconButton color="error" aria-label="reject" onClick={handleClickReject}>
+								{/* <IconButton color="error" aria-label="reject" onClick={handleClickReject(3)}>
 									<CloseIcon />
-								</IconButton>
+								</IconButton> */}
 							</div>
 						</div>
 					</div>
