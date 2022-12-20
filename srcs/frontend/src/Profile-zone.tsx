@@ -395,21 +395,28 @@ export function Profile(){
 					<div className='Profile-achievement-container'>
 						<div className='Profile-achievement-container-div'>
 							<div>
-								<img src={Avatar} alt='achievement 1' className='Profile-achievement-container-div-img'></img>
+								<img src={MessageAchievement} alt='1 sent in chat' className='Profile-achievement-container-div-img'></img>
 							</div>
 							<div>
-								Achivement 1
+								1st message sent
 							</div>
 						</div>
 						<div className='Profile-achievement-container-div'>
 							<div>
-								<img src={Avatar} alt='achievement 2' className='Profile-achievement-container-div-img'></img>
+								<img src={FriendAchievement} alt='1 friend made' className='Profile-achievement-container-div-img'></img>
 							</div>
 							<div>
-								Achivement 2
+								1st friend get
 							</div>
 						</div>
-					</div>
+						<div className='Profile-achievement-container-div'>
+							<div>
+								<img src={GameAchievement} alt='1 game played' className='Profile-achievement-container-div-img'></img>
+							</div>
+							<div>
+								1st game played
+							</div>
+						</div>
 					<h4>Invitations received</h4>
 					<div>
 						<div className='Profile-invitation-received'>
