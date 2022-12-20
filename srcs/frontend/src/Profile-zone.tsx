@@ -8,6 +8,9 @@ import Avatar from './link_botw_avatar.jpg';//a enlever quand plus nec
 import { styled } from '@mui/material/styles';
 import { Chart } from "react-google-charts";
 import { useState, useEffect } from "react";
+import MessageAchievement from './message_achievement.png'
+import FriendAchievement from './friend_achievement.png'
+import GameAchievement from './game_achievement.png'
 
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
@@ -273,18 +276,26 @@ export function OtherProfile(){
 					<div className='Profile-achievement-container'>
 						<div className='Profile-achievement-container-div'>
 							<div>
-								<img src={Avatar} alt='achievement 1' className='Profile-achievement-container-div-img'></img>
+								<img src={MessageAchievement} alt='1 sent in chat' className='Profile-achievement-container-div-img'></img>
 							</div>
 							<div>
-								Achivement 1
+								1st message sent
 							</div>
 						</div>
 						<div className='Profile-achievement-container-div'>
 							<div>
-								<img src={Avatar} alt='achievement 2' className='Profile-achievement-container-div-img'></img>
+								<img src={FriendAchievement} alt='1 friend made' className='Profile-achievement-container-div-img'></img>
 							</div>
 							<div>
-								Achivement 2
+								1st friend get
+							</div>
+						</div>
+						<div className='Profile-achievement-container-div'>
+							<div>
+								<img src={GameAchievement} alt='1 game played' className='Profile-achievement-container-div-img'></img>
+							</div>
+							<div>
+								1st game played
 							</div>
 						</div>
 					</div>
