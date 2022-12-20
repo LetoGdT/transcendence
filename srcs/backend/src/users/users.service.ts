@@ -238,7 +238,15 @@ export class UsersService
 		const queryBuilder2 = this.userRepository.createQueryBuilder('user');
 
 		queryBuilder2
+			.leftJoinAndSelect('user.banlist', 'banlist')
 			.where('user.id = :id', { id: createUserFriendDto.id });
+
+		const checkBan: number = user.banlist.findIndex((users) => {
+			return users.id == user.id;
+		});
+
+		if (checkBan != -1)
+			throw new HttpException('You have been blocked by this user', HttpStatus.FORBIDDEN)
 
 		const newInvited = await queryBuilder2.getOne();
 

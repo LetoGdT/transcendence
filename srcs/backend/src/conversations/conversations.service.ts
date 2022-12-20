@@ -171,6 +171,14 @@ export class ConversationsService
 
 		const conversation = await queryBuilder.getOne();
 
+		// const 
+
+		const queryBuilder2 = this.conversationsRepository.createQueryBuilder('conversation')
+			.leftJoinAndSelect(conversation.user1.id == user.id ? 'conversation.user2': 'conversation.user1',
+				conversation.user1.id == user.id ? 'user2': 'user1')
+
+		const receiver = queryBuilder2.getOne()
+
 		const newMessage : Message = new Message();
 		newMessage.sender = user;
 		newMessage.content = postConversationMessageDto.content;
