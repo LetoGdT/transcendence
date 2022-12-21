@@ -3,7 +3,7 @@ import './Profile.css'
 
 import * as React from 'react';
 import Button from '@mui/material/Button';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Avatar from './link_botw_avatar.jpg';//a enlever quand plus nec
 import { styled } from '@mui/material/styles';
 import { Chart } from "react-google-charts";
@@ -212,8 +212,11 @@ export const gameData = [
 ];
 
 
-export function OtherProfile(Info:{uid:number}){
-	const uid = Info.uid;
+// export function OtherProfile(Info:{uid:number}){
+// 	const uid = Info.uid;
+export function OtherProfile(){
+	let { uid } = useParams();
+	console.log(uid);//
 	// var uid: number = 1;//set a id du profile consulté
 	const handleClickInvite = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		const response = await fetch('http://localhost:9999/api/users/me/friends/invites', {

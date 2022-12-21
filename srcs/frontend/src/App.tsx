@@ -15,6 +15,7 @@ import { SignOn } from './adaptable-zone';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 
 import { useState, useEffect } from "react";
+import { Link } from 'react-router-dom'
 
 type resultProps = {
 	data: [];
@@ -27,25 +28,31 @@ export function ListUser(){//vouer à disparaitre
 		const api = async () => {
 			let urltofetch : string;
 			urltofetch = `http://localhost:9999/api/users/`;
-			console.log(urltofetch);//
 			const data = await fetch(urltofetch, {
 				method: "GET",
 				credentials: 'include'
 			});
 			const jsonData = await data.json();
 			setResult(jsonData);
-			console.log(jsonData);//
 		};
 	
 		api();
 	}, []);
 	return(
 		<div>
-			{data?.data.map((user: any) => {return(
-				<div>
-					{user.id}
-				</div>
-			);})}
+			{data?.data.map((user: any) => {
+				var url: string = "/otherprofile";
+				url = url.concat("/");
+				url = url.concat(user.id);
+				return(
+
+					<div>
+						<Link to={url} >
+							{user.uid}
+						</Link>
+					</div>
+				);
+			})}
 		</div>
 	);
 }
@@ -71,7 +78,9 @@ function App() {
 						<Route path="/play" element={<Play/>} />
 						<Route path="/settings" element={<SettingsZone/>} />
 						<Route path="/specamatch" element={<SpecAMatch/>} />
-						<Route path="/otherprofile" element={<OtherProfile uid={5} />} />
+						<Route path="/otherprofile/">
+							<Route path=':uid' element={<OtherProfile />} />
+						</Route>
 						<Route path="/profile" element={<ProfileZone/>} />
 						<Route path="/signon" element={<SignOn/>} />
 						<Route path='/ListUser' element={<ListUser />} />
