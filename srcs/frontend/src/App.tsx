@@ -52,6 +52,22 @@ export default App;
 
 
 export function ListUser(){
-	//boucle null
-		//generer lien vers les users
+	const [data, setResult] = useState<resultProps>();
+	
+	useEffect(() => {
+		const api = async () => {
+			let urltofetch : string;
+			urltofetch = `http://localhost:9999/api/users/`;
+			console.log(urltofetch);//
+			const data = await fetch(urltofetch, {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonData = await data.json();
+			setResult(jsonData);
+			console.log(jsonData);//
+		};
+	
+		api();
+	}, []);
 }
