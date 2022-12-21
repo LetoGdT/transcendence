@@ -17,7 +17,7 @@ import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 import { useState, useEffect } from "react";
 
 type resultProps = {
-	users: [];
+	data: [];
 }
 
 export function ListUser(){//vouer à disparaitre
@@ -41,7 +41,7 @@ export function ListUser(){//vouer à disparaitre
 	}, []);
 	return(
 		<div>
-			{data?.users.map((user: any) => {return(
+			{data?.data.map((user: any) => {return(
 				<div>
 					{user.id}
 				</div>
