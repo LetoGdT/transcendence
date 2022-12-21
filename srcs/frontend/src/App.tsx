@@ -14,6 +14,35 @@ import { ProfileZone, OtherProfile } from './Profile-zone';
 import { SignOn } from './adaptable-zone';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 
+import { useState, useEffect } from "react";
+
+type resultProps{
+	users: [];
+}
+
+export function ListUser(){
+	const [data, setResult] = useState<resultProps>();
+	
+	useEffect(() => {
+		const api = async () => {
+			let urltofetch : string;
+			urltofetch = `http://localhost:9999/api/users/`;
+			console.log(urltofetch);//
+			const data = await fetch(urltofetch, {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonData = await data.json();
+			setResult(jsonData);
+			console.log(jsonData);//
+		};
+	
+		api();
+	}, []);
+	return(
+		
+	);
+}
 
 
 function App() {
@@ -52,27 +81,3 @@ function App() {
 export default App;
 
 
-type resultProps{
-	users: [];
-}
-
-export function ListUser(){
-	const [data, setResult] = useState<resultProps>();
-	
-	useEffect(() => {
-		const api = async () => {
-			let urltofetch : string;
-			urltofetch = `http://localhost:9999/api/users/`;
-			console.log(urltofetch);//
-			const data = await fetch(urltofetch, {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonData = await data.json();
-			setResult(jsonData);
-			console.log(jsonData);//
-		};
-	
-		api();
-	}, []);
-}
