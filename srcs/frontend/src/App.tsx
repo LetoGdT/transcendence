@@ -36,7 +36,7 @@ function App() {
 						<Route path="/play" element={<Play/>} />
 						<Route path="/settings" element={<SettingsZone/>} />
 						<Route path="/specamatch" element={<SpecAMatch/>} />
-						<Route path="/otherprofile" element={<OtherProfile/>} />
+						<Route path="/otherprofile" element={<OtherProfile uid=5 />} />
 						<Route path="/profile" element={<ProfileZone/>} />
 						<Route path="/signon" element={<SignOn/>} />
 					</Routes>
