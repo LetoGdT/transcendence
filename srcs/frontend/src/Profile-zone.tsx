@@ -369,8 +369,6 @@ export function Profile(){
 			<div className='Profile-container'>
 				<div className='Profile-Alias'>
 					<div className='Profile-Alias-div'>{data?.username}</div>
-					{/* <div className='Profile-Alias-div'><AddButton variant="contained" disableRipple>Add to Friends</AddButton></div>
-					<div className='Profile-Alias-div'><RemoveButton variant="contained" disableRipple>Remove from Friends</RemoveButton></div> */}
 				</div>
 				<div className='Profile-container-row-lvl1'>
 					<div className='Profile-Avatar'>
@@ -417,6 +415,7 @@ export function Profile(){
 								1st game played
 							</div>
 						</div>
+					</div>
 					<h4>Invitations received</h4>
 					<div>
 						<div className='Profile-invitation-received'>
