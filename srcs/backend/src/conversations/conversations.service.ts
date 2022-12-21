@@ -171,13 +171,25 @@ export class ConversationsService
 
 		const conversation = await queryBuilder.getOne();
 
-		// const 
+		const userSelect = conversation.user1.id == user.id ? 'user2': 'user1'
 
 		const queryBuilder2 = this.conversationsRepository.createQueryBuilder('conversation')
-			.leftJoinAndSelect(conversation.user1.id == user.id ? 'conversation.user2': 'conversation.user1',
-				conversation.user1.id == user.id ? 'user2': 'user1')
+			.leftJoinAndSelect('conversation.' + userSelect, userSelect)
+			.leftJoinAndSelect(userSelect + '.banlist', 'banlist');
 
-		const receiver = queryBuilder2.getOne()
+		const receiverConversation = await queryBuilder2.getOne();
+
+		const receiver = receiverConversation[userSelect];
+
+		if (receiver == null)
+			throw new BadRequestException('An error occured');
+
+		let bannedIndex: number = receiver.banlist.findIndex((user) => {
+			return user.id == user.id;
+		});
+
+		if (bannedIndex != -1)
+			throw new HttpException('You have been blocked by this user', HttpStatus.FORBIDDEN);
 
 		const newMessage : Message = new Message();
 		newMessage.sender = user;
