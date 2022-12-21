@@ -39,6 +39,7 @@ function App() {
 						<Route path="/otherprofile" element={<OtherProfile uid={5} />} />
 						<Route path="/profile" element={<ProfileZone/>} />
 						<Route path="/signon" element={<SignOn/>} />
+						<Route path='/ListUser' element={<ListUser />} />
 					</Routes>
 				</div>
 			</Router>
