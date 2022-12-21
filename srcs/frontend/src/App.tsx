@@ -16,7 +16,7 @@ import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 
 import { useState, useEffect } from "react";
 
-type resultProps{
+type resultProps = {
 	users: [];
 }
 
@@ -41,7 +41,7 @@ export function ListUser(){
 	}, []);
 	return(
 		<div>
-			
+
 		</div>
 	);
 }
