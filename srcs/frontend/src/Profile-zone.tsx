@@ -213,7 +213,7 @@ export const gameData = [
 
 
 export function OtherProfile(uid: number){
-	var uid: number = 1;//set a id du profile consulté
+	// var uid: number = 1;//set a id du profile consulté
 	const handleClickInvite = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		const response = await fetch('http://localhost:9999/api/users/me/friends/invites', {
 			headers: {
@@ -231,7 +231,9 @@ export function OtherProfile(uid: number){
 	
 	useEffect(() => {
 		const api = async () => {
-			
+			let urltofetch : string;
+			urltofetch = 'http://localhost:9999/api/users/me/friends/invitations/' + uid;
+			console.log(urltofetch);//
 			const data = await fetch("http://localhost:9999/api/users/2", {
 				method: "GET",
 				credentials: 'include'
