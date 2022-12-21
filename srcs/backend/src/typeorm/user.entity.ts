@@ -2,6 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTabl
 import { Exclude } from 'class-transformer';
 import { IsDate, IsIn, MinLength, MaxLength, IsEmail, Matches } from 'class-validator';
 import { ChannelUser } from './channel-user.entity';
+import { Achievement } from './achievement.entity';
 
 @Entity()
 export class User
@@ -93,5 +94,8 @@ export class User
 	banlist: User[];
 
 	@OneToMany(() => ChannelUser, (channelUser) => channelUser.user)
-	channelUsers: ChannelUser;
+	channelUsers: ChannelUser[];
+
+	@OneToMany(() => Achievement, (achievement) => achievement.user)
+	achievements: Achievement[]; 
 }

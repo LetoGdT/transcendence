@@ -140,4 +140,13 @@ export class UsersController
 	{
 		return this.usersService.unbanUser(req.user, user_id);
 	}
+
+	@Get('/me/achievements')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	async getAchievements(@Query() pageOptionsDto: PageOptionsDto,
+		@Req() req)
+	{
+		return this.usersService.getAchievements(req.user, pageOptionsDto);
+	}
 }

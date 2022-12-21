@@ -2,6 +2,7 @@ import { Logger, Injectable, BadRequestException, HttpStatus, HttpException } fr
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import { User } from '../typeorm/user.entity';
+import { AchievementsService } from '../achievements/achievements.service';
 import { CreateUserDto, UpdateUserDto, CreateUserFriendDto } from '../dto/users.dto';
 import { PageDto } from "../dto/page.dto";
 import { PageMetaDto } from "../dto/page-meta.dto";
@@ -15,7 +16,8 @@ export class UsersService
 {
 	IdMax: number = Number.MAX_SAFE_INTEGER;
 
-	constructor(@InjectRepository(User) private readonly userRepository: Repository<User>) {}
+	constructor(@InjectRepository(User) private readonly userRepository: Repository<User>,
+		private achievementsService: AchievementsService) {}
 
 	public async getUsers(pageOptionsDto: PageOptionsDto,
 		userQueryFilterDto: UserQueryFilterDto): Promise<PageDto<User>>
@@ -354,5 +356,10 @@ export class UsersService
 
 		user.banlist.splice(toRemoveIndex, 1);
 		return this.userRepository.save(user);
+	}
+
+	async getAchievements(user: User, pageOptionsDto: PageOptionsDto)
+	{
+		return this.achievementsService.getUserAchievements(pageOptionsDto, user);
 	}
 }

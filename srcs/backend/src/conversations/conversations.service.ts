@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Brackets } from 'typeorm';
 import { MessagesService } from '../messages/messages.service';
 import { UsersService } from '../users/users.service';
+import { AchievementsService } from '../achievements/achievements.service';
 import { Conversation } from '../typeorm/conversation.entity';
 import { Message } from '../typeorm/message.entity';
 import { User } from '../typeorm/user.entity';
@@ -21,7 +22,8 @@ export class ConversationsService
 	constructor(@InjectRepository(Conversation) private readonly conversationsRepository: Repository<Conversation>,
 		@InjectRepository(Message) private readonly messagesRepository: Repository<Message>,
 		private readonly messagesService: MessagesService,
-		private readonly usersService: UsersService) {}
+		private readonly usersService: UsersService,
+		private readonly achievementsService: AchievementsService) {}
 
 	async getConversations(pageOptionsDto: PageOptionsDto,
 		conversationQueryFilterDto: ConversationQueryFilterDto,
@@ -197,7 +199,9 @@ export class ConversationsService
 		conversation.latest_sent = newMessage.sent_date;
 
 		conversation.messages.push(newMessage);
-		return this.conversationsRepository.save(conversation);
+		const ret = this.conversationsRepository.save(conversation);
+		await this.achievementsService.createUserAchievement(user, 'I\'m a sociable person');
+		return ret;
 	}
 
 	async updateConversationMessage(updateConversationMessageDto: UpdateConversationMessageDto,
