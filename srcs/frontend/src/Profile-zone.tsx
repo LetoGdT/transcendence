@@ -232,7 +232,7 @@ export function OtherProfile(uid: number){
 	useEffect(() => {
 		const api = async () => {
 			let urltofetch : string;
-			urltofetch = 'http://localhost:9999/api/users/' + uid;
+			urltofetch = `http://localhost:9999/api/users/` + $uid;
 			console.log(urltofetch);//
 			const data = await fetch(urltofetch, {
 				method: "GET",
@@ -244,7 +244,7 @@ export function OtherProfile(uid: number){
 		};
 	
 		api();
-	  }, []);
+	}, []);
 	return(
 		<React.Fragment>
 			<h1>Profile - Stats</h1>
