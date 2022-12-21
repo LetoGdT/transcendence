@@ -113,5 +113,31 @@ export class UsersController
 	{
 		return this.usersService.declineInvitation(req.user, user_id);
 	}
-}
 
+	@Get('/me/banlist')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	async getUserBanlist(@Query() pageOptionsDto: PageOptionsDto,
+		@Req() req)
+	{
+		return this.usersService.getUserBanlist(pageOptionsDto, req.user);
+	}
+
+	@Post('/me/banlist')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	async banUser(@Body() createUserFriendDto: CreateUserFriendDto,
+		@Req() req)
+	{
+		return this.usersService.banUser(createUserFriendDto, req.user);
+	}
+
+	@Delete('/me/banlist/:user_id')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	async unbanUser(@Param('user_id', ParseIntPipe) user_id: number,
+		@Req() req)
+	{
+		return this.usersService.unbanUser(req.user, user_id);
+	}
+}

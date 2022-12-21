@@ -76,7 +76,7 @@ export class ConversationsController
 	async createConversation(@Req() req,
 		@Body() postConversationDto: PostConversationDto)
 	{
-		await this.conversationsService.createConversation(req.user, postConversationDto);
+		return this.conversationsService.createConversation(req.user, postConversationDto);
 	}
 
 	@Get('/:id/messages')

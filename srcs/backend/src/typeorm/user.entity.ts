@@ -88,7 +88,8 @@ export class User
 	})
 	invited: User[];
 
-	@ManyToOne(() => User)
+	@ManyToMany(() => User)
+	@JoinTable()
 	banlist: User[];
 
 	@OneToMany(() => ChannelUser, (channelUser) => channelUser.user)
