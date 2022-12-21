@@ -213,7 +213,7 @@ export const gameData = [
 
 
 export function OtherProfile(){
-	var uid: number = 2;//set a id du profile consulté
+	var uid: number = 1;//set a id du profile consulté
 	const handleClickInvite = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		const response = await fetch('http://localhost:9999/api/users/me/friends/invites', {
 			headers: {
@@ -314,7 +314,7 @@ type invitesProps = {
 export function Profile(){
 	const [data, setResult] = useState<resultProps>();
 	const [invites, setInvites] = useState<invitesProps>();
-	var uid: number = 2;//à mettre à 0
+	var uid: number = 1;//à mettre à 0
 
 	useEffect(() => {
 		const api = async () => {
