@@ -212,7 +212,7 @@ export const gameData = [
 ];
 
 
-export function OtherProfile(){
+export function OtherProfile(uid: number){
 	var uid: number = 1;//set a id du profile consulté
 	const handleClickInvite = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		const response = await fetch('http://localhost:9999/api/users/me/friends/invites', {
@@ -222,7 +222,7 @@ export function OtherProfile(){
 			},
 			method: 'POST',
 			credentials: 'include',
-			body: JSON.stringify({ id: 2 })
+			body: JSON.stringify({ id: uid })
 		});
 		console.log(response.json());//
 	};
@@ -231,13 +231,14 @@ export function OtherProfile(){
 	
 	useEffect(() => {
 		const api = async () => {
-		  const data = await fetch("http://localhost:9999/api/users/2", {
-			method: "GET",
-			credentials: 'include'
-		  });
-		  const jsonData = await data.json();
-		  setResult(jsonData);
-		  console.log(jsonData);//
+			
+			const data = await fetch("http://localhost:9999/api/users/2", {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonData = await data.json();
+			setResult(jsonData);
+			console.log(jsonData);//
 		};
 	
 		api();
