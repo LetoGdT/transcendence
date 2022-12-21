@@ -40,11 +40,11 @@ export function ListUser(){//vouer à disparaitre
 		api();
 	}, []);
 	return(
-		{jsonData?.map((user) => {return(
+		{jsonData?.map((user) => {
 				<div>
 					{user.id}
 				</div>
-		);}
+		}
 		}
 	);
 }
