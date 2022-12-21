@@ -313,7 +313,7 @@ type invitesProps = {
 export function Profile(){
 	const [data, setResult] = useState<resultProps>();
 	const [invites, setInvites] = useState<invitesProps>();
-	var uid: number = 0;
+	var uid: number = 2;//à mettre à 0
 
 	useEffect(() => {
 		const api = async () => {
@@ -336,7 +336,7 @@ export function Profile(){
 		api();
 	}, []);
 
-	const handleClickAccept = async (uid) => {
+	const handleClickAccept = async () => {
 		const response = await fetch('http://localhost:9999/api/users/me/friends', {
 			headers: {
 				'Accept': 'application/json',
@@ -349,7 +349,7 @@ export function Profile(){
 		console.log(response.json());//
 	};
 
-	const handleClickReject = async (uid) => {
+	const handleClickReject = async () => {
 		let urltofetch : string;
 		urltofetch = 'http://localhost:9999/api/users/me/friends/invitations/' + uid;
 		console.log(urltofetch);//
