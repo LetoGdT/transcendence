@@ -25,13 +25,13 @@ type resultProps = {
 	status: string;
 	rank: number;
 	level: number;
-	achievement: string[];//?
+	achievement: [];//?
 	//map avec par exemple id = nom de l'achievement, value = url d'une image
 	winNb: number;
 	loseNb: number;
-	friends: string[];//?
+	friends: [];//?
 	//une map pour ses friends (key = id du friend, value = structure similaire du friend)
-	matchHistory: string[];//?
+	matchHistory: [];//?
 	/*
 		il me faudrait une liste avec :
 			score du player
