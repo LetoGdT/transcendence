@@ -425,12 +425,12 @@ export function Profile(){
 							</div>
 							<div>user 1</div>
 							<div>
-								<IconButton color="success" aria-label="accept" onClick={handleClickAccept(3)}>
+								<IconButton color="success" aria-label="accept" onClick={handleClickAccept}>
 									<CheckIcon />
 								</IconButton>
 							</div>
 							<div>
-								<IconButton color="error" aria-label="reject" onClick={handleClickReject(3)}>
+								<IconButton color="error" aria-label="reject" onClick={handleClickReject}>
 									<CloseIcon />
 								</IconButton>
 							</div>
