@@ -20,7 +20,7 @@ type resultProps = {
 	users: [];
 }
 
-export function ListUser(){
+export function ListUser(){//vouer à disparaitre
 	const [data, setResult] = useState<resultProps>();
 	
 	useEffect(() => {
@@ -40,9 +40,12 @@ export function ListUser(){
 		api();
 	}, []);
 	return(
-		<div>
-
-		</div>
+		{jsonData.map((user) => {
+				<div>
+					{user.id}
+				</div>
+			}
+		}
 	);
 }
 
