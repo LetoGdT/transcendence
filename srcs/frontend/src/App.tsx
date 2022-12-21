@@ -41,7 +41,7 @@ export function ListUser(){//vouer à disparaitre
 	}, []);
 	return(
 		<div>
-			{data.map((user: any) => {return(
+			{data?.users.map((user: any) => {return(
 				<div>
 					{user.id}
 				</div>
