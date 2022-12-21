@@ -40,7 +40,13 @@ export function ListUser(){//vouer à disparaitre
 		api();
 	}, []);
 	return(
-		<div></div>
+		<div>
+			{jsonData.map(user => {return(
+				<div>
+					{user.id}
+				</div>
+		);})}
+		</div>
 	);
 }
 
