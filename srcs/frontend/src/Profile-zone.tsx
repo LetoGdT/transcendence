@@ -234,7 +234,7 @@ export function OtherProfile(uid: number){
 			let urltofetch : string;
 			urltofetch = 'http://localhost:9999/api/users/me/friends/invitations/' + uid;
 			console.log(urltofetch);//
-			const data = await fetch("http://localhost:9999/api/users/2", {
+			const data = await fetch(urltofetch, {
 				method: "GET",
 				credentials: 'include'
 			});
