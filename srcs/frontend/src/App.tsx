@@ -51,6 +51,10 @@ function App() {
 export default App;
 
 
+type resultProps{
+	users: [];
+}
+
 export function ListUser(){
 	const [data, setResult] = useState<resultProps>();
 	
