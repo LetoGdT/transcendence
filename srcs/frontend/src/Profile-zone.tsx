@@ -335,7 +335,7 @@ export function Profile(){
 		api();
 	}, []);
 
-	const handleClickAccept = async (React.MouseEvent<HTMLButtonElement>, uid: number) => {
+	const handleClickAccept = async (uid: number) => {
 		const response = await fetch('http://localhost:9999/api/users/me/friends', {
 			headers: {
 				'Accept': 'application/json',
@@ -348,7 +348,7 @@ export function Profile(){
 		console.log(response.json());//
 	};
 
-	const handleClickReject = async (React.MouseEvent<HTMLButtonElement>, uid: number) => {
+	const handleClickReject = async (uid: number) => {
 		let urltofetch : string;
 		urltofetch = 'http://localhost:9999/api/users/me/friends/invitations/' + uid;
 		console.log(urltofetch);//
