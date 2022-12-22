@@ -216,8 +216,6 @@ export const gameData = [
 // 	const uid = Info.uid;
 export function OtherProfile(){
 	let { uid } = useParams();
-	console.log(uid);//
-	// var uid: number = 1;//set a id du profile consulté
 	const handleClickInvite = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		const response = await fetch('http://localhost:9999/api/users/me/friends/invites', {
 			headers: {
