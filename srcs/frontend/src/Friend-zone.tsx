@@ -12,6 +12,7 @@ import InGame from './ingame.png';
 import { useState, useEffect } from "react";
 
 import { PleaseConnect } from './adaptable-zone';
+import userEvent from '@testing-library/user-event';
 
 type resultProps = {
 	data: [];
@@ -36,7 +37,7 @@ export function Friends(){
 		api();
 	}, []);
 
-	
+	let status: string;
 	return(
 		<React.Fragment>
 			<h1>Friends</h1>
@@ -53,19 +54,17 @@ export function Friends(){
 								</div>
 								<div className='Friend-Name-status'>
 									<div>
-										{/* {() => {if(user.status === "online"){
-											return(
-												<img src={OnLine} alt={user.status}></img>
-											);
-										} else if(user.status === "offline"){
-											return(
-												<img src={OffLine} alt={user.status}></img>
-											);
-										} else {
-											return(
-												<img src={InGame} alt={user.status}></img>
-											);
-										}}} */}
+										{/* {
+											() => {
+												if(user.status === "online"){
+													return(<img src={OnLine} alt={user.status}></img>);
+												} else if(user.status === "offline"){
+													return(<img src={OffLine} alt={user.status}></img>);
+												} else {
+													return(<img src={InGame} alt={user.status}></img>);
+												}
+											}
+										} */}
 									</div>
 									<div className='Friend-name'>{user.username}</div>
 								</div>

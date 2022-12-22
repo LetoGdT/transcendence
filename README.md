@@ -13,6 +13,5 @@
 		<li>Afficher differents trucs en fonction de choses diverses : https://reactjs.org/docs/conditional-rendering.html</li>
 		<li>HandleClick avec plusieurs arguments : https://reactjs.org/docs/handling-events.html</li>
 	</ul>
-	<li>Axios + react https://www.freecodecamp.org/french/news/comment-utiliser-axios-avec-react-le-guide-complet-2021/</li>
 	<li>ce m'a permi de commencé à recup des données: https://codesandbox.io/s/0z1ex</li>
 </div>
