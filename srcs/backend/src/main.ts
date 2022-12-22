@@ -12,7 +12,8 @@ async function bootstrap()
 	app.setGlobalPrefix('api', {
 		exclude: [{ path: 'log', method: RequestMethod.GET },
 		{ path: 'logout', method: RequestMethod.GET },
-		{ path: 'callback', method: RequestMethod.GET }],
+		{ path: 'callback', method: RequestMethod.GET },
+		{ path: 'gen_token', method: RequestMethod.GET }],
 	});
 	app.useGlobalFilters(new NotFoundExceptionFilter());
 	app.useGlobalPipes(new ValidationPipe({ transform: true }));

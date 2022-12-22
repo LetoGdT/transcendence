@@ -1,15 +1,18 @@
 import React from 'react';
 import './App.css';
-import { OurMenu } from './menu-zone';
+import './Menu.css';
 
+import { OurHeader } from './Header-zone';
+import { OurMenu } from './Menu-zone';
 import { Home } from './adaptable-zone';
 import { Play, SpecAMatch} from './adaptable-zone';
-import { Chat } from './chat-zone';
-import { Friends, MatchHistory, Settings, Profile } from './adaptable-zone';
-import { PleaseConnect, SignOn } from './adaptable-zone';
-// import { Test } from './adaptable-zone';
+import { ChatZone } from './Chat-zone';
+import { FriendsZone } from './Friend-zone';
+import { MatchHistory } from './MatchHistory-zone';
+import { SettingsZone } from './Settings-zone';
+import { ProfileZone, OtherProfile } from './Profile-zone';
+import { SignOn } from './adaptable-zone';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
-
 import { socket, websocketContext } from './WebsocketContext'
 import { OurHeader } from './header-zone';
 
@@ -23,22 +26,20 @@ function App() {
 				<OurMenu/>
 			</div>
 			<div className='Adaptable'>
-					
-				<Routes>
-					<Route path="/chat" element={<Chat/>} />
-					<Route path="/friends" element={<Friends/>} />
-					<Route path="/" element={<Home />} />
-					<Route path="/matchhistory" element={<MatchHistory/>} />
-					<Route path="/play" element={<Play/>} />
-					<Route path="/settings" element={<Settings/>} />
-					<Route path="/specamatch" element={<SpecAMatch/>} />
-					<Route path="/profile" element={<Profile/>} />
-					<Route path="/pleaseconnect" element={<PleaseConnect/>} />
-					<Route path="/signon" element={<SignOn/>} />
-					{/* <Route path="/test" element={<Test/>} /> */}
-				</Routes>
-			</div>
-		</Router>;
+					<Routes>
+						<Route path="/chat" element={<ChatZone/>} />
+						<Route path="/friends" element={<FriendsZone/>} />
+						<Route path="/" element={<Home />} />
+						<Route path="/matchhistory" element={<MatchHistory/>} />
+						<Route path="/play" element={<Play/>} />
+						<Route path="/settings" element={<SettingsZone/>} />
+						<Route path="/specamatch" element={<SpecAMatch/>} />
+						{/* <Route path="/otherprofile" element={<OtherProfile/>} /> */}
+						<Route path="/profile" element={<ProfileZone/>} />
+						<Route path="/signon" element={<SignOn/>} />
+					</Routes>
+				</div>
+			</Router>
 
 	if (true) // à changer quand on pourra savoir si le user est log ou pas
 		return (

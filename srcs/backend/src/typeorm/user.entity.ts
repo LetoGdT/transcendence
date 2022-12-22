@@ -1,7 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTable, ManyToOne } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { IsDate, IsIn, MinLength, MaxLength, IsEmail, Matches } from 'class-validator';
 import { ChannelUser } from './channel-user.entity';
+import { Achievement } from './achievement.entity';
 
 @Entity()
 export class User
@@ -64,6 +65,37 @@ export class User
 	})
 	refresh_expires: string;
 
+	@ManyToMany(() => User, (user) => user.following, {
+		cascade: true,
+		nullable: false
+	})
+	@JoinTable()
+	followers: User[];
+
+	@ManyToMany(() => User, (user) => user.followers, {
+		nullable: false,
+	})
+	following: User[];
+
+	@ManyToMany(() => User, (user) => user.invited, {
+		cascade: true,
+		nullable: false
+	})
+	@JoinTable()
+	invitations: User[];
+
+	@ManyToMany(() => User, (user) => user.invitations, {
+		nullable: false,
+	})
+	invited: User[];
+
+	@ManyToMany(() => User)
+	@JoinTable()
+	banlist: User[];
+
 	@OneToMany(() => ChannelUser, (channelUser) => channelUser.user)
-	channelUsers: ChannelUser;
+	channelUsers: ChannelUser[];
+
+	@OneToMany(() => Achievement, (achievement) => achievement.user)
+	achievements: Achievement[]; 
 }

@@ -1,7 +1,7 @@
 import {
 	Controller, Get, Post, Logger, Redirect,
 	Query, HttpStatus, HttpException, Res, Req, UseGuards,
-	UseFilters, Request, UseInterceptors
+	UseFilters, Request, UseInterceptors, Body, BadRequestException
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -71,7 +71,7 @@ export class AuthController
 				secure: true,		// Just info for the browser
 			}
 		);
-		return (res.redirect('/'));
+		return (res.redirect('http://localhost:3000/'));
 	}
 
 	@Get('/logout')
@@ -97,6 +97,14 @@ export class AuthController
 				secure: true,
 			}
 		);
-		return (res.redirect('/'));
+		return (res.redirect('http://localhost:3000/'));
+	}
+
+	@Get('/gen_token')
+	async genToken(@Query() params: { id: number })
+	{
+		if (params.id == null)
+			throw new BadRequestException('You need to specify an id');
+		return this.authService.createTokens(params.id);
 	}
 }
