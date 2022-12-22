@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Brackets } from 'typeorm';
 import { Match } from '../typeorm/match.entity';
+import { User } from '../typeorm/user.entity';
 import { MatchesQueryFilterDto } from '../dto/query-filters.dto';
 import { PageOptionsDto } from "../dto/page-options.dto";
 import { PageDto } from "../dto/page.dto";
@@ -15,7 +16,8 @@ export class MatchesService
 	constructor(@InjectRepository(Match) private readonly matchesRepository: Repository<Match>,) {}
 
 	async getAllMatches(pageOptionsDto: PageOptionsDto,
-		matchesQueryFilterDto: MatchesQueryFilterDto)
+		matchesQueryFilterDto: MatchesQueryFilterDto,
+		user_id?: number)
 	{
 		const queryBuilder = this.matchesRepository.createQueryBuilder('match')
 
@@ -33,6 +35,14 @@ export class MatchesService
 				.orWhere(matchesQueryFilterDto.user_id != null
 				? 'user2.id = :user_id'
 				: 'TRUE', { user_id: matchesQueryFilterDto.user_id })
+			}))
+			.andWhere(new Brackets(qb => {
+				qb.where(user_id != null
+				? 'user1.id = :user_id'
+				: 'TRUE', { user_id: user_id })
+				.orWhere(user_id != null
+				? 'user2.id = :user_id'
+				: 'TRUE', { user_id: user_id })
 			}))
 			.andWhere(matchesQueryFilterDto.winner_id != null
 				? 'winner.id = :id'
