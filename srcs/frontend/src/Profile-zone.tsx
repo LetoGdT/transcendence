@@ -8,9 +8,9 @@ import Avatar from './link_botw_avatar.jpg';//a enlever quand plus nec
 import { styled } from '@mui/material/styles';
 import { Chart } from "react-google-charts";
 import { useState, useEffect } from "react";
-import MessageAchievement from './message_achievement.png'
-import FriendAchievement from './friend_achievement.png'
-import GameAchievement from './game_achievement.png'
+import MessageAchievement from './message_achievement.png';
+import FriendAchievement from './friend_achievement.png';
+import GameAchievement from './game_achievement.png';
 
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
