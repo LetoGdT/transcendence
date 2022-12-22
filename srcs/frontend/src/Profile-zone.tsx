@@ -3,11 +3,14 @@ import './Profile.css'
 
 import * as React from 'react';
 import Button from '@mui/material/Button';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Avatar from './link_botw_avatar.jpg';//a enlever quand plus nec
 import { styled } from '@mui/material/styles';
 import { Chart } from "react-google-charts";
 import { useState, useEffect } from "react";
+import MessageAchievement from './message_achievement.png'
+import FriendAchievement from './friend_achievement.png'
+import GameAchievement from './game_achievement.png'
 
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
@@ -22,13 +25,13 @@ type resultProps = {
 	status: string;
 	rank: number;
 	level: number;
-	achievement: string[];//?
+	achievement: [];//?
 	//map avec par exemple id = nom de l'achievement, value = url d'une image
 	winNb: number;
 	loseNb: number;
-	friends: string[];//?
+	friends: [];//?
 	//une map pour ses friends (key = id du friend, value = structure similaire du friend)
-	matchHistory: string[];//?
+	matchHistory: [];//?
 	/*
 		il me faudrait une liste avec :
 			score du player
@@ -209,7 +212,10 @@ export const gameData = [
 ];
 
 
+// export function OtherProfile(Info:{uid:number}){
+// 	const uid = Info.uid;
 export function OtherProfile(){
+	let { uid } = useParams();
 	const handleClickInvite = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		const response = await fetch('http://localhost:9999/api/users/me/friends/invites', {
 			headers: {
@@ -218,7 +224,7 @@ export function OtherProfile(){
 			},
 			method: 'POST',
 			credentials: 'include',
-			body: JSON.stringify({ id: 1 })
+			body: JSON.stringify({ id: uid })
 		});
 		console.log(response.json());//
 	};
@@ -227,17 +233,20 @@ export function OtherProfile(){
 	
 	useEffect(() => {
 		const api = async () => {
-		  const data = await fetch("http://localhost:9999/api/users/2", {
-			method: "GET",
-			credentials: 'include'
-		  });
-		  const jsonData = await data.json();
-		  setResult(jsonData);
-		  console.log(jsonData);//
+			let urltofetch : string;
+			urltofetch = `http://localhost:9999/api/users/${uid}`;
+			console.log(urltofetch);//
+			const data = await fetch(urltofetch, {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonData = await data.json();
+			setResult(jsonData);
+			console.log(jsonData);//
 		};
 	
 		api();
-	  }, []);
+	}, []);
 	return(
 		<React.Fragment>
 			<h1>Profile - Stats</h1>
@@ -273,18 +282,26 @@ export function OtherProfile(){
 					<div className='Profile-achievement-container'>
 						<div className='Profile-achievement-container-div'>
 							<div>
-								<img src={Avatar} alt='achievement 1' className='Profile-achievement-container-div-img'></img>
+								<img src={MessageAchievement} alt='1 sent in chat' className='Profile-achievement-container-div-img'></img>
 							</div>
 							<div>
-								Achivement 1
+								1st message sent
 							</div>
 						</div>
 						<div className='Profile-achievement-container-div'>
 							<div>
-								<img src={Avatar} alt='achievement 2' className='Profile-achievement-container-div-img'></img>
+								<img src={FriendAchievement} alt='1 friend made' className='Profile-achievement-container-div-img'></img>
 							</div>
 							<div>
-								Achivement 2
+								1st friend get
+							</div>
+						</div>
+						<div className='Profile-achievement-container-div'>
+							<div>
+								<img src={GameAchievement} alt='1 game played' className='Profile-achievement-container-div-img'></img>
+							</div>
+							<div>
+								1st game played
 							</div>
 						</div>
 					</div>
@@ -302,6 +319,7 @@ type invitesProps = {
 export function Profile(){
 	const [data, setResult] = useState<resultProps>();
 	const [invites, setInvites] = useState<invitesProps>();
+	var uid: number = 1;//à mettre à 0
 
 	useEffect(() => {
 		const api = async () => {
@@ -324,33 +342,33 @@ export function Profile(){
 		api();
 	}, []);
 
-	// const handleClickAccept = async (React.MouseEvent<HTMLButtonElement>, uid: number) => {
-	// 	const response = await fetch('http://localhost:9999/api/users/me/friends', {
-	// 		headers: {
-	// 			'Accept': 'application/json',
-	// 			'Content-Type': 'application/json'
-	// 		},
-	// 		method: 'POST',
-	// 		credentials: 'include',
-	// 		body: JSON.stringify({ id: uid })
-	// 	});
-	// 	console.log(response.json());//
-	// };
+	const handleClickAccept = async () => {
+		const response = await fetch('http://localhost:9999/api/users/me/friends', {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			credentials: 'include',
+			body: JSON.stringify({ id: uid })
+		});
+		console.log(response.json());//
+	};
 
-	// const handleClickReject = async (React.MouseEvent<HTMLButtonElement>, uid: number) => {
-	// 	let urltofetch : string;
-	// 	urltofetch = 'http://localhost:9999/api/users/me/friends/invitations/' + uid;
-	// 	console.log(urltofetch);//
-	// 	const response = await fetch(urltofetch, {
-	// 		headers: {
-	// 			'Accept': 'application/json',
-	// 			'Content-Type': 'application/json'
-	// 		},
-	// 		method: 'DELETE',
-	// 		credentials: 'include',
-	// 	});
-	// 	console.log(response.json());//
-	// };
+	const handleClickReject = async () => {
+		let urltofetch : string;
+		urltofetch = 'http://localhost:9999/api/users/me/friends/invitations/' + uid;
+		console.log(urltofetch);//
+		const response = await fetch(urltofetch, {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'DELETE',
+			credentials: 'include',
+		});
+		console.log(response.json());//
+	};
 
 	return(
 		<React.Fragment>
@@ -358,8 +376,6 @@ export function Profile(){
 			<div className='Profile-container'>
 				<div className='Profile-Alias'>
 					<div className='Profile-Alias-div'>{data?.username}</div>
-					{/* <div className='Profile-Alias-div'><AddButton variant="contained" disableRipple>Add to Friends</AddButton></div>
-					<div className='Profile-Alias-div'><RemoveButton variant="contained" disableRipple>Remove from Friends</RemoveButton></div> */}
 				</div>
 				<div className='Profile-container-row-lvl1'>
 					<div className='Profile-Avatar'>
@@ -384,18 +400,26 @@ export function Profile(){
 					<div className='Profile-achievement-container'>
 						<div className='Profile-achievement-container-div'>
 							<div>
-								<img src={Avatar} alt='achievement 1' className='Profile-achievement-container-div-img'></img>
+								<img src={MessageAchievement} alt='1 sent in chat' className='Profile-achievement-container-div-img'></img>
 							</div>
 							<div>
-								Achivement 1
+								1st message sent
 							</div>
 						</div>
 						<div className='Profile-achievement-container-div'>
 							<div>
-								<img src={Avatar} alt='achievement 2' className='Profile-achievement-container-div-img'></img>
+								<img src={FriendAchievement} alt='1 friend made' className='Profile-achievement-container-div-img'></img>
 							</div>
 							<div>
-								Achivement 2
+								1st friend get
+							</div>
+						</div>
+						<div className='Profile-achievement-container-div'>
+							<div>
+								<img src={GameAchievement} alt='1 game played' className='Profile-achievement-container-div-img'></img>
+							</div>
+							<div>
+								1st game played
 							</div>
 						</div>
 					</div>
@@ -407,14 +431,14 @@ export function Profile(){
 							</div>
 							<div>user 1</div>
 							<div>
-								{/* <IconButton color="success" aria-label="accept" onClick={handleClickAccept(3)}>
+								<IconButton color="success" aria-label="accept" onClick={handleClickAccept}>
 									<CheckIcon />
-								</IconButton> */}
+								</IconButton>
 							</div>
 							<div>
-								{/* <IconButton color="error" aria-label="reject" onClick={handleClickReject(3)}>
+								<IconButton color="error" aria-label="reject" onClick={handleClickReject}>
 									<CloseIcon />
-								</IconButton> */}
+								</IconButton>
 							</div>
 						</div>
 					</div>
