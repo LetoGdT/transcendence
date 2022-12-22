@@ -28,14 +28,6 @@ export class UpdateUserDto
 	
 	@IsNotEmpty()
 	image_url: string;
-
-	@Exclude()
-	@IsNotEmpty()
-	refresh_token: string;
-
-	@Exclude()
-	@IsNotEmpty()
-	refresh_expires: string;
 }
 
 export class CreateUserFriendDto

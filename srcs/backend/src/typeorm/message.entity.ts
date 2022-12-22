@@ -1,5 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, OneToOne, JoinColumn } from 'typeorm';
-import { Max, IsDate, IsOptional } from 'class-validator';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { IsDate, IsOptional } from 'class-validator';
 import { User } from './user.entity';
 import { Channel } from './channel.entity';
 import { Conversation } from './conversation.entity';

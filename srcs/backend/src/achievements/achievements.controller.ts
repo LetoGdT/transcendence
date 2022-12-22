@@ -1,4 +1,4 @@
-import { Controller, Get, ClassSerializerInterceptor, UseInterceptors, Req, Query } from '@nestjs/common';
+import { Controller, Get, ClassSerializerInterceptor, UseInterceptors, Query } from '@nestjs/common';
 import { AchievementsService } from './achievements.service';
 import { AuthInterceptor } from '../auth/auth.interceptor';
 import { PageOptionsDto } from "../dto/page-options.dto";
