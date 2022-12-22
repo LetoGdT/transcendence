@@ -7,6 +7,7 @@ import { User } from '../typeorm/user.entity';
 import { ChannelUser } from '../typeorm/channel-user.entity';
 import { Message } from '../typeorm/message.entity';
 import { MessagesService } from '../messages/messages.service';
+import { AchievementsService } from '../achievements/achievements.service';
 import { PostChannelDto, PatchChannelUserDto, PatchChannelDto } from '../dto/channels.dto';
 import { PageDto } from "../dto/page.dto";
 import { PageMetaDto } from "../dto/page-meta.dto";
@@ -31,7 +32,8 @@ export class ChannelsService
 	constructor(@InjectRepository(Channel) private readonly channelRepository: Repository<Channel>,
 		@InjectRepository(ChannelUser) private readonly channelUserRepository: Repository<ChannelUser>,
 		@InjectRepository(ChannelBan) private readonly channelBanRepository: Repository<ChannelBan>,
-		private readonly messagesService: MessagesService)
+		private readonly messagesService: MessagesService,
+		private readonly achievementsService: AchievementsService)
 		{}
 
 	async getChannels(pageOptionsDto: PageOptionsDto,
@@ -415,7 +417,9 @@ export class ChannelsService
 		channel.latest_sent = newMessage.sent_date;
 
 		channel.messages.push(newMessage);
-		return this.channelRepository.save(channel);
+		const ret = await this.channelRepository.save(channel);
+		await this.achievementsService.createUserAchievement(sender, 'I\'m a sociable person');
+		return ret;
 	}
 
 	async updateChannelMessage(channel_id: number, message_id: number,

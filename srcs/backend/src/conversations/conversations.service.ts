@@ -199,7 +199,7 @@ export class ConversationsService
 		conversation.latest_sent = newMessage.sent_date;
 
 		conversation.messages.push(newMessage);
-		const ret = this.conversationsRepository.save(conversation);
+		const ret = await this.conversationsRepository.save(conversation);
 		await this.achievementsService.createUserAchievement(user, 'I\'m a sociable person');
 		return ret;
 	}
