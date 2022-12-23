@@ -206,7 +206,7 @@ export const gameData = [
 	["Defeats", 2],
 ];
 
-function AddOrRemoveButton(uid: number){
+function AddOrRemoveButton(uid: string | undefined){
 
 	const handleClickInvite = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		const response = await fetch('http://localhost:9999/api/users/me/friends/invites', {
@@ -218,13 +218,11 @@ function AddOrRemoveButton(uid: number){
 			credentials: 'include',
 			body: JSON.stringify({ id: uid })
 		});
-		console.log(response.json());//
 	};
 
 	const handleClickRemove = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		let urltofetch : string;
 		urltofetch = 'http://localhost:9999/api/users/me/friends/' + uid;
-		console.log(urltofetch);//
 		const response = await fetch(urltofetch, {
 			headers: {
 				'Accept': 'application/json',
@@ -235,63 +233,47 @@ function AddOrRemoveButton(uid: number){
 		});
 	};
 
-	const [data, setResult] = useState<resultProps>();
 	const [friend, setFriend] = useState<friendProps>();
+	// const [blocked, setBlocked] = useState<blockedProps>();
 
 	useEffect(() => {
 		const api = async () => {
-			let urltofetch : string;
-			urltofetch = `http://localhost:9999/api/users/${uid}`;
-			console.log(urltofetch);//
-			const data = await fetch(urltofetch, {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonData = await data.json();
-			setResult(jsonData);
-			console.log(jsonData);//
 			const friend = await fetch("http://localhost:9999/api/users/me/friends/", {
 				method: "GET",
 				credentials: 'include'
 			});
 			const jsonFriend = await friend.json();
 			setFriend(jsonFriend);
+			// const blocked = await fetch("http://localhost:9999/api/users/me/banlist/", {
+			// 	method: "GET",
+			// 	credentials: 'include'
+			// });
+			// const jsonBlocked = await blocked.json();
+			// setBlocked(jsonBlocked);
+			// console.log(jsonBlocked);
 		};
 	
 		api();
 	}, []);
 
-	console.log("a remplir");
+	const res1 = friend?.data.find(({ id }) => id === uid);
+	// const res2 = blocked?.find(({id}) => id === uid);
+	// console.log(blocked);
+
+	if (typeof res1 === "undefined"){
+		return(
+			<AddButton variant="contained" disableRipple onClick={handleClickInvite}>Add to Friends</AddButton>
+		);
+	}
+	else {
+		return(
+			<RemoveButton variant="contained" disableRipple onClick={handleClickRemove}>Remove from Friends</RemoveButton>
+		);
+	}
 }
 
 export function OtherProfile(){
 	let { uid } = useParams();
-	const handleClickInvite = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('http://localhost:9999/api/users/me/friends/invites', {
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'POST',
-			credentials: 'include',
-			body: JSON.stringify({ id: uid })
-		});
-		console.log(response.json());//
-	};
-
-	const handleClickRemove = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		let urltofetch : string;
-		urltofetch = 'http://localhost:9999/api/users/me/friends/' + uid;
-		console.log(urltofetch);//
-		const response = await fetch(urltofetch, {
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'DELETE',
-			credentials: 'include',
-		});
-	};
 
 	const handleClickBlock = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		const response = await fetch('http://localhost:9999/api/users/me/banlist', {
@@ -303,13 +285,13 @@ export function OtherProfile(){
 			credentials: 'include',
 			body: JSON.stringify({ id: uid })
 		});
-		console.log(response.json());//
+		// console.log(response.json());//
 	};
 
 	const handleClickUnblock = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		let urltofetch : string;
 		urltofetch = 'http://localhost:9999/api/users/me/banlist/' + uid;
-		console.log(urltofetch);//
+		// console.log(urltofetch);//
 		const response = await fetch(urltofetch, {
 			headers: {
 				'Accept': 'application/json',
@@ -321,27 +303,20 @@ export function OtherProfile(){
 	};
 
 	const [data, setResult] = useState<resultProps>();
-	const [friend, setFriend] = useState<friendProps>();
 	const [blocked, setBlocked] = useState<blockedProps>();
 	
 	useEffect(() => {
 		const api = async () => {
 			let urltofetch : string;
 			urltofetch = `http://localhost:9999/api/users/${uid}`;
-			console.log(urltofetch);//
+			// console.log(urltofetch);//
 			const data = await fetch(urltofetch, {
 				method: "GET",
 				credentials: 'include'
 			});
 			const jsonData = await data.json();
 			setResult(jsonData);
-			console.log(jsonData);//
-			const friend = await fetch("http://localhost:9999/api/users/me/friends/", {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonFriend = await friend.json();
-			setFriend(jsonFriend);
+			// console.log(jsonData);//
 			const blocked = await fetch("http://localhost:9999/api/users/me/banlist/", {
 				method: "GET",
 				credentials: 'include'
@@ -358,8 +333,7 @@ export function OtherProfile(){
 			<div className='Profile-container'>
 				<div className='Profile-Alias'>
 					<div className='Profile-Alias-div'>{data?.username}</div>
-					<div className='Profile-Alias-div'><AddButton variant="contained" disableRipple onClick={handleClickInvite}>Add to Friends</AddButton></div>
-					<div className='Profile-Alias-div'><RemoveButton variant="contained" disableRipple onClick={handleClickRemove}>Remove from Friends</RemoveButton></div>
+					<div className='Profile-Alias-div'>{AddOrRemoveButton(uid)}</div>
 					<div className='Profile-Alias-div'><BlockButton variant="contained" disableRipple onClick={handleClickBlock}>Block user</BlockButton></div>
 					<div className='Profile-Alias-div'><UnblockButton variant="contained" disableRipple onClick={handleClickUnblock}>Unblock user</UnblockButton></div>
 				</div>
@@ -549,7 +523,7 @@ export function Profile(){
 											<IconButton color="error" aria-label="reject" onClick={()=>{
 												let urltofetch : string;
 												urltofetch = 'http://localhost:9999/api/users/me/friends/invitations/' + uid;
-												console.log(urltofetch);//
+												// console.log(urltofetch);//
 												const response = fetch(urltofetch, {
 													headers: {
 														'Accept': 'application/json',
