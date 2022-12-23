@@ -36,7 +36,7 @@ export function ListUser(){//vouer à disparaitre
 
 	return(
 		<div>
-			{/* {data?.map((user: any) => {
+			{data?.map((user: any) => {
 				var url: string = "/otherprofile";
 				url = url.concat("/");
 				url = url.concat(user.id);
@@ -48,7 +48,7 @@ export function ListUser(){//vouer à disparaitre
 						</Link>
 					</div>
 				);
-			})} */}
+			})}
 		</div>
 	);
 }

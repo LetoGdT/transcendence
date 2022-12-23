@@ -2,7 +2,7 @@ import './App.css'
 import './Header.css'
 import * as React from 'react';
 
-import { IsConnected } from './tools';
+// import { IsConnected } from './tools';
 
 import { Link } from 'react-router-dom';
 
