@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import './Menu.css';
 
+import { getPaginatedRequest } from './tools';
 import { OurHeader } from './Header-zone';
 import { OurMenu } from './Menu-zone';
 import { Home } from './adaptable-zone';
@@ -12,54 +13,13 @@ import { MatchHistory } from './MatchHistory-zone';
 import { SettingsZone } from './Settings-zone';
 import { ProfileZone, OtherProfile } from './Profile-zone';
 import { SignOn } from './adaptable-zone';
-import { useParams, BrowserRouter as Router, Route, Routes} from 'react-router-dom'
+import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect} from "react";
 import { Link } from 'react-router-dom'
 
 type resultProps = {
 	users: [];
-}
-
-async function getPaginatedRequest(url: string, setResult: Function, pageStart: number, pageEnd: number, take?: number): Promise<any>
-{
-	let ret: any = [];
-	const fullUrl = 'http://localhost:9999/api/' + url + '?';
-	if (take == undefined){
-		for (let i: number = pageStart - 1; i != pageEnd; i++)
-		{
-			const params = new URLSearchParams({
-				page: (i + 1).toString()
-			});
-			const data = await fetch(fullUrl + params, {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonData = await data.json();
-			ret = ret.concat(jsonData.data);
-			if (!jsonData.meta.hasNextPage)
-				break;
-		}
-	}
-	else {
-		for (let i: number = pageStart - 1; i != pageEnd; i++)
-		{
-			const params = new URLSearchParams({
-				take: take.toString(),
-				page: (i + 1).toString()
-			});
-			const data = await fetch(fullUrl + params, {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonData = await data.json();
-			ret = ret.concat(jsonData.data);
-			if (!jsonData.meta.hasNextPage)
-				break;
-		}
-	}
-	
-	setResult(ret)
 }
 
 export function ListUser(){//vouer à disparaitre
