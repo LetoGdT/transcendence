@@ -5,11 +5,12 @@ import {
 	UseInterceptors, Query, Req, UseFilters, Body
 } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { MatchesService } from '../matches/matches.service';
 import { User } from '../typeorm/user.entity';
 import { PageDto } from "../dto/page.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
 import { UpdateUserDto, CreateUserFriendDto } from '../dto/users.dto';
-import { UserQueryFilterDto } from '../dto/query-filters.dto';
+import { UserQueryFilterDto, MatchesQueryFilterDto } from '../dto/query-filters.dto';
 import { AuthInterceptor } from '../auth/auth.interceptor';
 import { JwtAuthGuard } from '../guards/jwt.guard';
 import { RedirectToLoginFilter } from '../filters/auth-exceptions.filter';
@@ -17,7 +18,8 @@ import { RedirectToLoginFilter } from '../filters/auth-exceptions.filter';
 @Controller('users')
 export class UsersController
 {
-	constructor(private readonly usersService: UsersService) {}
+	constructor(private readonly usersService: UsersService,
+		private readonly matchesService: MatchesService) {}
 
 	@Get('/')
 	@UseInterceptors(ClassSerializerInterceptor)
@@ -139,5 +141,32 @@ export class UsersController
 		@Req() req)
 	{
 		return this.usersService.unbanUser(req.user, user_id);
+	}
+
+	@Get('/me/achievements')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	async getAchievements(@Query() pageOptionsDto: PageOptionsDto,
+		@Req() req)
+	{
+		return this.usersService.getAchievements(req.user, pageOptionsDto);
+	}
+
+	@Get('/me/matches')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	async getUserMatches(@Query() pageOptionsDto: PageOptionsDto,
+		@Query() matchesQueryFilterDto: MatchesQueryFilterDto,
+		@Req() req)
+	{
+		return this.matchesService.getAllMatches(pageOptionsDto, matchesQueryFilterDto, req.user.id);
+	}
+
+	@Get('/me/winrate')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	async getUserWinrate(@Req() req)
+	{
+		return this.matchesService.getWinrate(req.user.id);
 	}
 }

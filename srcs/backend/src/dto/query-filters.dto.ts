@@ -107,3 +107,42 @@ export class ConversationQueryFilterDto
 	@IsOptional()
 	user2_id: number;
 }
+
+export class MatchesQueryFilterDto
+{
+	@Type(() => Number)
+	@IsInt()
+	@Min(1)
+	@Max(Number.MAX_SAFE_INTEGER)
+	@IsOptional()
+	id: number;
+
+	@Type(() => Number)
+	@IsInt()
+	@Min(1)
+	@Max(Number.MAX_SAFE_INTEGER)
+	@IsOptional()
+	user_id: number;
+
+	@Type(() => Number)
+	@IsInt()
+	@Min(1)
+	@Max(Number.MAX_SAFE_INTEGER)
+	@IsOptional()
+	winner_id: number;
+
+	@Type(() => Date)
+	@IsDate()
+	@IsOptional()
+	start_at: Date;
+
+	@Type(() => Date)
+	@IsDate()
+	@IsOptional()
+	end_at: Date;
+
+	@IsIn(['Quick play', 'Ranked'])
+	@IsNotEmpty()
+	@IsOptional()
+	type: 'Quick play' | 'Ranked';
+}
