@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import {TypeOrmModule} from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { resolve } from 'path';
+import { AppController } from './app.controller';
 import { User } from './typeorm/user.entity';
 import { Message } from './typeorm/message.entity';
 import { PrivateMessage } from './typeorm/private-message.entity';
@@ -56,6 +57,8 @@ import { MatchesModule } from './matches/matches.module';
 			AchievementsModule,
 			MatchesModule
 		],
+		controllers: [AppController],
+		// providers: [ChannelsService]
 	}
 )
 export class AppModule {}

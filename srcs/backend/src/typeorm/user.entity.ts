@@ -97,5 +97,11 @@ export class User
 	channelUsers: ChannelUser[];
 
 	@OneToMany(() => Achievement, (achievement) => achievement.user)
-	achievements: Achievement[]; 
+	achievements: Achievement[];
+
+	@Column({
+		nullable: false,
+		default: 0
+	})
+	exp: number;
 }
