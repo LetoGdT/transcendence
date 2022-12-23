@@ -1,8 +1,6 @@
 import './App.css'
 import './Chat.css'
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-
-import TextField from '@mui/material/TextField';
+import React, { useState, useEffect } from 'react';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
@@ -11,21 +9,6 @@ import Avatar from './link_botw_avatar.jpg';
 import Banniere from './link_botw_banniere.jpg';
 
 import { PleaseConnect } from './adaptable-zone';
-
-const MessageTextField = styled(TextField)({
-	'& input:valid + fieldset': {
-		borderColor: 'white',
-		borderWidth: 2,
-	},
-	'& input:invalid + fieldset': {
-		borderColor: 'red',
-		borderWidth: 2,
-	},
-	'& input:valid:focus + fieldset': {
-		borderLeftWidth: 6,
-		padding: '4px !important', // override inline-style
-	},
-});
 
 const SendButton = styled(Button)({
 	boxShadow: 'none',
@@ -101,7 +84,7 @@ export function Chat(){
 							<div className='Chat-message-from-self-lvl2'>
 								vraiment très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très très long long long long message de soi
 							</div>
-							<img src={Avatar} alt={'self-name'} className='Chat-who'></img>
+							<img src={Banniere} alt={'self-name'} className='Chat-who'></img>
 						</div>
 						{/* <div className='Chat-message-from-self-lvl1'>
 							<div className='Chat-div-empty'></div>

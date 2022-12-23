@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useEffect } from "react";
+// import { useState, useEffect } from "react";
 
 import OffLine from './offline.png';
 import OnLine from './online.png';
@@ -9,8 +9,8 @@ export async function getPaginatedRequest(url: string, setResult: Function, page
 {
 	let ret: any = [];
 	const fullUrl = 'http://localhost:9999/api/' + url + '?';
-	if (take == undefined){
-		for (let i: number = pageStart - 1; i != pageEnd; i++)
+	if (take === undefined){
+		for (let i: number = pageStart - 1; i !== pageEnd; i++)
 		{
 			const params = new URLSearchParams({
 				page: (i + 1).toString()
@@ -26,7 +26,7 @@ export async function getPaginatedRequest(url: string, setResult: Function, page
 		}
 	}
 	else {
-		for (let i: number = pageStart - 1; i != pageEnd; i++)
+		for (let i: number = pageStart - 1; i !== pageEnd; i++)
 		{
 			const params = new URLSearchParams({
 				take: take.toString(),
@@ -56,24 +56,24 @@ export function userStatus(status: string){
 	}
 }
 
-type isConnectedResult = {
+// type isConnectedResult = {
 
-};
+// };
 
-export async function IsConnected(){//a faire
-	const [isConnected, setIsConnected] = useState<isConnectedResult>();
+// export async function IsConnected(){//a faire
+// 	const [isConnected, setIsConnected] = useState<isConnectedResult>();
 
-	useEffect(() => {
-		const api = async () => {
-			const data = await fetch("http://localhost:9999/api/users/isconnected", {
-				method: "GET",
-				credentials: 'include'
-			});
-			// const jsonData = await data.json();
-			// setIsConnected(jsonData);
-			setIsConnected(data);
-		};
-		api();
-	}, []);
+// 	useEffect(() => {
+// 		const api = async () => {
+// 			const data = await fetch("http://localhost:9999/api/users/isconnected", {
+// 				method: "GET",
+// 				credentials: 'include'
+// 			});
+// 			// const jsonData = await data.json();
+// 			// setIsConnected(jsonData);
+// 			setIsConnected(data);
+// 		};
+// 		api();
+// 	}, []);
 	
-}
+// }
