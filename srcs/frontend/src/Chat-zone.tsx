@@ -215,17 +215,35 @@ export function Chat(){
 	);
 }
 
+type meProps = {
+};
+
 export function ChatZone(){
-	// const isLoggedIn = props.isLoggedIn;
-	// if (isLoggedIn){
+	const [me, setMe] = useState<meProps>();
+
+	useEffect(() => {
+		const api = async () => {
+			const me = await fetch("http://localhost:9999/api/users/me", {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonData = await me.json();
+			setMe(jsonData);
+		};
+	
+		api();
+	}, []);
+	
+	const isLoggedIn = me;
+	if (isLoggedIn){
 		return (
 			<Chat />
 		);
-	// }
-	// else 
-	// {
-	// 	return (
-	// 		<PleaseConnect />
-	// 	);
-	// }
+	}
+	else 
+	{
+		return (
+			<PleaseConnect />
+		);
+	}
 }

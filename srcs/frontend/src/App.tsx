@@ -19,7 +19,7 @@ import { useState, useEffect} from "react";
 import { Link } from 'react-router-dom'
 
 type resultProps = {
-	users: [];
+	Array: [];
 }
 
 export function ListUser(){//vouer à disparaitre
@@ -28,16 +28,16 @@ export function ListUser(){//vouer à disparaitre
 
 	useEffect(() => {
 			const call = async () => {
-				await getPaginatedRequest('users', setResult, 1, 10);
+				await getPaginatedRequest('users', setResult, 1, 2);
 			};
 			call();
 		}, []);
-
+	
 	console.log(data);
 
 	return(
 		<div>
-			{data?.users.map((user: any) => {
+			{data?.Array.map((user: any) => {
 				var url: string = "/otherprofile";
 				url = url.concat("/");
 				url = url.concat(user.id);
