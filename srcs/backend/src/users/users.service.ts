@@ -243,7 +243,8 @@ export class UsersService
 			.leftJoinAndSelect('user.banlist', 'banlist')
 			.where('user.id = :id', { id: createUserFriendDto.id });
 
-		const checkBan: number = user.banlist.findIndex((users) => {
+		const user2 = await queryBuilder2.getOne();
+		const checkBan: number = user2.banlist.findIndex((users) => {
 			return users.id == user.id;
 		});
 
