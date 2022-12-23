@@ -12,37 +12,55 @@ import { MatchHistory } from './MatchHistory-zone';
 import { SettingsZone } from './Settings-zone';
 import { ProfileZone, OtherProfile } from './Profile-zone';
 import { SignOn } from './adaptable-zone';
-import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
+import { useParams, BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from 'react-router-dom'
 
 //ce morceau marche !!! mais y'a que la première page
 
 type resultProps = {
-	data: [];
+	users: [];
+}
+
+async function getPaginatedRequest(url: string, setResult: Function, pageStart: number, pageEnd: number, take?: number): Promise<any>
+{
+	let ret: any = [];
+	const fullUrl = 'http://localhost:9999/api/' + url + '?';
+	for (let i: number = pageStart - 1; i != pageEnd; i++)
+	{
+		const params = new URLSearchParams({
+			take: "1",
+			page: (i + 1).toString()
+		});
+		const data = await fetch(fullUrl + params, {
+			method: "GET",
+			credentials: 'include'
+		});
+		const jsonData = await data.json();
+		ret = ret.concat(jsonData.data);
+		if (!jsonData.meta.hasNextPage)
+			break;
+	}
+	setResult(ret)
 }
 
 export function ListUser(){//vouer à disparaitre
+
 	const [data, setResult] = useState<resultProps>();
-	
+
 	useEffect(() => {
-		const api = async () => {
-			let urltofetch : string;
-			urltofetch = `http://localhost:9999/api/users/`;
-			const data = await fetch(urltofetch, {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonData = await data.json();
-			setResult(jsonData);
-		};
-	
-		api();
-	}, []);
+			const call = async () => {
+				await getPaginatedRequest('users', setResult, 1, 3, 1);
+			};
+			call();
+		}, []);
+
+	console.log(data);
+
 	return(
 		<div>
-			{data?.data.map((user: any) => {
+			{data?.map((user: any) => {
 				var url: string = "/otherprofile";
 				url = url.concat("/");
 				url = url.concat(user.id);
@@ -193,5 +211,3 @@ function App() {
 }
 
 export default App;
-
-
