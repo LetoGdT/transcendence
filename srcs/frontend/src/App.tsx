@@ -25,21 +25,40 @@ async function getPaginatedRequest(url: string, setResult: Function, pageStart: 
 {
 	let ret: any = [];
 	const fullUrl = 'http://localhost:9999/api/' + url + '?';
-	for (let i: number = pageStart - 1; i != pageEnd; i++)
-	{
-		const params = new URLSearchParams({
-			take: "1",
-			page: (i + 1).toString()
-		});
-		const data = await fetch(fullUrl + params, {
-			method: "GET",
-			credentials: 'include'
-		});
-		const jsonData = await data.json();
-		ret = ret.concat(jsonData.data);
-		if (!jsonData.meta.hasNextPage)
-			break;
+	if (take == undefined){
+		for (let i: number = pageStart - 1; i != pageEnd; i++)
+		{
+			const params = new URLSearchParams({
+				page: (i + 1).toString()
+			});
+			const data = await fetch(fullUrl + params, {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonData = await data.json();
+			ret = ret.concat(jsonData.data);
+			if (!jsonData.meta.hasNextPage)
+				break;
+		}
 	}
+	else {
+		for (let i: number = pageStart - 1; i != pageEnd; i++)
+		{
+			const params = new URLSearchParams({
+				take: take.toString(),
+				page: (i + 1).toString()
+			});
+			const data = await fetch(fullUrl + params, {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonData = await data.json();
+			ret = ret.concat(jsonData.data);
+			if (!jsonData.meta.hasNextPage)
+				break;
+		}
+	}
+	
 	setResult(ret)
 }
 
@@ -49,7 +68,7 @@ export function ListUser(){//vouer à disparaitre
 
 	useEffect(() => {
 			const call = async () => {
-				await getPaginatedRequest('users', setResult, 1, 3, 1);
+				await getPaginatedRequest('users', setResult, 1, 10);
 			};
 			call();
 		}, []);
@@ -58,7 +77,7 @@ export function ListUser(){//vouer à disparaitre
 
 	return(
 		<div>
-			{/* {data?.map((user: any) => {
+			{data?.users.map((user: any) => {
 				var url: string = "/otherprofile";
 				url = url.concat("/");
 				url = url.concat(user.id);
@@ -70,7 +89,7 @@ export function ListUser(){//vouer à disparaitre
 						</Link>
 					</div>
 				);
-			})} */}
+			})}
 		</div>
 	);
 }
