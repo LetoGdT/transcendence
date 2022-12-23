@@ -31,6 +31,14 @@ type resultProps = {
 	losses: number;
 };
 
+type friendProps = {
+	data: [];
+};
+
+type blockedProps = {
+
+};
+
 
 const AddButton = styled(Button)({
 	boxShadow: 'none',
@@ -228,7 +236,7 @@ export function OtherProfile(){
 	};
 
 	const handleClickBlock = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('http://localhost:9999/api/users/me/blocklist', {
+		const response = await fetch('http://localhost:9999/api/users/me/banlist', {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -242,7 +250,7 @@ export function OtherProfile(){
 
 	const handleClickUnblock = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		let urltofetch : string;
-		urltofetch = 'http://localhost:9999/api/users/me/blocklist/' + uid;
+		urltofetch = 'http://localhost:9999/api/users/me/banlist/' + uid;
 		console.log(urltofetch);//
 		const response = await fetch(urltofetch, {
 			headers: {
@@ -255,6 +263,8 @@ export function OtherProfile(){
 	};
 
 	const [data, setResult] = useState<resultProps>();
+	const [friend, setFriend] = useState<friendProps>();
+	const [blocked, setBlocked] = useState<blockedProps>();
 	
 	useEffect(() => {
 		const api = async () => {
@@ -268,6 +278,18 @@ export function OtherProfile(){
 			const jsonData = await data.json();
 			setResult(jsonData);
 			console.log(jsonData);//
+			const friend = await fetch("http://localhost:9999/api/users/me/friends/", {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonFriend = await friend.json();
+			setFriend(jsonFriend);
+			const blocked = await fetch("http://localhost:9999/api/users/me/banlist/", {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonBlocked = await blocked.json();
+			setBlocked(jsonBlocked);
 		};
 	
 		api();
@@ -353,14 +375,12 @@ export function Profile(){
 		  });
 		  const jsonData = await data.json();
 		  setResult(jsonData);
-		  console.log(jsonData);//
 		  const invites = await fetch("http://localhost:9999/api/users/me/friends/invites", {
 		  	method: "GET",
 			credentials: 'include'
 		  });
 		  const jsonInvites = await invites.json();
 		  setInvites(jsonInvites);
-		  console.log(jsonInvites);//
 		};
 	
 		api();
