@@ -46,7 +46,7 @@ type isConnectedResult = {
 
 };
 
-export async function IsConnected(){
+export async function IsConnected(){//a faire
 	const [isConnected, setIsConnected] = useState<isConnectedResult>();
 
 	useEffect(() => {
