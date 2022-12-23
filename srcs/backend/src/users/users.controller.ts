@@ -32,6 +32,14 @@ export class UsersController
 		return this.usersService.getUsers(pageOptionsDto, userQueryFilterDto);
 	}
 
+	@Get('/isconnected')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	isConnected(@Req() req)
+	{
+		return req.user != null;
+	}
+
 	@Get('/me')
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
