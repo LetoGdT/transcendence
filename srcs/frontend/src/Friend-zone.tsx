@@ -18,6 +18,17 @@ type resultProps = {
 	data: [];
 }
 
+export function userStatus(status: string){
+	if(status === "online"){
+		return(<img src={OnLine} alt='online'></img>);
+	} else if (status === "offline") {
+		return(<img src={OffLine} alt='offline'></img>);
+	} else {
+		return(<img src={InGame} alt='in game'></img>);
+	}
+}
+
+
 export function Friends(){
 	const [data, setResult] = useState<resultProps>();
 
@@ -38,6 +49,7 @@ export function Friends(){
 	}, []);
 
 	let status: string;
+
 	return(
 		<React.Fragment>
 			<h1>Friends</h1>
@@ -53,19 +65,7 @@ export function Friends(){
 									<img src={user.image_url} alt={user.username + "'s avatar"} className='Friend-avatar'></img>
 								</div>
 								<div className='Friend-Name-status'>
-									<div>
-										{/* {
-											() => {
-												if(user.status === "online"){
-													return(<img src={OnLine} alt={user.status}></img>);
-												} else if(user.status === "offline"){
-													return(<img src={OffLine} alt={user.status}></img>);
-												} else {
-													return(<img src={InGame} alt={user.status}></img>);
-												}
-											}
-										} */}
-									</div>
+									<div>{userStatus(user.status)}</div>
 									<div className='Friend-name'>{user.username}</div>
 								</div>
 							</div>
