@@ -9,7 +9,6 @@ import { Message } from '../typeorm/message.entity';
 import { AuthInterceptor } from '../auth/auth.interceptor';
 import { PageDto } from "../dto/page.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
-import { PostPrivateDto, UpdateMessageDto } from '../dto/private-messages.dto';
 import { MessageQueryFilterDto, ConversationQueryFilterDto } from '../dto/query-filters.dto';
 import { UserSelectDto } from '../dto/messages.dto';
 import {
