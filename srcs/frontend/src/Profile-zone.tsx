@@ -206,6 +206,64 @@ export const gameData = [
 	["Defeats", 2],
 ];
 
+function AddOrRemoveButton(uid: number){
+
+	const handleClickInvite = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		const response = await fetch('http://localhost:9999/api/users/me/friends/invites', {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			credentials: 'include',
+			body: JSON.stringify({ id: uid })
+		});
+		console.log(response.json());//
+	};
+
+	const handleClickRemove = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		let urltofetch : string;
+		urltofetch = 'http://localhost:9999/api/users/me/friends/' + uid;
+		console.log(urltofetch);//
+		const response = await fetch(urltofetch, {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'DELETE',
+			credentials: 'include',
+		});
+	};
+
+	const [data, setResult] = useState<resultProps>();
+	const [friend, setFriend] = useState<friendProps>();
+
+	useEffect(() => {
+		const api = async () => {
+			let urltofetch : string;
+			urltofetch = `http://localhost:9999/api/users/${uid}`;
+			console.log(urltofetch);//
+			const data = await fetch(urltofetch, {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonData = await data.json();
+			setResult(jsonData);
+			console.log(jsonData);//
+			const friend = await fetch("http://localhost:9999/api/users/me/friends/", {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonFriend = await friend.json();
+			setFriend(jsonFriend);
+		};
+	
+		api();
+	}, []);
+
+	console.log("a remplir");
+}
+
 export function OtherProfile(){
 	let { uid } = useParams();
 	const handleClickInvite = async (event: React.MouseEvent<HTMLButtonElement>) => {
