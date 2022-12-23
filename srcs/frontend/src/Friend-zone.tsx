@@ -2,32 +2,15 @@ import './App.css'
 import './Friend.css'
 
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 
-import Avatar from './link_botw_avatar.jpg';//a enlever quand plus nec
-
-import OffLine from './offline.png';
-import OnLine from './online.png';
-import InGame from './ingame.png';
-import { useState, useEffect } from "react";
-
+import { userStatus } from './tools';
 import { PleaseConnect } from './adaptable-zone';
-import userEvent from '@testing-library/user-event';
+import { Link } from 'react-router-dom';
+import { useState, useEffect } from "react";
 
 type resultProps = {
 	data: [];
 }
-
-export function userStatus(status: string){
-	if(status === "online"){
-		return(<img src={OnLine} alt='online'></img>);
-	} else if (status === "offline") {
-		return(<img src={OffLine} alt='offline'></img>);
-	} else {
-		return(<img src={InGame} alt='in game'></img>);
-	}
-}
-
 
 export function Friends(){
 	const [data, setResult] = useState<resultProps>();
