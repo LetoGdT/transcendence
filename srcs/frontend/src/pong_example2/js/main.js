@@ -8,7 +8,7 @@ const PLAYER_HEIGHT = 100;
 const PLAYER_WIDTH = 5;
 const MAX_SPEED = 12;
 
-function draw() {
+// function draw() {
     var context = canvas.getContext('2d');
 
     // Draw field
@@ -32,7 +32,7 @@ function draw() {
     context.fillStyle = 'white';
     context.arc(game.ball.x, game.ball.y, game.ball.r, 0, Math.PI * 2, false);
     context.fill();
-}
+// }
 
 function changeDirection(playerPosition) {
     var impact = game.ball.y - playerPosition - PLAYER_HEIGHT / 2;
@@ -137,29 +137,36 @@ function stop() {
     draw();
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    canvas = document.getElementById('canvas');
-    game = {
-        player: {
-            score: 0
-        },
-        computer: {
-            score: 0,
-            speedRatio: 0.75
-        },
-        ball: {
-            r: 5,
-            speed: {}
-        }
-    };
+document.addEventListener
+('DOMContentLoaded', function ()
+	{
+ 	   canvas = document.getElementById('canvas');
+ 	   game = 
+	   {
+			player:
+			{
+ 	        	score: 0
+ 	        },
+ 	    	computer:
+			{
+ 	        	score: 0,
+ 	        	speedRatio: 0.75
+ 	    	},
+ 	    	ball:
+			{
+  	        	r: 5,
+				speed: {}
+  	    	}
+  	  };
 
-    reset();
+  	  reset();
 
-    // Mouse move event
-    canvas.addEventListener('mousemove', playerMove);
+  	  // Mouse move event
+  	  canvas.addEventListener('mousemove', playerMove);
 
-    // Mouse click event
-    document.querySelector('#start-game').addEventListener('click', play);
-    document.querySelector('#stop-game').addEventListener('click', stop);
+  	  // Mouse click event
+  	  document.querySelector('#start-game').addEventListener('click', play);
+  	  document.querySelector('#stop-game').addEventListener('click', stop);
 
-});
+	}
+);
