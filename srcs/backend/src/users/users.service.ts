@@ -363,4 +363,10 @@ export class UsersService
 	{
 		return this.achievementsService.getUserAchievements(pageOptionsDto, user);
 	}
+
+	async changeRank(user: User, new_rank: number)
+	{
+		user.exp = new_rank;
+		this.userRepository.save(user);
+	}
 }

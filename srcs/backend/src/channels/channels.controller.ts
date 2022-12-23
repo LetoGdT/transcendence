@@ -10,9 +10,8 @@ import { ChannelUser } from '../typeorm/channel-user.entity';
 import { PageDto } from "../dto/page.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
 import { PostChannelDto, PatchChannelDto, PatchChannelUserDto } from '../dto/channels.dto';
-import { PostPrivateDto, UpdateMessageDto } from '../dto/private-messages.dto';
 import { MessageQueryFilterDto, ChannelQueryFilterDto } from '../dto/query-filters.dto';
-import { UserSelectDto } from '../dto/messages.dto';
+import { UserSelectDto, PostMessageDto, UpdateMessageDto } from '../dto/messages.dto';
 import { ChannelBanQueryFilterDto, PostChannelBanDto, UpdateChannelBanDto } from '../dto/channel-ban.dto';
 import { UserQueryFilterDto, ChannelUserQueryFilterDto } from '../dto/query-filters.dto';
 
@@ -181,10 +180,10 @@ export class ChannelsController
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
 	createChannelMessage(@Param('channel_id', ParseIntPipe) channel_id: number,
-		@Body() postPrivateDto: PostPrivateDto,
+		@Body() postMessageDto: PostMessageDto,
 		@Req() req)
 	{
-		return this.channelsService.createChannelMessage(channel_id, postPrivateDto, req.user);
+		return this.channelsService.createChannelMessage(channel_id, postMessageDto, req.user);
 	}
 
 	@Patch('/:channel_id/messages/:message_id')

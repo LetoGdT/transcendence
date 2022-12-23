@@ -7,6 +7,7 @@ import { MatchesQueryFilterDto } from '../dto/query-filters.dto';
 import { PageOptionsDto } from "../dto/page-options.dto";
 import { PageDto } from "../dto/page.dto";
 import { PageMetaDto } from "../dto/page-meta.dto";
+import { CreateMatchDto } from "../dto/matches.dto";
 
 @Injectable()
 export class MatchesService
@@ -80,5 +81,11 @@ export class MatchesService
 
 		const winrate = wins / losses * 100;
 		return { wins: wins, losses: losses, winrate: winrate };
+	}
+
+	async createMatch(createMatchDto: CreateMatchDto)
+	{
+		const newMatch: Match = this.matchesRepository.create(createMatchDto);
+		return this.matchesRepository.save(newMatch);
 	}
 }
