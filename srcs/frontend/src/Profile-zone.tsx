@@ -435,17 +435,35 @@ export function Profile(){
 	);
 }
 
+type meProps = {
+};
+
 export function ProfileZone(){
-	// const isLoggedIn = props.isLoggedIn;
-	// if (isLoggedIn){
+	const [me, setMe] = useState<meProps>();
+
+	useEffect(() => {
+		const api = async () => {
+			const data = await fetch("http://localhost:9999/api/users/isconnected", {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonData = await data.json();
+			setMe(jsonData);
+		};
+	
+		api();
+	}, []);
+	
+	const isLoggedIn = me;
+	if (isLoggedIn){
 		return (
 			<Profile />
 		);
-	// }
-	// else 
-	// {
-	// 	return (
-	// 		<PleaseConnect />
-	// 	);
-	// }
+	}
+	else 
+	{
+		return (
+			<PleaseConnect />
+		);
+	}
 }

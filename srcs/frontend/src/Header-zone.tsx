@@ -2,6 +2,8 @@ import './App.css'
 import './Header.css'
 import * as React from 'react';
 
+import { IsConnected } from './tools';
+
 import { Link } from 'react-router-dom';
 
 import Banniere from './link_botw_banniere.jpg';
@@ -140,7 +142,6 @@ function UserLogged(){
 			});
 			const jsonData = await data.json();
 			setResult(jsonData);
-			console.log(jsonData);//
 		};
 	
 		api();
@@ -178,24 +179,28 @@ function UserNotLogged(){
 		</div>
 	);
 }
+
+type meProps = {
+};
+
 function AvatarZone(props:any){
-	const [data, setResult] = useState<resultProps>();
+	const [me, setMe] = useState<meProps>();
 
 	useEffect(() => {
 		const api = async () => {
-			const data = await fetch("http://localhost:9999/api/users/me", {
+			const data = await fetch("http://localhost:9999/api/users/isconnected", {
 				method: "GET",
 				credentials: 'include'
 			});
 			const jsonData = await data.json();
-			setResult(jsonData);
+			setMe(jsonData);
 		};
 	
 		api();
 	}, []);
 	
-	const isLoggedIn = data;
-	if (isLoggedIn != undefined){
+	const isLoggedIn = me;
+	if (isLoggedIn){
 		return (
 			<UserLogged />
 		);

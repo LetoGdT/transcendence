@@ -9,7 +9,7 @@ import { Home } from './adaptable-zone';
 import { Play, SpecAMatch} from './adaptable-zone';
 import { ChatZone } from './Chat-zone';
 import { FriendsZone } from './Friend-zone';
-import { MatchHistory } from './MatchHistory-zone';
+import { MatchHistoryZone } from './MatchHistory-zone';
 import { SettingsZone } from './Settings-zone';
 import { ProfileZone, OtherProfile } from './Profile-zone';
 import { SignOn } from './adaptable-zone';
@@ -19,7 +19,6 @@ import { useState, useEffect} from "react";
 import { Link } from 'react-router-dom'
 
 type resultProps = {
-	Array: [];
 }
 
 export function ListUser(){//vouer à disparaitre
@@ -37,7 +36,7 @@ export function ListUser(){//vouer à disparaitre
 
 	return(
 		<div>
-			{data?.Array.map((user: any) => {
+			{/* {data?.map((user: any) => {
 				var url: string = "/otherprofile";
 				url = url.concat("/");
 				url = url.concat(user.id);
@@ -49,7 +48,7 @@ export function ListUser(){//vouer à disparaitre
 						</Link>
 					</div>
 				);
-			})}
+			})} */}
 		</div>
 	);
 }
@@ -70,7 +69,7 @@ function App() {
 						<Route path="/chat" element={<ChatZone/>} />
 						<Route path="/friends" element={<FriendsZone/>} />
 						<Route path="/" element={<Home />} />
-						<Route path="/matchhistory" element={<MatchHistory/>} />
+						<Route path="/matchhistory" element={<MatchHistoryZone/>} />
 						<Route path="/play" element={<Play/>} />
 						<Route path="/settings" element={<SettingsZone/>} />
 						<Route path="/specamatch" element={<SpecAMatch/>} />

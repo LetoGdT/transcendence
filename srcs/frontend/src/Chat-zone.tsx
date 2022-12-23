@@ -223,11 +223,11 @@ export function ChatZone(){
 
 	useEffect(() => {
 		const api = async () => {
-			const me = await fetch("http://localhost:9999/api/users/me", {
+			const data = await fetch("http://localhost:9999/api/users/isconnected", {
 				method: "GET",
 				credentials: 'include'
 			});
-			const jsonData = await me.json();
+			const jsonData = await data.json();
 			setMe(jsonData);
 		};
 	

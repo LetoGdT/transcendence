@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState, useEffect } from "react";
 
 export async function getPaginatedRequest(url: string, setResult: Function, pageStart: number, pageEnd: number, take?: number): Promise<any>
 {
@@ -39,4 +40,26 @@ export async function getPaginatedRequest(url: string, setResult: Function, page
 	}
 	
 	setResult(ret)
+}
+
+type isConnectedResult = {
+
+};
+
+export async function IsConnected(){
+	const [isConnected, setIsConnected] = useState<isConnectedResult>();
+
+	useEffect(() => {
+		const api = async () => {
+			const data = await fetch("http://localhost:9999/api/users/isconnected", {
+				method: "GET",
+				credentials: 'include'
+			});
+			// const jsonData = await data.json();
+			// setIsConnected(jsonData);
+			setIsConnected(data);
+		};
+		api();
+	}, []);
+	
 }
