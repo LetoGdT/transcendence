@@ -189,14 +189,13 @@ function AvatarZone(props:any){
 			});
 			const jsonData = await data.json();
 			setResult(jsonData);
-			console.log(jsonData);//
 		};
 	
 		api();
 	}, []);
 	
-	const isLoggedIn = props.isLoggedIn;
-	if (isLoggedIn){
+	const isLoggedIn = data;
+	if (isLoggedIn != undefined){
 		return (
 			<UserLogged />
 		);
