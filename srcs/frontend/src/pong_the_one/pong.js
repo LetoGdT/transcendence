@@ -1,29 +1,57 @@
-let c = document.getElementById("canvas");
-let ctx = c.getContext("2d");
-// Voile du bateau
-ctx.beginPath();      // Début du chemin
-ctx.moveTo(0,0);   // Le tracé part du point 150,80
-ctx.lineTo(350,350);  // Un segment est ajouté vers 300,230
-ctx.lineTo(0,350);  // Un segment est ajouté vers 150,230
-ctx.closePath();      // Fermeture du chemin
-ctx.fillStyle = "lightblue"; // Définition de la couleur de remplissage
-ctx.fill();           // Remplissage du dernier chemin tracé
+'use strict';
 
-// Coque du bâteau
-ctx.beginPath();      // Début d'un autre chemin
-ctx.moveTo(50,250);
-ctx.lineTo(100,300);
-ctx.lineTo(250,300);
-ctx.lineTo(300,250);
-ctx.fillStyle = "peru";
-ctx.strokeStyle = "sienna"; // Définition de la couleur de contour
-ctx.lineWidth = 5;         // Définition de la largeur de ligne
-ctx.fill();            // Application du remplissage
-ctx.stroke();          // Application du contour
+let canvas; // del need type
+let game; // del need type
 
-// Mât
-ctx.beginPath();
-ctx.moveTo(140,50);
-ctx.lineTo(140,250);
-ctx.lineWidth = 10;
-ctx.stroke();
+const PLAYER_HEIGHT = 100;
+const PLAYER_WIDTH = 5;
+
+function draw() {
+    var ctx = canvas.getContext('2d');
+	
+	// Draw field
+	ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+	// Draw net
+	ctx.lineWidth = 5;
+	ctx.strokeStyle = 'white';
+    ctx.beginPath();
+	ctx.setLineDash([5, 15]);
+    ctx.moveTo(canvas.width / 2, 0);
+    ctx.lineTo(canvas.width / 2, canvas.height);
+    ctx.stroke();
+	// Draw players
+	ctx.fillStyle = 'white';
+	ctx.fillRect(0, game.player.y, PLAYER_WIDTH, PLAYER_HEIGHT);
+	ctx.fillRect(canvas.width - PLAYER_WIDTH, game.computer.y, PLAYER_WIDTH, PLAYER_HEIGHT);
+	// Draw ball
+	ctx.beginPath();
+	ctx.fillStyle = 'white';
+	ctx.arc(game.ball.x, game.ball.y, game.ball.r, 0, Math.PI * 2, false);
+	ctx.fill();
+}
+document.addEventListener
+(
+	'DOMContentLoaded', function ()
+	{
+	    canvas = document.getElementById('canvas');
+		game =
+		{
+			player1:
+			{
+				y: canvas.height / 2 - PLAYER_HEIGHT / 2
+	        },
+	        player2:
+			{
+	        	y: canvas.height / 2 - PLAYER_HEIGHT / 2
+	        },
+	        ball:
+			{
+	        	x: canvas.width / 2,
+	            y: canvas.height / 2,
+	            r: 5
+	        }
+	    }
+	    draw();
+	}
+);
