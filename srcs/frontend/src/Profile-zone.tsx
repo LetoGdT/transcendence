@@ -198,9 +198,6 @@ export const gameData = [
 	["Defeats", 2],
 ];
 
-
-// export function OtherProfile(Info:{uid:number}){
-// 	const uid = Info.uid;
 export function OtherProfile(){
 	let { uid } = useParams();
 	const handleClickInvite = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -214,6 +211,47 @@ export function OtherProfile(){
 			body: JSON.stringify({ id: uid })
 		});
 		console.log(response.json());//
+	};
+
+	const handleClickRemove = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		let urltofetch : string;
+		urltofetch = 'http://localhost:9999/api/users/me/friends/' + uid;
+		console.log(urltofetch);//
+		const response = await fetch(urltofetch, {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'DELETE',
+			credentials: 'include',
+		});
+	};
+
+	const handleClickBlock = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		const response = await fetch('http://localhost:9999/api/users/me/blocklist', {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			credentials: 'include',
+			body: JSON.stringify({ id: uid })
+		});
+		console.log(response.json());//
+	};
+
+	const handleClickUnblock = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		let urltofetch : string;
+		urltofetch = 'http://localhost:9999/api/users/me/blocklist/' + uid;
+		console.log(urltofetch);//
+		const response = await fetch(urltofetch, {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'DELETE',
+			credentials: 'include',
+		});
 	};
 
 	const [data, setResult] = useState<resultProps>();
@@ -240,11 +278,10 @@ export function OtherProfile(){
 			<div className='Profile-container'>
 				<div className='Profile-Alias'>
 					<div className='Profile-Alias-div'>{data?.username}</div>
-					{/* <div>{data?.email}</div> */}
 					<div className='Profile-Alias-div'><AddButton variant="contained" disableRipple onClick={handleClickInvite}>Add to Friends</AddButton></div>
-					<div className='Profile-Alias-div'><RemoveButton variant="contained" disableRipple>Remove from Friends</RemoveButton></div>
-					<div className='Profile-Alias-div'><BlockButton variant="contained" disableRipple>Block user</BlockButton></div>
-					<div className='Profile-Alias-div'><UnblockButton variant="contained" disableRipple>Unblock user</UnblockButton></div>
+					<div className='Profile-Alias-div'><RemoveButton variant="contained" disableRipple onClick={handleClickRemove}>Remove from Friends</RemoveButton></div>
+					<div className='Profile-Alias-div'><BlockButton variant="contained" disableRipple onClick={handleClickBlock}>Block user</BlockButton></div>
+					<div className='Profile-Alias-div'><UnblockButton variant="contained" disableRipple onClick={handleClickUnblock}>Unblock user</UnblockButton></div>
 				</div>
 				<div className='Profile-container-row-lvl1'>
 					<div className='Profile-Avatar'>
@@ -300,13 +337,13 @@ export function OtherProfile(){
 }
 
 type invitesProps = {
-	invites: string[];
+	data: [];
 };
 
 export function Profile(){
 	const [data, setResult] = useState<resultProps>();
 	const [invites, setInvites] = useState<invitesProps>();
-	var uid: number = 1;//à mettre à 0
+	// var uid: number = 0;
 
 	useEffect(() => {
 		const api = async () => {
@@ -329,33 +366,20 @@ export function Profile(){
 		api();
 	}, []);
 
-	const handleClickAccept = async () => {
-		const response = await fetch('http://localhost:9999/api/users/me/friends', {
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'POST',
-			credentials: 'include',
-			body: JSON.stringify({ id: uid })
-		});
-		console.log(response.json());//
-	};
-
-	const handleClickReject = async () => {
-		let urltofetch : string;
-		urltofetch = 'http://localhost:9999/api/users/me/friends/invitations/' + uid;
-		console.log(urltofetch);//
-		const response = await fetch(urltofetch, {
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'DELETE',
-			credentials: 'include',
-		});
-		console.log(response.json());//
-	};
+	// const handleClickReject = async (uid: number) => {
+		// let urltofetch : string;
+		// urltofetch = 'http://localhost:9999/api/users/me/friends/invitations/' + uid;
+		// console.log(urltofetch);//
+		// const response = await fetch(urltofetch, {
+		// 	headers: {
+		// 		'Accept': 'application/json',
+		// 		'Content-Type': 'application/json'
+		// 	},
+		// 	method: 'DELETE',
+		// 	credentials: 'include',
+		// });
+	// 	console.log(response.json());//
+	// };
 
 	return(
 		<React.Fragment>
@@ -412,22 +436,58 @@ export function Profile(){
 					</div>
 					<h4>Invitations received</h4>
 					<div>
-						<div className='Profile-invitation-received'>
-							<div>
-								<img src={Avatar} alt="user's avatar" className='Profile-invitation-received-img'></img>
-							</div>
-							<div>user 1</div>
-							<div>
-								<IconButton color="success" aria-label="accept" onClick={handleClickAccept}>
-									<CheckIcon />
-								</IconButton>
-							</div>
-							<div>
-								<IconButton color="error" aria-label="reject" onClick={handleClickReject}>
-									<CloseIcon />
-								</IconButton>
-							</div>
-						</div>
+						{invites?.data.map((user: any) => {
+							var url: string = "/otherprofile";
+							url = url.concat("/");
+							url = url.concat(user.id);
+							var uid = user.id;
+							// console.log("uid = "+uid);
+							return(
+								<div className='Profile-invitation-received'>
+									<div>
+										<Link to={url} >
+											<div>
+												<img src={user.image_url} alt={user.username + "'s avatar"} className='Profile-invitation-received-img'></img>
+											</div>
+											<div>{user.username}</div>
+										</Link>
+										<div>
+											<IconButton color="success" aria-label="accept" onClick={()=>{
+												const response = fetch('http://localhost:9999/api/users/me/friends', {
+													headers: {
+														'Accept': 'application/json',
+														'Content-Type': 'application/json'
+													},
+													method: 'POST',
+													credentials: 'include',
+													body: JSON.stringify({ id: uid })
+												});
+											}}>
+												<CheckIcon />
+											</IconButton>
+										</div>
+										<div>
+											{/* <IconButton color="error" aria-label="reject" onClick={handleClickReject(user.id)}> */}
+											<IconButton color="error" aria-label="reject" onClick={()=>{
+												let urltofetch : string;
+												urltofetch = 'http://localhost:9999/api/users/me/friends/invitations/' + uid;
+												console.log(urltofetch);//
+												const response = fetch(urltofetch, {
+													headers: {
+														'Accept': 'application/json',
+														'Content-Type': 'application/json'
+													},
+													method: 'DELETE',
+													credentials: 'include',
+												});
+											}}>
+												<CloseIcon />
+											</IconButton>
+										</div>
+									</div>
+								</div>
+							);
+						})}
 					</div>
 				</div>
 			</div>
