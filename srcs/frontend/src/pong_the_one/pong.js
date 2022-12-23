@@ -39,6 +39,13 @@ function play() {
     requestAnimationFrame(play);
 }
 
+function playerMove(event)
+{
+
+}
+
+canvas.addEventListener('keydown', playerMove);
+
 document.addEventListener('DOMContentLoaded', function ()
 	{
 	    canvas = document.getElementById('canvas');
