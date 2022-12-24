@@ -39,12 +39,16 @@ function play() {
     requestAnimationFrame(play);
 }
 
-function playerMove(event)
+function playerMoveDown(event)
 {
 
 }
 
-canvas.addEventListener('keydown', playerMove);
+function playerMoveUp(event)
+{
+
+}
+
 
 document.addEventListener('DOMContentLoaded', function ()
 	{
@@ -73,5 +77,6 @@ document.addEventListener('DOMContentLoaded', function ()
 	    }
 	    draw();
 		play();
+		canvas.addEventListener('keydown', playerMoveDown);
 	}
 );

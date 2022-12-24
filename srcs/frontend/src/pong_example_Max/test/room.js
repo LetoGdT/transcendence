@@ -42,28 +42,36 @@ module.exports = class room {
             start_player = this.player2;
         }
 
-        this.players.forEach(player => {
-            if(player.keypress[UP] && player.to_trans.y >= 0) {
-                player.to_trans.y -= 7;
-            }
-            if(player.keypress[DOWN] && player_height + player.to_trans.y < config.screen_height) {
+        this.players.forEach
+        (
+            player =>
+            {
+                if (player.keypress[UP] && player.to_trans.y >= 0)
+                {
+                    player.to_trans.y -= 7;
+                }
+            if (player.keypress[DOWN] && player_height + player.to_trans.y < config.screen_height)
+            {
                 player.to_trans.y += 7;
             }
-            if(start_player.keypress[SPACE] && this.curr_state != "ST_ONGAME"
+            if (start_player.keypress[SPACE] && this.curr_state != "ST_ONGAME"
                && this.curr_state != "ST_GAMEOVER" 
                && (this.curr_state == "ST_LEFTBALL" || this.curr_state == "ST_RIGHTBALL" 
-               || this.curr_state == "ST_IDLE")) {
+               || this.curr_state == "ST_IDLE"))
+            {
                 this.ball.vel_x = this.ball.speed;
                 this.curr_state = "ST_ONGAME"
             }
             ids.push(player.id);
             status[player.id] = player.to_trans;
-        });
+            }
+        );
 
-        if((this.player1.points == config.end_point
-        || this.player2.points == config.end_point)
-        && this.curr_state != "ST_GAMEOVER"
-        && this.game_done == false) {
+        if ((this.player1.points == config.end_point
+            || this.player2.points == config.end_point)
+            && this.curr_state != "ST_GAMEOVER"
+            && this.game_done == false)
+        {
             let winner = this.curr_state === "ST_RIGHTBALL" ? this.player1.username : this.player2.username;
             let winning_text = winner + ' Won!';
             this.curr_state = "ST_GAMEOVER";
