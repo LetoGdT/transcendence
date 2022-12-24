@@ -55,65 +55,76 @@
     });
 
     let players = [];
-    class player {
-        constructor (xpos = 0, ypos = 0) {
+    class player
+    {
+        constructor (xpos = 0, ypos = 0)
+        {
             this.x = xpos;
             this.y = ypos;
             this.width = 0 
             this.height = 0;
             this.username = "";
         }
-        init() {
-        }
 
-        update() {
+        init() {}
+
+        update()
+        {
             this.width = player_width;
             this.height = player_height;
         }
 
-        draw() {
+        draw()
+        {
             ctx.fillRect(this.x, this.y, this.width, this.height);
         }
     };
 
-    ball = {
+    ball =
+    {
         x: null,
         y: null,
         vel: null,
         side: 0,
         speed: 8,
-        update: function () {
-        },
+        update: function () {},
 
-        draw: function() {
+        draw: function()
+        {
             ctx.fillRect(this.x, this.y, this.side, this.side);
         }
     };
 
-    function init() {
+    function init()
+    {
         ball.side = player_width;
         ball.x = (width - ball.side) / 2;
         ball.y = (height - ball.side) / 2;
         console.log(player_width);
-        ball.vel = {
+        ball.vel =
+        {
             x: ball.speed,
             y: 0
         };
     }
     
-    function update() {
+    function update()
+    {
         ball.update();
-        for(p in players) {
+        for(p in players)
+        {
             players[p].update();
         }
     }
 
-    function draw() {
+    function draw()
+    {
         ctx.fillRect(0, 0, width, height);
         ctx.save();
         ctx.fillStyle = "#fff";
 
-        for(p in players){
+        for (p in players)
+        {
             players[p].draw();
         }
 
@@ -125,7 +136,8 @@
         var step = height / 20;
 
         // draw half line
-        while (y < height) {
+        while (y < height)
+        {
             ctx.fillRect(x, y + step * 0.25, mid_width, step * 0.5);
             y += step;
         }
@@ -145,12 +157,14 @@
         ctx.restore();
     }
 
-    function main() {
+    function main()
+    {
         canvas = document.createElement("canvas");
         ctx = canvas.getContext("2d");
         document.body.appendChild(canvas);
 
-        var loop = function() {
+        var loop = function()
+        {
             canvas.width = width;
             canvas.height = height;
             update();
@@ -163,7 +177,8 @@
 
     main();
 
-    socket.on('config', (config) => {
+    socket.on('config', (config) =>
+    {
         width         = config.screen_width;
         height        = config.screen_height;
         player_width  = config.player_width;
@@ -172,12 +187,14 @@
         init();
     })
 
-    socket.on('usernames', (usernames) => {
+    socket.on('usernames', (usernames) =>
+    {
         username.push(usernames[0]);
         username.push(usernames[1]);
     })
 
-    socket.on('game_over', (msg) => {
+    socket.on('game_over', (msg) =>
+    {
         message = msg;
         // Create the button
         let leave_button = document.createElement("button");
@@ -188,30 +205,38 @@
         body.appendChild(leave_button);
 
         // Add event handler
-        leave_button.addEventListener("click", function () {
+        leave_button.addEventListener("click", function ()
+        {
             window.location.href = '/';
         });
     }) 
 
-    socket.on('score', (score_user) => {
+    socket.on('score', (score_user) =>
+    {
         console.log(score_user);
-        if(score_user == "ST_RIGHTBALL") {
+        if(score_user == "ST_RIGHTBALL")
+        {
             score1 += 1;
         } 
-        else if(score_user == "ST_LEFTBALL") {
+        else if(score_user == "ST_LEFTBALL")
+        {
             score2 += 1;
         }
     })
 
     // update game info
-    socket.on('update', (ids, player_status, ball_status) => {
+    socket.on('update', (ids, player_status, ball_status) =>
+    {
         console.log('update');
         players = [];
-        for (id of ids) {
-            if(players[id] == null || players[id] == undefined) { 
+        for (id of ids)
+        {
+            if(players[id] == null || players[id] == undefined)
+            { 
                 players[id] = new player(player_status[id].x, player_status[id].y);
             } 
-            else {
+            else
+            {
                 players[id].x = player_status[id].x;
                 players[id].y = player_status[id].y;
             }

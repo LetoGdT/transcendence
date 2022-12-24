@@ -1,6 +1,7 @@
 const Ball = require('./ball.js')
 const Player = require('./player.js')
-const config = {
+const config =
+{
     screen_width,
     screen_height,
     player_width,
@@ -11,8 +12,10 @@ const config = {
 const game_state = ["ST_IDLE", "ST_DISCONNECTED", "ST_ONGAME", "ST_LEFTBALL", "ST_RIGHTBALL"];
 const UP = 38, DOWN = 40, SPACE = 32;
 
-module.exports = class room {
-    constructor(p1, p2, io) {
+module.exports = class room
+{
+    constructor(p1, p2, io)
+    {
         this.player1 = new Player(p1, config.player_width, (config.screen_height - config.player_height)/ 2);
         this.player2 = new Player(p2, config.screen_width - config.player_width * 2, (config.screen_height - config.player_height) / 2);
         this.ball    = new Ball((config.screen_width - config.player_width) / 2, (config.screen_height - config.player_width) / 2);
@@ -25,7 +28,8 @@ module.exports = class room {
         this.players.push(this.player1);
         this.players.push(this.player2);
     }
-    init() {
+    init()
+    {
         let usernames = [this.player1.username, this.player2.username];
         this.io.to(this.player1.id).emit('usernames', usernames);
         this.io.to(this.player2.id).emit('usernames', usernames)
@@ -33,12 +37,14 @@ module.exports = class room {
         this.io.to(this.player2.id).emit('config', config);
     }
 
-    update() {
+    update()
+    {
         let status = {};
         let ids = [];
         // Determine player to start.
         let start_player = this.player1;
-        if(this.curr_state === "ST_RIGHTBALL") {
+        if(this.curr_state === "ST_RIGHTBALL")
+        {
             start_player = this.player2;
         }
 
@@ -87,7 +93,8 @@ module.exports = class room {
         }
     }
     
-    disconnect(id) {
+    disconnect(id)
+    {
         this.curr_state = "ST_DISCONNECTED"
         let disconnected_user = (id === this.player1.id) ? this.player1.username : this.player2.username;
         let connected_id = (id === this.player1.id) ? this.player2.id : this.player1.id;
@@ -96,7 +103,8 @@ module.exports = class room {
         console.log(msg);
     }
 
-    print_room() {
+    print_room()
+    {
         console.log("----------------------------------")
         console.log("Room ID: " + this.id);
         console.log("player 1: " + this.player1.username + "(" + this.player1.id + ")");
