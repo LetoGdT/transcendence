@@ -5,7 +5,7 @@ let game; // del need type
 
 const PLAYER_HEIGHT = 100
 const PLAYER_WIDTH = 5
-const BALL_SPEED = 8
+const BALL_SPEED = 5
 const UP = 38
 const DOWN = 40
 const STEP = 12
@@ -47,7 +47,10 @@ function play()
 
 function playerMove(event)
 {
-	if (event.keyCode === W && game.player1.y >= 0)
+	if (game.player1.y >= 0
+		&& (event.keyCode === W
+		|| (event.keyCode === W && event.keyCode === UP)
+		|| (event.keyCode === W && event.keyCode === DOWN)))
 	{
 		game.player1.y -= STEP;
 	}
@@ -100,10 +103,21 @@ function collide(opponent) {
 		// Reset speed
 		game.ball.speed.x = BALL_SPEED;
 		game.ball.speed.y = BALL_SPEED;
-	} else {
+	}
+	else
+	{
 		// Increase speed and change direction
 		game.ball.speed.x *= -1.2;
+		changeDirection(opponent.y);
 	}
+}
+
+function changeDirection(playerPosition)
+{
+    let impact = game.ball.y - playerPosition - PLAYER_HEIGHT / 2;
+    let ratio = 100 / (PLAYER_HEIGHT / 2);
+    // Get a value between 0 and 10
+    game.ball.speed.y = Math.round(impact * ratio / 10);
 }
 
 document.addEventListener('DOMContentLoaded', function ()
