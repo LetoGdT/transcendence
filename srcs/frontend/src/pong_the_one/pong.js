@@ -43,7 +43,7 @@ function play() {
 
 function playerMove(event)
 {
- if (event = UP && player1.y <= 0)
+ if (event.keyCode = UP && player1.y <= 0)
 	player1.y += 7;
 }
 
