@@ -25,7 +25,7 @@ function draw()
     ctx.stroke();
 	// Draw players
 	ctx.fillStyle = 'white';
-	ctx.fillRect(0, game.player1.y, PLAYER_WIDTH, PLAYER_HEIGHT);
+	ctx.fillRect(0, game.player.y, PLAYER_WIDTH, PLAYER_HEIGHT);
 	ctx.fillRect(canvas.width - PLAYER_WIDTH, game.player2.y, PLAYER_WIDTH, PLAYER_HEIGHT);
 	// Draw ball
 	ctx.beginPath();
@@ -43,28 +43,27 @@ function play() {
 
 function playerMove(event)
 {
-	if (event.keyCode === UP) // + && player1.y >= 0
+	if (event.keyCode === UP && game.player.y >= 0)
 	{
-		game.player1.y -= 7;
+		game.player.y -= 7;
 	}
-	if (event.keyCode === DOWN) // + && player1.y >= 0
+	if (event.keyCode === DOWN  && game.player.y <= canvas.height - PLAYER_HEIGHT)
 	{
-		game.player1.y += 7;
+		game.player.y += 7;
 	}
 }
 
 
 document.addEventListener('DOMContentLoaded', function ()
 {
-	console.log("A"); // del
 	canvas = document.getElementById('canvas');
 	game =
 	{
-		player1:
+		player:
 		{
 			y: canvas.height / 2 - PLAYER_HEIGHT / 2
 		},
-		player2:
+		player2: // needs to be received from the other player, via the server
 		{
 			y: canvas.height / 2 - PLAYER_HEIGHT / 2
 		},
@@ -81,9 +80,6 @@ document.addEventListener('DOMContentLoaded', function ()
 		}
 	};
 	window.addEventListener('keydown', playerMove);
-	console.log("B"); // del
-	console.log("C"); // del
 	play();
-	console.log("D"); // del
 	// Mouvement du joueur
 });
