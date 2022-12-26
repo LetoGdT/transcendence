@@ -45,41 +45,45 @@ function playerMove(event)
 {
 	if (event.keyCode === UP) // + && player1.y >= 0
 	{
-		console.log="YESSSSSSSSSSSSS";
-		<h1 style='color:red;'>YESSSSSSSSSSSS</h1>
-		// player1.y += 7;
+		game.player1.y -= 7;
+	}
+	if (event.keyCode === DOWN) // + && player1.y >= 0
+	{
+		game.player1.y += 7;
 	}
 }
 
 
 document.addEventListener('DOMContentLoaded', function ()
+{
+	console.log("A"); // del
+	canvas = document.getElementById('canvas');
+	game =
 	{
-	    canvas = document.getElementById('canvas');
-		game =
+		player1:
 		{
-			player1:
+			y: canvas.height / 2 - PLAYER_HEIGHT / 2
+		},
+		player2:
+		{
+			y: canvas.height / 2 - PLAYER_HEIGHT / 2
+		},
+		ball:
+		{
+			x: canvas.width / 2,
+			y: canvas.height / 2,
+			r: 5,
+			speed:
 			{
-				y: canvas.height / 2 - PLAYER_HEIGHT / 2
-	        },
-	        player2:
-			{
-	        	y: canvas.height / 2 - PLAYER_HEIGHT / 2
-	        },
-	        ball:
-			{
-	        	x: canvas.width / 2,
-	            y: canvas.height / 2,
-	            r: 5,
-				speed:
-				{
-					x: 2,
-					y: 2
-				}
-	        }
-	    }
-		canvas.addEventListener('keydown', playerMove);
-	    draw();
-		play();
-		// Mouvement du joueur
-	}
-);
+				x: 2,
+				y: 2
+			}
+		}
+	};
+	window.addEventListener('keydown', playerMove);
+	console.log("B"); // del
+	console.log("C"); // del
+	play();
+	console.log("D"); // del
+	// Mouvement du joueur
+});
