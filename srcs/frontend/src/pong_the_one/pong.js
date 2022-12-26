@@ -43,8 +43,12 @@ function play() {
 
 function playerMove(event)
 {
- if (event.keyCode = UP && player1.y <= 0)
-	player1.y += 7;
+	if (event.keyCode === UP) // + && player1.y >= 0
+	{
+		console.log="YESSSSSSSSSSSSS";
+		<h1 style='color:red;'>YESSSSSSSSSSSS</h1>
+		// player1.y += 7;
+	}
 }
 
 
