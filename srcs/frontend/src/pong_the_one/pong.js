@@ -6,6 +6,15 @@ let game; // del need type
 const PLAYER_HEIGHT = 100
 const PLAYER_WIDTH = 5
 const BALL_SPEED = 5
+
+// const moves =
+// {
+// 	87: {pressed: false, func: player1.moveUp},   // change it to 38
+// 	83: {pressed: false, func: player1.moveDown}, // change it to 40
+// 	38: {pressed: false, func: player2.moveUp},
+// 	40: {pressed: false, func: player2.moveDown},
+// }
+
 const UP = 38
 const DOWN = 40
 const STEP = 12
@@ -47,10 +56,7 @@ function play()
 
 function playerMove(event)
 {
-	if (game.player1.y >= 0
-		&& (event.keyCode === W
-		|| (event.keyCode === W && event.keyCode === UP)
-		|| (event.keyCode === W && event.keyCode === DOWN)))
+	if (event.keyCode === W && game.player1.y >= 0)
 	{
 		game.player1.y -= STEP;
 	}
@@ -145,6 +151,16 @@ document.addEventListener('DOMContentLoaded', function ()
 			}
 		}
 	};
+	// window.addEventListener('keydown', (event)=>
+	// {
+	// 	if (moves[event.key])
+	// 		moves[event.key].pressed = true;
+	// });
+	// window.addEventListener('keyup', (event)=>
+	// {
+	// 	if (moves[event.key])
+	// 		moves[event.key].pressed = false;
+	// });
 	window.addEventListener('keydown', playerMove);
 	play();
 	// Mouvement du joueur
