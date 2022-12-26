@@ -7,6 +7,8 @@ const PLAYER_HEIGHT = 100;
 const PLAYER_WIDTH = 5;
 const UP = 38
 const DOWN = 40
+const W = 87
+const S = 83
 
 function draw()
 {
@@ -25,7 +27,7 @@ function draw()
     ctx.stroke();
 	// Draw players
 	ctx.fillStyle = 'white';
-	ctx.fillRect(0, game.player.y, PLAYER_WIDTH, PLAYER_HEIGHT);
+	ctx.fillRect(0, game.player1.y, PLAYER_WIDTH, PLAYER_HEIGHT);
 	ctx.fillRect(canvas.width - PLAYER_WIDTH, game.player2.y, PLAYER_WIDTH, PLAYER_HEIGHT);
 	// Draw ball
 	ctx.beginPath();
@@ -43,13 +45,21 @@ function play() {
 
 function playerMove(event)
 {
-	if (event.keyCode === UP && game.player.y >= 0)
+	if (event.keyCode === UP && game.player1.y >= 0)
 	{
-		game.player.y -= 7;
+		game.player1.y -= 7;
 	}
-	if (event.keyCode === DOWN  && game.player.y <= canvas.height - PLAYER_HEIGHT)
+	if (event.keyCode === DOWN  && game.player1.y <= canvas.height - PLAYER_HEIGHT)
 	{
-		game.player.y += 7;
+		game.player1.y += 7;
+	}
+	if (event.keyCode === W && game.player2.y >= 0)
+	{
+		game.player2.y -= 7;
+	}
+	if (event.keyCode === S  && game.player2.y <= canvas.height - PLAYER_HEIGHT)
+	{
+		game.player2.y += 7;
 	}
 }
 
@@ -59,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function ()
 	canvas = document.getElementById('canvas');
 	game =
 	{
-		player:
+		player1:
 		{
 			y: canvas.height / 2 - PLAYER_HEIGHT / 2
 		},
