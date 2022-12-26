@@ -5,6 +5,8 @@ let game; // del need type
 
 const PLAYER_HEIGHT = 100;
 const PLAYER_WIDTH = 5;
+const UP = 38
+const DOWN = 40
 
 function draw()
 {
@@ -39,14 +41,10 @@ function play() {
     requestAnimationFrame(play);
 }
 
-function playerMoveDown(event)
+function playerMove(event)
 {
-
-}
-
-function playerMoveUp(event)
-{
-
+ if (event = UP && player1.y <= 0)
+	player1.y += 7;
 }
 
 
@@ -75,8 +73,9 @@ document.addEventListener('DOMContentLoaded', function ()
 				}
 	        }
 	    }
+		canvas.addEventListener('keydown', playerMove);
 	    draw();
 		play();
-		canvas.addEventListener('keydown', playerMoveDown);
+		// Mouvement du joueur
 	}
 );

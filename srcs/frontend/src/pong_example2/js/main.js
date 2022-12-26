@@ -8,7 +8,7 @@ const PLAYER_HEIGHT = 100;
 const PLAYER_WIDTH = 5;
 const MAX_SPEED = 12;
 
-// function draw() {
+function draw() {
     var context = canvas.getContext('2d');
 
     // Draw field
@@ -32,7 +32,7 @@ const MAX_SPEED = 12;
     context.fillStyle = 'white';
     context.arc(game.ball.x, game.ball.y, game.ball.r, 0, Math.PI * 2, false);
     context.fill();
-// }
+}
 
 function changeDirection(playerPosition) {
     var impact = game.ball.y - playerPosition - PLAYER_HEIGHT / 2;
