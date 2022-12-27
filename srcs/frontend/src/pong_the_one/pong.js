@@ -16,7 +16,7 @@ const STEP = 12
 const W = 87
 const S = 83
 
-function draw(score1, score2)
+async function draw(score1, score2) // keep it async or make a startGame function ?
 {
 	let ctx = canvas.getContext('2d');
 
@@ -52,7 +52,6 @@ function draw(score1, score2)
 	// Display set = start game
 	if (game.start === true)
 	{
-		console.log("A");
 		ctx.lineWidth = 27;
 		ctx.strokeStyle = 'white';
 		ctx.lineJoin = 'square';
@@ -66,7 +65,9 @@ function draw(score1, score2)
 		ctx.lineTo(590, 440);
 		ctx.lineTo(450, 440);
 		ctx.stroke();
-		// ICI call sleep	
+		console.log("A") // del
+		await sleep(2000);
+		console.log("B") // del
 	}
 	// Display set = game going on
 	// else
