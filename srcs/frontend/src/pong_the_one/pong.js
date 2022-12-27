@@ -4,7 +4,7 @@ let canvas; // del need type
 let game; // del need type
 
 const PLAYER_HEIGHT = 100
-const PLAYER_WIDTH = 5
+const PLAYER_WIDTH = 13
 const BALL_SPEED = 5
 
 // const moves =
@@ -21,10 +21,10 @@ const STEP = 12
 const W = 87
 const S = 83
 
-function draw()
+function draw(score1, score2)
 {
 	let ctx = canvas.getContext('2d');
-	
+
 	// Draw field
 	ctx.fillStyle = 'black';
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -32,10 +32,11 @@ function draw()
 	ctx.lineWidth = 5;
 	ctx.strokeStyle = 'white';
 	ctx.beginPath();
-	ctx.setLineDash([5, 15]);
+	ctx.setLineDash([5, 15]); // dotted line for the net
 	ctx.moveTo(canvas.width / 2, 0);
 	ctx.lineTo(canvas.width / 2, canvas.height);
 	ctx.stroke();
+	ctx.setLineDash([]); // sets the line back to solid
 	// Draw players
 	ctx.fillStyle = 'white';
 	ctx.fillRect(0, game.player1.y, PLAYER_WIDTH, PLAYER_HEIGHT);
@@ -45,50 +46,97 @@ function draw()
 	ctx.fillStyle = 'white';
 	ctx.arc(game.ball.x, game.ball.y, game.ball.r, 0, Math.PI * 2, false);
 	ctx.fill();
+	// Draw scores
+	switch (game.player1.score)
+	{
+		case 0:
+			{
+				ctx.lineWidth = 8;
+				ctx.strokeStyle = 'white';
+				ctx.lineJoin = 'square';
+				ctx.beginPath();
+				ctx.moveTo(240, 100);
+				ctx.lineTo(280, 100);
+				ctx.lineTo(280, 160);
+				ctx.lineTo(240, 160);
+				ctx.lineTo(240, 96);
+				ctx.stroke();
+			}
+			break;
+		default:
+			{
+				console.log('D'); // del
+				ctx.beginPath();
+				ctx.moveTo(165, 100);
+				ctx.moveTo(330, 100);
+				ctx.moveTo(330, 200);
+				ctx.moveTo(165, 200);
+				ctx.moveTo(165, 100);
+				ctx.stroke();
+			}
+	}
+	switch (game.player2.score)
+	{
+		case 0:
+			{
+				ctx.lineWidth = 8;
+				ctx.strokeStyle = 'white';
+				ctx.lineJoin = 'square';
+				ctx.beginPath();
+				ctx.moveTo(760, 100);
+				ctx.lineTo(800, 100);
+				ctx.lineTo(800, 160);
+				ctx.lineTo(760, 160);
+				ctx.lineTo(760, 96);
+				ctx.stroke();
+			}
+			break;
+		default:
+			{
+				console.log('D'); // del
+				ctx.beginPath();
+				ctx.moveTo(165, 100);
+				ctx.moveTo(330, 100);
+				ctx.moveTo(330, 200);
+				ctx.moveTo(165, 200);
+				ctx.moveTo(165, 100);
+				ctx.stroke();
+			}
+	}
 }
 
-function play()
-{
+function play() {
 	draw();
 	ballMove();
 	requestAnimationFrame(play);
 }
 
-function playerMove(event)
-{
-	if (event.keyCode === W && game.player1.y >= 0)
-	{
+function playerMove(event) {
+	if (event.keyCode === W && game.player1.y >= 0) {
 		game.player1.y -= STEP;
 	}
-	if (event.keyCode === S  && game.player1.y <= canvas.height - PLAYER_HEIGHT)
-	{
+	if (event.keyCode === S && game.player1.y <= canvas.height - PLAYER_HEIGHT) {
 		game.player1.y += STEP;
 	}
-	if (event.keyCode === UP && game.player2.y >= 0)
-	{
+	if (event.keyCode === UP && game.player2.y >= 0) {
 		game.player2.y -= STEP;
 	}
-	if (event.keyCode === DOWN  && game.player2.y <= canvas.height - PLAYER_HEIGHT)
-	{
+	if (event.keyCode === DOWN && game.player2.y <= canvas.height - PLAYER_HEIGHT) {
 		game.player2.y += STEP;
 	}
 }
 
-function ballMove()
-{
+function ballMove() {
 	// Rebounds on top and bottom
-	if (game.ball.y > canvas.height || game.ball.y < 0)
-	{
+	if (game.ball.y > canvas.height || game.ball.y < 0) {
 		game.ball.speed.y *= -1;
 	}
 
 	// The ball reaches the left or right limit
-	if (game.ball.x > canvas.width - PLAYER_WIDTH)
-	{
+	if (game.ball.x > canvas.width - PLAYER_WIDTH) {
 		collide(game.player2);
 	}
-	else if (game.ball.x < PLAYER_WIDTH)
-	{
+	else if (game.ball.x < PLAYER_WIDTH) {
 		collide(game.player1);
 	}
 
@@ -100,44 +148,45 @@ function ballMove()
 function collide(opponent) {
 	// The player misses the ball
 	if (game.ball.y < opponent.y || game.ball.y > opponent.y + PLAYER_HEIGHT) {
+		// Draw scores
+		game.opponent.score++;
 		// Set ball and players to the center
 		game.ball.x = canvas.width / 2;
 		game.ball.y = canvas.height / 2;
 		game.player1.y = canvas.height / 2 - PLAYER_HEIGHT / 2;
 		game.player2.y = canvas.height / 2 - PLAYER_HEIGHT / 2;
-		
+
 		// Reset speed
 		game.ball.speed.x = BALL_SPEED;
 		game.ball.speed.y = BALL_SPEED;
 	}
-	else
-	{
+	else {
 		// Increase speed and change direction
 		game.ball.speed.x *= -1.2;
 		changeDirection(opponent.y);
 	}
 }
 
-function changeDirection(playerPosition)
-{
-    let impact = game.ball.y - playerPosition - PLAYER_HEIGHT / 2;
-    let ratio = 100 / (PLAYER_HEIGHT / 2);
-    // Get a value between 0 and 10
-    game.ball.speed.y = Math.round(impact * ratio / 10);
+function changeDirection(playerPosition) {
+	let impact = game.ball.y - playerPosition - PLAYER_HEIGHT / 2;
+	let ratio = 100 / (PLAYER_HEIGHT / 2);
+	// Get a value between 0 and 10
+	game.ball.speed.y = Math.round(impact * ratio / 10);
 }
 
-document.addEventListener('DOMContentLoaded', function ()
-{
+document.addEventListener('DOMContentLoaded', function () {
 	canvas = document.getElementById('canvas');
 	game =
 	{
 		player1:
 		{
-			y: canvas.height / 2 - PLAYER_HEIGHT / 2
+			y: canvas.height / 2 - PLAYER_HEIGHT / 2,
+			score: 0
 		},
 		player2: // needs to be received from the other player, via the server
 		{
-			y: canvas.height / 2 - PLAYER_HEIGHT / 2
+			y: canvas.height / 2 - PLAYER_HEIGHT / 2,
+			score: 0
 		},
 		ball:
 		{
@@ -146,8 +195,8 @@ document.addEventListener('DOMContentLoaded', function ()
 			r: 5,
 			speed:
 			{
-				x: BALL_SPEED,
-				y: BALL_SPEED
+				// x: BALL_SPEED,
+				// y: BALL_SPEED
 			}
 		}
 	};
