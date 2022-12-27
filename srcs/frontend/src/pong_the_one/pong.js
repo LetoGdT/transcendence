@@ -6,15 +6,6 @@ let game; // del need type
 const PLAYER_HEIGHT = 100
 const PLAYER_WIDTH = 13
 const BALL_SPEED = 5
-
-// const moves =
-// {
-// 	87: {pressed: false, func: player1.moveUp},   // change it to 38
-// 	83: {pressed: false, func: player1.moveDown}, // change it to 40
-// 	38: {pressed: false, func: player2.moveUp},
-// 	40: {pressed: false, func: player2.moveDown},
-// }
-
 const UP = 38
 const DOWN = 40
 const STEP = 12
@@ -48,6 +39,38 @@ function draw(score1, score2)
 	ctx.fill();
 	// Draw scores
 	drawScore(ctx);
+	// Display set = game over
+	if (game.over === true)
+	{
+
+	}	
+	// Display set = start game
+	if (game.start === true)
+	{
+		console.log("A");
+		ctx.lineWidth = 27;
+		ctx.strokeStyle = 'white';
+		ctx.lineJoin = 'square';
+	
+		ctx.beginPath();
+		ctx.moveTo(450, 240);
+		ctx.lineTo(590, 240);
+		ctx.lineTo(590, 340);
+		ctx.lineTo(500, 340);
+		ctx.lineTo(590, 340);
+		ctx.lineTo(590, 440);
+		ctx.lineTo(450, 440);
+			// ctx.moveTo(250, 100);
+			// ctx.lineTo(280, 100);
+			// ctx.lineTo(280, 130);
+			// ctx.lineTo(260, 130);
+			// ctx.lineTo(280, 130);
+			// ctx.lineTo(280, 160);
+			// ctx.lineTo(250, 160);
+		ctx.stroke();
+	}
+	// Display set = game going on
+	// else
 }
 
 function drawScore(ctx)
@@ -321,6 +344,7 @@ function changeDirection(playerPosition)
 function gameOver()
 {
 	// make it freeze with score 5 displayed
+
 	game.player1.score = 0; // not needed here in final version
 	game.player2.score = 0; // not needed here in final version
 	draw();
@@ -331,15 +355,19 @@ document.addEventListener('DOMContentLoaded', function ()
 	canvas = document.getElementById('canvas');
 	game =
 	{
+		start: true,
+		over: false,
 		player1:
 		{
 			y: canvas.height / 2 - PLAYER_HEIGHT / 2,
-			score: 0
+			score: 0,
+			win: false
 		},
 		player2: // needs to be received from the other player, via the server
 		{
 			y: canvas.height / 2 - PLAYER_HEIGHT / 2,
-			score: 0
+			score: 0,
+			win: false
 		},
 		ball:
 		{
@@ -353,16 +381,6 @@ document.addEventListener('DOMContentLoaded', function ()
 			}
 		}
 	};
-	// window.addEventListener('keydown', (event)=>
-	// {
-	// 	if (moves[event.key])
-	// 		moves[event.key].pressed = true;
-	// });
-	// window.addEventListener('keyup', (event)=>
-	// {
-	// 	if (moves[event.key])
-	// 		moves[event.key].pressed = false;
-	// });
 	window.addEventListener('keydown', playerMove);
 	play();
 	// Mouvement du joueur
