@@ -82,12 +82,12 @@ function drawScore(ctx)
 		case 2:
 		{
 			ctx.beginPath();
-			ctx.moveTo(236, 100); // 1
-			ctx.lineTo(280, 100); // 2
-			ctx.lineTo(280, 130); // 3
-			ctx.lineTo(240, 130); // 4
-			ctx.lineTo(240, 160); // 5
-			ctx.lineTo(284, 160); // 6
+			ctx.moveTo(236, 100);
+			ctx.lineTo(280, 100);
+			ctx.lineTo(280, 130);
+			ctx.lineTo(240, 130);
+			ctx.lineTo(240, 160);
+			ctx.lineTo(284, 160);
 			ctx.stroke();
 		}
 			break;
@@ -120,12 +120,12 @@ function drawScore(ctx)
 		case 5:
 		{
 			ctx.beginPath();
-			ctx.moveTo(285, 100); // 2
-			ctx.lineTo(240, 100); // 1
-			ctx.lineTo(240, 130); // 4
-			ctx.lineTo(280, 130); // 3
-			ctx.lineTo(280, 160); // 6
-			ctx.lineTo(236, 160); // 5
+			ctx.moveTo(285, 100);
+			ctx.lineTo(240, 100);
+			ctx.lineTo(240, 130);
+			ctx.lineTo(280, 130);
+			ctx.lineTo(280, 160);
+			ctx.lineTo(236, 160);
 			ctx.stroke();
 		}
 			break;
@@ -163,6 +163,7 @@ function drawScore(ctx)
 			ctx.lineTo(805, 160);
 			ctx.stroke();
 		}
+			break;
 		case 2:
 		{
 			ctx.beginPath();
@@ -200,21 +201,21 @@ function drawScore(ctx)
 			ctx.lineTo(795, 155);
 			ctx.stroke();
 		}
+			break;
 		case 5:
 		{
 			ctx.beginPath();
-			ctx.moveTo(819, 100); // 2
-			ctx.lineTo(775, 100); // 1
-			ctx.lineTo(775, 130); // 4
-			ctx.lineTo(815, 130); // 3
-			ctx.lineTo(815, 160); // 6
-			ctx.lineTo(771, 160); // 5
+			ctx.moveTo(819, 100);
+			ctx.lineTo(775, 100);
+			ctx.lineTo(775, 130);
+			ctx.lineTo(815, 130);
+			ctx.lineTo(815, 160);
+			ctx.lineTo(771, 160);
 			ctx.stroke();
 		}
 			break;
 		default: // never gets in
 		{
-			console.log('D'); // del
 			ctx.beginPath();
 			ctx.moveTo(165, 100);
 			ctx.moveTo(330, 100);
@@ -277,9 +278,20 @@ function ballMove()
 function collide(opponent)
 {
 	// The player misses the ball
-	if (game.ball.y < opponent.y || game.ball.y > opponent.y + PLAYER_HEIGHT) {
-		// Draw scores
-		game.opponent.score++;
+	if (game.ball.y < opponent.y || game.ball.y > opponent.y + PLAYER_HEIGHT)
+	{
+		// The player who scores get 1 point
+		if (opponent == game.player1)
+			game.player2.score++;
+		else
+			game.player1.score++;
+		// End of the game when one player has 5 points
+		if (game.player1.score === 5 || game.player2.score === 5)
+		{
+			gameOver();
+			draw(); // change it to reset ?
+			// reset();
+		}
 		// Set ball and players to the center
 		game.ball.x = canvas.width / 2;
 		game.ball.y = canvas.height / 2;
@@ -306,6 +318,14 @@ function changeDirection(playerPosition)
 	game.ball.speed.y = Math.round(impact * ratio / 10);
 }
 
+function gameOver()
+{
+	// make it freeze with score 5 displayed
+	game.player1.score = 0; // not needed here in final version
+	game.player2.score = 0; // not needed here in final version
+	draw();
+}
+
 document.addEventListener('DOMContentLoaded', function ()
 {
 	canvas = document.getElementById('canvas');
@@ -314,12 +334,12 @@ document.addEventListener('DOMContentLoaded', function ()
 		player1:
 		{
 			y: canvas.height / 2 - PLAYER_HEIGHT / 2,
-			score: 5
+			score: 0
 		},
 		player2: // needs to be received from the other player, via the server
 		{
 			y: canvas.height / 2 - PLAYER_HEIGHT / 2,
-			score: 5
+			score: 0
 		},
 		ball:
 		{
