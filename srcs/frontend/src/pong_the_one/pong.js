@@ -20,6 +20,7 @@ async function draw(score1, score2) // keep it async or make a startGame functio
 {
 	let ctx = canvas.getContext('2d');
 
+	await sleep(2000); // del
 	// Draw field
 	ctx.fillStyle = 'black';
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -43,6 +44,7 @@ async function draw(score1, score2) // keep it async or make a startGame functio
 	ctx.fill();
 	// Draw scores
 	drawScore(ctx);
+	// Saves the canvas with an empty game field, so it can be used to "erase" the timer figures
 	let emptyField = ctx.getImageData(0, 0, canvas.width, canvas.height);
 	// Display set = game over
 	if (game.over === true)
@@ -65,7 +67,7 @@ async function draw(score1, score2) // keep it async or make a startGame functio
 		ctx.lineTo(590, 440);
 		ctx.lineTo(450, 440);
 		ctx.stroke();
-		console.log("A") // del
+		// console.log("A") // del
 		await sleep(2000);
 		console.log("B") // del
 	}
@@ -75,6 +77,7 @@ async function draw(score1, score2) // keep it async or make a startGame functio
 
 function sleep(ms)
 {
+	// console.log("B") // del
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
