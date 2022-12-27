@@ -82,12 +82,12 @@ function drawScore(ctx)
 		case 2:
 		{
 			ctx.beginPath();
-			ctx.moveTo(236, 100);
-			ctx.lineTo(280, 100);
-			ctx.lineTo(280, 130);
-			ctx.lineTo(240, 130);
-			ctx.lineTo(240, 160);
-			ctx.lineTo(284, 160);
+			ctx.moveTo(236, 100); // 1
+			ctx.lineTo(280, 100); // 2
+			ctx.lineTo(280, 130); // 3
+			ctx.lineTo(240, 130); // 4
+			ctx.lineTo(240, 160); // 5
+			ctx.lineTo(284, 160); // 6
 			ctx.stroke();
 		}
 			break;
@@ -117,14 +117,15 @@ function drawScore(ctx)
 			ctx.stroke();
 		}
 			break;
-		case 0:
+		case 5:
 		{
 			ctx.beginPath();
-			ctx.moveTo(240, 100);
-			ctx.lineTo(280, 100);
-			ctx.lineTo(280, 160);
-			ctx.lineTo(240, 160);
-			ctx.lineTo(240, 96);
+			ctx.moveTo(285, 100); // 2
+			ctx.lineTo(240, 100); // 1
+			ctx.lineTo(240, 130); // 4
+			ctx.lineTo(280, 130); // 3
+			ctx.lineTo(280, 160); // 6
+			ctx.lineTo(236, 160); // 5
 			ctx.stroke();
 		}
 			break;
@@ -199,6 +200,18 @@ function drawScore(ctx)
 			ctx.lineTo(795, 155);
 			ctx.stroke();
 		}
+		case 5:
+		{
+			ctx.beginPath();
+			ctx.moveTo(819, 100); // 2
+			ctx.lineTo(775, 100); // 1
+			ctx.lineTo(775, 130); // 4
+			ctx.lineTo(815, 130); // 3
+			ctx.lineTo(815, 160); // 6
+			ctx.lineTo(771, 160); // 5
+			ctx.stroke();
+		}
+			break;
 		default: // never gets in
 		{
 			console.log('D'); // del
@@ -301,12 +314,12 @@ document.addEventListener('DOMContentLoaded', function ()
 		player1:
 		{
 			y: canvas.height / 2 - PLAYER_HEIGHT / 2,
-			score: 4
+			score: 5
 		},
 		player2: // needs to be received from the other player, via the server
 		{
 			y: canvas.height / 2 - PLAYER_HEIGHT / 2,
-			score: 4
+			score: 5
 		},
 		ball:
 		{
