@@ -1,5 +1,9 @@
 'use strict';
 
+/*  when converting to typescript :
+	sleep : const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+*/
+
 let canvas; // del need type
 let game; // del need type
 
@@ -39,6 +43,7 @@ function draw(score1, score2)
 	ctx.fill();
 	// Draw scores
 	drawScore(ctx);
+	let emptyField = ctx.getImageData(0, 0, canvas.width, canvas.height);
 	// Display set = game over
 	if (game.over === true)
 	{
@@ -60,17 +65,16 @@ function draw(score1, score2)
 		ctx.lineTo(590, 340);
 		ctx.lineTo(590, 440);
 		ctx.lineTo(450, 440);
-			// ctx.moveTo(250, 100);
-			// ctx.lineTo(280, 100);
-			// ctx.lineTo(280, 130);
-			// ctx.lineTo(260, 130);
-			// ctx.lineTo(280, 130);
-			// ctx.lineTo(280, 160);
-			// ctx.lineTo(250, 160);
 		ctx.stroke();
+		// ICI call sleep	
 	}
 	// Display set = game going on
 	// else
+}
+
+function sleep(ms)
+{
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function drawScore(ctx)
