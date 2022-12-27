@@ -158,6 +158,17 @@ function drawScore(ctx)
 			ctx.lineTo(805, 160);
 			ctx.stroke();
 		}
+		case 2:
+		{
+			ctx.beginPath();
+			ctx.moveTo(771, 100);
+			ctx.lineTo(815, 100);
+			ctx.lineTo(815, 130);
+			ctx.lineTo(775, 130);
+			ctx.lineTo(775, 160);
+			ctx.lineTo(819, 160);
+			ctx.stroke();
+		}
 			break;
 		default: // never gets in
 		{
