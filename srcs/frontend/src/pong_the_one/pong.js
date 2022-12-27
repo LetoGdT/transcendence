@@ -91,14 +91,16 @@ function drawScore(ctx)
 			ctx.stroke();
 		}
 			break;
-		case 0:
+		case 3:
 		{
 			ctx.beginPath();
-			ctx.moveTo(240, 100);
+			ctx.moveTo(250, 100);
 			ctx.lineTo(280, 100);
+			ctx.lineTo(280, 130);
+			ctx.lineTo(260, 130);
+			ctx.lineTo(280, 130);
 			ctx.lineTo(280, 160);
-			ctx.lineTo(240, 160);
-			ctx.lineTo(240, 96);
+			ctx.lineTo(250, 160);
 			ctx.stroke();
 		}
 			break;
@@ -167,6 +169,19 @@ function drawScore(ctx)
 			ctx.lineTo(775, 130);
 			ctx.lineTo(775, 160);
 			ctx.lineTo(819, 160);
+			ctx.stroke();
+		}
+			break;
+		case 3:
+		{
+			ctx.beginPath();
+			ctx.moveTo(785, 100);
+			ctx.lineTo(815, 100);
+			ctx.lineTo(815, 130);
+			ctx.lineTo(795, 130);
+			ctx.lineTo(815, 130);
+			ctx.lineTo(815, 160);
+			ctx.lineTo(785, 160);
 			ctx.stroke();
 		}
 			break;
@@ -272,12 +287,12 @@ document.addEventListener('DOMContentLoaded', function ()
 		player1:
 		{
 			y: canvas.height / 2 - PLAYER_HEIGHT / 2,
-			score: 2
+			score: 3
 		},
 		player2: // needs to be received from the other player, via the server
 		{
 			y: canvas.height / 2 - PLAYER_HEIGHT / 2,
-			score: 2
+			score: 3
 		},
 		ball:
 		{
