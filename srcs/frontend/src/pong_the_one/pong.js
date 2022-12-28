@@ -16,11 +16,45 @@ const STEP = 12
 const W = 87
 const S = 83
 
-async function draw(score1, score2) // keep it async or make a startGame function ?
+async function startTimer(ctx)
 {
-	let ctx = canvas.getContext('2d');
+	draw(ctx)
+	
+	let ctx = canvas.getContext('2d', { willReadFrequently: true });
+	// let emptyField = ctx.getImageData(0, 0, canvas.width, canvas.height);
+	// Display set = start game
+	if (game.start === true)
+	{
+		console.log("A"); // del
+		ctx.lineWidth = 27;
+		ctx.strokeStyle = 'white';
+		ctx.lineJoin = 'square';
+	
+		ctx.beginPath();
+		ctx.moveTo(450, 240);
+		ctx.lineTo(590, 240);
+		ctx.lineTo(590, 340);
+		ctx.lineTo(500, 340);
+		ctx.lineTo(590, 340);
+		ctx.lineTo(590, 440);
+		ctx.lineTo(450, 440);
+		ctx.stroke();
+		// console.log("A") // del
+		await sleep(2000);
+		console.log("B") // del
+	}
+}
 
-	await sleep(2000); // del
+function sleep(ms)
+{
+	// console.log("B") // del
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function draw(ctx) // keep it async or make a startGame function ?
+{
+	let ctx = canvas.getContext('2d', { willReadFrequently: true });
+
 	// Draw field
 	ctx.fillStyle = 'black';
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -50,35 +84,9 @@ async function draw(score1, score2) // keep it async or make a startGame functio
 	if (game.over === true)
 	{
 
-	}	
-	// Display set = start game
-	if (game.start === true)
-	{
-		ctx.lineWidth = 27;
-		ctx.strokeStyle = 'white';
-		ctx.lineJoin = 'square';
-	
-		ctx.beginPath();
-		ctx.moveTo(450, 240);
-		ctx.lineTo(590, 240);
-		ctx.lineTo(590, 340);
-		ctx.lineTo(500, 340);
-		ctx.lineTo(590, 340);
-		ctx.lineTo(590, 440);
-		ctx.lineTo(450, 440);
-		ctx.stroke();
-		// console.log("A") // del
-		await sleep(2000);
-		console.log("B") // del
 	}
 	// Display set = game going on
 	// else
-}
-
-function sleep(ms)
-{
-	// console.log("B") // del
-    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function drawScore(ctx)
@@ -260,7 +268,7 @@ function drawScore(ctx)
 
 function play()
 {
-	draw();
+	draw(ctx);
 	ballMove();
 	requestAnimationFrame(play);
 }
@@ -355,12 +363,14 @@ function gameOver()
 
 	game.player1.score = 0; // not needed here in final version
 	game.player2.score = 0; // not needed here in final version
-	draw();
+	draw(ctx);
 }
 
 document.addEventListener('DOMContentLoaded', function ()
 {
 	canvas = document.getElementById('canvas');
+	let ctx = canvas.getContext('2d', { willReadFrequently: true });
+	
 	game =
 	{
 		start: true,
@@ -389,6 +399,7 @@ document.addEventListener('DOMContentLoaded', function ()
 			}
 		}
 	};
+	startTimer(ctx);
 	window.addEventListener('keydown', playerMove);
 	play();
 	// Mouvement du joueur
