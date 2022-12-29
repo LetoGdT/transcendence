@@ -16,16 +16,34 @@ const STEP = 12
 const W = 87
 const S = 83
 
-async function startTimer(ctx)
+async function startTimer()
 {
-	draw(ctx)
+	let ctx = canvas.getContext('2d', { willReadFrequently: true });
 	
-	// let ctx = canvas.getContext('2d', { willReadFrequently: true });
+	// Draw field
+	ctx.fillStyle = 'black';
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+	// Draw net
+	ctx.lineWidth = 5;
+	ctx.strokeStyle = 'white';
+	ctx.beginPath();
+	ctx.setLineDash([5, 15]); // dotted line for the net
+	ctx.moveTo(canvas.width / 2, 0);
+	ctx.lineTo(canvas.width / 2, canvas.height);
+	ctx.stroke();
+	ctx.setLineDash([]); // sets the line back to solid
+	// Draw players
+	ctx.fillStyle = 'white';
+	ctx.fillRect(0, game.player1.y, PLAYER_WIDTH, PLAYER_HEIGHT);
+	ctx.fillRect(canvas.width - PLAYER_WIDTH, game.player2.y, PLAYER_WIDTH, PLAYER_HEIGHT);
+	
+	// Saves the canvas with an empty game field, so it can be used to "erase" the timer figures
 	// let emptyField = ctx.getImageData(0, 0, canvas.width, canvas.height);
+	
 	// Display set = start game
-	if (game.start === true)
-	{
-		console.log("A"); // del
+	// if (game.start === true)
+	// {
+		console.log("A") // del
 		ctx.lineWidth = 27;
 		ctx.strokeStyle = 'white';
 		ctx.lineJoin = 'square';
@@ -41,19 +59,21 @@ async function startTimer(ctx)
 		ctx.stroke();
 		// console.log("A") // del
 		await sleep(2000);
-		console.log("B") // del
-	}
+		// console.log("B") // del
+	// }
 }
 
 function sleep(ms)
 {
-	// console.log("B") // del
+	// console.log("C") // del
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function draw(ctx) // keep it async or make a startGame function ?
+function draw() // keep it async or make a startGame function ?
 {
-	// let ctx = canvas.getContext('2d', { willReadFrequently: true });
+	// console.log("D") // del
+
+	let ctx = canvas.getContext('2d', { willReadFrequently: true });
 
 	// Draw field
 	ctx.fillStyle = 'black';
@@ -78,8 +98,6 @@ function draw(ctx) // keep it async or make a startGame function ?
 	ctx.fill();
 	// Draw scores
 	drawScore(ctx);
-	// Saves the canvas with an empty game field, so it can be used to "erase" the timer figures
-	let emptyField = ctx.getImageData(0, 0, canvas.width, canvas.height);
 	// Display set = game over
 	if (game.over === true)
 	{
@@ -266,9 +284,11 @@ function drawScore(ctx)
 	}
 }
 
-function play(ctx)
+function play()
 {
-	draw(ctx);
+	console.log(); // del
+
+	draw();
 	ballMove();
 	requestAnimationFrame(play);
 }
@@ -363,14 +383,14 @@ function gameOver()
 
 	game.player1.score = 0; // not needed here in final version
 	game.player2.score = 0; // not needed here in final version
-	draw(ctx);
+	draw();
 }
 
 document.addEventListener('DOMContentLoaded', function ()
 {
 	canvas = document.getElementById('canvas');
 	let ctx = canvas.getContext('2d', { willReadFrequently: true });
-	
+	console.log(); // del
 	game =
 	{
 		start: true,
@@ -399,8 +419,9 @@ document.addEventListener('DOMContentLoaded', function ()
 			}
 		}
 	};
-	startTimer(ctx);
+	startTimer();
+	sleep(3000);
 	window.addEventListener('keydown', playerMove);
-	play(ctx);
+	play();
 	// Mouvement du joueur
 });
