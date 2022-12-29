@@ -388,7 +388,7 @@ function gameOver()
 	draw();
 }
 
-document.addEventListener('DOMContentLoaded', function ()
+document.addEventListener('DOMContentLoaded', async function ()
 {
 	canvas = document.getElementById('canvas');
 	let ctx = canvas.getContext('2d', { willReadFrequently: true });
