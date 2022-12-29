@@ -20,7 +20,7 @@ async function startTimer(ctx)
 {
 	draw(ctx)
 	
-	let ctx = canvas.getContext('2d', { willReadFrequently: true });
+	// let ctx = canvas.getContext('2d', { willReadFrequently: true });
 	// let emptyField = ctx.getImageData(0, 0, canvas.width, canvas.height);
 	// Display set = start game
 	if (game.start === true)
@@ -53,7 +53,7 @@ function sleep(ms)
 
 function draw(ctx) // keep it async or make a startGame function ?
 {
-	let ctx = canvas.getContext('2d', { willReadFrequently: true });
+	// let ctx = canvas.getContext('2d', { willReadFrequently: true });
 
 	// Draw field
 	ctx.fillStyle = 'black';
@@ -266,7 +266,7 @@ function drawScore(ctx)
 	}
 }
 
-function play()
+function play(ctx)
 {
 	draw(ctx);
 	ballMove();
@@ -401,6 +401,6 @@ document.addEventListener('DOMContentLoaded', function ()
 	};
 	startTimer(ctx);
 	window.addEventListener('keydown', playerMove);
-	play();
+	play(ctx);
 	// Mouvement du joueur
 });
