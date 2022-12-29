@@ -7,8 +7,8 @@
 let canvas; // del need type
 let game; // del need type
 
-// const PLAYER_HEIGHT = 100
-// const PLAYER_WIDTH = 13
+const PLAYER_HEIGHT = 100
+const PLAYER_WIDTH = 13
 const BALL_SPEED = 5
 const UP = 38
 const DOWN = 40
@@ -36,6 +36,22 @@ async function startTimer()
 	ctx.fillStyle = 'white';
 	ctx.fillRect(0, game.player1.y, PLAYER_WIDTH, PLAYER_HEIGHT);
 	ctx.fillRect(canvas.width - PLAYER_WIDTH, game.player2.y, PLAYER_WIDTH, PLAYER_HEIGHT);
+	// Draw score player 1
+	ctx.beginPath();
+	ctx.moveTo(240, 100);
+	ctx.lineTo(280, 100);
+	ctx.lineTo(280, 160);
+	ctx.lineTo(240, 160);
+	ctx.lineTo(240, 96);
+	ctx.stroke();
+	// Draw score player 2
+	ctx.beginPath();
+	ctx.moveTo(760, 100);
+	ctx.lineTo(800, 100);
+	ctx.lineTo(800, 160);
+	ctx.lineTo(760, 160);
+	ctx.lineTo(760, 96);
+	ctx.stroke();
 	
 	// Saves the canvas with an empty game field, so it can be used to "erase" the timer figures
 	// let emptyField = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -47,7 +63,64 @@ async function startTimer()
 		ctx.lineWidth = 27;
 		ctx.strokeStyle = 'white';
 		ctx.lineJoin = 'square';
-	
+		// // Draw 3
+		ctx.fillStyle='white';
+		ctx.beginPath();
+		ctx.moveTo(450, 240);
+		ctx.lineTo(590, 240);
+		ctx.lineTo(590, 340);
+		ctx.lineTo(500, 340);
+		ctx.lineTo(590, 340);
+		ctx.lineTo(590, 440);
+		ctx.lineTo(450, 440);
+		ctx.stroke();
+		await sleep(3000);
+		// Erase 3
+		ctx.fillStyle = 'black';
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		// Draw net
+		ctx.lineWidth = 5;
+		ctx.strokeStyle = 'white';
+		ctx.beginPath();
+		ctx.setLineDash([5, 15]); // dotted line for the net
+		ctx.moveTo(canvas.width / 2, 0);
+		ctx.lineTo(canvas.width / 2, canvas.height);
+		ctx.stroke();
+		ctx.setLineDash([]); // sets the line back to solid
+		// Draw players
+		ctx.fillStyle = 'white';
+		ctx.fillRect(0, game.player1.y, PLAYER_WIDTH, PLAYER_HEIGHT);
+		ctx.fillRect(canvas.width - PLAYER_WIDTH, game.player2.y, PLAYER_WIDTH, PLAYER_HEIGHT);
+		// Draw score player 1
+		ctx.beginPath();
+		ctx.moveTo(240, 100);
+		ctx.lineTo(280, 100);
+		ctx.lineTo(280, 160);
+		ctx.lineTo(240, 160);
+		ctx.lineTo(240, 96);
+		ctx.stroke();
+		// Draw score player 2
+		ctx.beginPath();
+		ctx.moveTo(760, 100);
+		ctx.lineTo(800, 100);
+		ctx.lineTo(800, 160);
+		ctx.lineTo(760, 160);
+		ctx.lineTo(760, 96);
+		ctx.stroke();
+		// Draw 2
+		ctx.lineWidth = 27;
+		ctx.strokeStyle = 'white';
+		ctx.lineJoin = 'square';
+		ctx.beginPath();
+		ctx.moveTo(450, 240);
+		ctx.lineTo(590, 240);
+		ctx.lineTo(590, 340);
+		ctx.lineTo(500, 340);
+		ctx.lineTo(590, 340);
+		ctx.lineTo(590, 440);
+		ctx.lineTo(450, 440);
+		ctx.stroke();
+		// Draw 1
 		ctx.beginPath();
 		ctx.moveTo(450, 240);
 		ctx.lineTo(590, 240);
@@ -58,7 +131,7 @@ async function startTimer()
 		ctx.lineTo(450, 440);
 		ctx.stroke();
 		// console.log("A") // del
-		await sleep(2000);
+		await sleep(50000000000000);
 		console.log("B") // del
 	}
 }
@@ -284,17 +357,20 @@ function drawScore(ctx)
 	}
 }
 
-function play()
+async function play()
 {
-	// console.log("H"); // del
+	// await sleep(2000); // del ?
+	console.log("H"); // del
 
 	draw();
 	ballMove();
+	await sleep(2000); // del ?
 	requestAnimationFrame(play);
 }
 
 function playerMove(event)
 {
+
 	if (event.keyCode === W && game.player1.y >= 0)
 	{
 		game.player1.y -= STEP;
@@ -422,10 +498,10 @@ document.addEventListener('DOMContentLoaded', async function ()
 		}
 	};
 	startTimer();
-	sleep(3000);
+	await sleep(10000);
 	console.log("F") // del
 	window.addEventListener('keydown', playerMove);
 	console.log("J") // del
-	play();
+	// play();
 	// Mouvement du joueur
 });
