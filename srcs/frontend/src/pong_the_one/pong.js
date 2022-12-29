@@ -41,8 +41,8 @@ async function startTimer()
 	// let emptyField = ctx.getImageData(0, 0, canvas.width, canvas.height);
 	
 	// Display set = start game
-	// if (game.start === true)
-	// {
+	if (game.start === true)
+	{
 		console.log("A") // del
 		ctx.lineWidth = 27;
 		ctx.strokeStyle = 'white';
@@ -59,8 +59,8 @@ async function startTimer()
 		ctx.stroke();
 		// console.log("A") // del
 		await sleep(2000);
-		// console.log("B") // del
-	// }
+		console.log("B") // del
+	}
 }
 
 function sleep(ms)
@@ -286,7 +286,7 @@ function drawScore(ctx)
 
 function play()
 {
-	console.log(); // del
+	// console.log("H"); // del
 
 	draw();
 	ballMove();
@@ -299,14 +299,16 @@ function playerMove(event)
 	{
 		game.player1.y -= STEP;
 	}
-	if (event.keyCode === S && game.player1.y <= canvas.height - PLAYER_HEIGHT) {
+	if (event.keyCode === S && game.player1.y <= canvas.height - PLAYER_HEIGHT)
+	{
 		game.player1.y += STEP;
 	}
 	if (event.keyCode === UP && game.player2.y >= 0)
 	{
 		game.player2.y -= STEP;
 	}
-	if (event.keyCode === DOWN && game.player2.y <= canvas.height - PLAYER_HEIGHT) {
+	if (event.keyCode === DOWN && game.player2.y <= canvas.height - PLAYER_HEIGHT)
+	{
 		game.player2.y += STEP;
 	}
 }
@@ -421,7 +423,9 @@ document.addEventListener('DOMContentLoaded', function ()
 	};
 	startTimer();
 	sleep(3000);
+	console.log("F") // del
 	window.addEventListener('keydown', playerMove);
+	console.log("J") // del
 	play();
 	// Mouvement du joueur
 });
