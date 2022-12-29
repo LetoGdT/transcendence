@@ -7,8 +7,8 @@
 let canvas; // del need type
 let game; // del need type
 
-const PLAYER_HEIGHT = 100
-const PLAYER_WIDTH = 13
+// const PLAYER_HEIGHT = 100
+// const PLAYER_WIDTH = 13
 const BALL_SPEED = 5
 const UP = 38
 const DOWN = 40
