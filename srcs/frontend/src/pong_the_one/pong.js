@@ -362,7 +362,7 @@ async function play()
 
 	draw();
 	ballMove();
-	await sleep(2000); // del ?
+	// await sleep(2000); // del ?
 	requestAnimationFrame(play);
 }
 
@@ -490,16 +490,16 @@ document.addEventListener('DOMContentLoaded', async function ()
 			r: 5,
 			speed:
 			{
-				// x: BALL_SPEED,
-				// y: BALL_SPEED
+				x: BALL_SPEED,
+				y: BALL_SPEED
 			}
 		}
 	};
 	startTimer();
-	await sleep(10000);
+	await sleep(4500);
 	console.log("F") // del
 	window.addEventListener('keydown', playerMove);
 	console.log("J") // del
-	// play();
+	play();
 	// Mouvement du joueur
 });
