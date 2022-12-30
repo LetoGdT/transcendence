@@ -37,12 +37,13 @@ async function startTimer()
 	ctx.fillRect(0, game.player1.y, PLAYER_WIDTH, PLAYER_HEIGHT);
 	ctx.fillRect(canvas.width - PLAYER_WIDTH, game.player2.y, PLAYER_WIDTH, PLAYER_HEIGHT);
 	// Draw score player 1
+	ctx.lineWidth = 8;
 	ctx.beginPath();
 	ctx.moveTo(240, 100);
 	ctx.lineTo(280, 100);
 	ctx.lineTo(280, 160);
 	ctx.lineTo(240, 160);
-	ctx.lineTo(240, 98);
+	ctx.lineTo(240, 96);
 	ctx.stroke();
 	// Draw score player 2
 	ctx.beginPath();
@@ -50,7 +51,7 @@ async function startTimer()
 	ctx.lineTo(800, 100);
 	ctx.lineTo(800, 160);
 	ctx.lineTo(760, 160);
-	ctx.lineTo(760, 98);
+	ctx.lineTo(760, 96);
 	ctx.stroke();
 	
 	// ctx.clearRect(200, 225, 150, 27); // del
@@ -194,7 +195,7 @@ function drawScore(ctx)
 			ctx.lineTo(280, 100);
 			ctx.lineTo(280, 160);
 			ctx.lineTo(240, 160);
-			ctx.lineTo(240, 98);
+			ctx.lineTo(240, 96);
 			ctx.stroke();
 		}
 			break;
@@ -279,7 +280,7 @@ function drawScore(ctx)
 			ctx.lineTo(800, 100);
 			ctx.lineTo(800, 160);
 			ctx.lineTo(760, 160);
-			ctx.lineTo(760, 98);
+			ctx.lineTo(760, 96);
 			ctx.stroke();
 		}
 			break;
