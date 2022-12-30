@@ -66,6 +66,9 @@ async function startTimer()
 		// // Draw 3
 		ctx.fillStyle='white';
 		ctx.fillRect(445, 225, 150, 27);
+		ctx.fillRect(568, 252, 27, 200);
+		ctx.fillRect(495, 325, 85, 27);
+		ctx.fillRect(445, 425, 150, 27);
 		// ctx.beginPath();
 		// ctx.moveTo(450, 240);
 		// ctx.lineTo(590, 240);
