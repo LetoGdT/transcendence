@@ -65,15 +65,16 @@ async function startTimer()
 		ctx.lineJoin = 'square';
 		// // Draw 3
 		ctx.fillStyle='white';
-		ctx.beginPath();
-		ctx.moveTo(450, 240);
-		ctx.lineTo(590, 240);
-		ctx.lineTo(590, 340);
-		ctx.lineTo(500, 340);
-		ctx.lineTo(590, 340);
-		ctx.lineTo(590, 440);
-		ctx.lineTo(450, 440);
-		ctx.stroke();
+		ctx.fillRect(445, 225, 150, 27);
+		// ctx.beginPath();
+		// ctx.moveTo(450, 240);
+		// ctx.lineTo(590, 240);
+		// ctx.lineTo(590, 340);
+		// ctx.lineTo(500, 340);
+		// ctx.lineTo(590, 340);
+		// ctx.lineTo(590, 440);
+		// ctx.lineTo(450, 440);
+		// ctx.stroke();
 		await sleep(3000);
 		// Erase 3
 		ctx.fillStyle = 'black';
