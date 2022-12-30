@@ -42,7 +42,7 @@ async function startTimer()
 	ctx.lineTo(280, 100);
 	ctx.lineTo(280, 160);
 	ctx.lineTo(240, 160);
-	ctx.lineTo(240, 96);
+	ctx.lineTo(240, 98);
 	ctx.stroke();
 	// Draw score player 2
 	ctx.beginPath();
@@ -50,8 +50,11 @@ async function startTimer()
 	ctx.lineTo(800, 100);
 	ctx.lineTo(800, 160);
 	ctx.lineTo(760, 160);
-	ctx.lineTo(760, 96);
+	ctx.lineTo(760, 98);
 	ctx.stroke();
+	
+	// ctx.clearRect(200, 225, 150, 27); // del
+	// await sleep(5000);
 	
 	// Saves the canvas with an empty game field, so it can be used to "erase" the timer figures
 	// let emptyField = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -72,7 +75,8 @@ async function startTimer()
 		console.log("B") // del
 		await sleep(3000);
 		console.log("C") // del
-		ctx.clearRect();
+		ctx.clearRect(0, 0, 400, 400);
+		await sleep(3000);
 		console.log("D") // del
 		// ctx.beginPath();
 		// ctx.moveTo(450, 240);
@@ -106,7 +110,7 @@ async function startTimer()
 		ctx.lineTo(280, 100);
 		ctx.lineTo(280, 160);
 		ctx.lineTo(240, 160);
-		ctx.lineTo(240, 96);
+		ctx.lineTo(240, 98);
 		ctx.stroke();
 		// Draw score player 2
 		ctx.beginPath();
@@ -114,7 +118,7 @@ async function startTimer()
 		ctx.lineTo(800, 100);
 		ctx.lineTo(800, 160);
 		ctx.lineTo(760, 160);
-		ctx.lineTo(760, 96);
+		ctx.lineTo(760, 98);
 		ctx.stroke();
 		// Draw 2
 		ctx.lineWidth = 27;
@@ -205,7 +209,7 @@ function drawScore(ctx)
 			ctx.lineTo(280, 100);
 			ctx.lineTo(280, 160);
 			ctx.lineTo(240, 160);
-			ctx.lineTo(240, 96);
+			ctx.lineTo(240, 98);
 			ctx.stroke();
 		}
 			break;
@@ -290,7 +294,7 @@ function drawScore(ctx)
 			ctx.lineTo(800, 100);
 			ctx.lineTo(800, 160);
 			ctx.lineTo(760, 160);
-			ctx.lineTo(760, 96);
+			ctx.lineTo(760, 98);
 			ctx.stroke();
 		}
 			break;
