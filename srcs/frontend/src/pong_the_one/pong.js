@@ -69,6 +69,11 @@ async function startTimer()
 		ctx.fillRect(568, 252, 27, 200);
 		ctx.fillRect(495, 325, 85, 27);
 		ctx.fillRect(445, 425, 150, 27);
+		console.log("B") // del
+		await sleep(3000);
+		console.log("C") // del
+		ctx.clearRect();
+		console.log("D") // del
 		// ctx.beginPath();
 		// ctx.moveTo(450, 240);
 		// ctx.lineTo(590, 240);
@@ -78,7 +83,7 @@ async function startTimer()
 		// ctx.lineTo(590, 440);
 		// ctx.lineTo(450, 440);
 		// ctx.stroke();
-		await sleep(3000);
+		// await sleep(3000);
 		// Erase 3
 		ctx.fillStyle = 'black';
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
