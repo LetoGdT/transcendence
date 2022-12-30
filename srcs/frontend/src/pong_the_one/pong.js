@@ -72,7 +72,7 @@ async function startTimer()
 		ctx.fillRect(568, 252, 27, 200);
 		ctx.fillRect(495, 325, 85, 27);
 		ctx.fillRect(445, 425, 150, 27);
-		await sleep(1000);
+		await sleep(1500);
 		// Erase 3
 		ctx.fillStyle='black';
 		ctx.fillRect(445, 225, 150, 27);
@@ -94,7 +94,7 @@ async function startTimer()
 		ctx.fillRect(445, 325, 150, 27);
 		ctx.fillRect(445, 325, 27, 100);
 		ctx.fillRect(445, 425, 150, 27);
-		await sleep(1000);
+		await sleep(1500);
 		// Erase 2
 		ctx.fillStyle='black';
 		ctx.fillRect(445, 225, 150, 27);
@@ -114,7 +114,7 @@ async function startTimer()
 		ctx.fillStyle='white';
 		ctx.fillRect(480, 225, 27, 27);
 		ctx.fillRect(507, 225, 27, 200);
-		await sleep(1000);
+		await sleep(1500);
 		// Erase 1
 		ctx.fillStyle='black';
 		ctx.fillRect(480, 225, 27, 27);
