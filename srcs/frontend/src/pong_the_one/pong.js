@@ -7,9 +7,11 @@
 let canvas; // del need type
 let game; // del need type
 
+const TIMER = 0
+const SECOND = 0
 const PLAYER_HEIGHT = 100
 const PLAYER_WIDTH = 13
-const BALL_SPEED = 5
+const BALL_SPEED = 180
 const UP = 38
 const DOWN = 40
 const STEP = 12
@@ -73,7 +75,7 @@ async function startTimer()
 		ctx.fillRect(568, 252, 27, 200);
 		ctx.fillRect(495, 325, 85, 27);
 		ctx.fillRect(445, 425, 150, 27);
-		await sleep(1500);
+		await sleep(TIMER);
 		// Erase 3
 		ctx.fillStyle='black';
 		ctx.fillRect(445, 225, 150, 27);
@@ -95,7 +97,7 @@ async function startTimer()
 		ctx.fillRect(445, 325, 150, 27);
 		ctx.fillRect(445, 325, 27, 100);
 		ctx.fillRect(445, 425, 150, 27);
-		await sleep(1500);
+		await sleep(TIMER);
 		// Erase 2
 		ctx.fillStyle='black';
 		ctx.fillRect(445, 225, 150, 27);
@@ -115,7 +117,7 @@ async function startTimer()
 		ctx.fillStyle='white';
 		ctx.fillRect(480, 225, 27, 27);
 		ctx.fillRect(507, 225, 27, 200);
-		await sleep(1500);
+		await sleep(TIMER);
 		// Erase 1
 		ctx.fillStyle='black';
 		ctx.fillRect(480, 225, 27, 27);
@@ -170,13 +172,6 @@ function draw() // keep it async or make a startGame function ?
 	ctx.fill();
 	// Draw scores
 	drawScore(ctx);
-	// Display set = game over
-	if (game.over === true)
-	{
-
-	}
-	// Display set = game going on
-	// else
 }
 
 function drawScore(ctx)
@@ -359,11 +354,14 @@ function drawScore(ctx)
 async function play()
 {
 	// await sleep(2000); // del ?
-	console.log("H"); // del
+	// console.log("H"); // del
 
 	draw();
 	ballMove();
 	// await sleep(2000); // del ?
+	console.log(game.over); // del	
+	if (game.over === true)
+		cancelAnimationFrame();
 	requestAnimationFrame(play);
 }
 
@@ -422,11 +420,15 @@ function collide(opponent)
 		else
 			game.player1.score++;
 		// End of the game when one player has 5 points
+		console.log(game.player1.score); // del
+		console.log(game.player2.score); // del
+
 		if (game.player1.score === 5 || game.player2.score === 5)
 		{
+			console.log("T"); // del
+			game.over === true
 			gameOver();
-			draw(); // change it to reset ?
-			// reset();
+			return;
 		}
 		// Set ball and players to the center
 		game.ball.x = canvas.width / 2;
@@ -457,17 +459,20 @@ function changeDirection(playerPosition)
 function gameOver()
 {
 	// make it freeze with score 5 displayed
-
-	game.player1.score = 0; // not needed here in final version
-	game.player2.score = 0; // not needed here in final version
-	draw();
+	
+	// Stops the permanent refreshed displaying of the canvas
+	console.log("R"); // del
+	console.log("S"); // del
+	
+		
+	// // game.player1.score = 0; // not needed here in final version
+	// game.player2.score = 0; // not needed here in final version
 }
 
 document.addEventListener('DOMContentLoaded', async function ()
 {
 	canvas = document.getElementById('canvas');
 	let ctx = canvas.getContext('2d', { willReadFrequently: true });
-	console.log(); // del
 	game =
 	{
 		start: true,
@@ -497,7 +502,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 		}
 	};
 	startTimer();
-	await sleep(4500);
+	await sleep(TIMER);
 	console.log("F") // del
 	window.addEventListener('keydown', playerMove);
 	console.log("J") // del
