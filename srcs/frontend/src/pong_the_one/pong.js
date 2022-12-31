@@ -8,8 +8,8 @@
 let canvas; // del need type
 let game; // del need type
 
-const TIMER = 0
-const SECOND = 0
+const TIMER = 4500
+const SECOND = 1500
 const PLAYER_HEIGHT = 100
 const PLAYER_WIDTH = 13
 const BALL_SPEED = 10
@@ -478,6 +478,7 @@ async function play()
 	// 	game.ball.speed.y = 0
 	// }
 	if (game.player1.score !== 5 || game.player1.score !== 5)
+	// maybe draw the whole field with score 5
 		requestAnimationFrame(play);
 }
 
