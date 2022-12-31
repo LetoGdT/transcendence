@@ -2,6 +2,7 @@
 
 /*  when converting to typescript :
 	sleep : const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+	erase async where it's not needed
 */
 
 let canvas; // del need type
@@ -351,20 +352,6 @@ function drawScore(ctx)
 	}
 }
 
-async function play()
-{
-	// await sleep(2000); // del ?
-	// console.log("H"); // del
-
-	draw();
-	ballMove();
-	// await sleep(2000); // del ?
-	console.log(game.over); // del	
-	if (game.over === true)
-		cancelAnimationFrame();
-	requestAnimationFrame(play);
-}
-
 function playerMove(event)
 {
 
@@ -423,10 +410,12 @@ function collide(opponent)
 		console.log(game.player1.score); // del
 		console.log(game.player2.score); // del
 
+		console.log(game.over); // del	
 		if (game.player1.score === 5 || game.player2.score === 5)
 		{
 			console.log("T"); // del
-			game.over === true
+			game.over = true
+			console.log(game.over); // del	
 			gameOver();
 			return;
 		}
@@ -467,6 +456,29 @@ function gameOver()
 		
 	// // game.player1.score = 0; // not needed here in final version
 	// game.player2.score = 0; // not needed here in final version
+}
+
+async function play()
+{
+	// await sleep(2000); // del ?
+	// console.log("H"); // del
+
+	draw();
+	ballMove();
+	// await sleep(2000); // del ?
+	console.log(game.over); // del	
+	// if (game.over === true)
+	// {
+	// 	console.log(game.over); // del	
+	// 	console.log("H"); // del
+	// 	cancelAnimationFrame(play);
+	// 	game.ball.x = canvas.width / 2;
+	// 	game.ball.y = canvas.height / 2;
+	// 	game.ball.speed.x = 0
+	// 	game.ball.speed.y = 0
+	// }
+	if (game.player1.score !== 5 || game.player1.score !== 5)
+		requestAnimationFrame(play);
 }
 
 document.addEventListener('DOMContentLoaded', async function ()
