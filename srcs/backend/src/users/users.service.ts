@@ -1,6 +1,7 @@
 import { Logger, Injectable, BadRequestException, HttpStatus, HttpException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
+import * as fs from 'fs';
 import { User } from '../typeorm/user.entity';
 import { AchievementsService } from '../achievements/achievements.service';
 import { CreateUserDto, UpdateUserDto, CreateUserFriendDto } from '../dto/users.dto';
@@ -367,6 +368,19 @@ export class UsersService
 	async changeRank(user: User, new_rank: number)
 	{
 		user.exp = new_rank;
+		return this.userRepository.save(user);
+	}
+
+	async deleteOldPhoto(user: User, filename: string): Promise<void>
+	{
+		const oldPath = './src/static' + (new URL(user.image_url)).pathname;
+		if (fs.existsSync(oldPath))
+			fs.unlink(oldPath, (err) => {
+				if (err)
+					throw new HttpException('There was an error deleting the previous file',
+						HttpStatus.INTERNAL_SERVER_ERROR)
+			});
+		user.image_url = 'http://localhost:9999/uploads/' + filename;
 		this.userRepository.save(user);
 	}
 }

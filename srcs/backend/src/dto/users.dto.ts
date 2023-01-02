@@ -22,12 +22,6 @@ export class UpdateUserDto
 {
 	@IsNotEmpty()
 	username: string;
-	
-	@IsNotEmpty()
-	email: string;
-	
-	@IsNotEmpty()
-	image_url: string;
 }
 
 export class CreateUserFriendDto
