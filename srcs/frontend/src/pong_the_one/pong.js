@@ -8,11 +8,11 @@
 let canvas; // del need type
 let game; // del need type
 
-const TIMER = 100
-const SECOND = 0
+const TIMER = 4500
+const SECOND = 1500
 const PLAYER_HEIGHT = 100
 const PLAYER_WIDTH = 13
-const BALL_SPEED = 1000
+const BALL_SPEED = 7
 const UP = 38
 const DOWN = 40
 const STEP = 12
@@ -237,53 +237,63 @@ function draw() // keep it async or make a startGame function ?
 		ctx.lineWidth = 20;
 		// Draw 'D'
 		ctx.beginPath();
-		ctx.moveTo(180, 275);
-		ctx.lineTo(255, 290);
-		ctx.lineTo(255, 390);
-		ctx.lineTo(180, 405);
-		ctx.lineTo(180, 275);
-		ctx.lineTo(255, 290);
+		ctx.moveTo(145, 275);
+		ctx.lineTo(220, 290);
+		ctx.lineTo(220, 390);
+		ctx.lineTo(145, 405);
+		ctx.lineTo(145, 275);
+		ctx.lineTo(220, 290);
 		ctx.stroke();
 		// Draw 'E'
 		ctx.beginPath();
-		ctx.moveTo(400, 275);
-		ctx.lineTo(325, 275);
-		ctx.lineTo(325, 405);
-		ctx.lineTo(400, 405);
+		ctx.moveTo(365, 275);
+		ctx.lineTo(290, 275);
+		ctx.lineTo(290, 405);
+		ctx.lineTo(365, 405);
 		ctx.stroke();
 		ctx.beginPath();
-		ctx.moveTo(325, 340);
-		ctx.lineTo(365, 340);
+		ctx.moveTo(290, 340);
+		ctx.lineTo(330, 340);
 		ctx.stroke();
 		// Draw 'F'
 		ctx.beginPath();
-		ctx.moveTo(460, 415);
-		ctx.lineTo(460, 275);
-		ctx.lineTo(535, 275);
+		ctx.moveTo(425, 415);
+		ctx.lineTo(425, 275);
+		ctx.lineTo(500, 275);
 		ctx.stroke();
 		ctx.beginPath();
-		ctx.moveTo(460, 320);
-		ctx.lineTo(500, 320);
+		ctx.moveTo(425, 320);
+		ctx.lineTo(465, 320);
 		ctx.stroke();
 		// Draw 'E'
 		ctx.beginPath();
-		ctx.moveTo(670, 275);
-		ctx.lineTo(595, 275);
-		ctx.lineTo(595, 405);
-		ctx.lineTo(670, 405);
+		ctx.moveTo(635, 275);
+		ctx.lineTo(560, 275);
+		ctx.lineTo(560, 405);
+		ctx.lineTo(635, 405);
 		ctx.stroke();
 		ctx.beginPath();
-		ctx.moveTo(595, 340);
-		ctx.lineTo(635, 340);
+		ctx.moveTo(560, 340);
+		ctx.lineTo(600, 340);
+		ctx.stroke();
+		// Draw 'A'
+		ctx.beginPath();
+		ctx.moveTo(695, 415);
+		ctx.lineTo(695, 275);
+		ctx.lineTo(770, 275);
+		ctx.lineTo(770, 415);
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.moveTo(695, 330);
+		ctx.lineTo(770, 330);
 		ctx.stroke();
 		// Draw 'T'
 		ctx.beginPath();
-		ctx.moveTo(795, 272);
-		ctx.lineTo(842, 335);
+		ctx.moveTo(830, 275);
+		ctx.lineTo(925, 275);
 		ctx.stroke();
-		ctx.beginPath();
-		ctx.moveTo(880, 272);
-		ctx.lineTo(795, 415);
+		ctx.moveTo(877, 275);
+		ctx.lineTo(877, 415);
 		ctx.stroke();
 	}
 }
@@ -616,7 +626,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 		player2: // needs to be received from the other player, via the server
 		{
 			y: canvas.height / 2 - PLAYER_HEIGHT / 2,
-			score: 5,
+			score: 0,
 			win: false
 		},
 		ball:
