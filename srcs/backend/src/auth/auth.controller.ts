@@ -107,4 +107,13 @@ export class AuthController
 			throw new BadRequestException('You need to specify an id');
 		return this.authService.createTokens(params.id);
 	}
+
+	@Get('/2fa/generate')
+	@UseInterceptors(AuthInterceptor)
+	async register(@Res() response: Response,
+		@Req() req) {
+		const { otpauthUrl } = await this.authService.generate2faSecret(req.user);
+
+		return this.authService.pipeQrCodeStream(response, otpauthUrl);
+	}
 }
