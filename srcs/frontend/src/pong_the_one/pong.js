@@ -8,11 +8,11 @@
 let canvas; // del need type
 let game; // del need type
 
-const TIMER = 4500
-const SECOND = 1500
+const TIMER = 0
+const SECOND = 0
 const PLAYER_HEIGHT = 100
 const PLAYER_WIDTH = 13
-const BALL_SPEED = 10
+const BALL_SPEED = 1000
 const UP = 38
 const DOWN = 40
 const STEP = 12
@@ -76,7 +76,7 @@ async function startTimer()
 		ctx.fillRect(568, 252, 27, 200);
 		ctx.fillRect(495, 325, 85, 27);
 		ctx.fillRect(445, 425, 150, 27);
-		await sleep(TIMER);
+		await sleep(SECOND);
 		// Erase 3
 		ctx.fillStyle='black';
 		ctx.fillRect(445, 225, 150, 27);
@@ -98,7 +98,7 @@ async function startTimer()
 		ctx.fillRect(445, 325, 150, 27);
 		ctx.fillRect(445, 325, 27, 100);
 		ctx.fillRect(445, 425, 150, 27);
-		await sleep(TIMER);
+		await sleep(SECOND);
 		// Erase 2
 		ctx.fillStyle='black';
 		ctx.fillRect(445, 225, 150, 27);
@@ -118,7 +118,7 @@ async function startTimer()
 		ctx.fillStyle='white';
 		ctx.fillRect(480, 225, 27, 27);
 		ctx.fillRect(507, 225, 27, 200);
-		await sleep(TIMER);
+		await sleep(SECOND);
 		// Erase 1
 		ctx.fillStyle='black';
 		ctx.fillRect(480, 225, 27, 27);
@@ -173,6 +173,37 @@ function draw() // keep it async or make a startGame function ?
 	ctx.fill();
 	// Draw scores
 	drawScore(ctx);
+	if (game.player1.score === 5)
+	{
+		console.log("V"); // del
+		ctx.strokeStyle = 'white';
+		ctx.lineWidth = 20;
+		ctx.beginPath();
+		ctx.moveTo(200, 270);
+		ctx.lineTo(250, 390);
+		ctx.lineTo(300, 270);
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.moveTo(345, 265);
+		ctx.lineTo(345, 415);
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.moveTo(470, 275);
+		ctx.lineTo(395, 275);
+		ctx.lineTo(395, 405);
+		ctx.lineTo(470, 405);
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.moveTo(470, 275);
+		ctx.lineTo(395, 275);
+		ctx.lineTo(395, 405);
+		ctx.lineTo(470, 405);
+		ctx.stroke();
+	}
+	else if (game.player2.score === 5)
+	{
+		console.log("K"); // del
+	}
 }
 
 function drawScore(ctx)
@@ -411,6 +442,7 @@ function collide(opponent)
 		console.log(game.player2.score); // del
 
 		console.log(game.over); // del	
+		console.log("STILL PLAYING"); // del
 		if (game.player1.score === 5 || game.player2.score === 5)
 		{
 			console.log("T"); // del
@@ -450,6 +482,7 @@ function gameOver()
 	// make it freeze with score 5 displayed
 	
 	// Stops the permanent refreshed displaying of the canvas
+	draw();
 	console.log("R"); // del
 	console.log("S"); // del
 	
