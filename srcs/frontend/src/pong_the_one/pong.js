@@ -176,28 +176,62 @@ function draw() // keep it async or make a startGame function ?
 	if (game.player1.score === 5)
 	{
 		console.log("V"); // del
+		// Draw 'VICTORY'
 		ctx.strokeStyle = 'white';
 		ctx.lineWidth = 20;
+		// Draw 'V'
 		ctx.beginPath();
 		ctx.moveTo(200, 270);
 		ctx.lineTo(250, 390);
 		ctx.lineTo(300, 270);
 		ctx.stroke();
+		// Draw 'I'
 		ctx.beginPath();
 		ctx.moveTo(345, 265);
 		ctx.lineTo(345, 415);
 		ctx.stroke();
+		// Draw 'C'
 		ctx.beginPath();
 		ctx.moveTo(470, 275);
 		ctx.lineTo(395, 275);
 		ctx.lineTo(395, 405);
 		ctx.lineTo(470, 405);
 		ctx.stroke();
+		// Draw 'T'
 		ctx.beginPath();
-		ctx.moveTo(470, 275);
-		ctx.lineTo(395, 275);
-		ctx.lineTo(395, 405);
-		ctx.lineTo(470, 405);
+		ctx.moveTo(500, 275);
+		ctx.lineTo(595, 275);
+		ctx.stroke();
+		ctx.moveTo(547, 275);
+		ctx.lineTo(547, 415);
+		ctx.stroke();
+		// Draw 'O'
+		ctx.beginPath();
+		ctx.moveTo(635, 275);
+		ctx.lineTo(710, 275);
+		ctx.lineTo(710, 405);
+		ctx.lineTo(635, 405);
+		ctx.lineTo(635, 265);
+		ctx.stroke();
+		// Draw 'R'
+		ctx.beginPath();
+		ctx.moveTo(760, 265);
+		ctx.lineTo(760, 415);
+		ctx.stroke();
+		ctx.moveTo(760, 275);
+		ctx.lineTo(835, 275);
+		ctx.lineTo(835, 340);
+		ctx.lineTo(775, 340);
+		ctx.lineTo(835, 410);
+		ctx.stroke();
+		// Draw 'Y'
+		ctx.beginPath();
+		ctx.moveTo(885, 272);
+		ctx.lineTo(930, 335);
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.moveTo(970, 272);
+		ctx.lineTo(885, 415);
 		ctx.stroke();
 	}
 	else if (game.player2.score === 5)
