@@ -175,7 +175,6 @@ function draw() // keep it async or make a startGame function ?
 	drawScore(ctx);
 	if (game.player1.score === 5)
 	{
-		console.log("V"); // del
 		// Draw 'VICTORY'
 		ctx.strokeStyle = 'white';
 		ctx.lineWidth = 20;
@@ -236,7 +235,55 @@ function draw() // keep it async or make a startGame function ?
 	}
 	else if (game.player2.score === 5)
 	{
-		console.log("K"); // del
+		// Draw 'DEFEAT'
+		ctx.strokeStyle = 'white';
+		ctx.lineWidth = 20;
+		// Draw 'D'
+		ctx.beginPath();
+		ctx.moveTo(180, 275);
+		ctx.lineTo(255, 290);
+		ctx.lineTo(255, 390);
+		ctx.lineTo(180, 405);
+		ctx.lineTo(180, 275);
+		ctx.lineTo(255, 290);
+		ctx.stroke();
+		// Draw 'I'
+		ctx.beginPath();
+		ctx.moveTo(290, 265);
+		ctx.lineTo(290, 415);
+		ctx.stroke();
+		// Draw 'C'
+		ctx.beginPath();
+		ctx.moveTo(415, 275);
+		ctx.lineTo(340, 275);
+		ctx.lineTo(340, 405);
+		ctx.lineTo(415, 405);
+		ctx.stroke();
+		// Draw 'T'
+		ctx.beginPath();
+		ctx.moveTo(445, 275);
+		ctx.lineTo(540, 275);
+		ctx.stroke();
+		ctx.moveTo(492, 275);
+		ctx.lineTo(492, 415);
+		ctx.stroke();
+		// Draw 'O'
+		ctx.beginPath();
+		ctx.moveTo(580, 275);
+		ctx.lineTo(655, 275);
+		ctx.lineTo(655, 405);
+		ctx.lineTo(580, 405);
+		ctx.lineTo(580, 265);
+		ctx.stroke();
+		// Draw 'T'
+		ctx.beginPath();
+		ctx.moveTo(795, 272);
+		ctx.lineTo(842, 335);
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.moveTo(880, 272);
+		ctx.lineTo(795, 415);
+		ctx.stroke();
 	}
 }
 
@@ -544,9 +591,11 @@ async function play()
 	// 	game.ball.speed.x = 0
 	// 	game.ball.speed.y = 0
 	// }
-	if (game.player1.score !== 5 || game.player1.score !== 5)
-	// maybe draw the whole field with score 5
+	if (game.player1.score !== 5 && game.player2.score !== 5)
+	{
+		console.log("X");
 		requestAnimationFrame(play);
+	}
 }
 
 document.addEventListener('DOMContentLoaded', async function ()
@@ -566,7 +615,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 		player2: // needs to be received from the other player, via the server
 		{
 			y: canvas.height / 2 - PLAYER_HEIGHT / 2,
-			score: 0,
+			score: 5,
 			win: false
 		},
 		ball:
