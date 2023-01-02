@@ -2,8 +2,14 @@ import {
 	Controller, Get, Post, Patch, Delete, Param, ParseIntPipe,
 	NotFoundException, UseGuards, BadRequestException,
 	UnauthorizedException, ClassSerializerInterceptor,
-	UseInterceptors, Query, Req, UseFilters, Body
+	UseInterceptors, Query, Req, UseFilters, Body, UploadedFile, Res,
+	StreamableFile, Header, Response, ParseFilePipe, FileTypeValidator
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Express } from 'express';
+import { diskStorage } from 'multer';
+import { resolve } from 'path';
+import * as fs from 'fs';
 import { UsersService } from './users.service';
 import { MatchesService } from '../matches/matches.service';
 import { User } from '../typeorm/user.entity';
@@ -177,4 +183,40 @@ export class UsersController
 	{
 		return this.matchesService.getWinrate(req.user.id);
 	}
+
+	@Post('/me/picture')
+	@UseInterceptors(
+		FileInterceptor('file', {
+			storage: diskStorage({
+				destination: './src/static/uploads/',
+			}),
+		}),
+	)
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseInterceptors(AuthInterceptor)
+	async uploadImage(@UploadedFile(new ParseFilePipe({
+		validators: [
+			new FileTypeValidator({ fileType: 'image/*' }),
+			],
+	})) file: Express.Multer.File, @Req() req)
+	{
+		this.usersService.deleteOldPhoto(req.user, file.filename);
+		return {
+			filename: file.filename,
+		};
+	}
 }
+
+
+
+
+
+	// @Get('/photo')
+	// @Header('Content-Type', 'image/jpeg')
+	// getUserProfilePhoto(
+	// 	@Res({ passthrough: true }) res: Response
+	// ): StreamableFile {
+	// 	const imageLocation = resolve(process.cwd(), 'src', 'static', 'uploads', '28bfbb3402a1c6fc1f6c451637466b60');
+	// 	const file = fs.createReadStream(imageLocation);
+	// 	return new StreamableFile(file);
+	// }
