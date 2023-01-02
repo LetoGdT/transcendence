@@ -8,7 +8,7 @@
 let canvas; // del need type
 let game; // del need type
 
-const TIMER = 0
+const TIMER = 100
 const SECOND = 0
 const PLAYER_HEIGHT = 100
 const PLAYER_WIDTH = 13
@@ -64,78 +64,75 @@ async function startTimer()
 	// let emptyField = ctx.getImageData(0, 0, canvas.width, canvas.height);
 	
 	// Display set = start game
-	if (game.start === true)
-	{
-		console.log("A") // del
-		ctx.lineWidth = 27;
-		ctx.strokeStyle = 'white';
-		ctx.lineJoin = 'square';
-		// Draw 3
-		ctx.fillStyle='white';
-		ctx.fillRect(445, 225, 150, 27);
-		ctx.fillRect(568, 252, 27, 200);
-		ctx.fillRect(495, 325, 85, 27);
-		ctx.fillRect(445, 425, 150, 27);
-		await sleep(SECOND);
-		// Erase 3
-		ctx.fillStyle='black';
-		ctx.fillRect(445, 225, 150, 27);
-		ctx.fillRect(568, 252, 27, 200);
-		ctx.fillRect(495, 325, 85, 27);
-		ctx.fillRect(445, 425, 150, 27);
-		ctx.lineWidth = 5;
-		ctx.strokeStyle = 'white';
-		ctx.beginPath();
-		ctx.setLineDash([5, 15]); // dotted line for the net
-		ctx.moveTo(canvas.width / 2, 0);
-		ctx.lineTo(canvas.width / 2, canvas.height);
-		ctx.stroke();
-		ctx.setLineDash([]); // sets the line back to solid
-		// Draw 2
-		ctx.fillStyle='white';
-		ctx.fillRect(445, 225, 150, 27);
-		ctx.fillRect(568, 252, 27, 100);
-		ctx.fillRect(445, 325, 150, 27);
-		ctx.fillRect(445, 325, 27, 100);
-		ctx.fillRect(445, 425, 150, 27);
-		await sleep(SECOND);
-		// Erase 2
-		ctx.fillStyle='black';
-		ctx.fillRect(445, 225, 150, 27);
-		ctx.fillRect(568, 252, 27, 100);
-		ctx.fillRect(445, 325, 150, 27);
-		ctx.fillRect(445, 325, 27, 100);
-		ctx.fillRect(445, 425, 150, 27);
-		ctx.lineWidth = 5;
-		ctx.strokeStyle = 'white';
-		ctx.beginPath();
-		ctx.setLineDash([5, 15]); // dotted line for the net
-		ctx.moveTo(canvas.width / 2, 0);
-		ctx.lineTo(canvas.width / 2, canvas.height);
-		ctx.stroke();
-		ctx.setLineDash([]); // sets the line back to solid
-		// Draw 1
-		ctx.fillStyle='white';
-		ctx.fillRect(480, 225, 27, 27);
-		ctx.fillRect(507, 225, 27, 200);
-		await sleep(SECOND);
-		// Erase 1
-		ctx.fillStyle='black';
-		ctx.fillRect(480, 225, 27, 27);
-		ctx.fillRect(507, 225, 27, 200);
-		ctx.lineWidth = 5;
-		ctx.strokeStyle = 'white';
-		ctx.beginPath();
-		ctx.setLineDash([5, 15]); // dotted line for the net
-		ctx.moveTo(canvas.width / 2, 0);
-		ctx.lineTo(canvas.width / 2, canvas.height);
-		ctx.stroke();
-		ctx.setLineDash([]); // sets the line back to solid
-		console.log("D") // del
-		// Erase 3
-		await sleep(50000000000000);
-		console.log("B") // del
-	}
+	console.log("A") // del
+	ctx.lineWidth = 27;
+	ctx.strokeStyle = 'white';
+	ctx.lineJoin = 'square';
+	// Draw 3
+	ctx.fillStyle='white';
+	ctx.fillRect(445, 225, 150, 27);
+	ctx.fillRect(568, 252, 27, 200);
+	ctx.fillRect(495, 325, 85, 27);
+	ctx.fillRect(445, 425, 150, 27);
+	await sleep(SECOND);
+	// Erase 3
+	ctx.fillStyle='black';
+	ctx.fillRect(445, 225, 150, 27);
+	ctx.fillRect(568, 252, 27, 200);
+	ctx.fillRect(495, 325, 85, 27);
+	ctx.fillRect(445, 425, 150, 27);
+	ctx.lineWidth = 5;
+	ctx.strokeStyle = 'white';
+	ctx.beginPath();
+	ctx.setLineDash([5, 15]); // dotted line for the net
+	ctx.moveTo(canvas.width / 2, 0);
+	ctx.lineTo(canvas.width / 2, canvas.height);
+	ctx.stroke();
+	ctx.setLineDash([]); // sets the line back to solid
+	// Draw 2
+	ctx.fillStyle='white';
+	ctx.fillRect(445, 225, 150, 27);
+	ctx.fillRect(568, 252, 27, 100);
+	ctx.fillRect(445, 325, 150, 27);
+	ctx.fillRect(445, 325, 27, 100);
+	ctx.fillRect(445, 425, 150, 27);
+	await sleep(SECOND);
+	// Erase 2
+	ctx.fillStyle='black';
+	ctx.fillRect(445, 225, 150, 27);
+	ctx.fillRect(568, 252, 27, 100);
+	ctx.fillRect(445, 325, 150, 27);
+	ctx.fillRect(445, 325, 27, 100);
+	ctx.fillRect(445, 425, 150, 27);
+	ctx.lineWidth = 5;
+	ctx.strokeStyle = 'white';
+	ctx.beginPath();
+	ctx.setLineDash([5, 15]); // dotted line for the net
+	ctx.moveTo(canvas.width / 2, 0);
+	ctx.lineTo(canvas.width / 2, canvas.height);
+	ctx.stroke();
+	ctx.setLineDash([]); // sets the line back to solid
+	// Draw 1
+	ctx.fillStyle='white';
+	ctx.fillRect(480, 225, 27, 27);
+	ctx.fillRect(507, 225, 27, 200);
+	await sleep(SECOND);
+	// Erase 1
+	ctx.fillStyle='black';
+	ctx.fillRect(480, 225, 27, 27);
+	ctx.fillRect(507, 225, 27, 200);
+	ctx.lineWidth = 5;
+	ctx.strokeStyle = 'white';
+	ctx.beginPath();
+	ctx.setLineDash([5, 15]); // dotted line for the net
+	ctx.moveTo(canvas.width / 2, 0);
+	ctx.lineTo(canvas.width / 2, canvas.height);
+	ctx.stroke();
+	ctx.setLineDash([]); // sets the line back to solid
+	console.log("D") // del
+	// Erase 3
+	await sleep(0);
+	console.log("B") // del
 }
 
 function sleep(ms)
@@ -247,33 +244,37 @@ function draw() // keep it async or make a startGame function ?
 		ctx.lineTo(180, 275);
 		ctx.lineTo(255, 290);
 		ctx.stroke();
-		// Draw 'I'
+		// Draw 'E'
 		ctx.beginPath();
-		ctx.moveTo(290, 265);
-		ctx.lineTo(290, 415);
+		ctx.moveTo(400, 275);
+		ctx.lineTo(325, 275);
+		ctx.lineTo(325, 405);
+		ctx.lineTo(400, 405);
 		ctx.stroke();
-		// Draw 'C'
 		ctx.beginPath();
-		ctx.moveTo(415, 275);
-		ctx.lineTo(340, 275);
-		ctx.lineTo(340, 405);
-		ctx.lineTo(415, 405);
+		ctx.moveTo(325, 340);
+		ctx.lineTo(365, 340);
 		ctx.stroke();
-		// Draw 'T'
+		// Draw 'F'
 		ctx.beginPath();
-		ctx.moveTo(445, 275);
-		ctx.lineTo(540, 275);
+		ctx.moveTo(460, 415);
+		ctx.lineTo(460, 275);
+		ctx.lineTo(535, 275);
 		ctx.stroke();
-		ctx.moveTo(492, 275);
-		ctx.lineTo(492, 415);
-		ctx.stroke();
-		// Draw 'O'
 		ctx.beginPath();
-		ctx.moveTo(580, 275);
-		ctx.lineTo(655, 275);
-		ctx.lineTo(655, 405);
-		ctx.lineTo(580, 405);
-		ctx.lineTo(580, 265);
+		ctx.moveTo(460, 320);
+		ctx.lineTo(500, 320);
+		ctx.stroke();
+		// Draw 'E'
+		ctx.beginPath();
+		ctx.moveTo(670, 275);
+		ctx.lineTo(595, 275);
+		ctx.lineTo(595, 405);
+		ctx.lineTo(670, 405);
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.moveTo(595, 340);
+		ctx.lineTo(635, 340);
 		ctx.stroke();
 		// Draw 'T'
 		ctx.beginPath();
