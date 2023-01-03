@@ -27,41 +27,23 @@ class Game
 	
 	constructor (canvas: HTMLCanvasElement)
 	{
-		const playerHeight = 40;
-
-		this.player1 = new Player(
-			10,
-			(canvas.height - playerHeight) / 2,
-			10,
-			playerHeight			
-		);
-		this.player2 = new Player(
-			canvas.width - 10 - 10,
-			(canvas.height - playerHeight) / 2,
-			10,
-			playerHeight
-		);
-		this.y = 
-		
 		this.start = true;
 		this.over = false;
-		this.player1 = new Player(); // TODO need to get the user id here (maybe between the parenthesis) + delete to free
-		this.player2 = new Player(); // TODO need to get the user id here (maybe between the parenthesis) + delete to free
+		this.player1 = new Player(canvas.height / 2 - PLAYER_HEIGHT / 2); // TODO delete to free
+		this.player2 = new Player(canvas.height / 2 - PLAYER_HEIGHT / 2); // TODO delete to free
 		this.ball = new Ball(); // TODO delete to free
 	}
 };
 
 class Player
 {
-	private y: number; // player1 : y: canvas.height / 2 - PLAYER_HEIGHT / 2,  player 2 : y: canvas.height / 2 - PLAYER_HEIGHT / 2
+	private y: number;
 	private score: number;
-	private win: boolean; // false
+	private win: boolean;
 	
-	constructor (canvas: HTMLCanvasElement)
+	constructor (y: number)
 	{
-		const playerHeight = 40;
-
-		this.y = canvas.height / 2;
+		this.y = y;
 		this.score = 0;
 		this.win = false;
 	}
@@ -69,11 +51,20 @@ class Player
 
 class Ball
 {
-	private x: number; // canvas.width / 2
-	private	y: number; // canvas.height / 2
-	private	r: number; // 5
+	private x: number;
+	private	y: number;
+	private	r: number;
 	private	speedX: number; // BALL_SPEED
 	private	speedY: number; //  BALL_SPEED
+
+	constructor(canvas: HTMLCanvasElement)
+	{
+		this.x = canvas.width / 2;
+		this.y = canvas.height / 2;
+		this.r = 5;
+		this.speedX = BALL_SPEED;
+		this.speedY = BALL_SPEED;
+	}
 }
 
 class DrawingApp
@@ -213,7 +204,7 @@ async function startTimer()
 function sleep(ms)
 {
 	// console.log("C") // del
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms)); // TODO delete to free
 }
 
 function draw() // keep it async or make a startGame function ?

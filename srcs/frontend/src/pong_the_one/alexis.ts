@@ -27,18 +27,8 @@ class Game {
 	constructor(canvas: HTMLCanvasElement) {
 		const playerHeight = 40;
 
-		this.player1 = new Player(
-			10,
-			(canvas.height - playerHeight) / 2,
-			10,
-			playerHeight			
-		);
-		this.player2 = new Player(
-			canvas.width - 10 - 10,
-			(canvas.height - playerHeight) / 2,
-			10,
-			playerHeight
-		);
+		this.player1 = new Player(10, (canvas.height - playerHeight) / 2, 10, playerHeight);
+		this.player2 = new Player(canvas.width - 10 - 10, (canvas.height - playerHeight) / 2, 10, playerHeight);
 	}
 
 	render(ctx: CanvasRenderingContext2D) {
