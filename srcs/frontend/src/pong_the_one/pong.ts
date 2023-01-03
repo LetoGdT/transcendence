@@ -17,50 +17,53 @@ const STEP = 12
 const W = 87
 const S = 83
 
-class Game
-{
-	private start: boolean; // true
-	private over: boolean; // false
-	private	player1: Player;
-	private	player2: Player; // needs to be received from the other player, via the server
-	private	ball: Ball;
 
-	constructor ()
-	{
-		let start = true;
-		let over = false;
-		let player1 = new Player; // TODO need to get the user id here + delete to free
-		let player2 = new Player; // TODO need to get the user id here + delete to free
-		let ball = new Ball; // TODO delete to free
-
-
-		this.start = true;
-		this.over = false;
-	}
-};
-
-class Player
-{
-	private y: number; // player1 : y: canvas.height / 2 - PLAYER_HEIGHT / 2,  player 2 : y: canvas.height / 2 - PLAYER_HEIGHT / 2
-	private score: number;
-	private win: boolean; // false
-	// need constructor etc
-}
-
-class Ball
-{
-	private x: number; // canvas.width / 2
-	private	y: number; // canvas.height / 2
-	private	r: number; // 5
-	private	speedX: number; // BALL_SPEED
-	private	speedY: number; //  BALL_SPEED
-}
 
 class DrawingApp
 {
 	private canvas: HTMLCanvasElement;
 	private ctx: CanvasRenderingContext2D;
 	
+	class Game
+	{
+		private start: boolean; // true
+		private over: boolean; // false
+		private	player1: Player;
+		private	player2: Player; // needs to be received from the other player, via the server
+		private	ball: Ball;
+
+		constructor ()
+		{
+			this.start = true;
+			this.over = false;
+			this.player1 = new Player(); // TODO need to get the user id here (maybe between the parenthesis) + delete to free
+			this.player2 = new Player(); // TODO need to get the user id here (maybe between the parenthesis) + delete to free
+			this.ball = new Ball(); // TODO delete to free
+		}
+	};
+
+	class Player
+	{
+		private y: number; // player1 : y: canvas.height / 2 - PLAYER_HEIGHT / 2,  player 2 : y: canvas.height / 2 - PLAYER_HEIGHT / 2
+		private score: number;
+		private win: boolean; // false
+		private 
+		
+		constructor ()
+		{
+			this.y = 
+		}
+	}
+
+	class Ball
+	{
+		private x: number; // canvas.width / 2
+		private	y: number; // canvas.height / 2
+		private	r: number; // 5
+		private	speedX: number; // BALL_SPEED
+		private	speedY: number; //  BALL_SPEED
+	}
+
 	constructor()
 	{
 		let canvas = document.getElementById('canvas') as HTMLCanvasElement;
@@ -666,8 +669,10 @@ async function play()
 
 document.addEventListener('DOMContentLoaded', async function ()
 {
-	new drawingApp draw_pong; // TODO delete to free
-	new game game_pong; // TODO delete to free
+	new DrawingApp draw_pong; // TODO delete to free
+	new Game game_pong; // TODO delete to free
+	game_pong.player1.y = draw_pong.canvas.height / 2 - PLAYER_HEIGHT / 2;
+	game_pong.player2.y = draw_pong.canvas.height / 2 - PLAYER_HEIGHT / 2;
 	{
 		start: true,
 		over: false,
