@@ -1,7 +1,8 @@
 import {
 	Controller, Get, Post, Logger, Redirect,
 	Query, HttpStatus, HttpException, Res, Req, UseGuards,
-	UseFilters, Request, UseInterceptors, Body, BadRequestException
+	UseFilters, Request, UseInterceptors, Body, BadRequestException,
+	UnauthorizedException
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -56,7 +57,7 @@ export class AuthController
 		await api.setToken(query.code);
 		let me = await api.get('/v2/me');
 		const user: User = await this.usersService.addUser({ uid: me.id, username: me.login, email: me.email, image_url: me.image.link });
-		const { access_token, refresh_token } = await this.authService.createTokens(user.id);
+		const { access_token, refresh_token } = await this.authService.createTokens(user.id, false);
 		res.cookie('access_token', access_token,
 			{
 				httpOnly: true,		// Prevent xss
@@ -71,7 +72,7 @@ export class AuthController
 				secure: true,		// Just info for the browser
 			}
 		);
-		return (res.redirect('http://localhost:3000/'));
+		return (res.redirect('http://localhost:3000/2fa'));
 	}
 
 	@Get('/logout')
@@ -85,9 +86,9 @@ export class AuthController
 		this.usersService.updateOne(req.user.id, req.user);
 		res.clearCookie('access_token',
 			{
-				httpOnly: true,		// Prevent xss
-				sameSite: 'lax',	// Prevent CSRF
-				secure: true,		// Just info for the browser
+				httpOnly: true,
+				sameSite: 'lax',
+				secure: true,
 			}
 		);
 		res.clearCookie('refresh_token',
@@ -105,15 +106,60 @@ export class AuthController
 	{
 		if (params.id == null)
 			throw new BadRequestException('You need to specify an id');
-		return this.authService.createTokens(params.id);
+		return this.authService.createTokens(params.id, true);
 	}
 
 	@Get('/2fa/generate')
 	@UseInterceptors(AuthInterceptor)
 	async register(@Res() response: Response,
-		@Req() req) {
+		@Req() req)
+	{
+		if (req.user.enabled2fa)
+			throw new UnauthorizedException('You already have 2fa enabled');
 		const { otpauthUrl } = await this.authService.generate2faSecret(req.user);
-
 		return this.authService.pipeQrCodeStream(response, otpauthUrl);
 	}
+
+	@Post('/2fa/enable')
+	@UseInterceptors(AuthInterceptor)
+	async enable2fa(@Req() req, @Body() { code } : { code: string })
+	{
+		const isCodeValid = this.authService.is2faCodeValid(code, req.user);
+		if (!isCodeValid)
+			throw new UnauthorizedException('Wrong authentication code');
+		await this.usersService.enable2fa(req.user);
+	}
+
+	@Post('/2fa/disable')
+	@UseInterceptors(AuthInterceptor)
+	async disable2fa(@Req() req)
+	{
+		await this.usersService.disable2fa(req.user);
+	}
+
+	@Post('/2fa/authenticate')
+	@UseInterceptors(AuthInterceptor)
+	async authenticate(@Req() req, @Body() { code } : { code: string },
+		@Res({ passthrough: true }) res: Response)
+	{
+		const isCodeValid = this.authService.is2faCodeValid(code, req.user);
+		if (!isCodeValid)
+			throw new UnauthorizedException('Wrong authentication code');
+		const { access_token, refresh_token } = await this.authService.createTokens(req.user.id, true);
+		res.cookie('access_token', access_token,
+			{
+				httpOnly: true,		// Prevent xss
+				sameSite: 'lax',	// Prevent CSRF
+				secure: true,		// Just info for the browser
+			}
+		);
+		res.cookie('refresh_token', refresh_token,
+			{
+				httpOnly: true,		// Prevent xss
+				sameSite: 'lax',	// Prevent CSRF
+				secure: true,		// Just info for the browser
+			}
+		);
+	}
+
 }

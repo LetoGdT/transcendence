@@ -43,10 +43,11 @@ export class AuthService
 	}
 
 	// Returns a new token/refresh pair
-	async createTokens(id: number): Promise<{ access_token: string, refresh_token: string }>
+	async createTokens(id: number,
+		enabled2fa: boolean): Promise<{ access_token: string, refresh_token: string }>
 	{
 		const user = await this.userRepository.findOne({where: { id: id }});
-		const payload = { username: user.username, sub: user.id };
+		const payload = { username: user.username, sub: user.id, enabled2fa: enabled2fa };
 		const access_token = await this.jwtService.sign(payload);
 		const refresh_token = randtoken.generate(16);
 		const expires = new Date();
@@ -72,8 +73,17 @@ export class AuthService
 		}
 	}
 
-	async pipeQrCodeStream(stream: Response, otpauthUrl: string) {
+	async pipeQrCodeStream(stream: Response, otpauthUrl: string)
+	{
 		return toFileStream(stream, otpauthUrl);
+	}
+
+	is2faCodeValid(code: string, user: User)
+	{
+		return authenticator.verify({
+			token: code,
+			secret: user.secret2fa
+		})
 	}
 }
 

@@ -34,7 +34,9 @@ export class JwtAuthGuard extends AuthGuard('jwt')
 
 		// Access granted if the token is already valid, else we check the refresh
 		const isValidAccessToken = this.authService.verifyToken(accessToken);
-		if (isValidAccessToken)
+		const tokenInfos = await this.authService.tokenOwner(accessToken);
+
+		if (isValidAccessToken/* && tokenInfos.enabled2fa*/)
 			return true;
 
 		const refreshToken = await request.cookies['refresh_token'];
@@ -51,7 +53,7 @@ export class JwtAuthGuard extends AuthGuard('jwt')
 		const {
 			access_token: newAccessToken,
 			refresh_token: newRefreshToken,
-		} = await this.authService.createTokens(user.id);
+		} = await this.authService.createTokens(user.id, tokenInfos.enabled2fa);
 
 		request.cookies['access_token'] = newAccessToken;
 		request.cookies['refresh_token'] = newRefreshToken;

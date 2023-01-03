@@ -383,4 +383,16 @@ export class UsersService
 		user.image_url = 'http://localhost:9999/uploads/' + filename;
 		this.userRepository.save(user);
 	}
+
+	async enable2fa(user: User)
+	{
+		user.enabled2fa = true;
+		return this.userRepository.save(user);
+	}
+
+	async disable2fa(user: User)
+	{
+		user.enabled2fa = false;
+		return this.userRepository.save(user);
+	}
 }
