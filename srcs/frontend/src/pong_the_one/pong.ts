@@ -3,6 +3,7 @@
 /*  when converting to typescript :
 	sleep : const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 	erase async where it's not needed
+	keypress fluide = stocker l'état de keydown en boolean et le passer en false avec keyup.
 */
 
 const TIMER = 4500
@@ -16,23 +17,29 @@ const STEP = 12
 const W = 87
 const S = 83
 
-class game
+class Game
 {
 	private start: boolean; // true
 	private over: boolean; // false
-	private	player1: player;
-	private	player2: player; // needs to be received from the other player, via the server
-	private	ball: ball;
+	private	player1: Player;
+	private	player2: Player; // needs to be received from the other player, via the server
+	private	ball: Ball;
 
 	constructor ()
 	{
-		// let start = true;
-		// let over = false;
-		this.start
+		let start = true;
+		let over = false;
+		let player1 = new Player; // TODO need to get the user id here + delete to free
+		let player2 = new Player; // TODO need to get the user id here + delete to free
+		let ball = new Ball; // TODO delete to free
+
+
+		this.start = true;
+		this.over = false;
 	}
 };
 
-class player
+class Player
 {
 	private y: number; // player1 : y: canvas.height / 2 - PLAYER_HEIGHT / 2,  player 2 : y: canvas.height / 2 - PLAYER_HEIGHT / 2
 	private score: number;
@@ -40,7 +47,7 @@ class player
 	// need constructor etc
 }
 
-class ball
+class Ball
 {
 	private x: number; // canvas.width / 2
 	private	y: number; // canvas.height / 2
@@ -49,7 +56,7 @@ class ball
 	private	speedY: number; //  BALL_SPEED
 }
 
-class drawingApp
+class DrawingApp
 {
 	private canvas: HTMLCanvasElement;
 	private ctx: CanvasRenderingContext2D;
@@ -59,7 +66,8 @@ class drawingApp
 		let canvas = document.getElementById('canvas') as HTMLCanvasElement;
 		let ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-		ctx.lineWidth = 5;
+		if (ctx === null)
+			return; // del make a proper error return
 
 		this.canvas = canvas;
 		this.ctx = ctx;
@@ -658,8 +666,8 @@ async function play()
 
 document.addEventListener('DOMContentLoaded', async function ()
 {
-	new drawingApp draw_pong;
-	new game game_pong;
+	new drawingApp draw_pong; // TODO delete to free
+	new game game_pong; // TODO delete to free
 	{
 		start: true,
 		over: false,
