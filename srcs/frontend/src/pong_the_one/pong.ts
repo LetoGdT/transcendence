@@ -17,6 +17,24 @@ const STEP = 12
 const W = 87
 const S = 83
 
+class DrawingApp
+{
+	private canvas: HTMLCanvasElement;
+	private ctx: CanvasRenderingContext2D;
+	
+	constructor()
+	{
+		let canvas = document.getElementById('canvas') as HTMLCanvasElement;
+		let ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+		if (ctx === null)
+			return; // del make a proper error return
+
+		this.canvas = canvas;
+		this.ctx = ctx;
+	}
+}
+
 class Game
 {
 	private start: boolean; // true
@@ -64,24 +82,6 @@ class Ball
 		this.r = 5;
 		this.speedX = BALL_SPEED;
 		this.speedY = BALL_SPEED;
-	}
-}
-
-class DrawingApp
-{
-	private canvas: HTMLCanvasElement;
-	private ctx: CanvasRenderingContext2D;
-	
-	constructor()
-	{
-		let canvas = document.getElementById('canvas') as HTMLCanvasElement;
-		let ctx = canvas.getContext("2d", { willReadFrequently: true });
-
-		if (ctx === null)
-			return; // del make a proper error return
-
-		this.canvas = canvas;
-		this.ctx = ctx;
 	}
 }
 
