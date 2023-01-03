@@ -23,6 +23,13 @@ class game
 	private	player1: player;
 	private	player2: player; // needs to be received from the other player, via the server
 	private	ball: ball;
+
+	constructor ()
+	{
+		// let start = true;
+		// let over = false;
+		this.start
+	}
 };
 
 class player
