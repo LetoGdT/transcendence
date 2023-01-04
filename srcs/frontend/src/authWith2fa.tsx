@@ -5,9 +5,6 @@ import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 
-// import { useState, useEffect } from "react";
-// import {FormContainer, TextFieldElement} from 'react-hook-form-mui'
-
 const CodeOf2FATextField = styled(TextField)({
 	'& input:valid + fieldset': {
 		borderColor: 'white',
