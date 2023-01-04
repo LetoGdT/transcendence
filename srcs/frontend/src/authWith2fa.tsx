@@ -60,13 +60,14 @@ const SettingsButton = styled(Button)({
 });
 let newCode: string;
 
-export function AuthWith2FA: React.ReactElement(){
+export function AuthWith2FA(): React.ReactElement{
 	const [code2FA, setCode2FA] = useState(undefined);
 	// let Code2FA: string | undefined;	
 
 	const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
 		console.log("handleInput");
-		setCode2FA(e.target.value); 
+		console.log(e);
+		setCode2FA(e.target.value);
 		console.log(code2FA);
 	};
 
