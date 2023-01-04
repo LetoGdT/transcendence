@@ -220,6 +220,7 @@ export class UsersService
 		queryBuilder1
 			.leftJoinAndSelect('user.following', 'following')
 			.leftJoinAndSelect('user.invitations', 'invitations')
+			.leftJoinAndSelect('user.banlist', 'banlist')
 			.where('user.id = :id', { id: user.id });
 
 		user = await queryBuilder1.getOne();
@@ -245,12 +246,19 @@ export class UsersService
 			.where('user.id = :id', { id: createUserFriendDto.id });
 
 		const user2 = await queryBuilder2.getOne();
-		const checkBan: number = user2.banlist.findIndex((users) => {
+		let checkBan: number = user2.banlist.findIndex((users) => {
 			return users.id == user.id;
 		});
 
 		if (checkBan != -1)
-			throw new HttpException('You have been blocked by this user', HttpStatus.FORBIDDEN)
+			throw new HttpException('You have been blocked by this user', HttpStatus.FORBIDDEN);
+
+		checkBan = user.banlist.findIndex((users) => {
+			return users.id == user2.id
+		})
+
+		if (checkBan != -1)
+			throw new HttpException('You blocked this user', HttpStatus.FORBIDDEN);
 
 		const newInvited = await queryBuilder2.getOne();
 
