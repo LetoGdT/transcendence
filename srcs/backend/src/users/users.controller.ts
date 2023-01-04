@@ -39,7 +39,6 @@ export class UsersController
 
 	@Get('/isconnected')
 	@UseInterceptors(ClassSerializerInterceptor)
-	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	isConnected(@Req() req)
 	{
