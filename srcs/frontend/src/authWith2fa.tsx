@@ -58,19 +58,34 @@ const SettingsButton = styled(Button)({
 		xShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
 	},
 });
-let newCode: string;
+
+function SendCode2FA(code2FA: string | undefined){
+	React.useEffect(() => {
+		const api = async () => {
+			const response = await fetch('http://localhost:9999/api/2fa/enable',{
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				method: 'POST',
+				credentials: 'include',
+				body: JSON.stringify({code: code2FA})
+			});
+		};
+
+	}, []);	
+}
 
 export function AuthWith2FA(): React.ReactElement{
-	const [code2FA, setCode2FA] = React.useState(undefined);
-	// let Code2FA: string | undefined;	
+	const [code2FA, setCode2FA] = React.useState("");
 
-	const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-		console.log("handleInput");
-		console.log(e);
+	const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setCode2FA(e.target.value);
-		console.log(code2FA);
+		SendCode2FA(code2FA);
 	};
 
+	
+	
 	return(
 		<React.Fragment>
 			<h1>2FA</h1>
@@ -87,7 +102,7 @@ export function AuthWith2FA(): React.ReactElement{
 				id="validation-outlined-input"
 				onChange={handleInput}
 			/>
-			<p>Result : {newCode}</p>
+			<p>Result : {code2FA}</p>
 		</React.Fragment>
 	);
 }
