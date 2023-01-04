@@ -611,7 +611,7 @@ async function play()
 
 document.addEventListener('DOMContentLoaded', async function ()
 {
-	canvas = document.getElementById('canvas');
+	canvas: any = document.getElementById('canvas');
 	let ctx = canvas.getContext('2d', { willReadFrequently: true });
 	game =
 	{
