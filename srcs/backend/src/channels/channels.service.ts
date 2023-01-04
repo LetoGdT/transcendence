@@ -7,13 +7,13 @@ import { User } from '../typeorm/user.entity';
 import { ChannelUser } from '../typeorm/channel-user.entity';
 import { Message } from '../typeorm/message.entity';
 import { MessagesService } from '../messages/messages.service';
+import { AchievementsService } from '../achievements/achievements.service';
 import { PostChannelDto, PatchChannelUserDto, PatchChannelDto } from '../dto/channels.dto';
 import { PageDto } from "../dto/page.dto";
 import { PageMetaDto } from "../dto/page-meta.dto";
 import { PageOptionsDto, Order } from "../dto/page-options.dto";
 import { MessageQueryFilterDto, ChannelQueryFilterDto } from '../dto/query-filters.dto';
-import { PostPrivateDto, UpdateMessageDto } from '../dto/private-messages.dto';
-import { UserSelectDto } from '../dto/messages.dto';
+import { UserSelectDto, PostMessageDto, UpdateMessageDto } from '../dto/messages.dto';
 import { UserQueryFilterDto, ChannelUserQueryFilterDto } from '../dto/query-filters.dto';
 import { ChannelBanQueryFilterDto, PostChannelBanDto, UpdateChannelBanDto } from '../dto/channel-ban.dto';
 import { ChannelBan } from '../typeorm/channel-ban.entity';
@@ -31,7 +31,8 @@ export class ChannelsService
 	constructor(@InjectRepository(Channel) private readonly channelRepository: Repository<Channel>,
 		@InjectRepository(ChannelUser) private readonly channelUserRepository: Repository<ChannelUser>,
 		@InjectRepository(ChannelBan) private readonly channelBanRepository: Repository<ChannelBan>,
-		private readonly messagesService: MessagesService)
+		private readonly messagesService: MessagesService,
+		private readonly achievementsService: AchievementsService)
 		{}
 
 	async getChannels(pageOptionsDto: PageOptionsDto,
@@ -379,7 +380,7 @@ export class ChannelsService
 			messageQueryFilterDto, userSelectDto, user, as_sender);
 	}
 
-	async createChannelMessage(channel_id: number, postPrivateDto: PostPrivateDto, sender: User)
+	async createChannelMessage(channel_id: number, postMessageDto: PostMessageDto, sender: User)
 	{
 		if (channel_id > this.IdMax)
 			throw new BadRequestException(`channel_id must not be greater than ${this.IdMax}`);
@@ -410,12 +411,14 @@ export class ChannelsService
 		const newMessage : Message = new Message();
 
 		newMessage.sender = sender;
-		newMessage.content = postPrivateDto.content;
+		newMessage.content = postMessageDto.content;
 
 		channel.latest_sent = newMessage.sent_date;
 
 		channel.messages.push(newMessage);
-		return this.channelRepository.save(channel);
+		const ret = await this.channelRepository.save(channel);
+		await this.achievementsService.createUserAchievement(sender, 'I\'m a sociable person');
+		return ret;
 	}
 
 	async updateChannelMessage(channel_id: number, message_id: number,

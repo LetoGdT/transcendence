@@ -6,10 +6,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { lastValueFrom } from 'rxjs';
 import { Repository } from 'typeorm';
 import * as randtoken from 'rand-token';
+import { authenticator } from 'otplib';
+import { toFileStream } from 'qrcode';
+import { Response } from 'express';
 import { User } from '../typeorm/user.entity';
-
-
-// { username: 'tlafay', sub: '4', iat: 1666947580, exp: 1666947610 }
 
 @Injectable()
 export class AuthService
@@ -42,11 +42,17 @@ export class AuthService
 			.getOne();
 	}
 
+	tokenInfos(token: string): { username: string, sub: number, enabled2fa: boolean }
+	{
+		return this.jwtService.decode(token) as { username: string, sub: number, enabled2fa: boolean };
+	}
+
 	// Returns a new token/refresh pair
-	async createTokens(id: number): Promise<{ access_token: string, refresh_token: string }>
+	async createTokens(id: number,
+		enabled2fa: boolean): Promise<{ access_token: string, refresh_token: string }>
 	{
 		const user = await this.userRepository.findOne({where: { id: id }});
-		const payload = { username: user.username, sub: user.id };
+		const payload = { username: user.username, sub: user.id, enabled2fa: enabled2fa };
 		const access_token = await this.jwtService.sign(payload);
 		const refresh_token = randtoken.generate(16);
 		const expires = new Date();
@@ -54,6 +60,35 @@ export class AuthService
 		this.userRepository.update(id,
 			{ refresh_token: refresh_token, refresh_expires: expires.toDateString() });
 		return { access_token: access_token, refresh_token: refresh_token };
+	}
+
+	async generate2faSecret(user: User)
+	{
+		const secret = authenticator.generateSecret();
+
+		const otpauthUrl = authenticator.keyuri(user.email, 'ft_transcendence', secret);
+
+		await this.userRepository.update(user.id, {
+			secret2fa: secret
+		});
+
+		return {
+			secret,
+			otpauthUrl
+		}
+	}
+
+	async pipeQrCodeStream(stream: Response, otpauthUrl: string)
+	{
+		return toFileStream(stream, otpauthUrl);
+	}
+
+	is2faCodeValid(code: string, user: User)
+	{
+		return authenticator.verify({
+			token: code,
+			secret: user.secret2fa
+		})
 	}
 }
 

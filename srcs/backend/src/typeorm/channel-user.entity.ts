@@ -28,5 +28,5 @@ export class ChannelUser
 	is_muted: Boolean;
 
 	@ManyToOne(() => Channel, (channel) => channel.users, { onDelete: 'CASCADE' })
-	channel: Channel
+	channel: Channel;
 }

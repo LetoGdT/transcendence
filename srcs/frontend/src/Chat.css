@@ -12,18 +12,19 @@
 	margin-right: 3px;
 	height: 500px;
 	overflow: scroll;
-	width: 100px;
+	min-width: 80px;
+	width: 80px;
+	max-width: 80px;
 	border-style: solid;
-  	border-width: 3px;
+	border-width: 3px;
 	border-color: '#646464';
-	overflow-x: visible;
 }
 
 .Chat-history-container{
 	display: flex;
 	flex-direction: column;
 	border-style: solid;
-  	border-width: 3px;
+	border-width: 3px;
 	border-color: '#646464';
 	overflow: scroll;
 	height: 500px;
@@ -44,6 +45,7 @@
 	margin-right: 13px;
 	width: 90%;
 	align-self: center;
+	overflow-wrap: break-word;
 }
 
 .Chat-send-button{
@@ -54,6 +56,7 @@
 .Chat-message-from-other-lvl1{
 	display: flex;
 	flex-direction: row;
+	padding-right: 1em;
 }
 
 .Chat-message-from-self-lvl1{
@@ -64,7 +67,7 @@
 }
 
 .Chat-div-empty{
-	width: 63px;
+	width: 15em;
 }
 
 .Chat-who{
@@ -76,18 +79,21 @@
 
 .Chat-message-from-self-lvl2{
 	border-style: solid;
-  	border-width: 3px;
+	border-width: 3px;
 	margin: 3px;
 	border-radius: 10px 15px 0px 10px;
 	border-color: #3b9b3b;
 	padding: 5px;
+	/* overflow-wrap: break-word; */
 }
 
 .Chat-message-from-other-lvl2{
 	border-style: solid;
-  	border-width: 3px;
+	border-width: 3px;
 	margin: 3px;
 	border-radius: 10px 15px 10px 0px;
 	border-color: #007dd6;
 	padding: 5px;
+	/* overflow-wrap: break-word; */
+	word-break: break-all;
 }

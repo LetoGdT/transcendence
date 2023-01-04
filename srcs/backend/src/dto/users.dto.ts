@@ -1,8 +1,11 @@
-import { Exclude } from 'class-transformer';
-import { IsNotEmpty } from 'class-validator';
+import { Exclude, Type } from 'class-transformer';
+import { IsNotEmpty, Min, Max } from 'class-validator';
 
 export class CreateUserDto
 {
+	@Type(() => Number)
+	@Min(1)
+	@Max(Number.MAX_SAFE_INTEGER)
 	uid: number;
 
 	@IsNotEmpty()
@@ -19,18 +22,13 @@ export class UpdateUserDto
 {
 	@IsNotEmpty()
 	username: string;
-	
-	@IsNotEmpty()
-	email: string;
-	
-	@IsNotEmpty()
-	image_url: string;
+}
 
-	@Exclude()
+export class CreateUserFriendDto
+{
+	@Type(() => Number)
+	@Min(1)
+	@Max(Number.MAX_SAFE_INTEGER)
 	@IsNotEmpty()
-	refresh_token: string;
-
-	@Exclude()
-	@IsNotEmpty()
-	refresh_expires: string;
+	id: number;
 }

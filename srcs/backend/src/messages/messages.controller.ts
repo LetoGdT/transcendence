@@ -1,6 +1,6 @@
 import {
 	Controller, Get, Post, Query, Body, Req,
-	UseInterceptors, ClassSerializerInterceptor
+	UseInterceptors, ClassSerializerInterceptor, UseGuards
 } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { PageDto } from '../dto/page.dto';
@@ -9,10 +9,8 @@ import { UserSelectDto } from '../dto/messages.dto';
 import { Message } from '../typeorm/message.entity';
 import { AuthInterceptor } from '../auth/auth.interceptor';
 import { MessageQueryFilterDto } from '../dto/query-filters.dto';
-
-// Probably removable after
 import { UsersService } from '../users/users.service';
-import { User } from '../typeorm/user.entity';
+import { JwtAuthGuard } from '../guards/jwt.guard';
 
 @Controller('messages')
 export class MessagesController
@@ -22,6 +20,7 @@ export class MessagesController
 
 	@Get()
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async getMessages(@Query() pageOptionsDto: PageOptionsDto,
 		@Query() messageQueryFilterDto: MessageQueryFilterDto,
@@ -33,6 +32,7 @@ export class MessagesController
 
 	@Get('/as_sender')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async getMessagesAsSender(@Query() pageOptionsDto: PageOptionsDto,
 		@Query() messageQueryFilterDto: MessageQueryFilterDto,
@@ -44,6 +44,7 @@ export class MessagesController
 
 	@Get('/as_recipient')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async getMessagesAsRecipient(@Query() pageOptionsDto: PageOptionsDto,
 		@Query() messageQueryFilterDto: MessageQueryFilterDto,

@@ -2,10 +2,13 @@
 srcs/dist
 srcs/node_modules
 /build
+**uploads**
 
 # Database
 srcs/db/postgres/**
 **/postgres/**
+srcs/db/pgadmin/**
+**/pgadmin/**
 
 # Logs
 logs
