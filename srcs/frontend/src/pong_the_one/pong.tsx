@@ -3,6 +3,7 @@
 /*  when converting to typescript :
 	sleep : const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 	erase async where it's not needed
+	keypress fluide = stocker l'état de keydown en boolean et le passer en false avec keyup.
 */
 
 const TIMER = 4500
@@ -16,40 +17,7 @@ const STEP = 12
 const W = 87
 const S = 83
 
-class game
-{
-	private start: boolean; // true
-	private over: boolean; // false
-	private	player1: player;
-	private	player2: player; // needs to be received from the other player, via the server
-	private	ball: ball;
-
-	constructor ()
-	{
-		// let start = true;
-		// let over = false;
-		this.start
-	}
-};
-
-class player
-{
-	private y: number; // player1 : y: canvas.height / 2 - PLAYER_HEIGHT / 2,  player 2 : y: canvas.height / 2 - PLAYER_HEIGHT / 2
-	private score: number;
-	private win: boolean; // false
-	// need constructor etc
-}
-
-class ball
-{
-	private x: number; // canvas.width / 2
-	private	y: number; // canvas.height / 2
-	private	r: number; // 5
-	private	speedX: number; // BALL_SPEED
-	private	speedY: number; //  BALL_SPEED
-}
-
-class drawingApp
+class DrawingApp
 {
 	private canvas: HTMLCanvasElement;
 	private ctx: CanvasRenderingContext2D;
@@ -59,10 +27,61 @@ class drawingApp
 		let canvas = document.getElementById('canvas') as HTMLCanvasElement;
 		let ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-		ctx.lineWidth = 5;
+		if (ctx === null)
+			return; // del make a proper error return
 
 		this.canvas = canvas;
 		this.ctx = ctx;
+	}
+}
+
+class Game
+{
+	private start: boolean; // true
+	private over: boolean; // false
+	private	player1: Player;
+	private	player2: Player; // needs to be received from the other player, via the server
+	private	ball: Ball;
+	
+	constructor (canvas: HTMLCanvasElement)
+	{
+		this.start = true;
+		this.over = false;
+		this.player1 = new Player(canvas.height / 2 - PLAYER_HEIGHT / 2); // TODO delete to free
+		this.player2 = new Player(canvas.height / 2 - PLAYER_HEIGHT / 2); // TODO delete to free
+		this.ball = new Ball(); // TODO delete to free
+	}
+};
+
+class Player
+{
+	private y: number;
+	private score: number;
+	private win: boolean;
+	
+	constructor (y: number)
+	{
+		this.y = y;
+		this.score = 0;
+		this.win = false;
+	}
+}
+
+class Ball
+{
+	private x: number;
+	private	y: number;
+	private	r: number;
+	private	speedX: number; // BALL_SPEED
+	private	speedY: number; //  BALL_SPEED
+
+	constructor(canvas: HTMLCanvasElement)
+	{
+		this.x = canvas.width / 2;
+		this.y = canvas.height / 2;
+		this.r = 5;
+		this.speedX = BALL_SPEED;
+		this.speedY = BALL_SPEED;
 	}
 }
 
@@ -185,7 +204,7 @@ async function startTimer()
 function sleep(ms)
 {
 	// console.log("C") // del
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms)); // TODO delete to free
 }
 
 function draw() // keep it async or make a startGame function ?
@@ -658,8 +677,10 @@ async function play()
 
 document.addEventListener('DOMContentLoaded', async function ()
 {
-	new drawingApp draw_pong;
-	new game game_pong;
+	new DrawingApp draw_pong; // TODO delete to free
+	new Game game_pong; // TODO delete to free
+	game_pong.player1.y = draw_pong.canvas.height / 2 - PLAYER_HEIGHT / 2;
+	game_pong.player2.y = draw_pong.canvas.height / 2 - PLAYER_HEIGHT / 2;
 	{
 		start: true,
 		over: false,
