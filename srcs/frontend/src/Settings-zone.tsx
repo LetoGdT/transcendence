@@ -164,14 +164,14 @@ function SendNewAlias(newAlias: string | undefined){
 	}, []);	
 }
 
-function ValidateButton(newAlias: string | undefined, newAvatar: string | undefined){
-	if (newAlias !== undefined){
-		SendNewAlias(newAlias);
-	}
-	if (newAvatar !== undefined){
-		SendNewAvatar(newAvatar);
-	}
-}
+// function ValidateButton(newAlias: string | undefined, newAvatar: string | undefined){
+// 	if (newAlias !== undefined){
+// 		SendNewAlias(newAlias);
+// 	}
+// 	if (newAvatar !== undefined){
+// 		SendNewAvatar(newAvatar);
+// 	}
+// }
 
 export function Settings(){
 	const [data, setResult] = useState<resultProps>();
@@ -194,10 +194,12 @@ export function Settings(){
 
 	const handleInputAvatar = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setNewAvatar(e.target.value);
+		SendNewAvatar(newAvatar);
 	};
 
 	const handleInputAlias = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setNewAlias(e.target.value);
+		SendNewAlias(newAlias);
 	};
 
 	return(
@@ -287,9 +289,9 @@ export function Settings(){
 					</div>
 						
 				</div>
-				<div>
-					<SettingsButton variant="contained" disableRipple>Validate change(s)</SettingsButton>
-				</div>
+				{/* <div>
+					<SettingsButton variant="contained" disableRipple onClick={ValidateButton}>Validate change(s)</SettingsButton>
+				</div> */}
 				*Fill in the field is not required.
 			</div>
 		</React.Fragment>
