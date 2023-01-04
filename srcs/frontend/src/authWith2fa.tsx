@@ -83,8 +83,6 @@ export function AuthWith2FA(): React.ReactElement{
 		setCode2FA(e.target.value);
 		SendCode2FA(code2FA);
 	};
-
-	
 	
 	return(
 		<React.Fragment>
@@ -102,7 +100,6 @@ export function AuthWith2FA(): React.ReactElement{
 				id="validation-outlined-input"
 				onChange={handleInput}
 			/>
-			<p>Result : {code2FA}</p>
 		</React.Fragment>
 	);
 }

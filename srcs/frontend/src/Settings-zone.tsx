@@ -130,51 +130,76 @@ const TwoFASwitch = styled(Switch)(({ theme }) => ({
 	},
 }));
 
-// function ValidateButton(newAlias: string | undefined, newAvatar: string | undefined, bool2FA: boolean | undefined, str2FA: string | undefined){
-// 	const handleClickValidate = async (event: React.MouseEvent<HTMLButtonElement) => {
-// 		const response = await fetch
-// 	};
-// }
+function SendNewAvatar(newAvatar: string | undefined){
+	React.useEffect(() => {
+		const api = async () => {
+			const response = await fetch('http://localhost:9999/api/users/me?',{
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				method: 'PATCH',
+				credentials: 'include',
+				params: JSON.stringify({image_url: newAvatar})
+			});
+		};
 
-// export function Auth2FA(){
-// 	return(
-// 		<SettingsTextField
-// 			label="6 digits code"
-// 			InputLabelProps={{
-// 				sx:{
-// 					color:"white",
-// 				}
-// 			}}
-// 			variant="outlined"
-// 			defaultValue="000000"
-// 			sx={{ input: {color: "grey"} }}
-// 			id="validation-outlined-input"
-// 			value={str2FA}
-// 		/>
-// 	);
-// }
+	}, []);	
+}
+
+function SendNewAlias(newAlias: string | undefined){
+	React.useEffect(() => {
+		const api = async () => {
+			const response = await fetch('http://localhost:9999/api/users/me?',{
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				method: 'PATCH',
+				credentials: 'include',
+				params: JSON.stringify({username: newAlias})
+			});
+		};
+
+	}, []);	
+}
+
+function ValidateButton(newAlias: string | undefined, newAvatar: string | undefined){
+	if (newAlias !== undefined){
+		SendNewAlias(newAlias);
+	}
+	if (newAvatar !== undefined){
+		SendNewAvatar(newAvatar);
+	}
+}
 
 export function Settings(){
 	const [data, setResult] = useState<resultProps>();
+	const [newAvatar, setNewAvatar] = React.useState("");
+	const [newAlias, setNewAlias] = React.useState("");
 
 	useEffect(() => {
 		const api = async () => {
-		  const data = await fetch("http://localhost:9999/api/users/me", {
-			method: "GET",
-			credentials: 'include'
-		  });
-		  const jsonData = await data.json();
-		  setResult(jsonData);
-		  console.log(jsonData);
+			const data = await fetch("http://localhost:9999/api/users/me", {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonData = await data.json();
+			setResult(jsonData);
+			console.log(jsonData);
 		};
 	
 		api();
-	  }, []);
+	}, []);
 
-	  let newAlias: string;
-	  let newAvatar: string;
-	  let newCode: string;
-	  let active2FA: boolean;
+	const handleInputAvatar = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+		setNewAvatar(e.target.value);
+	};
+
+	const handleInputAlias = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+		setNewAlias(e.target.value);
+	};
+
 	return(
 		<React.Fragment>
 			<h1>Settings</h1>
@@ -206,8 +231,8 @@ export function Settings(){
 										defaultValue="*.jpg or *.png"
 										sx={{ input: { color: 'grey' } }}
 										id="validation-outlined-input"
-										// value={newAvatar}
-										/>
+										onChange={handleInputAvatar}
+									/>
 								</Box>
 							</div>
 							<div className='Settings-container-div-lvl4'>
@@ -241,7 +266,7 @@ export function Settings(){
 										defaultValue="ex: Toto"
 										sx={{ input: { color: 'grey' } }}
 										id="validation-outlined-input"
-										//value={newAlias}
+										onChange={handleInputAlias}
 									/>
 								</Box>
 							</div>
