@@ -60,12 +60,12 @@ const SettingsButton = styled(Button)({
 export function AuthWith2FA(){
 	let Code2FA: string | undefined;	
 
-	// const handleInput = (e: React.FormEvent<HTMLInputElement>) => {
-	// 	console.log("handleInput");
-	// 	let newCode: string;
-	// 	newCode = e.target.value; 
-	// 	console.log(newCode);
-	// };
+	const handleInput = (e: React.FormEvent<HTMLInputElement>) => {
+		console.log("handleInput");
+		let newCode: string;
+		newCode = e.target.value; 
+		console.log(newCode);
+	};
 
 	return(
 		<React.Fragment>
@@ -81,14 +81,14 @@ export function AuthWith2FA(){
 				// defaultValue="000000"
 				sx={{ input: {color: "grey"} }}
 				id="validation-outlined-input"
-				// onInput={(e: React.FormEvent<HTMLInputElement>) => handleInput(e)}
-				onChange={(e: React.SyntheticEvent) => {
-					e.preventDefault();
-					const target = e.target as typeof e.target & {
-					  Code2FA: { value: string };
-					};
-					Code2FA = target.Code2FA.value;
-				}}
+				onInput={(e: React.FormEvent<HTMLInputElement>) => handleInput(e)}
+				// onChange={(e: React.SyntheticEvent) => {
+				// 	e.preventDefault();
+				// 	const target = e.target as typeof e.target & {
+				// 	  Code2FA: { value: string };
+				// 	};
+				// 	Code2FA = target.Code2FA.value;
+				// }}
 			/>
 			<p>Result : {Code2FA}</p>
 		</React.Fragment>
