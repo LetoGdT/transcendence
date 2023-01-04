@@ -687,6 +687,7 @@ document.addEventListener('DOMContentLoaded', async function ()
 			}
 		}
 	};
+	console.log("1") // del
 	startTimer();
 	await sleep(TIMER);
 	console.log("F") // del
