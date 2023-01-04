@@ -22,12 +22,12 @@ class DrawingApp
 	private canvas: HTMLCanvasElement;
 	private ctx: CanvasRenderingContext2D;
 	
-	constructor()
+	constructor(original_canvas: HTMLCanvasElement, original_ctx: CanvasRenderingContext2D)
 	{
-		let canvas = document.getElementById('canvas') as HTMLCanvasElement;
-		let ctx = canvas.getContext("2d", { willReadFrequently: true });
+		let canvas = original_canvas;
+		let ctx = original_ctx;
 
-		if (ctx === null)
+		if (ctx === null) // TODO needed ?
 			return; // del make a proper error return
 
 		this.canvas = canvas;
@@ -204,7 +204,7 @@ async function startTimer()
 function sleep(ms)
 {
 	// console.log("C") // del
-    return new Promise(resolve => setTimeout(resolve, ms)); // TODO delete to free
+	return new Promise(resolve => setTimeout(resolve, ms)); // TODO delete to free
 }
 
 function draw() // keep it async or make a startGame function ?
@@ -677,9 +677,17 @@ async function play()
 
 document.addEventListener('DOMContentLoaded', async function ()
 {
-	canvas = document.getElementById('canvas');
-	let draw_pong = new DrawingApp; // TODO delete to free
-	let game_pong = new GamePhysics(HTMLCanvasElement); // TODO delete to free
+	let canvas = document.getElementById('canvas') as HTMLCanvasElement;
+	let res = canvas.getContext('2D', { willReadFrequently: true });
+
+	if (!res || !(res instanceof CanvasRenderingContext2D))
+	{
+		throw new Error('Failed to get 2D context'); // TODO delete to free ?
+	}
+	let ctx: CanvasRenderingContext2D = res;
+	
+	let draw_pong = new DrawingApp(canvas, ctx); // TODO delete to free
+	let game_pong = new GamePhysics(canvas); // TODO delete to free
 	game_pong.player1.y = draw_pong.canvas.height / 2 - PLAYER_HEIGHT / 2;
 	game_pong.player2.y = draw_pong.canvas.height / 2 - PLAYER_HEIGHT / 2;
 
