@@ -33,27 +33,27 @@ services:
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
             POSTGRES_DB: 'ft_transcendence'
             PGDATA: /data/postgres
-        volumes:
-            - postgres:/data/postgres
+        # volumes:
+            # - postgres:/data/postgres
         networks:
             - ft_transcendence
         restart: unless-stopped
 
-    pgadmin:
-        container_name: pgadmin
-        image: dpage/pgadmin4
-        environment:
-            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-            PGADMIN_CONFIG_SERVER_MODE: 'False'
-        volumes:
-            - pgadmin:/var/lib/pgadmin
+    # pgadmin:
+    #     container_name: pgadmin
+    #     image: dpage/pgadmin4
+    #     environment:
+    #         PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+    #         PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+    #         PGADMIN_CONFIG_SERVER_MODE: 'False'
+    #     volumes:
+    #         - pgadmin:/var/lib/pgadmin
 
-        ports:
-            - "${PGADMIN_PORT:-5050}:80"
-        networks:
-            - ft_transcendence
-        restart: unless-stopped
+    #     ports:
+    #         - "${PGADMIN_PORT:-5050}:80"
+    #     networks:
+    #         - ft_transcendence
+    #     restart: unless-stopped
 
 volumes:
     postgres:
@@ -62,12 +62,12 @@ volumes:
             type: none
             device: ./srcs/db/postgres
             o: bind
-    pgadmin:
-        driver: local
-        driver_opts:
-            type: none
-            device: ./srcs/db/pgadmin
-            o: bind
+    # pgadmin:
+    #     driver: local
+    #     driver_opts:
+    #         type: none
+    #         device: ./srcs/db/pgadmin
+    #         o: bind
 
 networks:
     ft_transcendence:
