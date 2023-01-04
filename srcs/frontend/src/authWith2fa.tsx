@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 
-import { useState, useEffect } from "react";
+// import { useState, useEffect } from "react";
 // import {FormContainer, TextFieldElement} from 'react-hook-form-mui'
 
 const CodeOf2FATextField = styled(TextField)({
@@ -61,7 +61,7 @@ const SettingsButton = styled(Button)({
 let newCode: string;
 
 export function AuthWith2FA(): React.ReactElement{
-	const [code2FA, setCode2FA] = useState(undefined);
+	const [code2FA, setCode2FA] = React.useState(undefined);
 	// let Code2FA: string | undefined;	
 
 	const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,15 +85,7 @@ export function AuthWith2FA(): React.ReactElement{
 				// defaultValue="000000"
 				sx={{ input: {color: "grey"} }}
 				id="validation-outlined-input"
-				// onInput={(e: React.FormEvent<HTMLInputElement>) => handleInput(e)}
 				onChange={handleInput}
-				// onChange={(e: React.SyntheticEvent) => {
-				// 	e.preventDefault();
-				// 	const target = e.target as typeof e.target & {
-				// 	  Code2FA: { value: string };
-				// 	};
-				// 	Code2FA = target.Code2FA.value;
-				// }}
 			/>
 			<p>Result : {newCode}</p>
 		</React.Fragment>
