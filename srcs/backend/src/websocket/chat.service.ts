@@ -18,11 +18,26 @@ export class ChatService {
 			withCredentials: 'true',
 		};
 		return this.http.get(
+			/*** DEPRECATED ! ***/
 			"localhost:9999/privmsg/" +
 				"?Order=DESC",
 			{
 				headers: headersRequest,
 			},
 		);
+
+		/**
+		 * New way of doing: Get latest conversations at 'http://localhost:9999/conversations',
+		 * save the id, then get the messages
+		 * at 'http://localhost:9999/conversations/<conversation_id>/messages', where conversation_id
+		 * is the id saved earlier.
+		 **/
+	}
+
+	async onNewMessage() {
+		/**
+		 * Create a message at POST 'http://localhost:9999/conversations/<conversation_id>/messages'
+		 * with body: { content : 'The message's content' }
+		 **/
 	}
 }
