@@ -384,13 +384,13 @@ export class UsersService
 		this.userRepository.save(user);
 	}
 
-	async enable2fa(user: User)
+	async enable2fa(user: User): Promise<User>
 	{
 		user.enabled2fa = true;
 		return this.userRepository.save(user);
 	}
 
-	async disable2fa(user: User)
+	async disable2fa(user: User): Promise<User>
 	{
 		user.enabled2fa = false;
 		return this.userRepository.save(user);

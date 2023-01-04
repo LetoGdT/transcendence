@@ -142,6 +142,8 @@ export class AuthController
 	async authenticate(@Req() req, @Body() { code } : { code: string },
 		@Res({ passthrough: true }) res: Response)
 	{
+		if (!req.user.enabled2fa)
+			throw new UnauthorizedException('You don\'t have 2fa enabled');
 		const isCodeValid = this.authService.is2faCodeValid(code, req.user);
 		if (!isCodeValid)
 			throw new UnauthorizedException('Wrong authentication code');

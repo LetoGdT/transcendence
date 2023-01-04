@@ -29,7 +29,7 @@ export class UsersController
 
 	@Get('/')
 	@UseInterceptors(ClassSerializerInterceptor)
-	@UseFilters(RedirectToLoginFilter)
+	// @UseFilters(RedirectToLoginFilter)
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async getAllUsers(@Query() pageOptionsDto: PageOptionsDto,

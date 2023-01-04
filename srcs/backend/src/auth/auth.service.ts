@@ -42,6 +42,11 @@ export class AuthService
 			.getOne();
 	}
 
+	tokenInfos(token: string): { username: string, sub: number, enabled2fa: boolean }
+	{
+		return this.jwtService.decode(token) as { username: string, sub: number, enabled2fa: boolean };
+	}
+
 	// Returns a new token/refresh pair
 	async createTokens(id: number,
 		enabled2fa: boolean): Promise<{ access_token: string, refresh_token: string }>
