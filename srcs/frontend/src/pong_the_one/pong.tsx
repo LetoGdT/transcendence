@@ -6,6 +6,7 @@
 	keypress fluide = stocker l'état de keydown en boolean et le passer en false avec keyup.
 */
 
+// partie ci-dessous dans un autre fichier
 const TIMER = 4500
 const SECOND = 1500
 const PLAYER_HEIGHT = 100
@@ -16,6 +17,19 @@ const DOWN = 40
 const STEP = 12
 const W = 87
 const S = 83
+
+export function Pong(){
+	let title: string = "PONG";
+
+	return(
+		<React.Fragment>
+			<h1>{title}</h1>
+			<div>
+				
+			</div>
+		</React.Fragment>
+	);
+}
 
 class DrawingApp
 {

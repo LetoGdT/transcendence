@@ -4,6 +4,7 @@ import { OurMenu } from './menu-zone';
 
 import { Home } from './adaptable-zone';
 import { Play, SpecAMatch} from './adaptable-zone';
+import { Pong } from './pong'
 import { Chat } from './chat-zone';
 import { Friends, MatchHistory, Settings, Profile } from './adaptable-zone';
 import { PleaseConnect, SignOn } from './adaptable-zone';
@@ -29,12 +30,13 @@ function App() {
 						<Route path="/friends" element={<Friends/>} />
 						<Route path="/" element={<Home />} />
 						<Route path="/matchhistory" element={<MatchHistory/>} />
-						<Route path="/play" element={<Play/>} />
+						<Route path="/play" element={<Pong />} />
 						<Route path="/settings" element={<Settings/>} />
 						<Route path="/specamatch" element={<SpecAMatch/>} />
 						<Route path="/profile" element={<Profile/>} />
 						<Route path="/pleaseconnect" element={<PleaseConnect/>} />
 						<Route path="/signon" element={<SignOn/>} />
+						<Route path="/pong" element={<Pong/>} />
 					</Routes>
 				</div>
 			</Router>
