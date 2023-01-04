@@ -165,7 +165,8 @@ export class ConversationsController
 	* 
 	* Args:
 	* 	:id (Number): The conversation's id.
-	* 	OTHER HERE AFTER
+	* 	postConversationMessageDto:
+	* 		content (string): The content of the message.
 	* 		
 	* 
 	* Return: The created message.
