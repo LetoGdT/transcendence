@@ -4,6 +4,8 @@ import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
+
+import { useState, useEffect } from "react";
 // import {FormContainer, TextFieldElement} from 'react-hook-form-mui'
 
 const CodeOf2FATextField = styled(TextField)({
@@ -56,15 +58,16 @@ const SettingsButton = styled(Button)({
 		xShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
 	},
 });
+let newCode: string;
 
-export function AuthWith2FA(){
-	let Code2FA: string | undefined;	
+export function AuthWith2FA: React.ReactElement(){
+	const [code2FA, setCode2FA] = useState(undefined);
+	// let Code2FA: string | undefined;	
 
-	const handleInput = (e: React.FormEvent<HTMLInputElement>) => {
+	const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
 		console.log("handleInput");
-		let newCode: string;
-		newCode = e.currentTarget.value; 
-		console.log(newCode);
+		setCode2FA(e.target.value); 
+		console.log(code2FA);
 	};
 
 	return(
@@ -81,7 +84,8 @@ export function AuthWith2FA(){
 				// defaultValue="000000"
 				sx={{ input: {color: "grey"} }}
 				id="validation-outlined-input"
-				onInput={(e: React.FormEvent<HTMLInputElement>) => handleInput(e)}
+				// onInput={(e: React.FormEvent<HTMLInputElement>) => handleInput(e)}
+				onChange={handleInput}
 				// onChange={(e: React.SyntheticEvent) => {
 				// 	e.preventDefault();
 				// 	const target = e.target as typeof e.target & {
@@ -90,27 +94,7 @@ export function AuthWith2FA(){
 				// 	Code2FA = target.Code2FA.value;
 				// }}
 			/>
-			<p>Result : {Code2FA}</p>
+			<p>Result : {newCode}</p>
 		</React.Fragment>
 	);
 }
-
-// export function AuthWith2FA(){
-// 	() => {
-// 		const formContext = useForm<{ code: string }>({
-// 		  defaultValues: {
-// 			code: '000000'
-// 		  }
-// 		})
-// 		const {handleSubmit} = formContext
-// 		return (
-// 			<FormContainer
-// 				formContext={formContext}
-// 				handleSubmit={handleSubmit(action('submit'))}
-// 			>
-// 				<TextFieldElement name={'name'} label={'Name'}/><br/>
-// 				<Button type={'submit'} color={'primary'}>Submit</Button>
-// 			</FormContainer>
-// 		)
-// 	  };
-// }
