@@ -1,8 +1,9 @@
-import { Controller, Get, Query, ClassSerializerInterceptor, UseInterceptors, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Query, ClassSerializerInterceptor, UseInterceptors, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { MatchesService } from './matches.service';
 import { AuthInterceptor } from '../auth/auth.interceptor';
 import { PageOptionsDto } from "../dto/page-options.dto";
 import { MatchesQueryFilterDto } from '../dto/query-filters.dto';
+import { JwtAuthGuard } from '../guards/jwt.guard';
 
 @Controller('matches')
 export class MatchesController
@@ -10,6 +11,7 @@ export class MatchesController
 	constructor(private readonly matchesService: MatchesService) {}
 
 	@Get()
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(ClassSerializerInterceptor)
 	async getAllMatches(@Query() pageOptionsDto: PageOptionsDto,
 		@Query() matchesQueryFilterDto: MatchesQueryFilterDto)
@@ -18,6 +20,7 @@ export class MatchesController
 	}
 
 	@Get('/:user_id/winrate')
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(ClassSerializerInterceptor)
 	async getWinrate(@Param('user_id', ParseIntPipe) user_id: number,)
 	{

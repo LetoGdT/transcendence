@@ -1,7 +1,7 @@
 import {
 	Controller, Req, Body, Get, Post, Patch, Delete,
 	UseInterceptors, ClassSerializerInterceptor,
-	Param, ParseIntPipe, Query
+	Param, ParseIntPipe, Query, UseGuards
 } from '@nestjs/common';
 import { ChannelsService } from './channels.service';
 import { AuthInterceptor } from '../auth/auth.interceptor';
@@ -14,6 +14,7 @@ import { MessageQueryFilterDto, ChannelQueryFilterDto } from '../dto/query-filte
 import { UserSelectDto, PostMessageDto, UpdateMessageDto } from '../dto/messages.dto';
 import { ChannelBanQueryFilterDto, PostChannelBanDto, UpdateChannelBanDto } from '../dto/channel-ban.dto';
 import { UserQueryFilterDto, ChannelUserQueryFilterDto } from '../dto/query-filters.dto';
+import { JwtAuthGuard } from '../guards/jwt.guard';
 
 /**
 * A channel, where multiple users can communicate.
@@ -51,6 +52,7 @@ export class ChannelsController
 
 	@Get()
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	getChannels(@Query() pageOptionsDto: PageOptionsDto,
 		@Query() channelQueryFilterDto: ChannelQueryFilterDto,
@@ -75,6 +77,7 @@ export class ChannelsController
 	
 	@Post()
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	createChannel(@Body() postChannelDto: PostChannelDto,
 		@Req() req): Promise<Channel>
@@ -98,6 +101,7 @@ export class ChannelsController
 
 	@Patch('/:channel_id')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	updateChannel(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Query() patchChannelDto: PatchChannelDto,
@@ -108,6 +112,7 @@ export class ChannelsController
 
 	@Get('/:channel_id/users')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	getChannelUsers(@Query() pageOptionsDto: PageOptionsDto,
 		@Query() userQueryFilterDto: UserQueryFilterDto,
@@ -121,6 +126,7 @@ export class ChannelsController
 
 	@Post('/:channel_id/users')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	joinChannel(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Body() body: { password: string },
@@ -131,6 +137,7 @@ export class ChannelsController
 
 	@Patch('/:channel_id/users/:user_id')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	changeUserPermissions(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Param('user_id', ParseIntPipe) user_id: number,
@@ -142,6 +149,7 @@ export class ChannelsController
 
 	@Delete('/:channel_id/users/:user_id')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	leaveChannel(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Param('user_id', ParseIntPipe) user_id: number,
@@ -152,6 +160,7 @@ export class ChannelsController
 
 	@Get('/:channel_id/messages')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	getChannelMessages(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Query() pageOptionsDto: PageOptionsDto,
@@ -165,6 +174,7 @@ export class ChannelsController
 
 	@Get('/:channel_id/messages/as_sender')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	getChannelMessagesAsSender(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Query() pageOptionsDto: PageOptionsDto,
@@ -178,6 +188,7 @@ export class ChannelsController
 
 	@Post('/:channel_id/messages')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	createChannelMessage(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Body() postMessageDto: PostMessageDto,
@@ -188,6 +199,7 @@ export class ChannelsController
 
 	@Patch('/:channel_id/messages/:message_id')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	updateChannelMessage(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Param('message_id', ParseIntPipe) message_id: number,
@@ -199,6 +211,7 @@ export class ChannelsController
 	
 	@Delete('/:channel_id/messages/:message_id')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	deleteChannelMessage(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Param('message_id', ParseIntPipe) message_id: number,
@@ -209,6 +222,7 @@ export class ChannelsController
 
 	@Get('/conversations')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	getConversations(@Query() pageOptionsDto: PageOptionsDto,
 		@Req() req)
@@ -219,6 +233,7 @@ export class ChannelsController
 
 	@Get('/:channel_id/banlist')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	getChannelBanlist(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Query() pageOptionsDto: PageOptionsDto,
@@ -229,6 +244,7 @@ export class ChannelsController
 
 	@Post('/:channel_id/banlist')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	banChannelUser(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Body() postChannelBanDto: PostChannelBanDto,
@@ -239,6 +255,7 @@ export class ChannelsController
 
 	@Patch('/:channel_id/banlist/:ban_id')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	updateChannelBan(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Param('ban_id', ParseIntPipe) ban_id: number,
@@ -250,6 +267,7 @@ export class ChannelsController
 
 	@Delete('/:channel_id/banlist/:ban_id')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	unbanChannelUser(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Param('ban_id', ParseIntPipe) ban_id: number,

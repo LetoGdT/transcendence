@@ -2,7 +2,7 @@ import {
 	Controller, Get, Post, Logger, Redirect,
 	Query, HttpStatus, HttpException, Res, Req, UseGuards,
 	UseFilters, Request, UseInterceptors, Body, BadRequestException,
-	UnauthorizedException
+	UnauthorizedException, ClassSerializerInterceptor
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -65,19 +65,21 @@ export class AuthController
 				secure: true,		// Just info for the browser
 			}
 		);
-		res.cookie('refresh_token', refresh_token,
+		if (!user.enabled2fa)
+		{		
+			res.cookie('refresh_token', refresh_token,
 			{
-				httpOnly: true,		// Prevent xss
-				sameSite: 'lax',	// Prevent CSRF
-				secure: true,		// Just info for the browser
-			}
-		);
+						httpOnly: true,		// Prevent xss
+						sameSite: 'lax',	// Prevent CSRF
+						secure: true,		// Just info for the browser
+					}
+					);
+		}
 		return (res.redirect('http://localhost:3000/2fa'));
 	}
 
 	@Get('/logout')
 	@UseGuards(JwtAuthGuard)
-	@UseFilters(RedirectToLoginFilter)
 	@UseInterceptors(AuthInterceptor)
 	logout(@Res({ passthrough: true }) res: Response,
 			@Req() req)
@@ -102,7 +104,7 @@ export class AuthController
 	}
 
 	@Get('/gen_token')
-	async genToken(@Query() params: { id: number })
+	genToken(@Query() params: { id: number })
 	{
 		if (params.id == null)
 			throw new BadRequestException('You need to specify an id');
@@ -110,6 +112,7 @@ export class AuthController
 	}
 
 	@Get('/2fa/generate')
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async register(@Res() response: Response,
 		@Req() req)
@@ -121,23 +124,29 @@ export class AuthController
 	}
 
 	@Post('/2fa/enable')
+	@UseGuards(JwtAuthGuard)
+	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	async enable2fa(@Req() req, @Body() { code } : { code: string })
+	enable2fa(@Req() req, @Body() { code } : { code: string })
 	{
 		const isCodeValid = this.authService.is2faCodeValid(code, req.user);
 		if (!isCodeValid)
 			throw new UnauthorizedException('Wrong authentication code');
-		await this.usersService.enable2fa(req.user);
+		return this.usersService.enable2fa(req.user);
 	}
 
 	@Post('/2fa/disable')
+	@UseGuards(JwtAuthGuard)
+	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	async disable2fa(@Req() req)
+	disable2fa(@Req() req)
 	{
-		await this.usersService.disable2fa(req.user);
+		return this.usersService.disable2fa(req.user);
 	}
 
 	@Post('/2fa/authenticate')
+	@UseGuards(JwtAuthGuard)
+	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
 	async authenticate(@Req() req, @Body() { code } : { code: string },
 		@Res({ passthrough: true }) res: Response)

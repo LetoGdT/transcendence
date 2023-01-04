@@ -29,7 +29,6 @@ export class UsersController
 
 	@Get('/')
 	@UseInterceptors(ClassSerializerInterceptor)
-	// @UseFilters(RedirectToLoginFilter)
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async getAllUsers(@Query() pageOptionsDto: PageOptionsDto,
@@ -40,6 +39,7 @@ export class UsersController
 
 	@Get('/isconnected')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	isConnected(@Req() req)
 	{
@@ -48,6 +48,7 @@ export class UsersController
 
 	@Get('/me')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	currentUser(@Req() req)
 	{
@@ -56,6 +57,7 @@ export class UsersController
 
 	@Patch('/me')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async updateUser(@Query() updateUserDto: UpdateUserDto,
 		@Req() req)
@@ -67,6 +69,7 @@ export class UsersController
 
 	@Get('/:id')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async getUserById(@Param('id', ParseIntPipe) id: number): Promise<User>
 	{
@@ -78,6 +81,7 @@ export class UsersController
 
 	@Get('/me/friends')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async getUserFriends(@Query() pageOptionsDto: PageOptionsDto,
 		@Req() req)
@@ -87,6 +91,7 @@ export class UsersController
 
 	@Post('/me/friends')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async createUserFriend(@Body() createUserFriendDto: CreateUserFriendDto,
 		@Req() req)
@@ -96,6 +101,7 @@ export class UsersController
 
 	@Delete('/me/friends/:user_id')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async deleteUserFriend(@Param('user_id', ParseIntPipe) user_id: number,
 		@Req() req)
@@ -105,6 +111,7 @@ export class UsersController
 
 	@Get('/me/friends/invites')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async getUserFriendInvitations(@Query() pageOptionsDto: PageOptionsDto,
 		@Req() req)
@@ -114,6 +121,7 @@ export class UsersController
 
 	@Post('/me/friends/invites')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async inviteUser(@Body() createUserFriendDto: CreateUserFriendDto,
 		@Req() req)
@@ -121,8 +129,9 @@ export class UsersController
 		return this.usersService.inviteUser(req.user, createUserFriendDto);
 	}
 
-	@Delete('/me/friends/invites/:id')
+	@Delete('/me/friends/invites/:user_id')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async declineInvitation(@Param('user_id', ParseIntPipe) user_id: number,
 		@Req() req)
@@ -132,6 +141,7 @@ export class UsersController
 
 	@Get('/me/banlist')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async getUserBanlist(@Query() pageOptionsDto: PageOptionsDto,
 		@Req() req)
@@ -141,6 +151,7 @@ export class UsersController
 
 	@Post('/me/banlist')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async banUser(@Body() createUserFriendDto: CreateUserFriendDto,
 		@Req() req)
@@ -150,6 +161,7 @@ export class UsersController
 
 	@Delete('/me/banlist/:user_id')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async unbanUser(@Param('user_id', ParseIntPipe) user_id: number,
 		@Req() req)
@@ -159,6 +171,7 @@ export class UsersController
 
 	@Get('/me/achievements')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async getAchievements(@Query() pageOptionsDto: PageOptionsDto,
 		@Req() req)
@@ -168,6 +181,7 @@ export class UsersController
 
 	@Get('/me/matches')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async getUserMatches(@Query() pageOptionsDto: PageOptionsDto,
 		@Query() matchesQueryFilterDto: MatchesQueryFilterDto,
@@ -178,6 +192,7 @@ export class UsersController
 
 	@Get('/me/winrate')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async getUserWinrate(@Req() req)
 	{
@@ -193,6 +208,7 @@ export class UsersController
 		}),
 	)
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async uploadImage(@UploadedFile(new ParseFilePipe({
 		validators: [
