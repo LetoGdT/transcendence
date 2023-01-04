@@ -12,6 +12,7 @@ import { resolve } from 'path';
 import * as fs from 'fs';
 import { UsersService } from './users.service';
 import { MatchesService } from '../matches/matches.service';
+import { AuthService } from '../auth/auth.service';
 import { User } from '../typeorm/user.entity';
 import { PageDto } from "../dto/page.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
@@ -25,7 +26,8 @@ import { RedirectToLoginFilter } from '../filters/auth-exceptions.filter';
 export class UsersController
 {
 	constructor(private readonly usersService: UsersService,
-		private readonly matchesService: MatchesService) {}
+		private readonly matchesService: MatchesService,
+		private readonly authService: AuthService) {}
 
 	@Get('/')
 	@UseInterceptors(ClassSerializerInterceptor)
@@ -40,8 +42,11 @@ export class UsersController
 	@Get('/isconnected')
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	isConnected(@Req() req)
+	async isConnected(@Req() req)
 	{
+		if (req.user.enabled2fa
+			&& !(await this.authService.tokenInfos(req.cookies.access_token).enabled2fa))
+			return false;
 		return req.user != null;
 	}
 
@@ -221,17 +226,3 @@ export class UsersController
 		};
 	}
 }
-
-
-
-
-
-	// @Get('/photo')
-	// @Header('Content-Type', 'image/jpeg')
-	// getUserProfilePhoto(
-	// 	@Res({ passthrough: true }) res: Response
-	// ): StreamableFile {
-	// 	const imageLocation = resolve(process.cwd(), 'src', 'static', 'uploads', '28bfbb3402a1c6fc1f6c451637466b60');
-	// 	const file = fs.createReadStream(imageLocation);
-	// 	return new StreamableFile(file);
-	// }

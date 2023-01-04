@@ -11,7 +11,7 @@ export class AuthInterceptor implements NestInterceptor
 	{
 		const request = context.switchToHttp().getRequest();
 		const access_token = request.cookies['access_token'];
-		if (access_token)
+		if (access_token && await this.authService.verifyToken(access_token))
 		{
 			const user = await this.authService.tokenOwner(access_token);
 			request.user = user;
