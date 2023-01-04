@@ -16,7 +16,7 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 
-import { PleaseConnect } from './adaptable-zone';
+import { PleaseConnect, NotFound } from './adaptable-zone';
 
 type resultProps = {
 	email: string;
@@ -432,7 +432,7 @@ export function Profile(){
 		// });
 	// 	console.log(response.json());//
 	// };
-
+	
 	return(
 		<React.Fragment>
 			<h1>Profile - Stats</h1>
@@ -522,7 +522,7 @@ export function Profile(){
 											{/* <IconButton color="error" aria-label="reject" onClick={handleClickReject(user.id)}> */}
 											<IconButton color="error" aria-label="reject" onClick={()=>{
 												let urltofetch : string;
-												urltofetch = 'http://localhost:9999/api/users/me/friends/invitations/' + uid;
+												urltofetch = 'http://localhost:9999/api/users/me/friends/invites/' + uid;
 												// console.log(urltofetch);//
 												const response = fetch(urltofetch, {
 													headers: {

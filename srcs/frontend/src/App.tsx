@@ -5,7 +5,7 @@ import './Menu.css';
 import { getPaginatedRequest } from './tools';
 import { OurHeader } from './Header-zone';
 import { OurMenu } from './Menu-zone';
-import { Home } from './adaptable-zone';
+import { Home, NotFound } from './adaptable-zone';
 import { Play, SpecAMatch} from './adaptable-zone';
 import { ChatZone } from './Chat-zone';
 import { FriendsZone } from './Friend-zone';
@@ -13,6 +13,7 @@ import { MatchHistoryZone } from './MatchHistory-zone';
 import { SettingsZone } from './Settings-zone';
 import { ProfileZone, OtherProfile } from './Profile-zone';
 import { SignOn } from './adaptable-zone';
+import { AuthWith2FA } from './authWith2fa';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 
 import { useState, useEffect} from "react";
@@ -79,6 +80,8 @@ function App() {
 						<Route path="/profile" element={<ProfileZone/>} />
 						<Route path="/signon" element={<SignOn/>} />
 						<Route path='/ListUser' element={<ListUser />} />
+						<Route path='/2fa' element={<AuthWith2FA />} />
+						<Route path='*' element={<NotFound/>} />
 					</Routes>
 				</div>
 			</Router>

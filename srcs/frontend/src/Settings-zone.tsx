@@ -130,6 +130,30 @@ const TwoFASwitch = styled(Switch)(({ theme }) => ({
 	},
 }));
 
+// function ValidateButton(newAlias: string | undefined, newAvatar: string | undefined, bool2FA: boolean | undefined, str2FA: string | undefined){
+// 	const handleClickValidate = async (event: React.MouseEvent<HTMLButtonElement) => {
+// 		const response = await fetch
+// 	};
+// }
+
+// export function Auth2FA(){
+// 	return(
+// 		<SettingsTextField
+// 			label="6 digits code"
+// 			InputLabelProps={{
+// 				sx:{
+// 					color:"white",
+// 				}
+// 			}}
+// 			variant="outlined"
+// 			defaultValue="000000"
+// 			sx={{ input: {color: "grey"} }}
+// 			id="validation-outlined-input"
+// 			value={str2FA}
+// 		/>
+// 	);
+// }
+
 export function Settings(){
 	const [data, setResult] = useState<resultProps>();
 
@@ -146,6 +170,11 @@ export function Settings(){
 	
 		api();
 	  }, []);
+
+	  let newAlias: string;
+	  let newAvatar: string;
+	  let newCode: string;
+	  let active2FA: boolean;
 	return(
 		<React.Fragment>
 			<h1>Settings</h1>
@@ -177,6 +206,7 @@ export function Settings(){
 										defaultValue="*.jpg or *.png"
 										sx={{ input: { color: 'grey' } }}
 										id="validation-outlined-input"
+										// value={newAvatar}
 										/>
 								</Box>
 							</div>
@@ -203,14 +233,15 @@ export function Settings(){
 									<SettingsTextField
 										label="New alias"
 										InputLabelProps={{
-										sx:{
-											color:"white",
-										}
+											sx:{
+												color:"white",
+											}
 										}}
 										variant="outlined"
 										defaultValue="ex: Toto"
 										sx={{ input: { color: 'grey' } }}
 										id="validation-outlined-input"
+										//value={newAlias}
 									/>
 								</Box>
 							</div>
@@ -225,6 +256,7 @@ export function Settings(){
 										<TwoFASwitch defaultChecked inputProps={{ 'aria-label': 'ant design' }} />
 									<Typography color="common.white">On</Typography>
 								</Stack>
+								
 							</div>
 						</div>
 					</div>
