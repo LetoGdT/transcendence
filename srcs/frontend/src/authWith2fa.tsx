@@ -63,7 +63,7 @@ export function AuthWith2FA(){
 	const handleInput = (e: React.FormEvent<HTMLInputElement>) => {
 		console.log("handleInput");
 		let newCode: string;
-		newCode = e.target.value; 
+		newCode = e.currentTarget.value; 
 		console.log(newCode);
 	};
 
