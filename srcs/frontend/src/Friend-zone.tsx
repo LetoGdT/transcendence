@@ -31,8 +31,6 @@ export function Friends(){
 		api();
 	}, []);
 
-	let status: string;
-
 	return(
 		<React.Fragment>
 			<h1>Friends</h1>
