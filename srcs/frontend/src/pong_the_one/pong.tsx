@@ -1,4 +1,4 @@
-'use strict';
+// 'use strict'; // seems not to be relevant in ts
 
 /*  when converting to typescript :
 	sleep : const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -35,7 +35,7 @@ class DrawingApp
 	}
 }
 
-class Game
+class GamePhysics
 {
 	private start: boolean; // true
 	private over: boolean; // false
@@ -677,43 +677,18 @@ async function play()
 
 document.addEventListener('DOMContentLoaded', async function ()
 {
-	new DrawingApp draw_pong; // TODO delete to free
-	new Game game_pong; // TODO delete to free
+	canvas = document.getElementById('canvas');
+	let draw_pong = new DrawingApp; // TODO delete to free
+	let game_pong = new GamePhysics(HTMLCanvasElement); // TODO delete to free
 	game_pong.player1.y = draw_pong.canvas.height / 2 - PLAYER_HEIGHT / 2;
 	game_pong.player2.y = draw_pong.canvas.height / 2 - PLAYER_HEIGHT / 2;
-	{
-		start: true,
-		over: false,
-		player1:
-		{
-			y: canvas.height / 2 - PLAYER_HEIGHT / 2,
-			score: 0,
-			win: false
-		},
-		player2: // needs to be received from the other player, via the server
-		{
-			y: canvas.height / 2 - PLAYER_HEIGHT / 2,
-			score: 0,
-			win: false
-		},
-		ball:
-		{
-			x: canvas.width / 2,
-			y: canvas.height / 2,
-			r: 5,
-			speed:
-			{
-				x: BALL_SPEED,
-				y: BALL_SPEED
-			}
-		}
-	};
-	console.log("1") // del
+
+	console.log("1"); // del
 	startTimer();
 	await sleep(TIMER);
-	console.log("F") // del
+	console.log("F"); // del
 	window.addEventListener('keydown', playerMove);
-	console.log("J") // del
+	console.log("J"); // del
 	play();
 	// Mouvement du joueur
 });
