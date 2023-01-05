@@ -4,10 +4,10 @@ const PLAYER_WIDTH = 13;
 
 class Player
 {
-	private x: number;
-	private y: number;
-	private score: number;
-	private win: boolean;
+	public x: number;
+	public y: number;
+	public score: number;
+	public win: boolean;
 	
 	constructor(x: number, y: number)
 	{

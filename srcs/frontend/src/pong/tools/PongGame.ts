@@ -8,6 +8,8 @@ class PongGame {
     private player2: Player;
     private ball: Ball;
 
+    private up: boolean = false;
+
 	constructor(width: number, height: number) {
 		this.width = width;
 		this.height = height;
@@ -63,14 +65,25 @@ class PongGame {
 	 * Fonction appelée toutes les 20ms (50 Hz / 50 fois par seconde)
 	 */
 	update() {
+        if (this.up) {
+            this.player1.y -= 7;
+            if (this.player1.y < 0)
+                this.player1.y = 0;
+        }
+
         this.updatePhysics();
 	}
 
     handleKeyUp(code: string) {
-
+        if (code === 'KeyW') {
+            this.up = false;
+        }
     }
 
     handleKeyDown(code: string) {
+        if (code === 'KeyW') {
+            this.up = true;
+        }
     }
 
 }

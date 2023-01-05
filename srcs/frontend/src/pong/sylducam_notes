@@ -9,6 +9,12 @@ docker logs -f nestjs
 INSTALL REACT :
 npx create-react-app my-app --template typescript
 npm install react-scripts@2.1.0
+.ENV
+add it everytime in backend
+
+Dans le dockerfile eviter d'utiliser la version node:latest, toujours specifier la version
+car si il y a une mise a jour majeure cela peut casser l'application
+
 
 -------------RESOURCES---------------
 https://blog.devoreve.com/2018/06/06/creer-un-pong-en-javascript/ (bon tutoriel, tres clair mais js et non ts. Bon point de depart duquel s'inspirer. correspond au code present dans pong_example2)

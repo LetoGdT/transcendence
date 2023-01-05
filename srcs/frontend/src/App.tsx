@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect} from 'react';
 import './App.css';
 import './Menu.css';
 
@@ -17,7 +17,6 @@ import { SignOn } from './adaptable-zone';
 import { AuthWith2FA } from './authWith2fa';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 
-import { useState, useEffect} from "react";
 import { Link } from 'react-router-dom'
 
 type resultProps = {
