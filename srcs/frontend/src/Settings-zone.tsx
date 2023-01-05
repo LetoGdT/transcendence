@@ -130,22 +130,78 @@ const TwoFASwitch = styled(Switch)(({ theme }) => ({
 	},
 }));
 
+function SendNewAvatar(newAvatar: string | undefined){
+	React.useEffect(() => {
+		const api = async () => {
+			const response = await fetch('http://localhost:9999/api/users/me?',{
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				method: 'PATCH',
+				credentials: 'include',
+				body: JSON.stringify({image_url: newAvatar})
+			});
+		};
+
+	}, []);	
+}
+
+function SendNewAlias(newAlias: string | undefined){
+	React.useEffect(() => {
+		const api = async () => {
+			const response = await fetch('http://localhost:9999/api/users/me',{
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				method: 'PATCH',
+				credentials: 'include',
+				body: JSON.stringify({username: newAlias})
+			});
+		};
+
+	}, []);	
+}
+
+// function ValidateButton(newAlias: string | undefined, newAvatar: string | undefined){
+// 	if (newAlias !== undefined){
+// 		SendNewAlias(newAlias);
+// 	}
+// 	if (newAvatar !== undefined){
+// 		SendNewAvatar(newAvatar);
+// 	}
+// }
+
 export function Settings(){
 	const [data, setResult] = useState<resultProps>();
+	const [newAvatar, setNewAvatar] = React.useState("");
+	const [newAlias, setNewAlias] = React.useState("");
 
 	useEffect(() => {
 		const api = async () => {
-		  const data = await fetch("http://localhost:9999/api/users/me", {
-			method: "GET",
-			credentials: 'include'
-		  });
-		  const jsonData = await data.json();
-		  setResult(jsonData);
-		  console.log(jsonData);
+			const data = await fetch("http://localhost:9999/api/users/me", {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonData = await data.json();
+			setResult(jsonData);
+			console.log(jsonData);
 		};
 	
 		api();
-	  }, []);
+	}, []);
+
+	const handleInputAvatar = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+		setNewAvatar(e.target.value);
+		SendNewAvatar(newAvatar);
+	};
+
+	const handleInputAlias = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+		setNewAlias(e.target.value);
+		SendNewAlias(newAlias);
+	};
+
 	return(
 		<React.Fragment>
 			<h1>Settings</h1>
@@ -177,7 +233,8 @@ export function Settings(){
 										defaultValue="*.jpg or *.png"
 										sx={{ input: { color: 'grey' } }}
 										id="validation-outlined-input"
-										/>
+										onChange={handleInputAvatar}
+									/>
 								</Box>
 							</div>
 							<div className='Settings-container-div-lvl4'>
@@ -203,14 +260,15 @@ export function Settings(){
 									<SettingsTextField
 										label="New alias"
 										InputLabelProps={{
-										sx:{
-											color:"white",
-										}
+											sx:{
+												color:"white",
+											}
 										}}
 										variant="outlined"
 										defaultValue="ex: Toto"
 										sx={{ input: { color: 'grey' } }}
 										id="validation-outlined-input"
+										onChange={handleInputAlias}
 									/>
 								</Box>
 							</div>
@@ -225,14 +283,15 @@ export function Settings(){
 										<TwoFASwitch defaultChecked inputProps={{ 'aria-label': 'ant design' }} />
 									<Typography color="common.white">On</Typography>
 								</Stack>
+								
 							</div>
 						</div>
 					</div>
 						
 				</div>
-				<div>
-					<SettingsButton variant="contained" disableRipple>Validate change(s)</SettingsButton>
-				</div>
+				{/* <div>
+					<SettingsButton variant="contained" disableRipple onClick={ValidateButton}>Validate change(s)</SettingsButton>
+				</div> */}
 				*Fill in the field is not required.
 			</div>
 		</React.Fragment>
