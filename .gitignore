@@ -48,3 +48,4 @@ tests.py
 .env
 srcs/backend/.env
 **.env**
+node_modules
