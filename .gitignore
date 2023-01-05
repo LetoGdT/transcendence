@@ -1,14 +1,20 @@
 # compiled output
 srcs/dist
-srcs/node_modules
+srcs/backend/dist
+srcs/frontend/dist
 /build
-**uploads**
+
+# node dependencies
+srcs/node_modules
+srcs/backend/node_modules
+srcs/frontend/node_modules
 
 # Database
 srcs/db/postgres/**
 **/postgres/**
 srcs/db/pgadmin/**
 **/pgadmin/**
+**uploads**
 
 # Logs
 logs

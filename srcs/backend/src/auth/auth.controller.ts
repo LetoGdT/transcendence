@@ -15,7 +15,7 @@ import { UsersService } from '../users/users.service';
 import { User } from '../typeorm/user.entity';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from '../guards/jwt.guard';
-import { AuthInterceptor } from './auth.interceptor'
+import { AuthInterceptor } from './auth.interceptor';
 
 @Controller()
 export class AuthController
@@ -68,12 +68,13 @@ export class AuthController
 		if (!user.enabled2fa)
 		{		
 			res.cookie('refresh_token', refresh_token,
-			{
-						httpOnly: true,		// Prevent xss
-						sameSite: 'lax',	// Prevent CSRF
-						secure: true,		// Just info for the browser
-					}
-					);
+				{
+					httpOnly: true,		// Prevent xss
+					sameSite: 'lax',	// Prevent CSRF
+					secure: true,		// Just info for the browser
+				}
+			);
+			return (res.redirect('http://localhost:3000'));
 		}
 		return (res.redirect('http://localhost:3000/2fa'));
 	}
@@ -129,6 +130,8 @@ export class AuthController
 	@UseInterceptors(AuthInterceptor)
 	enable2fa(@Req() req, @Body() { code } : { code: string })
 	{
+		if (req.user.secret2fa == null)
+			throw new UnauthorizedException('You first need to generate a QR code')
 		const isCodeValid = this.authService.is2faCodeValid(code, req.user);
 		if (!isCodeValid)
 			throw new UnauthorizedException('Wrong authentication code');
