@@ -44,7 +44,7 @@ export class UsersController
 	@UseInterceptors(AuthInterceptor)
 	async isConnected(@Req() req)
 	{
-		if (req.user.enabled2fa
+		if (req.user != null && req.user.enabled2fa
 			&& !(await this.authService.tokenInfos(req.cookies.access_token).enabled2fa))
 			return false;
 		return req.user != null;
