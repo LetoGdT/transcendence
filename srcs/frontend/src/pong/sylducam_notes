@@ -10,6 +10,7 @@ INSTALL REACT :
 npx create-react-app my-app --template typescript
 npm install react-scripts@2.1.0
 
+-------------RESOURCES---------------
 https://blog.devoreve.com/2018/06/06/creer-un-pong-en-javascript/ (bon tutoriel, tres clair mais js et non ts. Bon point de depart duquel s'inspirer. correspond au code present dans pong_example2)
 https://www.alsacreations.com/tuto/lire/1484-introduction.html (tuto introductif canvas, bien clair aussi)
 https://codepen.io/salammia/pen/yjOgyB (un autre pong en js, sans tuto, juste le code. Celui-ci fonctionne avec les fleches plutot que la souris. J'ai mis le code dans pong_example)
@@ -33,3 +34,9 @@ https://www.kirupa.com/html5/keyboard_events_in_javascript.htm (keyboard events 
 https://www.kirupa.com/canvas/moving_shapes_canvas_keyboard.htm (how to use keyboard to move canvas elements)
 https://www.toptal.com/developers/keycode/table-of-all-keycodes (keycodes of all the keyboard)
 https://www.w3schools.com/jsref/obj_event.asp (js event properties)
+--REACT--
+https://reactjs.org/docs/hooks-intro.html#no-breaking-changes (introduction to react hooks)
+https://reactjs.org/docs/state-and-lifecycle.html (react state and lifecycle doc)
+https://reactjs.org/docs/faq-state.html (react state doc)
+https://reactjs.org/docs/react-component.html (React.Component doc)
+https://reactjs.org/docs/components-and-props.html (react Components and Props doc)

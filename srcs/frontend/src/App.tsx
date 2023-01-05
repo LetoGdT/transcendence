@@ -15,11 +15,8 @@ import { FriendsZone } from './Friend-zone';
 import { MatchHistoryZone } from './MatchHistory-zone';
 import { SettingsZone } from './Settings-zone';
 import { ProfileZone, OtherProfile } from './Profile-zone';
-<<<<<<< HEAD
-=======
 import { SignOn } from './adaptable-zone';
 import { AuthWith2FA } from './authWith2fa';
->>>>>>> main
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 
 import { useState, useEffect} from "react";
