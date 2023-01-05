@@ -7,7 +7,7 @@ import { OurHeader } from './Header-zone';
 import { OurMenu } from './Menu-zone';
 import { Home } from './adaptable-zone';
 import { Play, SpecAMatch} from './adaptable-zone';
-import { Pong } from './pong'
+import { Pong } from './pong/Pong';
 //import { Friends, MatchHistory, Settings, Profile } from './adaptable-zone';
 import { PleaseConnect, SignOn } from './adaptable-zone';
 import { ChatZone } from './Chat-zone';

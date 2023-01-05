@@ -1,6 +1,22 @@
 import React from 'react';
 import PongGame from './tools/PongGame';
 
+// TODO from Lucille. I think, the last line "export { Pong };" does the same
+// import * as React from 'react';
+
+// export function Pong(){
+// 	let title: string = "PONG";
+
+// 	return(
+// 		<React.Fragment>
+// 			<h1>{title}</h1>
+// 			<div>
+
+// 			</div>
+// 		</React.Fragment>
+// 	);
+// }
+
 const GAME_WIDTH = 1040;
 const GAME_HEIGHT = 680;
 

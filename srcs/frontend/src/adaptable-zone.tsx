@@ -18,8 +18,8 @@ export function Home(){
 
 export function Play(){
 	return(
-		<div>
-			Play
+		<div className='Pong'>
+			Play {/* TODO syl : here is pong's place */}
 		</div>
 	);
 }
