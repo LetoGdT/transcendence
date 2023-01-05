@@ -8,13 +8,12 @@ import { OurMenu } from './Menu-zone';
 import { Home, NotFound } from './adaptable-zone';
 import { Play, SpecAMatch} from './adaptable-zone';
 import { Pong } from './pong/Pong';
-//import { Friends, MatchHistory, Settings, Profile } from './adaptable-zone';
-import { PleaseConnect, SignOn } from './adaptable-zone';
 import { ChatZone } from './Chat-zone';
 import { FriendsZone } from './Friend-zone';
 import { MatchHistoryZone } from './MatchHistory-zone';
 import { SettingsZone } from './Settings-zone';
 import { ProfileZone, OtherProfile } from './Profile-zone';
+import { SignOn } from './adaptable-zone';
 import { AuthWith2FA } from './authWith2fa';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 
@@ -44,7 +43,6 @@ export function ListUser(){//vouer à disparaitre
 				url = url.concat("/");
 				url = url.concat(user.id);
 				return(
-
 					<div>
 						<Link to={url} >
 							{user.name}
