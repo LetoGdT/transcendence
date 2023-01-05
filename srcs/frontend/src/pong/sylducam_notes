@@ -1,10 +1,14 @@
+DOCKER BUILD
 docker-compose up --build -d
-front:
+FRONT:
 http://localhost:3000/
-back:
+BACK:
 http://localhost:9999/
-docker logs (back ?):
+DOCKER LOGS (BACK ?):
 docker logs -f nestjs
+INSTALL REACT :
+npx create-react-app my-app --template typescript
+npm install react-scripts@2.1.0
 
 https://blog.devoreve.com/2018/06/06/creer-un-pong-en-javascript/ (bon tutoriel, tres clair mais js et non ts. Bon point de depart duquel s'inspirer. correspond au code present dans pong_example2)
 https://www.alsacreations.com/tuto/lire/1484-introduction.html (tuto introductif canvas, bien clair aussi)
