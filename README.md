@@ -14,12 +14,12 @@
 		<li>HandleClick avec plusieurs arguments : https://reactjs.org/docs/handling-events.html</li>
 		<li> https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find</li>
 	</ul>
-<<<<<<< HEAD
 	<ul>pour le chat
 		<li>à regarder pour l'auth des sockets https://wanago.io/2021/01/25/api-nestjs-chat-websockets/</li>
+		<li>pour apprendre à utiliser react https://reactjs.org/tutorial/tutorial.html</li>
+		<li>react dans ts https://blog.logrocket.com/how-use-typescript-react-tutorial-examples/</li>
+		<li>appel api sauvegardés dans le state react https://www.pluralsight.com/guides/fetching-data-updating-state-react-class</li>
 	</ul>
 	<li>Axios + react https://www.freecodecamp.org/french/news/comment-utiliser-axios-avec-react-le-guide-complet-2021/</li>
-=======
->>>>>>> main
 	<li>ce m'a permi de commencé à recup des données: https://codesandbox.io/s/0z1ex</li>
 </div>
