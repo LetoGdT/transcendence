@@ -63,7 +63,7 @@ export class UsersController
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
-	async updateUser(@Query() updateUserDto: UpdateUserDto,
+	async updateUser(@Body() updateUserDto: UpdateUserDto,
 		@Req() req)
 	{
 		if (Object.keys(updateUserDto).length === 0)

@@ -211,7 +211,7 @@ export class ConversationsController
 	@UseInterceptors(AuthInterceptor)
 	updateConversationMessage(@Param('id', ParseIntPipe) id: number,
 		@Param('message_id', ParseIntPipe) message_id: number,
-		@Query() updateConversationMessageDto: UpdateConversationMessageDto,
+		@Body() updateConversationMessageDto: UpdateConversationMessageDto,
 		@Req() req)
 	{
 		return this.conversationsService.updateConversationMessage(updateConversationMessageDto,

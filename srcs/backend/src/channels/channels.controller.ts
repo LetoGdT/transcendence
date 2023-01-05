@@ -104,7 +104,7 @@ export class ChannelsController
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	updateChannel(@Param('channel_id', ParseIntPipe) channel_id: number,
-		@Query() patchChannelDto: PatchChannelDto,
+		@Body() patchChannelDto: PatchChannelDto,
 		@Req() req): Promise<Channel>
 	{
 		return this.channelsService.updateChannel(channel_id, patchChannelDto, req.user);
@@ -141,7 +141,7 @@ export class ChannelsController
 	@UseInterceptors(AuthInterceptor)
 	changeUserPermissions(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Param('user_id', ParseIntPipe) user_id: number,
-		@Query() patchChannelUserDto: PatchChannelUserDto,
+		@Body() patchChannelUserDto: PatchChannelUserDto,
 		@Req() req)
 	{
 		return this.channelsService.updateChannelUser(channel_id, user_id, req.user, patchChannelUserDto);
@@ -203,7 +203,7 @@ export class ChannelsController
 	@UseInterceptors(AuthInterceptor)
 	updateChannelMessage(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Param('message_id', ParseIntPipe) message_id: number,
-		@Query() updateMessageDto: UpdateMessageDto,
+		@Body() updateMessageDto: UpdateMessageDto,
 		@Req() req)
 	{
 		return this.channelsService.updateChannelMessage(channel_id, message_id, updateMessageDto, req.user)
@@ -259,7 +259,7 @@ export class ChannelsController
 	@UseInterceptors(AuthInterceptor)
 	updateChannelBan(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Param('ban_id', ParseIntPipe) ban_id: number,
-		@Query() updateChannelBanDto: UpdateChannelBanDto,
+		@Body() updateChannelBanDto: UpdateChannelBanDto,
 		@Req() req)
 	{
 		return this.channelsService.updateChannelBan(channel_id, ban_id, updateChannelBanDto, req.user);
