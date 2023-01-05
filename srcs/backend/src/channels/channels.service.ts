@@ -13,8 +13,7 @@ import { PageDto } from "../dto/page.dto";
 import { PageMetaDto } from "../dto/page-meta.dto";
 import { PageOptionsDto, Order } from "../dto/page-options.dto";
 import { MessageQueryFilterDto, ChannelQueryFilterDto } from '../dto/query-filters.dto';
-import { PostPrivateDto, UpdateMessageDto } from '../dto/private-messages.dto';
-import { UserSelectDto } from '../dto/messages.dto';
+import { UserSelectDto, PostMessageDto, UpdateMessageDto } from '../dto/messages.dto';
 import { UserQueryFilterDto, ChannelUserQueryFilterDto } from '../dto/query-filters.dto';
 import { ChannelBanQueryFilterDto, PostChannelBanDto, UpdateChannelBanDto } from '../dto/channel-ban.dto';
 import { ChannelBan } from '../typeorm/channel-ban.entity';
@@ -381,7 +380,7 @@ export class ChannelsService
 			messageQueryFilterDto, userSelectDto, user, as_sender);
 	}
 
-	async createChannelMessage(channel_id: number, postPrivateDto: PostPrivateDto, sender: User)
+	async createChannelMessage(channel_id: number, postMessageDto: PostMessageDto, sender: User)
 	{
 		if (channel_id > this.IdMax)
 			throw new BadRequestException(`channel_id must not be greater than ${this.IdMax}`);
@@ -412,7 +411,7 @@ export class ChannelsService
 		const newMessage : Message = new Message();
 
 		newMessage.sender = sender;
-		newMessage.content = postPrivateDto.content;
+		newMessage.content = postMessageDto.content;
 
 		channel.latest_sent = newMessage.sent_date;
 

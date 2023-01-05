@@ -2,6 +2,8 @@ import './App.css'
 import './Header.css'
 import * as React from 'react';
 
+// import { IsConnected } from './tools';
+
 import { Link } from 'react-router-dom';
 
 import Banniere from './link_botw_banniere.jpg';
@@ -140,7 +142,6 @@ function UserLogged(){
 			});
 			const jsonData = await data.json();
 			setResult(jsonData);
-			console.log(jsonData);
 		};
 	
 		api();
@@ -170,7 +171,7 @@ function UserNotLogged(){
 					</Link>
 				</div>
 				<div className='Avatar-zone-1button'>
-					<a href='http://localhost:9000/log'>
+					<a href='http://localhost:9999/log'>
 						<LogInButton variant="contained" disableRipple>Log In</LogInButton>
 					</a>
 				</div>
@@ -178,24 +179,27 @@ function UserNotLogged(){
 		</div>
 	);
 }
+
+type meProps = {
+};
+
 function AvatarZone(props:any){
-	const [data, setResult] = useState<resultProps>();
+	const [me, setMe] = useState<meProps>();
 
 	useEffect(() => {
 		const api = async () => {
-		  const data = await fetch("http://localhost:9999/api/users/me", {
-			method: "GET",
-			credentials: 'include'
-		  });
-		  const jsonData = await data.json();
-		  setResult(jsonData);
-		  console.log(jsonData);
+			const data = await fetch("http://localhost:9999/api/users/isconnected", {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonData = await data.json();
+			setMe(jsonData);
 		};
 	
 		api();
 	}, []);
 	
-	const isLoggedIn = props.isLoggedIn;
+	const isLoggedIn = me;
 	if (isLoggedIn){
 		return (
 			<UserLogged />

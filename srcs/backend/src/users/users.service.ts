@@ -1,6 +1,7 @@
 import { Logger, Injectable, BadRequestException, HttpStatus, HttpException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
+import * as fs from 'fs';
 import { User } from '../typeorm/user.entity';
 import { AchievementsService } from '../achievements/achievements.service';
 import { CreateUserDto, UpdateUserDto, CreateUserFriendDto } from '../dto/users.dto';
@@ -219,6 +220,7 @@ export class UsersService
 		queryBuilder1
 			.leftJoinAndSelect('user.following', 'following')
 			.leftJoinAndSelect('user.invitations', 'invitations')
+			.leftJoinAndSelect('user.banlist', 'banlist')
 			.where('user.id = :id', { id: user.id });
 
 		user = await queryBuilder1.getOne();
@@ -243,12 +245,20 @@ export class UsersService
 			.leftJoinAndSelect('user.banlist', 'banlist')
 			.where('user.id = :id', { id: createUserFriendDto.id });
 
-		const checkBan: number = user.banlist.findIndex((users) => {
+		const user2 = await queryBuilder2.getOne();
+		let checkBan: number = user2.banlist.findIndex((users) => {
 			return users.id == user.id;
 		});
 
 		if (checkBan != -1)
-			throw new HttpException('You have been blocked by this user', HttpStatus.FORBIDDEN)
+			throw new HttpException('You have been blocked by this user', HttpStatus.FORBIDDEN);
+
+		checkBan = user.banlist.findIndex((users) => {
+			return users.id == user2.id
+		})
+
+		if (checkBan != -1)
+			throw new HttpException('You blocked this user', HttpStatus.FORBIDDEN);
 
 		const newInvited = await queryBuilder2.getOne();
 
@@ -361,5 +371,36 @@ export class UsersService
 	async getAchievements(user: User, pageOptionsDto: PageOptionsDto)
 	{
 		return this.achievementsService.getUserAchievements(pageOptionsDto, user);
+	}
+
+	async changeRank(user: User, new_rank: number)
+	{
+		user.exp = new_rank;
+		return this.userRepository.save(user);
+	}
+
+	async deleteOldPhoto(user: User, filename: string): Promise<void>
+	{
+		const oldPath = './src/static' + (new URL(user.image_url)).pathname;
+		if (fs.existsSync(oldPath))
+			fs.unlink(oldPath, (err) => {
+				if (err)
+					throw new HttpException('There was an error deleting the previous file',
+						HttpStatus.INTERNAL_SERVER_ERROR)
+			});
+		user.image_url = 'http://localhost:9999/uploads/' + filename;
+		this.userRepository.save(user);
+	}
+
+	async enable2fa(user: User): Promise<User>
+	{
+		user.enabled2fa = true;
+		return this.userRepository.save(user);
+	}
+
+	async disable2fa(user: User): Promise<User>
+	{
+		user.enabled2fa = false;
+		return this.userRepository.save(user);
 	}
 }

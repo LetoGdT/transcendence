@@ -8,15 +8,13 @@ srcs/frontend/dist
 srcs/node_modules
 srcs/backend/node_modules
 srcs/frontend/node_modules
-package-lock.json
-srcs/backend/package-lock.json
-srcs/frontend/package-lock.json
 
 # Database
 srcs/db/postgres/**
 **/postgres/**
 srcs/db/pgadmin/**
 **/pgadmin/**
+**uploads**
 
 # Logs
 logs

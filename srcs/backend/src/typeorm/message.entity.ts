@@ -3,7 +3,6 @@ import { IsDate, IsOptional } from 'class-validator';
 import { User } from './user.entity';
 import { Channel } from './channel.entity';
 import { Conversation } from './conversation.entity';
-import { PrivateMessage } from './private-message.entity';
 
 @Entity()
 export class Message

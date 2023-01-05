@@ -65,6 +65,17 @@ export class User
 	})
 	refresh_expires: string;
 
+	@Exclude({ toPlainOnly: true })
+	@Column({
+		nullable: true
+	})
+	secret2fa: string;
+
+	@Column({
+		default: false
+	})
+	enabled2fa: boolean;
+
 	@ManyToMany(() => User, (user) => user.following, {
 		cascade: true,
 		nullable: false
@@ -97,5 +108,11 @@ export class User
 	channelUsers: ChannelUser[];
 
 	@OneToMany(() => Achievement, (achievement) => achievement.user)
-	achievements: Achievement[]; 
+	achievements: Achievement[];
+
+	@Column({
+		nullable: false,
+		default: 0
+	})
+	exp: number;
 }

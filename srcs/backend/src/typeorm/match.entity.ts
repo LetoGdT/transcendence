@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { Max, IsDate, IsOptional, IsIn } from 'class-validator';
+import { IsDate, IsIn } from 'class-validator';
 import { User } from './user.entity';
 
 @Entity()

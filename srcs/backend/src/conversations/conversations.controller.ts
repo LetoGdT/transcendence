@@ -1,7 +1,7 @@
 import {
 	Controller, Get, Post, Patch, Delete, Param, Body,
 	Query, Req, UseInterceptors, ClassSerializerInterceptor,
-	HttpException, HttpStatus, ParseIntPipe
+	HttpException, HttpStatus, ParseIntPipe, UseGuards
 } from '@nestjs/common';
 import { MessagesService } from '../messages/messages.service';
 import { ConversationsService } from './conversations.service';
@@ -9,12 +9,12 @@ import { Message } from '../typeorm/message.entity';
 import { AuthInterceptor } from '../auth/auth.interceptor';
 import { PageDto } from "../dto/page.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
-import { PostPrivateDto, UpdateMessageDto } from '../dto/private-messages.dto';
 import { MessageQueryFilterDto, ConversationQueryFilterDto } from '../dto/query-filters.dto';
 import { UserSelectDto } from '../dto/messages.dto';
 import {
 	PostConversationDto, PostConversationMessageDto, UpdateConversationMessageDto
 } from '../dto/conversations.dto';
+import { JwtAuthGuard } from '../guards/jwt.guard';
 
 /**
 * Get a conversation between 2 users (DMs).
@@ -50,6 +50,7 @@ export class ConversationsController
 
 	@Get()
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	getConversations(@Query() pageOptionsDto: PageOptionsDto,
 		@Query() conversationQueryFilterDto: ConversationQueryFilterDto,
@@ -73,6 +74,7 @@ export class ConversationsController
    /*
 	@Post()
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async createConversation(@Req() req,
 		@Body() postConversationDto: PostConversationDto)
@@ -83,6 +85,7 @@ export class ConversationsController
 
 	@Get('/:id/messages')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	getConversationMessages(@Query() pageOptionsDto: PageOptionsDto,
 		@Param('id', ParseIntPipe) id: number,
@@ -116,6 +119,7 @@ export class ConversationsController
 	
 	@Get('/:id/messages/as_sender')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	getConversationMessagesAsSender(@Query() pageOptionsDto: PageOptionsDto,
 		@Param('id', ParseIntPipe) id: number,
@@ -149,6 +153,7 @@ export class ConversationsController
 
 	@Get('/:id/messages/as_recipient')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	getConversationMessagesAsRecipient(@Query() pageOptionsDto: PageOptionsDto,
 		@Param('id', ParseIntPipe) id: number,
@@ -177,6 +182,7 @@ export class ConversationsController
 	
 	@Post('/:id/messages/')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	createConversationMessage(@Body() postConversationMessageDto: PostConversationMessageDto,
 		@Param('id', ParseIntPipe) id: number,
@@ -204,6 +210,7 @@ export class ConversationsController
 
 	@Patch('/:id/messages/:message_id')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	updateConversationMessage(@Param('id', ParseIntPipe) id: number,
 		@Param('message_id', ParseIntPipe) message_id: number,
@@ -228,6 +235,7 @@ export class ConversationsController
 
 	@Delete('/:id/messages/:message_id')
 	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	deleteConversationMessage(@Param('id', ParseIntPipe) id: number,
 		@Param('message_id', ParseIntPipe) message_id: number,
