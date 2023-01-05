@@ -1,5 +1,8 @@
 docker-compose up --build -d
-To see the website, go in front-end/ft_trancendence/website and run "npm run start"
+front:
+http://localhost:3000/
+back:
+http://localhost:9999/
 
 https://blog.devoreve.com/2018/06/06/creer-un-pong-en-javascript/ (bon tutoriel, tres clair mais js et non ts. Bon point de depart duquel s'inspirer. correspond au code present dans pong_example2)
 https://www.alsacreations.com/tuto/lire/1484-introduction.html (tuto introductif canvas, bien clair aussi)
