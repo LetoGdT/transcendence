@@ -140,7 +140,7 @@ function SendNewAvatar(newAvatar: string | undefined){
 				},
 				method: 'PATCH',
 				credentials: 'include',
-				params: JSON.stringify({image_url: newAvatar})
+				body: JSON.stringify({image_url: newAvatar})
 			});
 		};
 
@@ -150,14 +150,14 @@ function SendNewAvatar(newAvatar: string | undefined){
 function SendNewAlias(newAlias: string | undefined){
 	React.useEffect(() => {
 		const api = async () => {
-			const response = await fetch('http://localhost:9999/api/users/me?',{
+			const response = await fetch('http://localhost:9999/api/users/me',{
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
 				},
 				method: 'PATCH',
 				credentials: 'include',
-				params: JSON.stringify({username: newAlias})
+				body: JSON.stringify({username: newAlias})
 			});
 		};
 
