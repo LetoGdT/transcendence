@@ -61,13 +61,13 @@ volumes:
         driver: local
         driver_opts:
             type: none
-            device: /home/leto/Documents/ecole_42/transcendence/srcs/db/postgres
+            device: ./srcs/db/postgres
             o: bind
     pgadmin:
         driver: local
         driver_opts:
             type: none
-            device: /home/leto/Documents/ecole_42/transcendence/srcs/db/pgadmin
+            device: ./srcs/db/pgadmin
             o: bind
 
 networks:
