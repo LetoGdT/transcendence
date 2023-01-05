@@ -54,7 +54,6 @@ export function ListUser(){//vouer à disparaitre
 		</div>
 	);
 }
->>>>>>> main
 
 function App() {
 	const router = 
