@@ -1,5 +1,5 @@
 import React from 'react';
-import PongGame from './pong/PongGame';
+import PongGame from './tools/PongGame';
 
 const GAME_WIDTH = 1040;
 const GAME_HEIGHT = 680;
