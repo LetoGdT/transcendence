@@ -297,7 +297,7 @@ export function Settings(){
 						</div>
 					</div>
 					<div className='Settings-container-div-lvl2'>
-						<h2>2FA - 2 Fractor Authentification</h2>
+						<h2>2FA - 2 Factor Authentication</h2>
 						<div className='Settings-container-div-lvl3'>
 							<div className='Settings-container-div-lvl4'>
 								<Stack direction="row" spacing={1} alignItems="center">
