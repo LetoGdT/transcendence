@@ -22,4 +22,5 @@
 	</ul>
 	<li>Axios + react https://www.freecodecamp.org/french/news/comment-utiliser-axios-avec-react-le-guide-complet-2021/</li>
 	<li>ce m'a permi de commencé à recup des données: https://codesandbox.io/s/0z1ex</li>
+	<li>c'est quoi l'opérateur "?." https://bobbyhadz.com/blog/typescript-question-mark-dot</li>
 </div>

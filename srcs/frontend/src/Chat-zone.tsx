@@ -62,30 +62,16 @@ const SendButton = styled(Button)({
 	},
 });
 
-class ChatNavigate extends React.Component {
-	constructor(props: any) {
-		super(props);
-		this.state = {
-			convs: null
-		};
-		//const [data, setResult] = useState<resultProps>();
-	}
-
-	render() {
-		return(<div />);/*
-			<div className='Chat-navigate'>
-				{data?.data.map((user: any) => {
-					var url: string = "/otherprofile";
-					url = url.concat("/");
-					url = url.concat(user.id);
-					return(
-						<div>pouet</div>
-					);
-				})}
-			</div>
-		);
-	*/
-	}
+function ChatNavigate(props: any) {
+	return(
+		<div className='Chat-navigate'>
+			{props?.conv_list?.map((obj: Conversation) => {
+				return(
+					<div key={obj.id}>{obj.name}</div>
+				);
+			})}
+		</div>
+	);
 }
 
 
@@ -97,14 +83,14 @@ type Message = {
 
 type Conversation = {
 	id: number;
+	name: string;
 	new_message: boolean;
 }
 
-type resultProps = {
-	data: [];
-}
-
-export class ChatZone extends React.Component {
+export class ChatZone extends React.Component<{}, { current_conv: number,
+													current_uid: number,
+													messages: Message[],
+													conv_list: Conversation[] }> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
@@ -121,7 +107,9 @@ export class ChatZone extends React.Component {
 			credentials: 'include'
 		})
 		.then(response=>response.json())
-		.then(data=>this.setState({conv_list: data}));
+		.then(data => this.setState({conv_list: data.data.map((elem: any) => {
+			return {id: elem.id, name: "pouet", new_message: false};
+		})}));
 	}
 
 	render() {
@@ -129,7 +117,7 @@ export class ChatZone extends React.Component {
 			<React.Fragment>
 				<h1>Chat</h1>
 				<div className='Chat-container'>
-					<ChatNavigate/>
+					<ChatNavigate conv_list={this.state.conv_list}/>
 					<div>
 						<div className='Chat-history-container'>
 							<div className='Chat-message-from-self-lvl1'>
