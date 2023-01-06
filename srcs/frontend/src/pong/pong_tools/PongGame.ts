@@ -1,6 +1,11 @@
 import Ball from "./Ball";
 import Player, { PLAYER_WIDTH, PLAYER_HEIGHT } from "./Player";
 
+const PLAYER1_DOWN_KEY = 'KeyS';
+const PLAYER1_UP_KEY = 'KeyW';
+const PLAYER2_DOWN_KEY = 'ArrowDown';
+const PLAYER2_UP_KEY = 'ArrowUp';
+
 class PongGame
 {
 	private width: number;
@@ -9,7 +14,13 @@ class PongGame
     private player2: Player;
     private ball: Ball;
 
-    private keyPressed: boolean = false;
+    private keyStates: any;
+
+    private moveUpPlayer1: boolean = false;
+    private moveDownPlayer1: boolean = false;
+    private moveUpPlayer2: boolean = false; // TODO will be on server side ?
+    private moveDownPlayer2: boolean = false; // TODO will be on server side ?
+
 
 	constructor(width: number, height: number)
     {
@@ -19,7 +30,9 @@ class PongGame
         this.player1 = new Player(0, (height - PLAYER_HEIGHT) / 2);
         this.player2 = new Player(width - PLAYER_WIDTH, (height - PLAYER_HEIGHT) / 2);
         this.ball = new Ball(width / 2, height / 2);
-	}
+
+        this.keyStates = [];
+    }
 
 	/**
 	 * Appelée quand le navigateur a besoin de rafraichir le canvas
@@ -64,11 +77,32 @@ class PongGame
 	 */
 	update()
 	{
-        if (this.keyPressed)
+        if (this.keyStates[PLAYER1_UP_KEY])
 		{
             this.player1.y -= 7;
             if (this.player1.y < 0)
                 this.player1.y = 0;
+        }
+
+        if (this.keyStates[PLAYER1_DOWN_KEY])
+		{
+            this.player1.y += 7;
+            if (this.player1.y < 0)
+                this.player1.y = 0;
+        }
+
+        if (this.keyStates[PLAYER2_DOWN_KEY])
+		{
+            this.player2.y += 7;
+            if (this.player2.y < 0)
+                this.player2.y = 0;
+        }
+
+        if (this.keyStates[PLAYER2_UP_KEY])
+		{
+            this.player2.y -= 7;
+            if (this.player2.y < 0)
+                this.player2.y = 0;
         }
 
         this.updatePhysics();
@@ -76,20 +110,21 @@ class PongGame
 
     handleKeyUp(code: string)
 	{
+        delete this.keyStates[code];
         if (code === 'KeyW')
 		{
-            this.keyPressed = false;
+            this.moveUpPlayer1 = false;
         }
     }
 
     handleKeyDown(code: string)
-	{
-        if (code === 'KeyW')
+    {
+        this.keyStates[code] = true;
+        if (code === 'KeyS')
 		{
-            this.keyPressed = true;
+            this.moveUpPlayer1 = true;
         }
     }
-
 }
 
 export default PongGame;

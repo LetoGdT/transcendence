@@ -1,3 +1,7 @@
+TODO :
+read useEffect doc
+try to make keypress effective even if we haven't clicked in the canvas zone
+
 DOCKER BUILD
 docker-compose up --build -d
 FRONT:

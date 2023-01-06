@@ -1,5 +1,5 @@
 
-const BALL_SPEED = 7;
+const BALL_SPEED = 0.001;
 
 class Ball
 {

@@ -70,7 +70,7 @@ function App() {
 						<Route path="/friends" element={<FriendsZone/>} />
 						<Route path="/" element={<Home />} />
 						<Route path="/matchhistory" element={<MatchHistoryZone/>} />
-						<Route path="/play" element={<Play/>} />
+						<Route path="/play" element={<Pong/>} />
 						<Route path="/settings" element={<SettingsZone/>} />
 						<Route path="/specamatch" element={<SpecAMatch/>} />
 						<Route path="/otherprofile/">
@@ -78,7 +78,6 @@ function App() {
 						</Route>
 						<Route path="/profile" element={<ProfileZone/>} />
 						<Route path="/signon" element={<SignOn/>} />
-						<Route path="/pong" element={<Pong/>} />
 						<Route path='/ListUser' element={<ListUser />} />
 						<Route path='/2fa' element={<AuthWith2FA />} />
 						<Route path='*' element={<NotFound/>} />

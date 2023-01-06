@@ -53,11 +53,18 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 	return canvasRef;
 };
 
+function useGame() {
+	const ref = React.useRef<PongGame>();
+	if (!ref.current)
+		ref.current = new PongGame(GAME_WIDTH, GAME_HEIGHT);
+	return ref.current;
+}
+
 const PongGameBootstrap = () =>
 {
-	const [game] = React.useState(() => new PongGame(GAME_WIDTH, GAME_HEIGHT)); // TODO Ax
-	const canvasRef = useCanvas(ctx => game.render(ctx));
-
+	const game = useGame();
+	const canvasRef = useCanvas(ctx => game.render(ctx))
+	
 	React.useEffect(() =>
 	{
 		const timer = setInterval(() => game.update(), 20);
@@ -84,7 +91,7 @@ const Pong = () =>
 	<>
 		<h1>PONG</h1>
 		<div>
-			<PongGameBootstrap />
+			<PongGameBootstrap/>
 		</div>
 	</>
 );
