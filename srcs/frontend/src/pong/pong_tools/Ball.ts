@@ -18,7 +18,8 @@ class Ball
 		this.speedY = BALL_SPEED;
 	}
 
-	draw(ctx: CanvasRenderingContext2D) {
+	draw(ctx: CanvasRenderingContext2D)
+	{
 		ctx.beginPath();
 		ctx.fillStyle = 'white';
 		ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);

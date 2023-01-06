@@ -1,5 +1,5 @@
 import React from 'react';
-import PongGame from './tools/PongGame';
+import PongGame from './pong_tools/PongGame';
 
 // TODO from Lucille. I think, the last line "export { Pong };" does the same
 // import * as React from 'react';
@@ -17,13 +17,15 @@ import PongGame from './tools/PongGame';
 // 	);
 // }
 
-const GAME_WIDTH = 1040;
-const GAME_HEIGHT = 680;
+const GAME_WIDTH = 1040; // TODO needs to be responsive
+const GAME_HEIGHT = 680; // TODO needs to be responsive
 
-const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) => {
+const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
+{
 	const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
-	React.useEffect(() => {
+	React.useEffect(() =>
+	{
 		const canvas = canvasRef.current;
 		let animFrameId: number;
 
@@ -33,7 +35,8 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) => {
 		if (null === ctx)
 			return ;
 
-		function render() {
+		function render()
+		{
 			draw(ctx as CanvasRenderingContext2D);
 
 			animFrameId = window.requestAnimationFrame(render);
@@ -41,19 +44,22 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) => {
 
 		render();
 
-		return () => {
+		return () => // TODO Ax
+		{
 			window.cancelAnimationFrame(animFrameId);
 		}
-	}, [draw]);
+	}, [draw]); // TODO Ax
 
 	return canvasRef;
 };
 
-const PongGameBootstrap = () => {
-	const [game] = React.useState(() => new PongGame(GAME_WIDTH, GAME_HEIGHT));
+const PongGameBootstrap = () =>
+{
+	const [game] = React.useState(() => new PongGame(GAME_WIDTH, GAME_HEIGHT)); // TODO Ax
 	const canvasRef = useCanvas(ctx => game.render(ctx));
 
-	React.useEffect(() => {
+	React.useEffect(() =>
+	{
 		const timer = setInterval(() => game.update(), 20);
 
 		return () => clearInterval(timer);
@@ -73,7 +79,8 @@ const PongGameBootstrap = () => {
 	);
 }
 
-const Pong = () => (
+const Pong = () =>
+(
 	<>
 		<h1>PONG</h1>
 		<div>

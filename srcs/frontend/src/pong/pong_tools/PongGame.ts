@@ -1,27 +1,23 @@
 import Ball from "./Ball";
 import Player, { PLAYER_WIDTH, PLAYER_HEIGHT } from "./Player";
 
-class PongGame {
+class PongGame
+{
 	private width: number;
 	private height: number;
     private player1: Player;
     private player2: Player;
     private ball: Ball;
 
-    private up: boolean = false;
+    private keyPressed: boolean = false;
 
-	constructor(width: number, height: number) {
+	constructor(width: number, height: number)
+    {
 		this.width = width;
 		this.height = height;
 
-        this.player1 = new Player(
-            0,
-            (height - PLAYER_HEIGHT) / 2
-        );
-        this.player2 = new Player(
-            width - PLAYER_WIDTH,
-            (height - PLAYER_HEIGHT) / 2
-        );
+        this.player1 = new Player(0, (height - PLAYER_HEIGHT) / 2);
+        this.player2 = new Player(width - PLAYER_WIDTH, (height - PLAYER_HEIGHT) / 2);
         this.ball = new Ball(width / 2, height / 2);
 	}
 
@@ -29,7 +25,8 @@ class PongGame {
 	 * Appelée quand le navigateur a besoin de rafraichir le canvas
 	 * @param ctx Le context de rendu de canvas
 	 */
-	render(ctx: CanvasRenderingContext2D) {
+	render(ctx: CanvasRenderingContext2D)
+	{
         // Clear the screen
 		ctx.fillStyle = 'black';
 		ctx.fillRect(0, 0, this.width, this.height);
@@ -39,7 +36,8 @@ class PongGame {
         this.ball.draw(ctx);
 	}
 
-    updatePhysics() {
+    updatePhysics()
+	{
         // Rebounds on top and bottom
         if (this.ball.y > this.height || this.ball.y < 0)
         {
@@ -64,8 +62,10 @@ class PongGame {
 	/**
 	 * Fonction appelée toutes les 20ms (50 Hz / 50 fois par seconde)
 	 */
-	update() {
-        if (this.up) {
+	update()
+	{
+        if (this.keyPressed)
+		{
             this.player1.y -= 7;
             if (this.player1.y < 0)
                 this.player1.y = 0;
@@ -74,15 +74,19 @@ class PongGame {
         this.updatePhysics();
 	}
 
-    handleKeyUp(code: string) {
-        if (code === 'KeyW') {
-            this.up = false;
+    handleKeyUp(code: string)
+	{
+        if (code === 'KeyW')
+		{
+            this.keyPressed = false;
         }
     }
 
-    handleKeyDown(code: string) {
-        if (code === 'KeyW') {
-            this.up = true;
+    handleKeyDown(code: string)
+	{
+        if (code === 'KeyW')
+		{
+            this.keyPressed = true;
         }
     }
 

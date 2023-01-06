@@ -1,6 +1,6 @@
 
-const PLAYER_HEIGHT = 100;
-const PLAYER_WIDTH = 13;
+const PLAYER_HEIGHT = 100; // TODO needs to be responsive
+const PLAYER_WIDTH = 13; // TODO needs to be responsive
 
 class Player
 {
@@ -14,10 +14,11 @@ class Player
 		this.x = x;
 		this.y = y;
 		this.score = 0;
-		this.win = false;
+		this.win = false; // TODO Alexis thinks it would be better in PongGame class
 	}
 
-	draw(ctx: CanvasRenderingContext2D) {
+	draw(ctx: CanvasRenderingContext2D)
+	{
 		ctx.fillStyle = 'white';
 		ctx.fillRect(this.x, this.y, PLAYER_WIDTH, PLAYER_HEIGHT);
 	}
