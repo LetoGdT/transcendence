@@ -74,7 +74,6 @@ function ChatNavigate(props: any) {
 	);
 }
 
-
 type Message = {
 	sender_uid: number;
 	content: string;
@@ -88,27 +87,46 @@ type Conversation = {
 }
 
 export class ChatZone extends React.Component<{}, { current_conv: number,
-													current_uid: number,
+													current_user_id: number,
 													messages: Message[],
 													conv_list: Conversation[] }> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			current_conv: 0,
-			current_uid: 0,
+			current_conv: -1,
+			current_user_id: -1,
 			messages: [],
 			conv_list: []
 		};
 	}
 
 	componentDidMount() {
+		// set Current_user_id
+		fetch('http://localhost:9999/api/users/me/', {
+			method: "GET",
+			credentials: 'include'
+		})
+		.then(response=>response.json())
+		.then(data => this.setState({ current_user_id: data.id }));
+
+		// Set the list of conversations for chat-navigate
 		fetch('http://localhost:9999/api/conversations/', {
 			method: "GET",
 			credentials: 'include'
 		})
 		.then(response=>response.json())
 		.then(data => this.setState({conv_list: data.data.map((elem: any) => {
-			return {id: elem.id, name: "pouet", new_message: false};
+			// The condition is necessary because the users/me fetch request is async
+			let name: string;
+			if (this.state.current_user_id == -1)
+				name = "not leaded";
+			else if (this.state.current_user_id == elem.user1.id)
+				name = elem.user2.username;
+			else
+				name = elem.user1.username;
+			return {id: elem.id,
+					name: name,
+					new_message: false};
 		})}));
 	}
 
@@ -117,7 +135,7 @@ export class ChatZone extends React.Component<{}, { current_conv: number,
 			<React.Fragment>
 				<h1>Chat</h1>
 				<div className='Chat-container'>
-					<ChatNavigate conv_list={this.state.conv_list}/>
+					<ChatNavigate conv_list={this.state.conv_list} current_user_id={this.state.current_user_id}/>
 					<div>
 						<div className='Chat-history-container'>
 							<div className='Chat-message-from-self-lvl1'>
