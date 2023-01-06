@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTable, ManyToOne } from 'typeorm';
-import { Exclude } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 import { IsDate, IsIn, MinLength, MaxLength, IsEmail, Matches } from 'class-validator';
 import { ChannelUser } from './channel-user.entity';
 import { Achievement } from './achievement.entity';
@@ -44,6 +44,7 @@ export class User
 	image_url: string;
 
 	@IsIn(['online', 'offline', 'in-game'])
+	@Expose({ groups: ["friends", "me"] })
 	@Column({
 		nullable: false,
 		default: 'online',

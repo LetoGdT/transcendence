@@ -3,7 +3,8 @@ import {
 	NotFoundException, UseGuards, BadRequestException,
 	UnauthorizedException, ClassSerializerInterceptor,
 	UseInterceptors, Query, Req, UseFilters, Body, UploadedFile, Res,
-	StreamableFile, Header, Response, ParseFilePipe, FileTypeValidator
+	StreamableFile, Header, Response, ParseFilePipe, FileTypeValidator,
+	SerializeOptions
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
@@ -54,6 +55,9 @@ export class UsersController
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
+	@SerializeOptions({
+		groups: ['me'],
+	})
 	currentUser(@Req() req)
 	{
 		return req.user;
@@ -63,6 +67,9 @@ export class UsersController
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
+	@SerializeOptions({
+		groups: ['me'],
+	})
 	async updateUser(@Body() updateUserDto: UpdateUserDto,
 		@Req() req)
 	{
@@ -87,6 +94,9 @@ export class UsersController
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
+	@SerializeOptions({
+		groups: ['friends'],
+	})
 	async getUserFriends(@Query() pageOptionsDto: PageOptionsDto,
 		@Req() req)
 	{
@@ -97,6 +107,9 @@ export class UsersController
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
+	@SerializeOptions({
+		groups: ['friends'],
+	})
 	async createUserFriend(@Body() createUserFriendDto: CreateUserFriendDto,
 		@Req() req)
 	{
@@ -107,6 +120,9 @@ export class UsersController
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
+	@SerializeOptions({
+		groups: ['friends'],
+	})
 	async deleteUserFriend(@Param('user_id', ParseIntPipe) user_id: number,
 		@Req() req)
 	{

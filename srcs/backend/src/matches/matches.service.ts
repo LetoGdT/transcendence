@@ -73,13 +73,15 @@ export class MatchesService
 	{
 		const wins: number = await this.matchesRepository.createQueryBuilder('match')
 			.where('match.winner = :id', { id: id })
+			.andWhere('match.game_type = :game_type', { game_type: 'Ranked' })
 			.getCount();
 
 		const losses: number = await this.matchesRepository.createQueryBuilder('match')
 			.where('match.winner != :id', { id: id })
+			.andWhere('match.game_type = :game_type', { game_type: 'Ranked' })
 			.getCount();
 
-		const winrate = wins / losses * 100;
+		const winrate: number = wins / (wins + losses) * 100;
 		return { wins: wins, losses: losses, winrate: winrate };
 	}
 
