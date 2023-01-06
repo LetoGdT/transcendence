@@ -113,7 +113,6 @@ function OneMatch(user1id: number, user2id: number, score1: number, score2: numb
 
 export function MatchHistory(){
 	const [data, setResult] = useState<matchHistoryProps>();
-	const [me, setMe] = useState<meProps>();
 
 	useEffect(() => {
 		const api = async () => {
