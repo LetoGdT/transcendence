@@ -20,41 +20,6 @@ const CodeOf2FATextField = styled(TextField)({
 	},
 });
 
-const SettingsButton = styled(Button)({
-	boxShadow: 'none',
-	textTransform: 'none',
-	fontSize: 16,
-	padding: '6px 12px',
-	border: '1px solid',
-	lineHeight: 1.5,
-	backgroundColor: '#646464',
-	borderColor: '#646464',
-	fontFamily: [
-		'-apple-system',
-		'BlinkMacSystemFont',
-		'"Segoe UI"',
-		'Roboto',
-		'"Helvetica Neue"',
-		'Arial',
-		'sans-serif',
-		'"Apple Color Emoji"',
-		'"Segoe UI Emoji"',
-		'"Segoe UI Symbol"',
-	].join(','),
-	'&:hover': {
-		backgroundColor: '#3b9b3b',
-		borderColor: '#646464',
-		boxShadow: 'none',
-	},
-	'&:active': {
-		boxShadow: 'none',
-		backgroundColor: '#4a7a4a',
-		borderColor: '#646464',
-	},
-	'&:focus': {
-		xShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
-	},
-});
 
 function SendCode2FA(code2FA: string | undefined){
 	React.useEffect(() => {
@@ -73,7 +38,7 @@ function SendCode2FA(code2FA: string | undefined){
 	}, []);	
 }
 
-export function AuthWith2FA(): React.ReactElement{
+export function Activate2FA(): React.ReactElement{
 	const [code2FA, setCode2FA] = React.useState("");
 
 	const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -85,6 +50,7 @@ export function AuthWith2FA(): React.ReactElement{
 	return(
 		<React.Fragment>
 			<h1>2FA</h1>
+			<img className='transparent' src='http://localhost:9999/api/2fa/generate' alt='QR code'></img>
 			<CodeOf2FATextField
 				label="6 digits code"
 				InputLabelProps={{
