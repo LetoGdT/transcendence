@@ -25,12 +25,13 @@ export function Friends(){
 		  });
 		  const jsonData = await data.json();
 		  setResult(jsonData);
-		  console.log(jsonData);//
+		//   console.log(jsonData);//
 		};
 	
 		api();
 	}, []);
 
+	// console.log(data);//
 	return(
 		<React.Fragment>
 			<h1>Friends</h1>

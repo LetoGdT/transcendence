@@ -2,10 +2,11 @@ import './App.css'
 import './MatchHistory.css'
 
 import * as React from 'react';
-// import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useState, useEffect } from "react";
 
 import { PleaseConnect } from './adaptable-zone';
+import { match } from 'assert';
 
 type opponentProps = {
 	username: string;
@@ -22,18 +23,21 @@ type matchHistoryProps = {
 	// game_type: string;
 	// user1: [];
 	// user2: [];
+	data: [];
 };
 
-function OneMatch(user1id: number, user2id: number, score1: number, score2: number, type: string){
-	
+function OneMatch(match:any){
+	const {user1, user2, score_user1, score_user2, game_type} = match.match;
 	const [data1, setResult1] = useState<opponentProps>();
 	const [data2, setResult2] = useState<opponentProps>();
 	const [me, setMe] = useState<meProps>();
 
+	// console.log(match.match.user1);//
+
 	useEffect(() => {
 		const api = async () => {
 			let urltofetch1 : string;
-			urltofetch1 = `http://localhost:9999/api/users/${user1id}`;
+			urltofetch1 = `http://localhost:9999/api/users/${user1.id}`;
 			const data1 = await fetch(urltofetch1, {
 				method: "GET",
 				credentials: 'include'
@@ -42,7 +46,7 @@ function OneMatch(user1id: number, user2id: number, score1: number, score2: numb
 			setResult1(jsonData1);
 			
 			let urltofetch : string;
-			urltofetch = `http://localhost:9999/api/users/${user2id}`;
+			urltofetch = `http://localhost:9999/api/users/${user2.id}`;
 			const data2 = await fetch(urltofetch, {
 				method: "GET",
 				credentials: 'include'
@@ -61,49 +65,63 @@ function OneMatch(user1id: number, user2id: number, score1: number, score2: numb
 		api();
 	}, []);
 
-	if (user1id === me?.id){
-		const result: string = (score1 > score2) ? "Victory" : "Defeat";
+	if (user1.id === me?.id){
+		const result: string = (score_user1 > score_user2) ? "Victory" : "Defeat";
+		var url: string = "/otherprofile";
+		url = url.concat("/");
+		url = url.concat(user2.id.toString());
 		return (
 			<React.Fragment>
-				{type}
+				{game_type}
 				<div className='Match-Resultat'>
 					{result}
 				</div>
 				<div className='Match-Summary'>
 					<div className='Match-Player-score'>
 						<div>You</div>
-						<div className='Match-Player-points'>{score1}</div>
+						<div className='Match-Player-points'>{score_user1}</div>
 					</div>
 					<div className='Match-VS'>
 						VS
 					</div>
 					<div className='Match-Player-score'>
-						<div>{data2?.username}</div>
-						<div className='Match-Player-points'>{score2}</div>
+						<div>
+							<Link to={url} >
+								{data2?.username}
+							</Link>
+						</div>
+						<div className='Match-Player-points'>{score_user2}</div>
 					</div>
 				</div>
 			</React.Fragment>
 			
 		);
 	} else {
-		const result: string = (score2 > score1) ? "Victory" : "Defeat";
+		const result: string = (score_user2 > score_user1) ? "Victory" : "Defeat";
+		var url: string = "/otherprofile";
+		url = url.concat("/");
+		url = url.concat(user1.id.toString());
 		return (
 			<React.Fragment>
-				{type}
+				{game_type}
 				<div className='Match-Resultat'>
 					{result}
 				</div>
 				<div className='Match-Summary'>
 					<div className='Match-Player-score'>
 						<div>You</div>
-						<div className='Match-Player-points'>{score2}</div>
+						<div className='Match-Player-points'>{score_user2}</div>
 					</div>
 					<div className='Match-VS'>
 						VS
 					</div>
 					<div className='Match-Player-score'>
-						<div>{data1?.username}</div>
-						<div className='Match-Player-points'>{score1}</div>
+						<div>
+							<Link to={url} >
+								{data1?.username}
+							</Link>
+						</div>
+						<div className='Match-Player-points'>{score_user1}</div>
 					</div>
 				</div>
 			</React.Fragment>
@@ -112,7 +130,7 @@ function OneMatch(user1id: number, user2id: number, score1: number, score2: numb
 }
 
 export function MatchHistory(){
-	const [data, setResult] = useState<matchHistoryProps>();
+	const [matchs, setMatchs] = useState<matchHistoryProps>();
 
 	useEffect(() => {
 		const api = async () => {
@@ -121,8 +139,9 @@ export function MatchHistory(){
 				credentials: 'include'
 			});
 			const jsonData = await data.json();
-			setResult(jsonData);
-			console.log(jsonData);//
+			setMatchs(jsonData);
+			// console.log(jsonData);//
+
 		};
 	
 		api();
@@ -132,11 +151,13 @@ export function MatchHistory(){
 			<h1>Your Matchs History</h1>
 			<div className='Match-container'>
 				<div className='Match-container-div'>
-					{/* {
-						data?.map((match: any) => {
-								{OneMatch(match.user1.id, match.user2.id, match.score_user1, match.score_user2, match.game_type)}
-						})
-					} */}
+					{matchs?.data.map((match:any) => {
+						return(
+							
+								<OneMatch match={match} />
+							
+						);
+					})}
 				</div>
 			</div>
 		</React.Fragment>
