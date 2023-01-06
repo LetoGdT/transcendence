@@ -22,6 +22,7 @@ import { UserQueryFilterDto, MatchesQueryFilterDto } from '../dto/query-filters.
 import { AuthInterceptor } from '../auth/auth.interceptor';
 import { JwtAuthGuard } from '../guards/jwt.guard';
 import { RedirectToLoginFilter } from '../filters/auth-exceptions.filter';
+import { RequestWithUser } from '../interfaces/RequestWithUser.interface';
 
 @Controller('users')
 export class UsersController
@@ -43,7 +44,7 @@ export class UsersController
 	@Get('/isconnected')
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	async isConnected(@Req() req)
+	async isConnected(@Req() req: RequestWithUser)
 	{
 		if (req.user != null && req.user.enabled2fa
 			&& !(await this.authService.tokenInfos(req.cookies.access_token).enabled2fa))
@@ -58,7 +59,7 @@ export class UsersController
 	@SerializeOptions({
 		groups: ['me'],
 	})
-	currentUser(@Req() req)
+	currentUser(@Req() req: RequestWithUser)
 	{
 		return req.user;
 	}
@@ -71,7 +72,7 @@ export class UsersController
 		groups: ['me'],
 	})
 	async updateUser(@Body() updateUserDto: UpdateUserDto,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		if (Object.keys(updateUserDto).length === 0)
 			throw new BadRequestException('Empty parameters');
@@ -84,7 +85,7 @@ export class UsersController
 	@UseInterceptors(AuthInterceptor)
 	async getUserById(@Param('id', ParseIntPipe) id: number): Promise<User>
 	{
-		var user: User = await this.usersService.getOneById(id);
+		const user: User | null = await this.usersService.getOneById(id);
 		if (user == null)
 			throw new NotFoundException('User id was not found');
 		return user;
@@ -98,7 +99,7 @@ export class UsersController
 		groups: ['friends'],
 	})
 	async getUserFriends(@Query() pageOptionsDto: PageOptionsDto,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.usersService.getUserFriends(pageOptionsDto, req.user);
 	}
@@ -111,7 +112,7 @@ export class UsersController
 		groups: ['friends'],
 	})
 	async createUserFriend(@Body() createUserFriendDto: CreateUserFriendDto,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.usersService.createUserFriend(req.user, createUserFriendDto);
 	}
@@ -124,7 +125,7 @@ export class UsersController
 		groups: ['friends'],
 	})
 	async deleteUserFriend(@Param('user_id', ParseIntPipe) user_id: number,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.usersService.deleteUserFriend(req.user, user_id);
 	}
@@ -134,7 +135,7 @@ export class UsersController
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async getUserFriendInvitations(@Query() pageOptionsDto: PageOptionsDto,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.usersService.getUserFriendInvitations(pageOptionsDto, req.user);
 	}
@@ -144,7 +145,7 @@ export class UsersController
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async inviteUser(@Body() createUserFriendDto: CreateUserFriendDto,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.usersService.inviteUser(req.user, createUserFriendDto);
 	}
@@ -154,7 +155,7 @@ export class UsersController
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async declineInvitation(@Param('user_id', ParseIntPipe) user_id: number,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.usersService.declineInvitation(req.user, user_id);
 	}
@@ -164,7 +165,7 @@ export class UsersController
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async getUserBanlist(@Query() pageOptionsDto: PageOptionsDto,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.usersService.getUserBanlist(pageOptionsDto, req.user);
 	}
@@ -174,7 +175,7 @@ export class UsersController
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async banUser(@Body() createUserFriendDto: CreateUserFriendDto,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.usersService.banUser(createUserFriendDto, req.user);
 	}
@@ -184,7 +185,7 @@ export class UsersController
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async unbanUser(@Param('user_id', ParseIntPipe) user_id: number,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.usersService.unbanUser(req.user, user_id);
 	}
@@ -194,7 +195,7 @@ export class UsersController
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	async getAchievements(@Query() pageOptionsDto: PageOptionsDto,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.usersService.getAchievements(req.user, pageOptionsDto);
 	}
@@ -205,7 +206,7 @@ export class UsersController
 	@UseInterceptors(AuthInterceptor)
 	async getUserMatches(@Query() pageOptionsDto: PageOptionsDto,
 		@Query() matchesQueryFilterDto: MatchesQueryFilterDto,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.matchesService.getAllMatches(pageOptionsDto, matchesQueryFilterDto, req.user.id);
 	}
@@ -214,7 +215,7 @@ export class UsersController
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
-	async getUserWinrate(@Req() req)
+	async getUserWinrate(@Req() req: RequestWithUser)
 	{
 		return this.matchesService.getWinrate(req.user.id);
 	}
@@ -234,7 +235,7 @@ export class UsersController
 		validators: [
 			new FileTypeValidator({ fileType: 'image/*' }),
 			],
-	})) file: Express.Multer.File, @Req() req)
+	})) file: Express.Multer.File, @Req() req: RequestWithUser)
 	{
 		this.usersService.deleteOldPhoto(req.user, file.filename);
 		return {

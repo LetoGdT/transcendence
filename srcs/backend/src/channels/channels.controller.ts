@@ -15,6 +15,7 @@ import { UserSelectDto, PostMessageDto, UpdateMessageDto } from '../dto/messages
 import { ChannelBanQueryFilterDto, PostChannelBanDto, UpdateChannelBanDto } from '../dto/channel-ban.dto';
 import { UserQueryFilterDto, ChannelUserQueryFilterDto } from '../dto/query-filters.dto';
 import { JwtAuthGuard } from '../guards/jwt.guard';
+import { RequestWithUser } from '../interfaces/RequestWithUser.interface';
 
 /**
 * A channel, where multiple users can communicate.
@@ -56,7 +57,7 @@ export class ChannelsController
 	@UseInterceptors(AuthInterceptor)
 	getChannels(@Query() pageOptionsDto: PageOptionsDto,
 		@Query() channelQueryFilterDto: ChannelQueryFilterDto,
-		@Req() req): Promise<PageDto<Channel>>
+		@Req() req: RequestWithUser): Promise<PageDto<Channel>>
 	{
 		return this.channelsService.getChannels(pageOptionsDto, channelQueryFilterDto, req.user);
 	}
@@ -80,7 +81,7 @@ export class ChannelsController
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	createChannel(@Body() postChannelDto: PostChannelDto,
-		@Req() req): Promise<Channel>
+		@Req() req: RequestWithUser): Promise<Channel>
 	{
 		return this.channelsService.createChannel(postChannelDto, req.user);
 	}
@@ -105,7 +106,7 @@ export class ChannelsController
 	@UseInterceptors(AuthInterceptor)
 	updateChannel(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Body() patchChannelDto: PatchChannelDto,
-		@Req() req): Promise<Channel>
+		@Req() req: RequestWithUser): Promise<Channel>
 	{
 		return this.channelsService.updateChannel(channel_id, patchChannelDto, req.user);
 	}
@@ -118,7 +119,7 @@ export class ChannelsController
 		@Query() userQueryFilterDto: UserQueryFilterDto,
 		@Query() channelUserQueryFilterDto: ChannelUserQueryFilterDto,
 		@Param('channel_id', ParseIntPipe) channel_id: number,
-		@Req() req): Promise<PageDto<ChannelUser>>
+		@Req() req: RequestWithUser): Promise<PageDto<ChannelUser>>
 	{
 		return this.channelsService.getChannelUsers(pageOptionsDto, userQueryFilterDto, channelUserQueryFilterDto,
 			channel_id, req.user);
@@ -130,7 +131,7 @@ export class ChannelsController
 	@UseInterceptors(AuthInterceptor)
 	joinChannel(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Body() body: { password: string },
-		@Req() req): Promise<Channel>
+		@Req() req: RequestWithUser): Promise<Channel>
 	{
 		return this.channelsService.joinChannel(channel_id, req.user, body.password);
 	}
@@ -142,7 +143,7 @@ export class ChannelsController
 	changeUserPermissions(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Param('user_id', ParseIntPipe) user_id: number,
 		@Body() patchChannelUserDto: PatchChannelUserDto,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.channelsService.updateChannelUser(channel_id, user_id, req.user, patchChannelUserDto);
 	}
@@ -153,7 +154,7 @@ export class ChannelsController
 	@UseInterceptors(AuthInterceptor)
 	leaveChannel(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Param('user_id', ParseIntPipe) user_id: number,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.channelsService.deleteChannelUser(channel_id, user_id, req.user)
 	}
@@ -166,7 +167,7 @@ export class ChannelsController
 		@Query() pageOptionsDto: PageOptionsDto,
 		@Query() messageQueryFilterDto: MessageQueryFilterDto,
 		@Query() userSelectDto: UserSelectDto,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.channelsService.getChannelMessages(channel_id, pageOptionsDto, messageQueryFilterDto,
 			userSelectDto, req.user);
@@ -180,7 +181,7 @@ export class ChannelsController
 		@Query() pageOptionsDto: PageOptionsDto,
 		@Query() messageQueryFilterDto: MessageQueryFilterDto,
 		@Query() userSelectDto: UserSelectDto,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.channelsService.getChannelMessages(channel_id, pageOptionsDto, messageQueryFilterDto,
 			userSelectDto, req.user, true);
@@ -192,7 +193,7 @@ export class ChannelsController
 	@UseInterceptors(AuthInterceptor)
 	createChannelMessage(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Body() postMessageDto: PostMessageDto,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.channelsService.createChannelMessage(channel_id, postMessageDto, req.user);
 	}
@@ -204,7 +205,7 @@ export class ChannelsController
 	updateChannelMessage(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Param('message_id', ParseIntPipe) message_id: number,
 		@Body() updateMessageDto: UpdateMessageDto,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.channelsService.updateChannelMessage(channel_id, message_id, updateMessageDto, req.user)
 	}
@@ -215,7 +216,7 @@ export class ChannelsController
 	@UseInterceptors(AuthInterceptor)
 	deleteChannelMessage(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Param('message_id', ParseIntPipe) message_id: number,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.channelsService.deleteChannelMessage(channel_id, message_id, req.user)
 	}
@@ -225,7 +226,7 @@ export class ChannelsController
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
 	getConversations(@Query() pageOptionsDto: PageOptionsDto,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.channelsService.getConversations(pageOptionsDto, req.user)
 	}
@@ -248,7 +249,7 @@ export class ChannelsController
 	@UseInterceptors(AuthInterceptor)
 	banChannelUser(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Body() postChannelBanDto: PostChannelBanDto,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.channelsService.banChannelUser(channel_id, postChannelBanDto, req.user);
 	}
@@ -260,7 +261,7 @@ export class ChannelsController
 	updateChannelBan(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Param('ban_id', ParseIntPipe) ban_id: number,
 		@Body() updateChannelBanDto: UpdateChannelBanDto,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.channelsService.updateChannelBan(channel_id, ban_id, updateChannelBanDto, req.user);
 	}
@@ -271,7 +272,7 @@ export class ChannelsController
 	@UseInterceptors(AuthInterceptor)
 	unbanChannelUser(@Param('channel_id', ParseIntPipe) channel_id: number,
 		@Param('ban_id', ParseIntPipe) ban_id: number,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.channelsService.deleteChannelBan(channel_id, ban_id, req.user);
 	}

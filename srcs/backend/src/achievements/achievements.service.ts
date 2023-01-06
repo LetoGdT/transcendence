@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Achievement } from '../typeorm/achievement.entity';
@@ -67,6 +67,10 @@ export class AchievementsService
 			.where('achievementType.name = :name', { name: achievementType_name});
 
 		const achievementType = await queryBuilder.getOne();
+
+		if (achievementType == null)
+			throw new HttpException("You forgot to create this achievement type in the database",
+				HttpStatus.INTERNAL_SERVER_ERROR);
 
 		const newAchievement = await this.achievementRepository.create({
 			achievementType: achievementType,

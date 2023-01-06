@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpStatus, HttpException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Brackets } from 'typeorm';
 import { Message } from '../typeorm/message.entity';
@@ -13,6 +13,8 @@ import { MessageQueryFilterDto } from '../dto/query-filters.dto';
 @Injectable()
 export class MessagesService
 {
+	IdMax = Number.MAX_SAFE_INTEGER;
+
 	constructor(@InjectRepository(Message) private readonly messageRepository: Repository<Message>) {}
 
 	async getMessages(pageOptionsDto: PageOptionsDto,
@@ -107,15 +109,21 @@ export class MessagesService
 
 	async updateMessageFromId(id: number, content: string)
 	{
+		if (id > this.IdMax)
+			throw new BadRequestException(`channel_id must not be greater than ${this.IdMax}`);
+
 		const queryBuilder = this.messageRepository.createQueryBuilder("message");
 
 		const message = await queryBuilder
 			.where('message.id = :id', { id: id })
 			.getOne();
 
+		if (message == null)
+			throw new HttpException("An unexpected error occured: invalid id", HttpStatus.INTERNAL_SERVER_ERROR)
+
 		message.content = content;
 
-		return this.messageRepository.save(message)
+		return this.messageRepository.save(message);
 	}
 
 	// This function needs to be used if you are ABSOLUTELY SURE the message is valid and checked.
