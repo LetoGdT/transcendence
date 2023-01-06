@@ -71,7 +71,7 @@ function OneMatch(match:any){
 		url = url.concat("/");
 		url = url.concat(user2.id.toString());
 		return (
-			<React.Fragment>
+			<div className='Match-container-div'>
 				{game_type}
 				<div className='Match-Resultat'>
 					{result}
@@ -93,7 +93,7 @@ function OneMatch(match:any){
 						<div className='Match-Player-points'>{score_user2}</div>
 					</div>
 				</div>
-			</React.Fragment>
+			</div>
 			
 		);
 	} else {
@@ -102,7 +102,7 @@ function OneMatch(match:any){
 		url = url.concat("/");
 		url = url.concat(user1.id.toString());
 		return (
-			<React.Fragment>
+			<div className='Match-container-div'>
 				{game_type}
 				<div className='Match-Resultat'>
 					{result}
@@ -124,7 +124,7 @@ function OneMatch(match:any){
 						<div className='Match-Player-points'>{score_user1}</div>
 					</div>
 				</div>
-			</React.Fragment>
+			</div>
 		);
 	}
 }
@@ -150,7 +150,7 @@ export function MatchHistory(){
 		<React.Fragment>
 			<h1>Your Matchs History</h1>
 			<div className='Match-container'>
-				<div className='Match-container-div'>
+				
 					{matchs?.data.map((match:any) => {
 						return(
 							
@@ -158,7 +158,7 @@ export function MatchHistory(){
 							
 						);
 					})}
-				</div>
+				
 			</div>
 		</React.Fragment>
 	);

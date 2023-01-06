@@ -14,18 +14,15 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 
 import { PleaseConnect } from './adaptable-zone';
+import {FromEXPtoLvl} from './tools'
 
 type resultProps = {
 	email: string;
 	username: string;
 	image_url: string;
 	status: string;
-	rank: number;
-	level: number;
-	achievement: [];//?
-	//map avec par exemple id = nom de l'achievement, value = url d'une image
-	wins: number;
-	losses: number;
+	exp: number;
+
 };
 
 type statsProps = {
@@ -121,8 +118,8 @@ export function Profile(){
 				</div>
 				<div>
 					<div className='Profile-game-info'>
-						<div><b>Rank:</b> {data?.rank}</div>
-						<div><b>Level:</b> {data?.level}</div>
+						{/* <div><b>Rank:</b> {data?.rank}</div> */}
+						<div><b>Level:</b> {FromEXPtoLvl(data?.exp)}</div>
 					</div>
 					<h4>Achievements</h4>
 					<div className='Profile-achievement-container'>
