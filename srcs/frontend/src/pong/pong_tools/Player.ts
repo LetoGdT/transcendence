@@ -6,14 +6,12 @@ class Player
 {
 	public x: number;
 	public y: number;
-	public score: number;
 	public win: boolean;
 	
 	constructor(x: number, y: number)
 	{
 		this.x = x;
 		this.y = y;
-		this.score = 0;
 		this.win = false; // TODO Alexis thinks it would be better in PongGame class
 	}
 

@@ -12,25 +12,23 @@ class PongGame
 	private height: number;
     private player1: Player;
     private player2: Player;
+	private scorePlayer1: number; // TODO private or public ?
+	private scorePlayer2: number; // TODO private or public ?
+    private over: boolean = false; // Meaning game over
     private ball: Ball;
-
     private keyStates: any;
-
-    private moveUpPlayer1: boolean = false;
-    private moveDownPlayer1: boolean = false;
-    private moveUpPlayer2: boolean = false; // TODO will be on server side ?
-    private moveDownPlayer2: boolean = false; // TODO will be on server side ?
+    private movePlayer: boolean = false;
 
 
 	constructor(width: number, height: number)
     {
 		this.width = width;
 		this.height = height;
-
         this.player1 = new Player(0, (height - PLAYER_HEIGHT) / 2);
         this.player2 = new Player(width - PLAYER_WIDTH, (height - PLAYER_HEIGHT) / 2);
+		this.scorePlayer1 = 0;
+		this.scorePlayer2 = 0;
         this.ball = new Ball(width / 2, height / 2);
-
         this.keyStates = [];
     }
 
@@ -47,6 +45,8 @@ class PongGame
         this.player1.draw(ctx);
         this.player2.draw(ctx);
         this.ball.draw(ctx);
+        // this.score1.draw(ctx);
+        // this.score2.draw(ctx);
 	}
 
     updatePhysics()
@@ -57,19 +57,61 @@ class PongGame
             this.ball.speedY *= -1;
         }
 
-        // The ball reaches the left or right limit
-        if (this.ball.x > this.width - PLAYER_WIDTH)
+        // The ball reaches the right or left limit
+        if (this.ball.x < PLAYER_WIDTH)
         {
-            // collide(this.player2);
+            collide(this.player1);
         }
-        else if (this.ball.x < PLAYER_WIDTH)
+        else if (this.ball.x > this.width - PLAYER_WIDTH)
         {
-            // collide(this.player1);
+            collide(this.player2);
         }
 
         // The ball's speed increases each time
         this.ball.x += this.ball.speedX;
         this.ball.y += this.ball.speedY;
+    }
+
+    collide(opponent: Player)
+    {
+        // The player misses the ball
+        if (this.ball.y < opponent.y || this.ball.y > opponent.y + PLAYER_HEIGHT)
+        {
+            // The player who scores get 1 point
+            if (opponent == this.player1)
+                this.scorePlayer2++;
+            else
+                this.scorePlayer1++;
+            // End of the game when one player has 5 points
+            console.log(this.scorePlayer1); // del
+            console.log(this.scorePlayer2); // del
+
+            console.log(this.over); // del	
+            console.log("STILL PLAYING"); // del
+            if (this.scorePlayer1 === 5 || this.scorePlayer2 === 5)
+            {
+                console.log("T"); // del
+                this.over = true
+                console.log(this.over); // del	
+                gameOver();
+                return;
+            }
+            // Set ball and players to the center
+            this.ball.x = canvas.width / 2;
+            this.ball.y = canvas.height / 2;
+            this.player1.y = canvas.height / 2 - PLAYER_HEIGHT / 2;
+            this.player2.y = canvas.height / 2 - PLAYER_HEIGHT / 2;
+
+            // Reset speed
+            game.ball.speed.x = BALL_SPEED;
+            game.ball.speed.y = BALL_SPEED;
+        }
+        else
+        {
+            // Increase speed and change direction
+            game.ball.speed.x *= -1.2;
+            changeDirection(opponent.y);
+        }
     }
 
 	/**
@@ -113,7 +155,7 @@ class PongGame
         delete this.keyStates[code];
         if (code === 'KeyW')
 		{
-            this.moveUpPlayer1 = false;
+            this.movePlayer = false;
         }
     }
 
@@ -122,7 +164,7 @@ class PongGame
         this.keyStates[code] = true;
         if (code === 'KeyS')
 		{
-            this.moveUpPlayer1 = true;
+            this.movePlayer = true;
         }
     }
 }
