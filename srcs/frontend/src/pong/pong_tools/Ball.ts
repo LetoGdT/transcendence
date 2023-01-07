@@ -6,8 +6,8 @@ class Ball
 	public x: number;
 	public y: number;
 	public r: number;
-	public speedX: number; // BALL_SPEED
-	public speedY: number; //  BALL_SPEED
+	public speedX: number;
+	public speedY: number;
 
 	constructor(x: number, y: number)
 	{

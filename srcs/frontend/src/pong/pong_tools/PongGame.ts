@@ -97,19 +97,19 @@ class PongGame
                 return;
             }
             // Set ball and players to the center
-            this.ball.x = canvas.width / 2;
-            this.ball.y = canvas.height / 2;
-            this.player1.y = canvas.height / 2 - PLAYER_HEIGHT / 2;
-            this.player2.y = canvas.height / 2 - PLAYER_HEIGHT / 2;
+            this.ball.x = this.width / 2;
+            this.ball.y = this.height / 2;
+            this.player1.y = this.height / 2 - PLAYER_HEIGHT / 2;
+            this.player2.y = this.height / 2 - PLAYER_HEIGHT / 2;
 
             // Reset speed
-            game.ball.speed.x = BALL_SPEED;
-            game.ball.speed.y = BALL_SPEED;
+            this.ball.x = BALL_SPEED;
+            this.ball.y = BALL_SPEED;
         }
         else
         {
             // Increase speed and change direction
-            game.ball.speed.x *= -1.2;
+            this.ball.x *= -1.2;
             changeDirection(opponent.y);
         }
     }
