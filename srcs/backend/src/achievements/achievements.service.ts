@@ -33,14 +33,14 @@ export class AchievementsService
 		return new PageDto(entities, pageMetaDto);
 	}
 
-	async getUserAchievements(pageOptionsDto: PageOptionsDto, user: User)
+	async getUserAchievements(pageOptionsDto: PageOptionsDto, user_id: number)
 	{
 		const queryBuilder = this.achievementRepository.createQueryBuilder("achievement");
 
 		queryBuilder
 			.leftJoinAndSelect('achievement.user', 'user')
 			.leftJoinAndSelect('achievement.achievementType', 'achievementType')
-			.where('user.id = :id', { id: user.id })
+			.where('user.id = :id', { id: user_id })
 			.orderBy("achievement.id", pageOptionsDto.order)
 			.skip(pageOptionsDto.skip)
 			.take(pageOptionsDto.take);

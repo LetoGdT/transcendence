@@ -34,7 +34,7 @@ export class Match
 	@Column({
 		type: 'timestamptz',
 		nullable: true,
-		default: null
+		default: () => 'CURRENT_TIMESTAMP'
 	})
 	played_at: Date;
 

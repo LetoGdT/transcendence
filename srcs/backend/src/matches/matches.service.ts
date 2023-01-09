@@ -41,11 +41,11 @@ export class MatchesService
 			}))
 			.andWhere(new Brackets(qb => {
 				qb.where(user_id != null
-				? 'user1.id = :user_id'
-				: 'TRUE', { user_id: user_id })
+				? 'user1.id = :my_id'
+				: 'TRUE', { my_id: user_id })
 				.orWhere(user_id != null
-				? 'user2.id = :user_id'
-				: 'TRUE', { user_id: user_id })
+				? 'user2.id = :my_id'
+				: 'TRUE', { my_id: user_id })
 			}))
 			.andWhere(matchesQueryFilterDto.winner_id != null
 				? 'winner.id = :id'
