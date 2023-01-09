@@ -14,7 +14,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 
 import { PleaseConnect } from './adaptable-zone';
-import {FromEXPtoLvl} from './tools'
+import {FromEXPtoLvl, ToNextLevel} from './tools'
 
 type resultProps = {
 	email: string;
@@ -34,10 +34,19 @@ type invitesProps = {
 	data: [];
 };
 
+type achievementProps = {
+	data: [];
+}
+
+function OneAchievement(achievement: any){
+	const {id, achievementTypeId, user} = achievement.achievement;
+}
+
 export function Profile(){
 	const [data, setResult] = useState<resultProps>();
 	const [invites, setInvites] = useState<invitesProps>();
 	const [stats, setStats] = useState<statsProps>();
+	const [achievements, setAchievements] = useState<achievementProps>();
 
 	useEffect(() => {
 		const api = async () => {
@@ -118,8 +127,8 @@ export function Profile(){
 				</div>
 				<div>
 					<div className='Profile-game-info'>
-						{/* <div><b>Rank:</b> {data?.rank}</div> */}
 						<div><b>Level:</b> {FromEXPtoLvl(data?.exp)}</div>
+						<div><b>To next level:</b> {ToNextLevel(data?.exp)} EXP</div>
 					</div>
 					<h4>Achievements</h4>
 					<div className='Profile-achievement-container'>

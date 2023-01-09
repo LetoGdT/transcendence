@@ -56,15 +56,29 @@ export function userStatus(status: string){
 	}
 }
 
+const EXPtoNewLevel: number = 100;
+
 export function FromEXPtoLvl(exp: number | undefined){
 	if (exp === undefined)
 		return(
 			0
 		);
-	let EXPtoNewLevel: number = 100;
+	
 	let level: number = Math.floor(exp/EXPtoNewLevel);	
 	return(
 		level
+	);
+}
+
+export function ToNextLevel(exp: number | undefined){
+	if (exp === undefined)
+		return(
+			EXPtoNewLevel
+		);
+	
+	let toNextLevel: number = (FromEXPtoLvl(exp) + 1) * EXPtoNewLevel - exp;
+	return(
+		toNextLevel
 	);
 }
 
