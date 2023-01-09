@@ -53,7 +53,9 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 	return canvasRef;
 };
 
-function useGame() {
+function useGame()
+{
+    console.log("B"); // del
 	const ref = React.useRef<PongGame>();
 	if (!ref.current)
 		ref.current = new PongGame(GAME_WIDTH, GAME_HEIGHT);
@@ -62,6 +64,7 @@ function useGame() {
 
 const PongGameBootstrap = () =>
 {
+    console.log("A"); // del
 	const game = useGame();
 	const canvasRef = useCanvas(ctx => game.render(ctx))
 	

@@ -51,6 +51,7 @@ class PongGame
 
     updatePhysics()
 	{
+        // console.log("A"); // del
         // Rebounds on top and bottom
         if (this.ball.y > this.height || this.ball.y < 0)
         {
