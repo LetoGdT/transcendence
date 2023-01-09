@@ -490,7 +490,7 @@ export function OtherProfile(){
 			const jsonAchievement = await achievements.json();
 			setAchievements(jsonAchievement);
 
-			const matchs = await fetch("http://localhost:9999/api/users/me/matches/", {//
+			const matchs = await fetch(`http://localhost:9999/api/matches?user_id=${uid}`, {
 				method: "GET",
 				credentials: 'include'
 			});
@@ -557,12 +557,11 @@ export function OtherProfile(){
 						{matchs?.data.map((match:any) => {
 							return(
 								
-									// <OneMatch uid={uid} match={match} />
+									<OneMatch uid={uid} match={match} />
 								
 							);
 						})}
 					</div>
-
 				</div>
 			</div>
 		</React.Fragment>
