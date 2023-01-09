@@ -21,6 +21,8 @@ export class Ball implements Object2D
 
 	readonly radius: number;
 
+	// These are ABSOLUTELY needed since they are passed by reference
+	// and get modified in real time.
 	private paddle1: Paddle;
 	private paddle2: Paddle;
 
@@ -51,5 +53,11 @@ export class Ball implements Object2D
 			|| new_position.y - this.radius < this.window.min.y)
 			return true;
 		return false;
+	}
+
+	launchBallRandom()
+	{
+		this.direction.x = Math.random() * this.window.max.x;
+		this.direction.y = Math.random() * this.window.max.y;
 	}
 }

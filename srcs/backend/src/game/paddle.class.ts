@@ -9,7 +9,6 @@ export class Paddle implements Object2D
 	readonly coordinates: Vector2D;
 
 	// The current speed of the paddle.
-	// Px / s
 	readonly speed: number;
 
 	// The size of the paddle.
@@ -38,5 +37,21 @@ export class Paddle implements Object2D
 		if (new_position.x + this.height > this.window.max.x || new_position.x < this.window.min.x)
 			return true;
 		return false;
+	}
+
+	moveUp()
+	{
+		const new_position = this.coordinates;
+		new_position.x += this.speed;
+		if (!this.collides(new_position))
+			this.coordinates.x += this.speed;
+	}
+
+	moveDown()
+	{
+		const new_position = this.coordinates;
+		new_position.x -= this.speed;
+		if (!this.collides(new_position))
+			this.coordinates.x -= this.speed;
 	}
 }
