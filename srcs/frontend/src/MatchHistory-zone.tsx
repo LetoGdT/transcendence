@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from "react";
 
 import { PleaseConnect } from './adaptable-zone';
-import { match } from 'assert';
 
 type opponentProps = {
 	username: string;
@@ -18,11 +17,6 @@ type meProps = {
 }
 
 type matchHistoryProps = {
-	// score_user1: number;
-	// score_user2: number;
-	// game_type: string;
-	// user1: [];
-	// user2: [];
 	data: [];
 };
 

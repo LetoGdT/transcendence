@@ -38,8 +38,46 @@ type achievementProps = {
 	data: [];
 }
 
-function OneAchievement(achievement: any){
-	const {id, achievementTypeId, user} = achievement.achievement;
+export function OneAchievement(achievement: any){
+	const {achievementType, user} = achievement.achievement;
+
+	console.log(achievementType);
+	if (achievementType.name === "I'm a sociable person"){
+		return(
+			<div className='Profile-achievement-container-div'>
+				<div>
+					<img src={MessageAchievement} alt='1 sent in chat' className='Profile-achievement-container-div-img'></img>
+				</div>
+				<div>
+					1st message sent
+				</div>
+			</div>
+		);
+	} else if (achievementType.name === "I'm a mundaine person"){
+		return(
+			<div className='Profile-achievement-container-div'>
+				<div>
+					<img src={FriendAchievement} alt='1 friend made' className='Profile-achievement-container-div-img'></img>
+				</div>
+				<div>
+					1st friend get
+				</div>
+			</div>
+		);
+	} else if (achievementType.name === "I'm a gamer"){
+		return(
+			<div className='Profile-achievement-container-div'>
+				<div>
+					<img src={GameAchievement} alt='1 game played' className='Profile-achievement-container-div-img'></img>
+				</div>
+				<div>
+					1st game played
+				</div>
+			</div>
+		);
+	} else {
+		return(<div></div>);
+	}
 }
 
 export function Profile(){
@@ -70,7 +108,14 @@ export function Profile(){
 			});
 			const jsonStats = await stats.json();
 			setStats(jsonStats);
-			console.log(jsonStats);
+
+			const achievements = await fetch("http://localhost:9999/api/users/me/achievements", {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonAchievement = await achievements.json();
+			setAchievements(jsonAchievement);
+			// console.log(jsonAchievement);//
 		};
 	
 		api();
@@ -88,21 +133,6 @@ export function Profile(){
 		["Victories", stats?.wins],
 		["Defeats", stats?.losses],
 	];
-
-	// const handleClickReject = async (uid: number) => {
-		// let urltofetch : string;
-		// urltofetch = 'http://localhost:9999/api/users/me/friends/invitations/' + uid;
-		// console.log(urltofetch);//
-		// const response = await fetch(urltofetch, {
-		// 	headers: {
-		// 		'Accept': 'application/json',
-		// 		'Content-Type': 'application/json'
-		// 	},
-		// 	method: 'DELETE',
-		// 	credentials: 'include',
-		// });
-	// 	console.log(response.json());//
-	// };
 	
 	return(
 		<React.Fragment>
@@ -132,30 +162,11 @@ export function Profile(){
 					</div>
 					<h4>Achievements</h4>
 					<div className='Profile-achievement-container'>
-						<div className='Profile-achievement-container-div'>
-							<div>
-								<img src={MessageAchievement} alt='1 sent in chat' className='Profile-achievement-container-div-img'></img>
-							</div>
-							<div>
-								1st message sent
-							</div>
-						</div>
-						<div className='Profile-achievement-container-div'>
-							<div>
-								<img src={FriendAchievement} alt='1 friend made' className='Profile-achievement-container-div-img'></img>
-							</div>
-							<div>
-								1st friend get
-							</div>
-						</div>
-						<div className='Profile-achievement-container-div'>
-							<div>
-								<img src={GameAchievement} alt='1 game played' className='Profile-achievement-container-div-img'></img>
-							</div>
-							<div>
-								1st game played
-							</div>
-						</div>
+						{achievements?.data.map((achievement:any) => {
+							return(
+								<OneAchievement achievement={achievement} />
+							);
+						})}
 					</div>
 					<h4>Invitations received</h4>
 					<div>
@@ -164,7 +175,6 @@ export function Profile(){
 							url = url.concat("/");
 							url = url.concat(user.id);
 							var uid = user.id;
-							// console.log("uid = "+uid);
 							return(
 								<div className='Profile-invitation-received'>
 									<div>

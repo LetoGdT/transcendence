@@ -1,5 +1,6 @@
 import './App.css'
 import './Profile.css'
+import './MatchHistory.css'
 
 import * as React from 'react';
 import Button from '@mui/material/Button';
@@ -10,20 +11,16 @@ import { useState, useEffect } from "react";
 import MessageAchievement from './message_achievement.png';
 import FriendAchievement from './friend_achievement.png';
 import GameAchievement from './game_achievement.png';
-
 import { NotFound } from './adaptable-zone';
+import { FromEXPtoLvl, ToNextLevel } from './tools';
+import { OneAchievement } from './Profile-zone';
 
 type resultProps = {
 	email: string;
 	username: string;
 	image_url: string;
 	status: string;
-	rank: number;
-	level: number;
-	achievement: [];//?
-	//map avec par exemple id = nom de l'achievement, value = url d'une image
-	wins: number;
-	losses: number;
+	exp: number;
 };
 
 type friendProps = {
@@ -31,12 +28,29 @@ type friendProps = {
 };
 
 type blockedProps = {
-
+	// data:[]; 
 };
 
 type statsProps = {
 	wins: number;
 	losses: number;
+}
+
+type achievementProps = {
+	data: [];
+}
+
+type opponentProps = {
+	username: string;
+};
+
+type meProps = {
+	username: string;
+	id: number;
+}
+
+type matchHistoryProps = {
+	data: [];
 }
 
 const AddButton = styled(Button)({
@@ -217,7 +231,6 @@ function AddOrRemoveButton(uid: string | undefined){
 	};
 
 	const [friend, setFriend] = useState<friendProps>();
-	// const [blocked, setBlocked] = useState<blockedProps>();
 
 	useEffect(() => {
 		const api = async () => {
@@ -227,21 +240,12 @@ function AddOrRemoveButton(uid: string | undefined){
 			});
 			const jsonFriend = await friend.json();
 			setFriend(jsonFriend);
-			// const blocked = await fetch("http://localhost:9999/api/users/me/banlist/", {
-			// 	method: "GET",
-			// 	credentials: 'include'
-			// });
-			// const jsonBlocked = await blocked.json();
-			// setBlocked(jsonBlocked);
-			// console.log(jsonBlocked);
 		};
 	
 		api();
 	}, []);
 
 	const res1 = friend?.data.find(({ id }) => id === uid);
-	// const res2 = blocked?.find(({id}) => id === uid);
-	// console.log(blocked);
 
 	if (typeof res1 === "undefined"){
 		return(
@@ -251,6 +255,169 @@ function AddOrRemoveButton(uid: string | undefined){
 	else {
 		return(
 			<RemoveButton variant="contained" disableRipple onClick={handleClickRemove}>Remove from Friends</RemoveButton>
+		);
+	}
+}
+
+function BlockOrUnblockButton(uid: string | undefined){
+
+	const handleClickBlock = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		const response = await fetch('http://localhost:9999/api/users/me/banlist', {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			credentials: 'include',
+			body: JSON.stringify({ id: uid })
+		});
+	};
+
+	const handleClickUnblock = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		let urltofetch : string;
+		urltofetch = 'http://localhost:9999/api/users/me/banlist/' + uid;
+		const response = await fetch(urltofetch, {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'DELETE',
+			credentials: 'include',
+		});
+	};
+
+	const [blocked, setBlocked] = useState<blockedProps>();
+
+	useEffect(() => {
+		const api = async () => {
+			const blocked = await fetch("http://localhost:9999/api/users/me/banlist/", {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonBlocked = await blocked.json();
+			setBlocked(jsonBlocked);
+		};
+	
+		api();
+	}, []);
+
+
+	// console.log(blocked);//
+	// const res1 = blocked?.find(({ id }) => id === uid);
+
+	return(<div></div>);
+	// if (typeof res1 === "undefined"){
+	// 	return(
+	// 		<AddButton variant="contained" disableRipple onClick={handleClickBlock}>Block user</AddButton>
+	// 	);
+	// }
+	// else {
+	// 	return(
+	// 		<RemoveButton variant="contained" disableRipple onClick={handleClickUnblock}>Unblock user</RemoveButton>
+	// 	);
+	// }
+}
+
+function OneMatch(uid: number, match:any){
+	const {user1, user2, score_user1, score_user2, game_type} = match.match;
+	const [data1, setResult1] = useState<opponentProps>();
+	const [data2, setResult2] = useState<opponentProps>();
+	const [me, setMe] = useState<meProps>();
+
+	// console.log(match.match.user1);//
+
+	useEffect(() => {
+		const api = async () => {
+			let urltofetch1 : string;
+			urltofetch1 = `http://localhost:9999/api/users/${user1.id}`;
+			const data1 = await fetch(urltofetch1, {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonData1 = await data1.json();
+			setResult1(jsonData1);
+			
+			let urltofetch : string;
+			urltofetch = `http://localhost:9999/api/users/${user2.id}`;
+			const data2 = await fetch(urltofetch, {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonData = await data2.json();
+			setResult2(jsonData);
+
+			urltofetch = `http://localhost:9999/api/users/${uid}`;
+			const me = await fetch(urltofetch, {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonMe = await me.json();
+			setMe(jsonMe);
+		};
+	
+		api();
+	}, []);
+
+	if (user1.id === me?.id){
+		const result: string = (score_user1 > score_user2) ? "Victory" : "Defeat";
+		var url: string = "/otherprofile";
+		url = url.concat("/");
+		url = url.concat(user2.id.toString());
+		return (
+			<div className='Match-container-div'>
+				{game_type}
+				<div className='Match-Resultat'>
+					{result}
+				</div>
+				<div className='Match-Summary'>
+					<div className='Match-Player-score'>
+						<div>You</div>
+						<div className='Match-Player-points'>{score_user1}</div>
+					</div>
+					<div className='Match-VS'>
+						VS
+					</div>
+					<div className='Match-Player-score'>
+						<div>
+							<Link to={url} >
+								{data2?.username}
+							</Link>
+						</div>
+						<div className='Match-Player-points'>{score_user2}</div>
+					</div>
+				</div>
+			</div>
+			
+		);
+	} else {
+		const result: string = (score_user2 > score_user1) ? "Victory" : "Defeat";
+		var url: string = "/otherprofile";
+		url = url.concat("/");
+		url = url.concat(user1.id.toString());
+		return (
+			<div className='Match-container-div'>
+				{game_type}
+				<div className='Match-Resultat'>
+					{result}
+				</div>
+				<div className='Match-Summary'>
+					<div className='Match-Player-score'>
+						<div>You</div>
+						<div className='Match-Player-points'>{score_user2}</div>
+					</div>
+					<div className='Match-VS'>
+						VS
+					</div>
+					<div className='Match-Player-score'>
+						<div>
+							<Link to={url} >
+								{data1?.username}
+							</Link>
+						</div>
+						<div className='Match-Player-points'>{score_user1}</div>
+					</div>
+				</div>
+			</div>
 		);
 	}
 }
@@ -268,13 +435,12 @@ export function OtherProfile(){
 			credentials: 'include',
 			body: JSON.stringify({ id: uid })
 		});
-		// console.log(response.json());//
 	};
 
 	const handleClickUnblock = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		let urltofetch : string;
 		urltofetch = 'http://localhost:9999/api/users/me/banlist/' + uid;
-		// console.log(urltofetch);//
+
 		const response = await fetch(urltofetch, {
 			headers: {
 				'Accept': 'application/json',
@@ -288,19 +454,19 @@ export function OtherProfile(){
 	const [data, setResult] = useState<resultProps>();
 	const [blocked, setBlocked] = useState<blockedProps>();
 	const [stats, setStats] = useState<statsProps>();
+	const [achievements, setAchievements] = useState<achievementProps>();
+	const [matchs, setMatchs] = useState<matchHistoryProps>();
 	
 	useEffect(() => {
 		const api = async () => {
 			let urltofetch : string;
 			urltofetch = `http://localhost:9999/api/users/${uid}`;
-			// console.log(urltofetch);//
 			const data = await fetch(urltofetch, {
 				method: "GET",
 				credentials: 'include'
 			});
 			const jsonData = await data.json();
 			setResult(jsonData);
-			// console.log(jsonData);//
 
 			const blocked = await fetch("http://localhost:9999/api/users/me/banlist/", {
 				method: "GET",
@@ -315,7 +481,21 @@ export function OtherProfile(){
 			});
 			const jsonStats = await stats.json();
 			setStats(jsonStats);
-			console.log(jsonStats);
+			
+			urltofetch = `http://localhost:9999/api/users/${uid}/achievements`;
+			const achievements = await fetch(urltofetch, {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonAchievement = await achievements.json();
+			setAchievements(jsonAchievement);
+
+			const matchs = await fetch("http://localhost:9999/api/users/me/matches/", {//
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonMatchs = await matchs.json();
+			setMatchs(jsonMatchs);
 		};
 	
 		api();
@@ -341,6 +521,7 @@ export function OtherProfile(){
 				<div className='Profile-Alias'>
 					<div className='Profile-Alias-div'>{data?.username}</div>
 					<div className='Profile-Alias-div'>{AddOrRemoveButton(uid)}</div>
+					{/* <div className='Profile-Alias-div'>{BlockOrUnblockButton(uid)}</div> */}
 					<div className='Profile-Alias-div'><BlockButton variant="contained" disableRipple onClick={handleClickBlock}>Block user</BlockButton></div>
 					<div className='Profile-Alias-div'><UnblockButton variant="contained" disableRipple onClick={handleClickUnblock}>Unblock user</UnblockButton></div>
 				</div>
@@ -360,35 +541,26 @@ export function OtherProfile(){
 				</div>
 				<div>
 					<div className='Profile-game-info'>
-						<div><b>Rank:</b> {data?.rank}</div>
-						<div><b>Level:</b> {data?.level}</div>
+						<div><b>Level:</b> {FromEXPtoLvl(data?.exp)}</div>
+						<div><b>To next level:</b> {ToNextLevel(data?.exp)} EXP</div>
 					</div>
 					<h4>Achievements</h4>
 					<div className='Profile-achievement-container'>
-						<div className='Profile-achievement-container-div'>
-							<div>
-								<img src={MessageAchievement} alt='1 sent in chat' className='Profile-achievement-container-div-img'></img>
-							</div>
-							<div>
-								1st message sent
-							</div>
-						</div>
-						<div className='Profile-achievement-container-div'>
-							<div>
-								<img src={FriendAchievement} alt='1 friend made' className='Profile-achievement-container-div-img'></img>
-							</div>
-							<div>
-								1st friend get
-							</div>
-						</div>
-						<div className='Profile-achievement-container-div'>
-							<div>
-								<img src={GameAchievement} alt='1 game played' className='Profile-achievement-container-div-img'></img>
-							</div>
-							<div>
-								1st game played
-							</div>
-						</div>
+						{achievements?.data.map((achievement:any) => {
+							return(
+								<OneAchievement achievement={achievement} />
+							);
+						})}
+					</div>
+					<h4>Match History</h4>
+					<div className='Match-container-otherProfile'>
+						{matchs?.data.map((match:any) => {
+							return(
+								
+									// <OneMatch uid={uid} match={match} />
+								
+							);
+						})}
 					</div>
 
 				</div>
