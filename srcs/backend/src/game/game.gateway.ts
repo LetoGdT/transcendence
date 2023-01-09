@@ -29,6 +29,4 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		if (index != -1)
 			this.clients.splice(index, 1);
 	}
-
-	// @SubscribeMessage('')
 }

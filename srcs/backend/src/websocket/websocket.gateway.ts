@@ -13,6 +13,8 @@ import { User } from '../typeorm/user.entity';
 import { ChatService } from './chat.service';
 import { UsersService } from '../users/users.service';
 import { Connection } from '../interfaces/connection.interface';
+import { Ball } from '../game/ball.class';
+import { Paddle } from '../game/paddle.class';
 
 @WebSocketGateway(9998, { cors: true })
 export class MySocketGateway implements OnGatewayConnection, 
@@ -29,7 +31,7 @@ export class MySocketGateway implements OnGatewayConnection,
 		// Vérification du token de l’utilisateur
 		// Si le token est invalide, la socket est fermée de suite
 		console.log("connection par websocket tentée");
-		if(typeof client.request.headers.cookie === 'undefined' || !this.auth.verifyToken(client.request.headers.cookie)) {
+		if(client.request.headers.cookie == null || !this.auth.verifyToken(client.request.headers.cookie)) {
 			client.disconnect();
 			return ;
 		}
