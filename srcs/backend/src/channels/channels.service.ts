@@ -140,6 +140,9 @@ export class ChannelsService
 
 	async updateChannel(id: number, patchChannelDto: PatchChannelDto,  user: User)
 	{
+		if (id > this.IdMax)
+			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
+
 		const queryBuilder = this.channelRepository.createQueryBuilder('channel');
 
 		queryBuilder
@@ -152,7 +155,7 @@ export class ChannelsService
 		if (channel == null)
 			throw new BadRequestException('Channel not found');
 
-		let channelUser: ChannelUser = null;
+		let channelUser: ChannelUser | null = null;
 
 		for (let tmp_channelUser of channel.users)
 		{
@@ -162,6 +165,9 @@ export class ChannelsService
 				break;
 			}
 		}
+
+		if (channelUser == null)
+			throw new HttpException('You are not in this channel', HttpStatus.FORBIDDEN);
 
 		if (channelUser.role === 'None')
 			throw new HttpException('You are not a channel administrator', HttpStatus.FORBIDDEN);
@@ -254,8 +260,12 @@ export class ChannelsService
 
 		const channel = await queryBuilder.getOne();
 
-		let requester: ChannelUser = null;
-		let toChange: ChannelUser = null;
+		if (channel == null)
+			throw new HttpException("An unexpected error occured: invalid channel id",
+				HttpStatus.INTERNAL_SERVER_ERROR);
+
+		let requester: ChannelUser | null = null;
+		let toChange: ChannelUser | null = null;
 
 		for (let channelUser of channel.users)
 		{
@@ -328,8 +338,8 @@ export class ChannelsService
 
 		const channel = await queryBuilder.getOne();
 
-		let requester: ChannelUser = null;
-		let toDelete: ChannelUser = null;
+		let requester: ChannelUser | null = null;
+		let toDelete: ChannelUser | null = null;
 
 		for (let channelUser of channel.users)
 		{
@@ -417,7 +427,14 @@ export class ChannelsService
 
 		channel.messages.push(newMessage);
 		const ret = await this.channelRepository.save(channel);
-		await this.achievementsService.createUserAchievement(sender, 'I\'m a sociable person');
+		try
+		{
+			await this.achievementsService.createUserAchievement(sender, 'I\'m a sociable person');
+		}
+		catch (err)
+		{
+			console.log('No achievement for you');
+		}
 		return ret;
 	}
 
@@ -603,7 +620,7 @@ export class ChannelsService
 		if (toBanIndex === userIndex)
 			throw new BadRequestException('You can\'t ban yourself !');
 
-		if (this.permissions[users[userIndex].role] <= this.permissions[users[toBanIndex].role])
+		if (this.permissions.get(users[userIndex].role) <= this.permissions.get(users[toBanIndex].role))
 			throw new HttpException('You can\'t ban a user with a higher or equal role', HttpStatus.FORBIDDEN);
 
 		const bannedUser = new ChannelBan();
@@ -653,7 +670,7 @@ export class ChannelsService
 		if (banlist[bannedIndex].id === user.id)
 			throw new BadRequestException('You can\'t unban yourself !');
 
-		if (this.permissions[channel.users[userIndex].role] < this.permissions['Admin'])
+		if (this.permissions.get(channel.users[userIndex].role) < this.permissions.get('Admin'))
 			throw new HttpException('You need to be admin or owner to edit a ban', HttpStatus.FORBIDDEN);
 
 		channel.banlist[bannedIndex].unban_date = updateChannelBanDto.unban_date;
@@ -697,7 +714,7 @@ export class ChannelsService
 		if (banlist[bannedIndex].id === user.id)
 			throw new BadRequestException('You can\'t unban yourself !');
 
-		if (this.permissions[channel.users[userIndex].role] < this.permissions['Admin'])
+		if (this.permissions.get(channel.users[userIndex].role) < this.permissions.get('Admin'))
 			throw new HttpException('You need to be admin or owner to edit a ban', HttpStatus.FORBIDDEN);
 
 		this.channelBanRepository.remove(banlist[bannedIndex]);

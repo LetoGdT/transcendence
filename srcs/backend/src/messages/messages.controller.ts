@@ -11,6 +11,7 @@ import { AuthInterceptor } from '../auth/auth.interceptor';
 import { MessageQueryFilterDto } from '../dto/query-filters.dto';
 import { UsersService } from '../users/users.service';
 import { JwtAuthGuard } from '../guards/jwt.guard';
+import { RequestWithUser } from '../interfaces/RequestWithUser.interface';
 
 @Controller('messages')
 export class MessagesController
@@ -25,7 +26,7 @@ export class MessagesController
 	async getMessages(@Query() pageOptionsDto: PageOptionsDto,
 		@Query() messageQueryFilterDto: MessageQueryFilterDto,
 		@Query() userSelectDto: UserSelectDto,
-		@Req() req): Promise<PageDto<Message>>
+		@Req() req: RequestWithUser): Promise<PageDto<Message>>
 	{
 		return this.messagesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user);
 	}
@@ -37,7 +38,7 @@ export class MessagesController
 	async getMessagesAsSender(@Query() pageOptionsDto: PageOptionsDto,
 		@Query() messageQueryFilterDto: MessageQueryFilterDto,
 		@Query() userSelectDto: UserSelectDto,
-		@Req() req): Promise<PageDto<Message>>
+		@Req() req: RequestWithUser): Promise<PageDto<Message>>
 	{
 		return this.messagesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user, { as_sender: true });
 	}
@@ -49,7 +50,7 @@ export class MessagesController
 	async getMessagesAsRecipient(@Query() pageOptionsDto: PageOptionsDto,
 		@Query() messageQueryFilterDto: MessageQueryFilterDto,
 		@Query() userSelectDto: UserSelectDto,
-		@Req() req): Promise<PageDto<Message>>
+		@Req() req: RequestWithUser): Promise<PageDto<Message>>
 	{
 		return this.messagesService.getMessages(pageOptionsDto, messageQueryFilterDto, userSelectDto, req.user, { as_recipient: true });
 	}

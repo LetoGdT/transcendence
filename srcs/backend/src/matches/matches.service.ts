@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Brackets } from 'typeorm';
 import { Match } from '../typeorm/match.entity';
 import { User } from '../typeorm/user.entity';
+import { UsersService } from '../users/users.service';
 import { MatchesQueryFilterDto } from '../dto/query-filters.dto';
 import { PageOptionsDto } from "../dto/page-options.dto";
 import { PageDto } from "../dto/page.dto";
@@ -14,7 +15,8 @@ export class MatchesService
 {
 	IdMax: number = Number.MAX_SAFE_INTEGER;
 
-	constructor(@InjectRepository(Match) private readonly matchesRepository: Repository<Match>,) {}
+	constructor(@InjectRepository(Match) private readonly matchesRepository: Repository<Match>,
+		private readonly usersService: UsersService) {}
 
 	async getAllMatches(pageOptionsDto: PageOptionsDto,
 		matchesQueryFilterDto: MatchesQueryFilterDto,
@@ -73,13 +75,15 @@ export class MatchesService
 	{
 		const wins: number = await this.matchesRepository.createQueryBuilder('match')
 			.where('match.winner = :id', { id: id })
+			.andWhere('match.game_type = :game_type', { game_type: 'Ranked' })
 			.getCount();
 
 		const losses: number = await this.matchesRepository.createQueryBuilder('match')
 			.where('match.winner != :id', { id: id })
+			.andWhere('match.game_type = :game_type', { game_type: 'Ranked' })
 			.getCount();
 
-		const winrate = wins / losses * 100;
+		const winrate: number = wins / (wins + losses) * 100;
 		return { wins: wins, losses: losses, winrate: winrate };
 	}
 
@@ -87,5 +91,47 @@ export class MatchesService
 	{
 		const newMatch: Match = this.matchesRepository.create(createMatchDto);
 		return this.matchesRepository.save(newMatch);
+	}
+
+	// Lucille this is for you
+	async calculateRank(match_id: number): Promise<void>
+	{
+		if (match_id > this.IdMax)
+			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
+
+		const queryBuilder = this.matchesRepository.createQueryBuilder('match')
+
+		queryBuilder
+			.leftJoinAndSelect('match.user1', 'user1')
+			.leftJoinAndSelect('match.user2', 'user2')
+			.leftJoinAndSelect('match.winner', 'winner')
+			.where('match.id = :id', { match_id: match_id });
+
+		const match: Match | null = await queryBuilder.getOne();
+
+		if (match == null)
+			throw new BadRequestException("Invalid match id: calculateRank()");
+
+
+		// All the data you could ever want.
+		const user1_exp: number = match.user1.exp;
+		const user2_exp: number = match.user2.exp;
+		const score_user1: number = match.score_user1;
+		const score_user2: number = match.score_user2;
+		const winner: User = match.winner;
+
+		// Those are the variables that will be saved at the end.
+		// CHANGE THESE !!!
+		let newUser1_exp: number = user1_exp;
+		let newUser2_exp: number = user2_exp;
+
+		/******** YOUR CODE HERE ********/
+
+
+
+		/******** END OF YOUR CODE ********/
+
+		this.usersService.changeRank(match.user1, newUser1_exp);
+		this.usersService.changeRank(match.user2, newUser2_exp);
 	}
 }
