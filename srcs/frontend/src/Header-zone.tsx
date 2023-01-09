@@ -6,7 +6,7 @@ import * as React from 'react';
 
 import { Link } from 'react-router-dom';
 
-import Banniere from './link_botw_banniere.jpg';
+import Banniere from './banniere-transcendence_1.png';
 // import Avatar from './link_botw_avatar.jpg';
 import Logo42blanc from './logo_42_white.png';
 

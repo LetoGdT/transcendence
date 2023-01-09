@@ -16,7 +16,7 @@
 }
 .Banniere-img {
 	width: 400px;
-	height: auto;
+	/* height: auto; */
 }
   
 .Avatar-zone {
@@ -30,7 +30,7 @@
 }
   
 .Avatar-zone-img {
-	max-width: 200px;
+	max-width: 100px;
 	height: auto;
 	max-height: 210px;
 }

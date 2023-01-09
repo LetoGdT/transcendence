@@ -318,7 +318,8 @@ function BlockOrUnblockButton(uid: string | undefined){
 	// }
 }
 
-function OneMatch(uid: number, match:any){
+function OneMatch(match:any){
+	let { uid } = useParams();
 	const {user1, user2, score_user1, score_user2, game_type} = match.match;
 	const [data1, setResult1] = useState<opponentProps>();
 	const [data2, setResult2] = useState<opponentProps>();
@@ -557,7 +558,7 @@ export function OtherProfile(){
 						{matchs?.data.map((match:any) => {
 							return(
 								
-									<OneMatch uid={uid} match={match} />
+									<OneMatch match={match} />
 								
 							);
 						})}
