@@ -197,7 +197,16 @@ export class UsersController
 	async getAchievements(@Query() pageOptionsDto: PageOptionsDto,
 		@Req() req: RequestWithUser)
 	{
-		return this.usersService.getAchievements(req.user, pageOptionsDto);
+		return this.usersService.getAchievements(req.user.id, pageOptionsDto);
+	}
+
+	@Get('/:id/achievements')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
+	async getUserAchievements(@Param('id', ParseIntPipe) id: number,
+		@Query() pageOptionsDto: PageOptionsDto)
+	{
+		return this.usersService.getAchievements(id, pageOptionsDto);
 	}
 
 	@Get('/me/matches')
