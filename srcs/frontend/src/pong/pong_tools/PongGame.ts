@@ -12,8 +12,8 @@ class PongGame
 	private height: number;
     private player1: Player;
     private player2: Player;
-	private scorePlayer1: number; // TODO private or public ?
-	private scorePlayer2: number; // TODO private or public ?
+	private scorePlayer1: number; // TODO only get it from the back. private or public ? 
+	private scorePlayer2: number; // TODO only get it from the back. private or public ?
     private over: boolean = false; // Meaning game over
     private ball: Ball;
     private keyStates: any;
@@ -77,7 +77,7 @@ class PongGame
         // The player misses the ball
         if (this.ball.y < opponent.y || this.ball.y > opponent.y + PLAYER_HEIGHT)
         {
-            // The player who scores get 1 point
+            // The player who scores gets 1 point
             if (opponent == this.player1)
                 this.scorePlayer2++;
             else
