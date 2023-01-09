@@ -118,7 +118,10 @@ export class MatchesService
 		const user2_exp: number = match.user2.exp;
 		const score_user1: number = match.score_user1;
 		const score_user2: number = match.score_user2;
-		const winner: User = match.winner;
+		const expToNewLevel: number = 100;
+		let diffLvl: number = 0;
+		let lvl1: number = Math.floor(user1_exp/expToNewLevel);
+		let lvl2: number = Math.floor(user2_exp/expToNewLevel);
 
 		// Those are the variables that will be saved at the end.
 		// CHANGE THESE !!!
@@ -127,7 +130,50 @@ export class MatchesService
 
 		/******** YOUR CODE HERE ********/
 
-
+		if (lvl1 < lvl2){
+			diffLvl = lvl2 - lvl1;
+			if (score_user1 > score_user2){
+				if (score_user2 <= 1){
+					newUser1_exp = newUser1_exp + 50 * diffLvl;
+					if (newUser2_exp !== 0)
+						newUser2_exp = newUser2_exp - 20 * diffLvl;
+				} else {
+					newUser1_exp = newUser1_exp + 25 * diffLvl;
+					if (newUser2_exp !== 0)
+						newUser2_exp = newUser2_exp - 10 * diffLvl;
+				}
+			} else if (score_user1 <= 1 && newUser1_exp !== 0){
+					newUser1_exp = newUser1_exp - 5;
+			}
+		} else if (lvl1 > lvl2){
+			diffLvl = lvl1 - lvl2;
+			if (score_user1 < score_user2) 
+			{
+				if (score_user1 <= 1){
+					newUser2_exp = newUser2_exp + 50 * diffLvl;
+					if (newUser1_exp !== 0)
+						newUser1_exp = newUser1_exp - 20 * diffLvl;
+				} else {
+					newUser2_exp = newUser2_exp + 25 * diffLvl;
+					if (newUser1_exp !== 0)
+						newUser1_exp = newUser1_exp - 10 * diffLvl;
+				}
+			} else if (score_user2 <= 1 && newUser2_exp !== 0){
+					newUser2_exp = newUser2_exp - 5;
+			} 
+		} else {
+			if (score_user1 > score_user2){
+				if (score_user2 <= 1 && newUser2_exp !== 0){
+					newUser2_exp = newUser2_exp - 10;
+				}
+				newUser1_exp = newUser1_exp + 20;
+			} else {
+				if (score_user1 <= 1 && newUser1_exp !== 0){
+					newUser1_exp = newUser1_exp - 10;
+				}
+				newUser2_exp = newUser2_exp + 20;
+			}
+		}
 
 		/******** END OF YOUR CODE ********/
 
