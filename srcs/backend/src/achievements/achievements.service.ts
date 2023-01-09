@@ -39,6 +39,7 @@ export class AchievementsService
 
 		queryBuilder
 			.leftJoinAndSelect('achievement.user', 'user')
+			.leftJoinAndSelect('achievement.achievementType', 'achievementType')
 			.where('user.id = :id', { id: user.id })
 			.orderBy("achievement.id", pageOptionsDto.order)
 			.skip(pageOptionsDto.skip)
