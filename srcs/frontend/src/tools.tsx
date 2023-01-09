@@ -106,29 +106,60 @@ export function NewExp(usr1id: number, usr2id: number, usr1Score: number, usr2Sc
 	}, []);
 
 	let NewEXP1: number = 0;
+	if (data1?.exp !== undefined)
+		NewEXP1 = data1?.exp;
 	let NewEXP2: number = 0;
+	if (data2?.exp !== undefined)
+		NewEXP2 = data2?.exp;
 	let lvl1: number = FromEXPtoLvl(data1?.exp);
 	let lvl2: number = FromEXPtoLvl(data2?.exp);
+	let diffLvl: number = 0;
 
 	if (lvl1 < lvl2){
-
+		diffLvl = lvl2 - lvl1;
+		if (usr1Score > usr2Score){
+			if (usr2Score <= 1){
+				NewEXP1 = NewEXP1 + 50 * diffLvl;
+				if (NewEXP2 !== 0)
+					NewEXP2 = NewEXP2 - 20 * diffLvl;
+			} else {
+				NewEXP1 = NewEXP1 + 25 * diffLvl;
+				if (NewEXP2 !== 0)
+					NewEXP2 = NewEXP2 - 10 * diffLvl;
+			}
+		} else if (usr1Score <= 1 && NewEXP1 !== 0){
+				NewEXP1 = NewEXP1 - 5;
+		}
 	} else if (lvl1 > lvl2){
-
+		diffLvl = lvl1 - lvl2;
+		if (usr1Score < usr2Score) 
+		{
+			if (usr1Score <= 1){
+				NewEXP2 = NewEXP2 + 50 * diffLvl;
+				if (NewEXP1 !== 0)
+					NewEXP1 = NewEXP1 - 20 * diffLvl;
+			} else {
+				NewEXP2 = NewEXP2 + 25 * diffLvl;
+				if (NewEXP1 !== 0)
+					NewEXP1 = NewEXP1 - 10 * diffLvl;
+			}
+		} else if (usr2Score <= 1 && NewEXP2 !== 0){
+				NewEXP2 = NewEXP2 - 5;
+		} 
 	} else {
-		
+		if (usr1Score > usr2Score){
+			if (usr2Score <= 1 && NewEXP2 !== 0){
+				NewEXP2 = NewEXP2 - 10;
+			}
+			NewEXP1 = NewEXP1 + 20;
+		} else {
+			if (usr1Score <= 1 && NewEXP1 !== 0){
+				NewEXP1 = NewEXP1 - 10;
+			}
+			NewEXP2 = NewEXP2 + 20;
+		}
 	}
-	/*
-- face à un joueur de rank inferieur (strict) tu peux pas gagner de l'exp mais seulement en perdre et la quantité perdu est du genre :
-     * si t'as pris une raclée (donc au mieux 1 vs 5) tu perds le double que si t'as pas pris de raclée mais que tu as perdu quand meme donc -10 en temps normal -20 en cas de raclée
-     * le tout est multiplié par la diff de rank : donc si t'es de rank 5 et ton adversaire est de rank 3 c'est multiplié par 2
-- face à un joueur de rank supérieur (strict) :
-     * tu perds d'une petite quantité d'exp en cas de defaite genre -5 sauf si t'as perdu de justesse genre 4 vs 5, là tu perds rien
-     * en cas de victoire classique tu gagnes 25 x la difference de rank 
-     * en cas de victoire type raclée tu gagnes 50 x la defference de rank
-- face à un joueur de meme rank :
-     * en cas de raclée tu perds -10,
-     * defaite de justesse : tu perds rien
-     * victoire : +20*/
+
 }
 
 // type isConnectedResult = {
