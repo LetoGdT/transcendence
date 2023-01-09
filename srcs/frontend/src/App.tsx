@@ -11,9 +11,11 @@ import { ChatZone } from './Chat-zone';
 import { FriendsZone } from './Friend-zone';
 import { MatchHistoryZone } from './MatchHistory-zone';
 import { SettingsZone } from './Settings-zone';
-import { ProfileZone, OtherProfile } from './Profile-zone';
+import { ProfileZone} from './Profile-zone';
+import { OtherProfile } from './OtherProfile';
 import { SignOn } from './adaptable-zone';
 import { AuthWith2FA } from './authWith2fa';
+import { Activate2FA } from './activate2fa';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 
 import { useState, useEffect} from "react";
@@ -81,6 +83,7 @@ function App() {
 						<Route path="/signon" element={<SignOn/>} />
 						<Route path='/ListUser' element={<ListUser />} />
 						<Route path='/2fa' element={<AuthWith2FA />} />
+						<Route path='/activate2fa' element={<Activate2FA />} />
 						<Route path='*' element={<NotFound/>} />
 					</Routes>
 				</div>
