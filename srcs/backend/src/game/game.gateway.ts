@@ -8,6 +8,7 @@ import { User } from '../typeorm/user.entity';
 
 @WebSocketGateway(9997, { cors: true })
 export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
+
 	constructor(private readonly auth: AuthService,
 		private clients: Connection[]) {}
 
@@ -28,4 +29,6 @@ export class GameGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		if (index != -1)
 			this.clients.splice(index, 1);
 	}
+
+	// @SubscribeMessage('')
 }
