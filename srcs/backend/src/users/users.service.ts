@@ -370,9 +370,11 @@ export class UsersService
 		return this.userRepository.save(user);
 	}
 
-	async getAchievements(user: User, pageOptionsDto: PageOptionsDto)
+	async getAchievements(id: number, pageOptionsDto: PageOptionsDto)
 	{
-		return this.achievementsService.getUserAchievements(pageOptionsDto, user);
+		if (id > this.IdMax)
+			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
+		return this.achievementsService.getUserAchievements(pageOptionsDto, id);
 	}
 
 	async changeRank(user: User, new_rank: number)
