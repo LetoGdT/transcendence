@@ -20,6 +20,7 @@ import { WebsocketModule } from './websocket/websocket.module';
 import { ConversationsModule } from './conversations/conversations.module';
 import { AchievementsModule } from './achievements/achievements.module';
 import { MatchesModule } from './matches/matches.module';
+import { GameModule } from './game/game.module';
 
 @Module(
 	{
@@ -53,7 +54,8 @@ import { MatchesModule } from './matches/matches.module';
 			WebsocketModule,
 			ConversationsModule,
 			AchievementsModule,
-			MatchesModule
+			MatchesModule,
+			GameModule
 		],
 	}
 )

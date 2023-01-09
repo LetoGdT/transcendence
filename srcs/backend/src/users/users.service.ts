@@ -403,4 +403,10 @@ export class UsersService
 		user.enabled2fa = false;
 		return this.userRepository.save(user);
 	}
+
+	async changeUserStatus(user: User, status: 'online' | 'offline' | 'in-game')
+	{
+		user.status = status;
+		return this.userRepository.save(user);
+	}
 }
