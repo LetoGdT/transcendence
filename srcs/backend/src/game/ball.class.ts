@@ -1,5 +1,6 @@
 import { Object2D, Window, Vector2D } from '../interfaces/object2D.interface';
 import { Paddle } from './paddle.class';
+import { performance } from "perf_hooks";
 
 export class Ball implements Object2D
 {
@@ -26,6 +27,8 @@ export class Ball implements Object2D
 	private paddle1: Paddle;
 	private paddle2: Paddle;
 
+	private latest_time: number = performance.now()
+
 	constructor(paddle1: Paddle, paddle2: Paddle,
 		window: Window = {
 			max: { x: 1040, y: 680 },
@@ -42,22 +45,30 @@ export class Ball implements Object2D
 		this.paddle1 = paddle1;
 		this.paddle2 = paddle2;
 		if (this.collides(this.coordinates))
-			throw new RangeError('Ball is not in the window')
+			throw new RangeError('Ball is not in the window');
 	}
 
-	collides(new_position: Vector2D): boolean
+	collides(position: Vector2D): boolean
 	{
-		if (new_position.x + this.radius > this.window.max.x
-			|| new_position.x - this.radius < this.window.min.x
-			|| new_position.y + this.radius > this.window.max.y
-			|| new_position.y - this.radius < this.window.min.y)
+		if (position.x + this.radius > this.window.max.x
+			|| position.x - this.radius < this.window.min.x
+			|| position.y + this.radius > this.window.max.y
+			|| position.y - this.radius < this.window.min.y)
 			return true;
 		return false;
 	}
 
-	launchBallRandom()
+	launchBallRandom(): void
 	{
-		this.direction.x = Math.random() * this.window.max.x;
-		this.direction.y = Math.random() * this.window.max.y;
+		this.direction.x = Math.random() * this.window.max.x / 2;
+		this.direction.y = Math.random() * this.window.max.y / 2;
+	}
+
+	bounce(): void
+	{
+		if (this.collides(this.coordinates))
+		{
+
+		}
 	}
 }
