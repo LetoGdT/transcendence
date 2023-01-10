@@ -132,6 +132,7 @@ export function Settings(){
 	const [data, setResult] = useState<resultProps>();
 	const [newAvatar, setNewAvatar] = React.useState("");
 	const [newAlias, setNewAlias] = React.useState("");
+	let file: File;
 
 	useEffect(() => {
 		const api = async () => {
@@ -191,7 +192,24 @@ export function Settings(){
 			});
 		};
 
-	}, []);	
+	}, []);
+
+	const uploadAvatar = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+		if (input == null || input.files == null)
+			return;
+		const file = input.files[0];
+		const formData = new FormData();
+		formData.append('file', file, file.name);
+		const response = await fetch('http://localhost:9999/api/users/me/picture',{
+			headers: {
+					'Accept': 'application/json',
+				},
+			method: 'POST',
+			credentials: 'include',
+			body: formData
+		});
+	}
 
 	return(
 		<React.Fragment>
@@ -270,6 +288,15 @@ export function Settings(){
 									handleChangeAlias
 								}>Change Alias</SettingsButton>
 							</div>
+							<form>
+								<div className='Settings-container-div-lvl4'>
+									<label>Select a picture to upload</label>
+									<input type="file"></input>
+									<SettingsButton variant="contained" disableRipple onClick={
+										uploadAvatar
+									}>upload</SettingsButton>
+								</div>
+							</form>
 						</div>
 					</div>
 					{/* <div className='Settings-container-div-lvl2'>
