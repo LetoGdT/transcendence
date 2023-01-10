@@ -144,6 +144,7 @@ function SendNewAlias(newAlias: string | undefined){
 		};
 
 	}, []);	
+	return(<div></div>);
 }
 
 function Desactivate2FA(){
@@ -197,9 +198,9 @@ export function Settings(){
 
 	const handleInputAlias = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setNewAlias(e.target.value);
-		console.log(newAlias);//
 		// SendNewAlias(newAlias);
 	};
+	// console.log(newAlias);//
 
 	const handleSwitch = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
 		console.log(checked);//
@@ -327,9 +328,10 @@ export function Settings(){
 					<SettingsButton variant="contained" disableRipple onClick={
 						async (event: React.MouseEvent<HTMLButtonElement>) => {
 							if (newAlias !== undefined){
-								// SendNewAlias(newAlias);
 								console.log("newAlias n'est pas undefined");
 								console.log(newAlias);
+								SendNewAlias(newAlias);
+								
 							}
 							// if (newAvatar !== undefined){
 							// 	SendNewAvatar(newAvatar);
