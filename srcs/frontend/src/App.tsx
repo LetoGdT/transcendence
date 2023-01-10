@@ -24,6 +24,19 @@ import { Link } from 'react-router-dom'
 type resultProps = {
 }
 
+function DisplayList(users:any){
+	const {id, username} = users.users;
+	var url: string = "/otherprofile/";
+	url = url.concat(id);
+	return(
+		<div>
+			<Link to={url} >
+				{username}
+			</Link>
+		</div>
+	);
+}
+
 export function ListUser(){//vouer à disparaitre
 
 	const [data, setResult] = useState<resultProps>();
@@ -33,23 +46,15 @@ export function ListUser(){//vouer à disparaitre
 				await getPaginatedRequest('users', setResult, 1, 2);
 			};
 			call();
-		}, []);
+	}, []);
 	
-	console.log(data);
+	// console.log(data);//
 
 	return(
 		<div>
 			{/* {data?.map((user: any) => {
-				var url: string = "/otherprofile";
-				url = url.concat("/");
-				url = url.concat(user.id);
 				return(
-
-					<div>
-						<Link to={url} >
-							{user.name}
-						</Link>
-					</div>
+					<DisplayList users={user}/>
 				);
 			})} */}
 		</div>

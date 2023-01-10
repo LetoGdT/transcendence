@@ -162,14 +162,14 @@ function Desactivate2FA(){
 	}, []);	
 }
 
-// function ValidateButton(newAlias: string | undefined, newAvatar: string | undefined){
-// 	if (newAlias !== undefined){
-// 		SendNewAlias(newAlias);
-// 	}
-// 	if (newAvatar !== undefined){
-// 		SendNewAvatar(newAvatar);
-// 	}
-// }
+function ValidateButton(newAlias: string | undefined, newAvatar: string | undefined){
+	if (newAlias !== undefined){
+		SendNewAlias(newAlias);
+	}
+	if (newAvatar !== undefined){
+		SendNewAvatar(newAvatar);
+	}
+}
 
 export function Settings(){
 	const [data, setResult] = useState<resultProps>();
@@ -184,7 +184,6 @@ export function Settings(){
 			});
 			const jsonData = await data.json();
 			setResult(jsonData);
-			console.log(jsonData);
 		};
 	
 		api();
@@ -192,11 +191,13 @@ export function Settings(){
 
 	const handleInputAvatar = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setNewAvatar(e.target.value);
+		console.log(newAvatar);//
 		// SendNewAvatar(newAvatar);
 	};
 
 	const handleInputAlias = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setNewAlias(e.target.value);
+		console.log(newAlias);//
 		// SendNewAlias(newAlias);
 	};
 
@@ -207,6 +208,16 @@ export function Settings(){
 		} else {
 
 		}
+	}
+
+	const handleValidate = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		if (newAlias !== undefined){
+			// SendNewAlias(newAlias);
+			console.log(newAvatar);
+		}
+		// if (newAvatar !== undefined){
+		// 	SendNewAvatar(newAvatar);
+		// }
 	}
 
 	React.useEffect(() => {
@@ -259,9 +270,9 @@ export function Settings(){
 									/>
 								</Box>
 							</div>
-							<div className='Settings-container-div-lvl4'>
+							{/* <div className='Settings-container-div-lvl4'>
 								<SettingsButton variant="contained" disableRipple>Browse</SettingsButton>
-							</div>
+							</div> */}
 						</div>
 					</div>
 					<div className='Settings-container-div-lvl2'>
@@ -294,9 +305,10 @@ export function Settings(){
 									/>
 								</Box>
 							</div>
+							<div>newAlias = {newAlias}</div>
 						</div>
 					</div>
-					<div className='Settings-container-div-lvl2'>
+					{/* <div className='Settings-container-div-lvl2'>
 						<h2>2FA - 2 Factor Authentication</h2>
 						<div className='Settings-container-div-lvl3'>
 							<div className='Settings-container-div-lvl4'>
@@ -308,12 +320,23 @@ export function Settings(){
 								
 							</div>
 						</div>
-					</div>
+					</div> */}
 						
 				</div>
-				{/* <div>
-					<SettingsButton variant="contained" disableRipple onClick={ValidateButton}>Validate change(s)</SettingsButton>
-				</div> */}
+				<div>
+					<SettingsButton variant="contained" disableRipple onClick={
+						async (event: React.MouseEvent<HTMLButtonElement>) => {
+							if (newAlias !== undefined){
+								// SendNewAlias(newAlias);
+								console.log("newAlias n'est pas undefined");
+								console.log(newAlias);
+							}
+							// if (newAvatar !== undefined){
+							// 	SendNewAvatar(newAvatar);
+							// }
+						}
+					}>Validate change(s)</SettingsButton>
+				</div>
 				*Fill in the field is not required.
 			</div>
 		</React.Fragment>
