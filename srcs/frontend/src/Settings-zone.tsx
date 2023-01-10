@@ -128,15 +128,6 @@ function Desactivate2FA(){
 	}, []);	
 }
 
-// function ValidateButton(newAlias: string | undefined, newAvatar: string | undefined){
-// 	if (newAlias !== undefined){
-// 		SendNewAlias(newAlias);
-// 	}
-// 	if (newAvatar !== undefined){
-// 		SendNewAvatar(newAvatar);
-// 	}
-// }
-
 export function Settings(){
 	const [data, setResult] = useState<resultProps>();
 	const [newAvatar, setNewAvatar] = React.useState("");
