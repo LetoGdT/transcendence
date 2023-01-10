@@ -41,7 +41,6 @@ export class Channel
 	})
 	status: 'public' | 'private' | 'protected';
 
-	@Exclude()
 	@IsDate()
 	@Column({
 		type: 'timestamptz',
