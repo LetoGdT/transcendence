@@ -100,7 +100,7 @@ export function AuthWith2FA(): React.ReactElement{
 	};
 
 	const handleSend = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('http://localhost:9999/api/2fa/enable',{
+		const response = await fetch('http://localhost:9999/api/2fa/authenticate',{
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
