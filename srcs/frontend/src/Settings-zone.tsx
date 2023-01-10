@@ -205,7 +205,9 @@ export function Settings(){
 	}
 
 	const handleChangeAlias = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		console.log(newAlias);//
 		const api = async () => {
+			console.log("in api");//
 			const response = await fetch('http://localhost:9999/api/users/me',{
 				headers: {
 					'Accept': 'application/json',
@@ -215,6 +217,7 @@ export function Settings(){
 				credentials: 'include',
 				body: JSON.stringify({username: newAlias})
 			});
+			console.log("after response");//
 		};
 	}
 
