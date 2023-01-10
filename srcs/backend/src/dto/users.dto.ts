@@ -1,5 +1,5 @@
 import { Exclude, Type } from 'class-transformer';
-import { IsNotEmpty, Min, Max } from 'class-validator';
+import { IsNotEmpty, Min, Max, IsOptional } from 'class-validator';
 
 export class CreateUserDto
 {
@@ -21,7 +21,12 @@ export class CreateUserDto
 export class UpdateUserDto
 {
 	@IsNotEmpty()
+	@IsOptional()
 	username: string;
+
+	@IsNotEmpty()
+	@IsOptional()
+	image_url: string;
 }
 
 export class CreateUserFriendDto
