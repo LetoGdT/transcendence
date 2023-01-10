@@ -112,24 +112,6 @@ const TwoFASwitch = styled(Switch)(({ theme }) => ({
 	},
 }));
 
-function SendNewAvatar(newAvatar: string | undefined){
-	React.useEffect(() => {
-		const api = async () => {
-			const response = await fetch('http://localhost:9999/api/users/me?',{
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json'
-				},
-				method: 'PATCH',
-				credentials: 'include',
-				body: JSON.stringify({image_url: newAvatar})
-			});
-		};
-
-	}, []);	
-}
-
-
 function Desactivate2FA(){
 	React.useEffect(() => {
 		const api = async () => {
@@ -175,70 +157,35 @@ export function Settings(){
 
 	const handleInputAvatar = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setNewAvatar(e.target.value);
-		console.log(newAvatar);//
-		// SendNewAvatar(newAvatar);
 	};
 
 	const handleInputAlias = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setNewAlias(e.target.value);
-		// SendNewAlias(newAlias);
 	};
-	// console.log(newAlias);//
-
-	const handleSwitch = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-		console.log(checked);//
-		if (checked === true){
-			
-		} else {
-
-		}
-	}
-
-	const handleValidate = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		if (newAlias !== undefined){
-			// SendNewAlias(newAlias);
-			console.log(newAvatar);
-		}
-		// if (newAvatar !== undefined){
-		// 	SendNewAvatar(newAvatar);
-		// }
-	}
 
 	const handleChangeAlias = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		console.log(newAlias);//
-		const api = async () => {
-			await console.log("in api");//
-			const response = await fetch('http://localhost:9999/api/users/me',{
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json'
-				},
-				method: 'PATCH',
-				credentials: 'include',
-				body: JSON.stringify({username: newAlias})
-			});
-			await console.log("after response");//
-		};
+		const response = await fetch('http://localhost:9999/api/users/me',{
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'PATCH',
+			credentials: 'include',
+			body: JSON.stringify({username: newAlias})
+		});
 	}
 
-	// function SendNewAlias(newAlias: string | undefined):React.ReactElement{
-	// 	React.useEffect(() => {
-	// 		const api = async () => {
-	// 			const response = await fetch('http://localhost:9999/api/users/me',{
-	// 				headers: {
-	// 					'Accept': 'application/json',
-	// 					'Content-Type': 'application/json'
-	// 				},
-	// 				method: 'PATCH',
-	// 				credentials: 'include',
-	// 				body: JSON.stringify({username: newAlias})
-	// 			});
-	// 		};
-	
-	// 	}, []);	
-	// 	return(<div></div>);
-	// }
-	
+	const handleChangeAvatar = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		const response = await fetch('http://localhost:9999/api/users/me',{
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'PATCH',
+			credentials: 'include',
+			body: JSON.stringify({image_url: newAvatar})
+		});
+	}
 
 	React.useEffect(() => {
 		const api = async () => {
@@ -290,9 +237,11 @@ export function Settings(){
 									/>
 								</Box>
 							</div>
-							{/* <div className='Settings-container-div-lvl4'>
-								<SettingsButton variant="contained" disableRipple>Browse</SettingsButton>
-							</div> */}
+							<div className='Settings-container-div-lvl4'>
+								<SettingsButton variant="contained" disableRipple onClick={
+									handleChangeAvatar
+								}>Change Avatar</SettingsButton>
+							</div>
 						</div>
 					</div>
 					<div className='Settings-container-div-lvl2'>
@@ -325,7 +274,11 @@ export function Settings(){
 									/>
 								</Box>
 							</div>
-							<div>newAlias = {newAlias}</div>
+							<div>
+								<SettingsButton variant="contained" disableRipple onClick={
+									handleChangeAlias
+								}>Change Alias</SettingsButton>
+							</div>
 						</div>
 					</div>
 					{/* <div className='Settings-container-div-lvl2'>
@@ -345,17 +298,6 @@ export function Settings(){
 				</div>
 				<div>
 					<SettingsButton variant="contained" disableRipple onClick={
-						// async (event: React.MouseEvent<HTMLButtonElement>) => {
-						// 	if (newAlias !== undefined){
-						// 		console.log("newAlias n'est pas undefined");
-						// 		console.log(newAlias);
-						// 		SendNewAlias(newAlias);
-								
-						// 	}
-						// 	// if (newAvatar !== undefined){
-						// 	// 	SendNewAvatar(newAvatar);
-						// 	// }
-						// }
 						handleChangeAlias
 					}>Validate change(s)</SettingsButton>
 				</div>
