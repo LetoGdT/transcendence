@@ -129,23 +129,6 @@ function SendNewAvatar(newAvatar: string | undefined){
 	}, []);	
 }
 
-function SendNewAlias(newAlias: string | undefined):React.ReactElement{
-	React.useEffect(() => {
-		const api = async () => {
-			const response = await fetch('http://localhost:9999/api/users/me',{
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json'
-				},
-				method: 'PATCH',
-				credentials: 'include',
-				body: JSON.stringify({username: newAlias})
-			});
-		};
-
-	}, []);	
-	return(<div></div>);
-}
 
 function Desactivate2FA(){
 	React.useEffect(() => {
@@ -220,6 +203,25 @@ export function Settings(){
 		// 	SendNewAvatar(newAvatar);
 		// }
 	}
+
+	function SendNewAlias(newAlias: string | undefined):React.ReactElement{
+		React.useEffect(() => {
+			const api = async () => {
+				const response = await fetch('http://localhost:9999/api/users/me',{
+					headers: {
+						'Accept': 'application/json',
+						'Content-Type': 'application/json'
+					},
+					method: 'PATCH',
+					credentials: 'include',
+					body: JSON.stringify({username: newAlias})
+				});
+			};
+	
+		}, []);	
+		return(<div></div>);
+	}
+	
 
 	React.useEffect(() => {
 		const api = async () => {
