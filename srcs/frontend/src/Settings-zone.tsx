@@ -129,7 +129,7 @@ function SendNewAvatar(newAvatar: string | undefined){
 	}, []);	
 }
 
-function SendNewAlias(newAlias: string | undefined){
+function SendNewAlias(newAlias: string | undefined):React.ReactElement{
 	React.useEffect(() => {
 		const api = async () => {
 			const response = await fetch('http://localhost:9999/api/users/me',{
