@@ -204,23 +204,37 @@ export function Settings(){
 		// }
 	}
 
-	function SendNewAlias(newAlias: string | undefined):React.ReactElement{
-		React.useEffect(() => {
-			const api = async () => {
-				const response = await fetch('http://localhost:9999/api/users/me',{
-					headers: {
-						'Accept': 'application/json',
-						'Content-Type': 'application/json'
-					},
-					method: 'PATCH',
-					credentials: 'include',
-					body: JSON.stringify({username: newAlias})
-				});
-			};
-	
-		}, []);	
-		return(<div></div>);
+	const handleChangeAlias = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		const api = async () => {
+			const response = await fetch('http://localhost:9999/api/users/me',{
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				method: 'PATCH',
+				credentials: 'include',
+				body: JSON.stringify({username: newAlias})
+			});
+		};
 	}
+
+	// function SendNewAlias(newAlias: string | undefined):React.ReactElement{
+	// 	React.useEffect(() => {
+	// 		const api = async () => {
+	// 			const response = await fetch('http://localhost:9999/api/users/me',{
+	// 				headers: {
+	// 					'Accept': 'application/json',
+	// 					'Content-Type': 'application/json'
+	// 				},
+	// 				method: 'PATCH',
+	// 				credentials: 'include',
+	// 				body: JSON.stringify({username: newAlias})
+	// 			});
+	// 		};
+	
+	// 	}, []);	
+	// 	return(<div></div>);
+	// }
 	
 
 	React.useEffect(() => {
@@ -328,17 +342,18 @@ export function Settings(){
 				</div>
 				<div>
 					<SettingsButton variant="contained" disableRipple onClick={
-						async (event: React.MouseEvent<HTMLButtonElement>) => {
-							if (newAlias !== undefined){
-								console.log("newAlias n'est pas undefined");
-								console.log(newAlias);
-								SendNewAlias(newAlias);
+						// async (event: React.MouseEvent<HTMLButtonElement>) => {
+						// 	if (newAlias !== undefined){
+						// 		console.log("newAlias n'est pas undefined");
+						// 		console.log(newAlias);
+						// 		SendNewAlias(newAlias);
 								
-							}
-							// if (newAvatar !== undefined){
-							// 	SendNewAvatar(newAvatar);
-							// }
-						}
+						// 	}
+						// 	// if (newAvatar !== undefined){
+						// 	// 	SendNewAvatar(newAvatar);
+						// 	// }
+						// }
+						handleChangeAlias
 					}>Validate change(s)</SettingsButton>
 				</div>
 				*Fill in the field is not required.
