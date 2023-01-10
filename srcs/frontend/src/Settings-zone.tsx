@@ -248,34 +248,49 @@ export function Settings(){
 								<img src={data?.image_url} alt='your avatar' className='Settings-avatar-img'></img>
 							</div>
 							<div className='Settings-container-div-lvl4'>
-								<Box
-									component="form"
-									noValidate
-									sx={{
-										display: 'grid',
-										gap: 2,
-									}}
-								>
-									<SettingsTextField
-										label="New avatar"
-										InputLabelProps={{
-										sx:{
-											color:"white",
-										}
+								<div>
+									<Box
+										component="form"
+										noValidate
+										sx={{
+											display: 'grid',
+											gap: 2,
 										}}
-										variant="outlined"
-										defaultValue="*.jpg or *.png"
-										sx={{ input: { color: 'grey' } }}
-										id="validation-outlined-input"
-										onChange={handleInputAvatar}
-									/>
-								</Box>
+									>
+										<SettingsTextField
+											label="New avatar"
+											InputLabelProps={{
+											sx:{
+												color:"white",
+											}
+											}}
+											variant="outlined"
+											defaultValue="*.jpg or *.png"
+											sx={{ input: { color: 'grey' } }}
+											id="validation-outlined-input"
+											onChange={handleInputAvatar}
+										/>
+									</Box>
+								</div>
+								<div>
+									<SettingsButton variant="contained" disableRipple onClick={
+										handleChangeAvatar
+									}>Change Avatar</SettingsButton>
+								</div>
+								<div>
+									<form>
+										<div className='Settings-container-div-lvl4'>
+											<label>Select a picture to upload</label>
+											<input type="file"></input>
+											<SettingsButton variant="contained" disableRipple onClick={
+												uploadAvatar
+											}>upload</SettingsButton>
+										</div>
+									</form>
+								</div>
 							</div>
-							<div className='Settings-container-div-lvl4'>
-								<SettingsButton variant="contained" disableRipple onClick={
-									handleChangeAvatar
-								}>Change Avatar</SettingsButton>
-							</div>
+							
+							
 						</div>
 					</div>
 					<div className='Settings-container-div-lvl2'>
@@ -313,15 +328,7 @@ export function Settings(){
 									handleChangeAlias
 								}>Change Alias</SettingsButton>
 							</div>
-							<form>
-								<div className='Settings-container-div-lvl4'>
-									<label>Select a picture to upload</label>
-									<input type="file"></input>
-									<SettingsButton variant="contained" disableRipple onClick={
-										uploadAvatar
-									}>upload</SettingsButton>
-								</div>
-							</form>
+							
 						</div>
 					</div>
 					<div className='Settings-container-div-lvl2'>
