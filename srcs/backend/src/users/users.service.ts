@@ -79,6 +79,11 @@ export class UsersService
 	{
 		if (id > this.IdMax)
 			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
+		const user: User | null = await this.userRepository.findOne({
+			where: { username: updateUserDto.username }
+		});
+		if (user != null)
+			throw new BadRequestException('This username already exists');
 		return await this.userRepository.update(id, updateUserDto);
 	}
 
