@@ -121,7 +121,7 @@ export function AuthWith2FA(): React.ReactElement{
 	return(
 		<React.Fragment>
 			<h1>2FA</h1>
-			{ error && <h3 className="error"> { error } </h3> }
+			{ error && <h3 className="Error"> { error } </h3> }
 			<CodeOf2FATextField
 				label="6 digits code"
 				InputLabelProps={{

@@ -53,3 +53,7 @@
 		transform: rotate(360deg);
 	}
 }
+
+.Error{
+	color: red;
+}
