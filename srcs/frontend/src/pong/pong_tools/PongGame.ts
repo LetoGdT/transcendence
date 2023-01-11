@@ -60,11 +60,11 @@ class PongGame
         // The ball reaches the right or left limit
         if (this.ball.x < PLAYER_WIDTH)
         {
-            collide(this.player1);
+            this.collide(this.player1);
         }
         else if (this.ball.x > this.width - PLAYER_WIDTH)
         {
-            collide(this.player2);
+            this.collide(this.player2);
         }
 
         // The ball's speed increases each time
