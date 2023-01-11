@@ -237,6 +237,7 @@ function AddOrRemoveButton(uid: string | undefined){
 			});
 			const jsonFriend = await friend.json();
 			setFriend(jsonFriend);
+			
 		};
 	
 		api();
@@ -454,6 +455,7 @@ export function OtherProfile(){
 	const [stats, setStats] = useState<statsProps>();
 	const [achievements, setAchievements] = useState<achievementProps>();
 	const [matchs, setMatchs] = useState<matchHistoryProps>();
+	const [error, setError] = React.useState("");
 	
 	useEffect(() => {
 		const api = async () => {
@@ -462,9 +464,17 @@ export function OtherProfile(){
 			const data = await fetch(urltofetch, {
 				method: "GET",
 				credentials: 'include'
-			});
-			const jsonData = await data.json();
-			setResult(jsonData);
+			})
+			.then(data => {
+				const jsonData = data.json()
+				if (!data.ok)
+					return (jsonData);
+				setResult(jsonData);
+				return null;
+			})
+			.then(data => setError(data != null ? data.message : null));
+			// const jsonData = await data.json();
+			// setResult(jsonData);
 
 			const blocked = await fetch("http://localhost:9999/api/users/me/banlist/", {
 				method: "GET",
@@ -473,7 +483,7 @@ export function OtherProfile(){
 			const jsonBlocked = await blocked.json();
 			setBlocked(jsonBlocked);
 
-			const stats = await fetch("http://localhost:9999/api/matches/2/winrate", {
+			const stats = await fetch(`http://localhost:9999/api/matches/${uid}/winrate`, {
 				method: "GET",
 				credentials: 'include'
 			});
@@ -512,56 +522,62 @@ export function OtherProfile(){
 		["Defeats", stats?.losses],
 	];
 
-	return(
-		<React.Fragment>
-			<h1>Profile - Stats</h1>
-			<div className='Profile-container'>
-				<div className='Profile-Alias'>
-					<div className='Profile-Alias-div'>{data?.username}</div>
-					<div className='Profile-Alias-div'>{AddOrRemoveButton(uid)}</div>
-					{/* <div className='Profile-Alias-div'>{BlockOrUnblockButton(uid)}</div> */}
-					<div className='Profile-Alias-div'><BlockButton variant="contained" disableRipple onClick={handleClickBlock}>Block user</BlockButton></div>
-					<div className='Profile-Alias-div'><UnblockButton variant="contained" disableRipple onClick={handleClickUnblock}>Unblock user</UnblockButton></div>
+	if (error) {
+		return(
+			<NotFound />
+		);
+	} else {
+		return(
+			<React.Fragment>
+				<h1>Profile - Stats</h1>
+				<div className='Profile-container'>
+					<div className='Profile-Alias'>
+						<div className='Profile-Alias-div'>{data?.username}</div>
+						<div className='Profile-Alias-div'>{AddOrRemoveButton(uid)}</div>
+						{/* <div className='Profile-Alias-div'>{BlockOrUnblockButton(uid)}</div> */}
+						<div className='Profile-Alias-div'><BlockButton variant="contained" disableRipple onClick={handleClickBlock}>Block user</BlockButton></div>
+						<div className='Profile-Alias-div'><UnblockButton variant="contained" disableRipple onClick={handleClickUnblock}>Unblock user</UnblockButton></div>
+					</div>
+					<div className='Profile-container-row-lvl1'>
+						<div className='Profile-Avatar'>
+							<img src={data?.image_url} alt="alias' avatar" className='Profile-avatar-img'></img>
+						</div>
+						<div className='Profile-Pie-Charts'>
+							<Chart
+								chartType="PieChart"
+								data={gameData}
+								options={options}
+								width={"100%"}
+								height={"400"}
+							/>
+						</div>
+					</div>
+					<div>
+						<div className='Profile-game-info'>
+							<div><b>Level:</b> {FromEXPtoLvl(data?.exp)}</div>
+							<div><b>To next level:</b> {ToNextLevel(data?.exp)} EXP</div>
+						</div>
+						<h4>Achievements</h4>
+						<div className='Profile-achievement-container'>
+							{achievements?.data.map((achievement:any) => {
+								return(
+									<OneAchievement achievement={achievement} />
+								);
+							})}
+						</div>
+						<h4>Match History</h4>
+						<div className='Match-container-otherProfile'>
+							{matchs?.data.map((match:any) => {
+								return(
+									
+										<OneMatch match={match} />
+									
+								);
+							})}
+						</div>
+					</div>
 				</div>
-				<div className='Profile-container-row-lvl1'>
-					<div className='Profile-Avatar'>
-						<img src={data?.image_url} alt="alias' avatar" className='Profile-avatar-img'></img>
-					</div>
-					<div className='Profile-Pie-Charts'>
-						<Chart
-							chartType="PieChart"
-							data={gameData}
-							options={options}
-							width={"100%"}
-							height={"400"}
-						/>
-					</div>
-				</div>
-				<div>
-					<div className='Profile-game-info'>
-						<div><b>Level:</b> {FromEXPtoLvl(data?.exp)}</div>
-						<div><b>To next level:</b> {ToNextLevel(data?.exp)} EXP</div>
-					</div>
-					<h4>Achievements</h4>
-					<div className='Profile-achievement-container'>
-						{achievements?.data.map((achievement:any) => {
-							return(
-								<OneAchievement achievement={achievement} />
-							);
-						})}
-					</div>
-					<h4>Match History</h4>
-					<div className='Match-container-otherProfile'>
-						{matchs?.data.map((match:any) => {
-							return(
-								
-									<OneMatch match={match} />
-								
-							);
-						})}
-					</div>
-				</div>
-			</div>
-		</React.Fragment>
-	);
+			</React.Fragment>
+		);
+	}
 }
