@@ -19,6 +19,8 @@
 		<li>pour apprendre à utiliser react https://reactjs.org/tutorial/tutorial.html</li>
 		<li>react dans ts https://blog.logrocket.com/how-use-typescript-react-tutorial-examples/</li>
 		<li>appel api sauvegardés dans le state react https://www.pluralsight.com/guides/fetching-data-updating-state-react-class</li>
+		<li>tuto de base pour les hooks https://www.glennstovall.com/how-to-use-useeffect-and-other-hooks-in-class-components/</li>
+		<li>les hooks expliqués https://www.freecodecamp.org/news/introduction-to-react-hooks/</li>
 	</ul>
 	<li>Axios + react https://www.freecodecamp.org/french/news/comment-utiliser-axios-avec-react-le-guide-complet-2021/</li>
 	<li>ce m'a permi de commencé à recup des données: https://codesandbox.io/s/0z1ex</li>
