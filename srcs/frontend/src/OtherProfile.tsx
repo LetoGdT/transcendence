@@ -9,7 +9,7 @@ import { styled } from '@mui/material/styles';
 import { Chart } from "react-google-charts";
 import { useState, useEffect } from "react";
 import { NotFound } from './adaptable-zone';
-import { FromEXPtoLvl, ToNextLevel } from './tools';
+import { FromEXPtoLvl, getAllPaginated, ToNextLevel } from './tools';
 import { OneAchievement } from './Profile-zone';
 
 type resultProps = {
@@ -299,21 +299,7 @@ function BlockOrUnblockButton(uid: string | undefined){
 		api();
 	}, []);
 
-
-	// console.log(blocked);//
-	// const res1 = blocked?.find(({ id }) => id === uid);
-
 	return(<div></div>);
-	// if (typeof res1 === "undefined"){
-	// 	return(
-	// 		<AddButton variant="contained" disableRipple onClick={handleClickBlock}>Block user</AddButton>
-	// 	);
-	// }
-	// else {
-	// 	return(
-	// 		<RemoveButton variant="contained" disableRipple onClick={handleClickUnblock}>Unblock user</RemoveButton>
-	// 	);
-	// }
 }
 
 function OneMatch(match:any){
@@ -322,8 +308,6 @@ function OneMatch(match:any){
 	const [data1, setResult1] = useState<opponentProps>();
 	const [data2, setResult2] = useState<opponentProps>();
 	const [me, setMe] = useState<meProps>();
-
-	// console.log(match.match.user1);//
 
 	useEffect(() => {
 		const api = async () => {
@@ -464,17 +448,17 @@ export function OtherProfile(){
 			const data = await fetch(urltofetch, {
 				method: "GET",
 				credentials: 'include'
-			})
-			.then(data => {
-				const jsonData = data.json()
-				if (!data.ok)
-					return (jsonData);
-				setResult(jsonData);
-				return null;
-			})
-			.then(data => setError(data != null ? data.message : null));
-			// const jsonData = await data.json();
-			// setResult(jsonData);
+			});//Tim, j'ai besoin de ta magie noire !!!! pour mettre en place la redir de NotFound
+			// .then(data => {
+			// 	const jsonData = data.json()
+			// 	if (!data.ok)
+			// 		return (jsonData);
+			// 	setResult(jsonData);
+			// 	return null;
+			// })
+			// .then(data => setError(data != null ? data.message : null));
+			const jsonData = await data.json();
+			setResult(jsonData);
 
 			const blocked = await fetch("http://localhost:9999/api/users/me/banlist/", {
 				method: "GET",
@@ -498,12 +482,16 @@ export function OtherProfile(){
 			const jsonAchievement = await achievements.json();
 			setAchievements(jsonAchievement);
 
-			const matchs = await fetch(`http://localhost:9999/api/matches?user_id=${uid}`, {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonMatchs = await matchs.json();
-			setMatchs(jsonMatchs);
+			//Tim, ici j'ai besoin de ta magie blanche
+			// const matchs = await fetch(`http://localhost:9999/api/matches?user_id=${uid}`, {
+			// 	method: "GET",
+			// 	credentials: 'include'
+			// });
+			// const jsonMatchs = await matchs.json();
+			// setMatchs(jsonMatchs);
+			urltofetch = `matches?user_id=${uid}`;
+			await getAllPaginated(urltofetch)
+			.then(data => setMatchs(data));
 		};
 	
 		api();
@@ -569,9 +557,7 @@ export function OtherProfile(){
 						<div className='Match-container-otherProfile'>
 							{matchs?.data.map((match:any) => {
 								return(
-									
 										<OneMatch match={match} />
-									
 								);
 							})}
 						</div>

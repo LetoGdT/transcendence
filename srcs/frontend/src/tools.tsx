@@ -64,7 +64,6 @@ export async function getAllPaginated(url: string, take = 30): Promise<any>
 		if (!jsonData.meta.hasNextPage)
 			break;
 	}
-
 	return ret;
 }
 
@@ -86,7 +85,7 @@ export function FromEXPtoLvl(exp: number | undefined){
 			0
 		);
 	
-	let level: number = Math.floor(exp/EXPtoNewLevel);	
+	let level: number = Math.floor(exp / EXPtoNewLevel);	
 	return(
 		level
 	);

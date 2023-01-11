@@ -27,8 +27,6 @@ function OneMatch(match:any){
 	const [data2, setResult2] = useState<opponentProps>();
 	const [me, setMe] = useState<meProps>();
 
-	// console.log(match.match.user1);//
-
 	useEffect(() => {
 		const api = async () => {
 			let urltofetch1 : string;
