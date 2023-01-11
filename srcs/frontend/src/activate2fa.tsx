@@ -20,32 +20,60 @@ const CodeOf2FATextField = styled(TextField)({
 	},
 });
 
-
-function SendCode2FA(code2FA: string | undefined){
-	React.useEffect(() => {
-		const api = async () => {
-			const response = await fetch('http://localhost:9999/api/2fa/enable',{
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json'
-				},
-				method: 'POST',
-				credentials: 'include',
-				body: JSON.stringify({code: code2FA})
-			});
-		};
-
-	}, []);	
-}
+const SendButton = styled(Button)({
+	boxShadow: 'none',
+	textTransform: 'none',
+	fontSize: 16,
+	padding: '6px 12px',
+	border: '1px solid',
+	lineHeight: 1.5,
+	backgroundColor: '#646464',
+	borderColor: '#646464',
+	fontFamily: [
+		'-apple-system',
+		'BlinkMacSystemFont',
+		'"Segoe UI"',
+		'Roboto',
+		'"Helvetica Neue"',
+		'Arial',
+		'sans-serif',
+		'"Apple Color Emoji"',
+		'"Segoe UI Emoji"',
+		'"Segoe UI Symbol"',
+	].join(','),
+	'&:hover': {
+		backgroundColor: '#3b9b3b',
+		borderColor: '#646464',
+		boxShadow: 'none',
+	},
+	'&:active': {
+		boxShadow: 'none',
+		backgroundColor: '#4a7a4a',
+		borderColor: '#646464',
+	},
+	'&:focus': {
+		xShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
+	},
+});
 
 export function Activate2FA(): React.ReactElement{
 	const [code2FA, setCode2FA] = React.useState("");
 
 	const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setCode2FA(e.target.value);
-		console.log(code2FA);//
-		// SendCode2FA(code2FA);
 	};
+
+	const handleSend = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		const response = await fetch('http://localhost:9999/api/2fa/enable',{
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			credentials: 'include',
+			body: JSON.stringify({code: code2FA})
+		});
+	}
 	
 	return(
 		<React.Fragment>
@@ -64,6 +92,9 @@ export function Activate2FA(): React.ReactElement{
 				id="validation-outlined-input"
 				onChange={handleInput}
 			/>
+			<SendButton variant="contained" disableRipple onClick={
+				handleSend
+			}>Send</SendButton>
 		</React.Fragment>
 	);
 }

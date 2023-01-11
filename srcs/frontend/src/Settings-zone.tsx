@@ -3,16 +3,13 @@ import './Settings.css'
 
 import * as React from 'react';
 import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
+import { Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
-import Switch from '@mui/material/Switch';
-import Typography from '@mui/material/Typography';
 import { useState, useEffect } from "react";
 
 import { PleaseConnect } from './adaptable-zone';
-import { Activate2FA } from './activate2fa' 
 
 type resultProps = {
 	username: string;
@@ -72,60 +69,88 @@ const SettingsButton = styled(Button)({
 	},
 });
 
-const TwoFASwitch = styled(Switch)(({ theme }) => ({
-	width: 28,
-	height: 16,
-	padding: 0,
-	display: 'flex', '&:active': {
-		'& .MuiSwitch-thumb': {
-			width: 15,
-		},
-		'& .MuiSwitch-switchBase.Mui-checked': {
-			transform: 'translateX(9px)',
-		},
+const SettingsButton2 = styled(Button)({
+	boxShadow: 'none',
+	textTransform: 'none',
+	fontSize: 16,
+	padding: '6px 12px',
+	border: '1px solid',
+	lineHeight: 1.5,
+	backgroundColor: '#646464',
+	borderColor: '#646464',
+	fontFamily: [
+		'-apple-system',
+		'BlinkMacSystemFont',
+		'"Segoe UI"',
+		'Roboto',
+		'"Helvetica Neue"',
+		'Arial',
+		'sans-serif',
+		'"Apple Color Emoji"',
+		'"Segoe UI Emoji"',
+		'"Segoe UI Symbol"',
+	].join(','),
+	'&:hover': {
+		backgroundColor: '#bb1d03',
+		borderColor: '#646464',
+		boxShadow: 'none',
 	},
-	'& .MuiSwitch-switchBase': {
-		padding: 2,
-		'&.Mui-checked': {
-			transform: 'translateX(12px)',
-			color: '#fff',
-			'& + .MuiSwitch-track': {
-				opacity: 1,
-				backgroundColor: theme.palette.mode === 'dark' ? '#177d00' : '#189000',
-			},
-		},
+	'&:active': {
+		boxShadow: 'none',
+		backgroundColor: '#891d03',
+		borderColor: '#646464',
 	},
-	'& .MuiSwitch-thumb': {
-		boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
-		width: 12,
-		height: 12,
-		borderRadius: 6,
-		transition: theme.transitions.create(['width'], {
-			duration: 200,
-		}),
-	},
-	'& .MuiSwitch-track': {
-		borderRadius: 16 / 2,
-		opacity: 1,
-		backgroundColor: 'rgba(187,29,3,1)',
-		boxSizing: 'border-box',
-	},
-}));
+	'&:focus': {
+		boxShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
+	},  
+});
 
-function Desactivate2FA(){
-	React.useEffect(() => {
+function ActivateOrDesactivate2FAButton(){
+	const [data, setResult] = useState<resultProps>();
+
+	useEffect(() => {
 		const api = async () => {
-			const response = await fetch('http://localhost:9999/api/2fa/disable',{
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json'
-				},
-				method: 'POST',
-				credentials: 'include',
+			const data = await fetch("http://localhost:9999/api/users/me", {
+				method: "GET",
+				credentials: 'include'
 			});
+			const jsonData = await data.json();
+			setResult(jsonData);
 		};
+	
+		api();
+	}, []);
 
-	}, []);	
+	const handleDesactivate2FA = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		const response = await fetch('http://localhost:9999/api/2fa/disable',{
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			credentials: 'include',
+		});
+	}
+
+	if(data?.enabled2fa === true){
+		return(
+			<div className='Settings-container-div-lvl4'>
+				<Link to={"/activate2fa"}>
+					<SettingsButton2 variant="contained" disableRipple onClick={
+						handleDesactivate2FA
+					}>Desactivate</SettingsButton2>
+				</Link>
+            </div>
+		);
+	} else {
+		return(
+			<div className='Settings-container-div-lvl4'>
+				<Link to={"/activate2fa"}>
+					<SettingsButton variant="contained" disableRipple >Activate</SettingsButton>
+				</Link>
+            </div>
+		);
+	}
 }
 
 export function Settings(){
@@ -223,34 +248,49 @@ export function Settings(){
 								<img src={data?.image_url} alt='your avatar' className='Settings-avatar-img'></img>
 							</div>
 							<div className='Settings-container-div-lvl4'>
-								<Box
-									component="form"
-									noValidate
-									sx={{
-										display: 'grid',
-										gap: 2,
-									}}
-								>
-									<SettingsTextField
-										label="New avatar"
-										InputLabelProps={{
-										sx:{
-											color:"white",
-										}
+								<div>
+									<Box
+										component="form"
+										noValidate
+										sx={{
+											display: 'grid',
+											gap: 2,
 										}}
-										variant="outlined"
-										defaultValue="*.jpg or *.png"
-										sx={{ input: { color: 'grey' } }}
-										id="validation-outlined-input"
-										onChange={handleInputAvatar}
-									/>
-								</Box>
+									>
+										<SettingsTextField
+											label="New avatar"
+											InputLabelProps={{
+											sx:{
+												color:"white",
+											}
+											}}
+											variant="outlined"
+											defaultValue="*.jpg or *.png"
+											sx={{ input: { color: 'grey' } }}
+											id="validation-outlined-input"
+											onChange={handleInputAvatar}
+										/>
+									</Box>
+								</div>
+								<div>
+									<SettingsButton variant="contained" disableRipple onClick={
+										handleChangeAvatar
+									}>Change Avatar</SettingsButton>
+								</div>
+								<div>
+									<form>
+										<div className='Settings-container-div-lvl4'>
+											<label>Select a picture to upload</label>
+											<input type="file"></input>
+											<SettingsButton variant="contained" disableRipple onClick={
+												uploadAvatar
+											}>upload</SettingsButton>
+										</div>
+									</form>
+								</div>
 							</div>
-							<div className='Settings-container-div-lvl4'>
-								<SettingsButton variant="contained" disableRipple onClick={
-									handleChangeAvatar
-								}>Change Avatar</SettingsButton>
-							</div>
+							
+							
 						</div>
 					</div>
 					<div className='Settings-container-div-lvl2'>
@@ -288,38 +328,16 @@ export function Settings(){
 									handleChangeAlias
 								}>Change Alias</SettingsButton>
 							</div>
-							<form>
-								<div className='Settings-container-div-lvl4'>
-									<label>Select a picture to upload</label>
-									<input type="file"></input>
-									<SettingsButton variant="contained" disableRipple onClick={
-										uploadAvatar
-									}>upload</SettingsButton>
-								</div>
-							</form>
+							
 						</div>
 					</div>
-					{/* <div className='Settings-container-div-lvl2'>
-						<h2>2FA - 2 Factor Authentication</h2>
+					<div className='Settings-container-div-lvl2'>
+						<h2>2FA - Two Factor Authentication</h2>
 						<div className='Settings-container-div-lvl3'>
-							<div className='Settings-container-div-lvl4'>
-								<Stack direction="row" spacing={1} alignItems="center">
-									<Typography color="common.white">Off</Typography>
-										<TwoFASwitch checked={data?.enabled2fa} inputProps={{ 'aria-label': 'ant design' }} onChange={handleSwitch} />
-									<Typography color="common.white">On</Typography>
-								</Stack>
-								
-							</div>
+							<ActivateOrDesactivate2FAButton />
 						</div>
-					</div> */}
-						
+					</div>
 				</div>
-				<div>
-					<SettingsButton variant="contained" disableRipple onClick={
-						handleChangeAlias
-					}>Validate change(s)</SettingsButton>
-				</div>
-				*Fill in the field is not required.
 			</div>
 		</React.Fragment>
 	);
