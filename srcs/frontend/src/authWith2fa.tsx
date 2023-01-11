@@ -94,6 +94,7 @@ const SendButton = styled(Button)({
 
 export function AuthWith2FA(): React.ReactElement{
 	const [code2FA, setCode2FA] = React.useState("");
+	const [error, setError] = React.useState("");
 
 	const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setCode2FA(e.target.value);
@@ -108,12 +109,19 @@ export function AuthWith2FA(): React.ReactElement{
 			method: 'POST',
 			credentials: 'include',
 			body: JSON.stringify({code: code2FA})
-		});
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+			return null;
+		})
+		.then(data => setError(data != null ? data.message : null));
 	}
 	
 	return(
 		<React.Fragment>
 			<h1>2FA</h1>
+			{ error && <h3 className="error"> { error } </h3> }
 			<CodeOf2FATextField
 				label="6 digits code"
 				InputLabelProps={{

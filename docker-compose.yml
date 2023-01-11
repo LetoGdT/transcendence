@@ -5,6 +5,7 @@ services:
         container_name: nestjs
         ports:
             - "9999:9999"
+            - "9998:9998"
         build: ./srcs/backend/
         restart: unless-stopped
         volumes:
