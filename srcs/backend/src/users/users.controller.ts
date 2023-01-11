@@ -71,12 +71,12 @@ export class UsersController
 	@SerializeOptions({
 		groups: ['me'],
 	})
-	async updateUser(@Body() updateUserDto: UpdateUserDto,
+	updateUser(@Body() updateUserDto: UpdateUserDto,
 		@Req() req: RequestWithUser)
 	{
 		if (Object.keys(updateUserDto).length === 0)
 			throw new BadRequestException('Empty parameters');
-		return await this.usersService.updateOne(req.user.id, updateUserDto);
+		return this.usersService.updateOne(req.user.id, updateUserDto);
 	}
 
 	@Get('/:id')
