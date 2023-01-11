@@ -75,11 +75,19 @@ export class MatchesService
 	{
 		const wins: number = await this.matchesRepository.createQueryBuilder('match')
 			.where('match.winner = :id', { id: id })
+			.andWhere(new Brackets(qb => {
+				qb.where('match.user1.id = :id', { id: id })
+				.orWhere('match.user2.id = :id', { id: id })
+			}))
 			.andWhere('match.game_type = :game_type', { game_type: 'Ranked' })
 			.getCount();
 
 		const losses: number = await this.matchesRepository.createQueryBuilder('match')
 			.where('match.winner != :id', { id: id })
+			.andWhere(new Brackets(qb => {
+				qb.where('match.user1 = :id', { id: id })
+				.orWhere('match.user2 = :id', { id: id })
+			}))
 			.andWhere('match.game_type = :game_type', { game_type: 'Ranked' })
 			.getCount();
 
