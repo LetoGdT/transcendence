@@ -75,7 +75,7 @@ export class UsersService
 	}
 
 	// Update a user
-	async updateOne(id: number, updateUserDto: UpdateUserDto): Promise<UpdateResult>
+	async updateOnePartial(id: number, updateUserDto: UpdateUserDto): Promise<UpdateResult>
 	{
 		if (id > this.IdMax)
 			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
@@ -84,7 +84,15 @@ export class UsersService
 		})
 		if (updateUserDto.username != null && user != null)
 			throw new BadRequestException('Username already exists')
-		return this.userRepository.update(id, updateUserDto);
+		return this.userRepository.update(id, {
+			...(updateUserDto.username && { username: updateUserDto.username }),
+			...(updateUserDto.image_url && { image_url: updateUserDto.image_url }),
+		});
+	}
+
+	updateOne(user: User)
+	{
+		return this.userRepository.save(user);
 	}
 
 	// Create a user in the database
