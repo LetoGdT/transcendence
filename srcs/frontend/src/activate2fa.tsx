@@ -87,7 +87,6 @@ export function Activate2FA(): React.ReactElement{
 					}
 				}}
 				variant="outlined"
-				// defaultValue="000000"
 				sx={{ input: {color: "grey"} }}
 				id="validation-outlined-input"
 				onChange={handleInput}
