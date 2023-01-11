@@ -5,7 +5,7 @@ import OffLine from './offline.png';
 import OnLine from './online.png';
 import InGame from './ingame.png';
 
-export async function getPaginatedRequest(url: string, setResult: Function, pageStart: number, pageEnd: number, take?: number): Promise<any>
+export async function getPaginatedRequest(url: string, pageStart: number, pageEnd: number, take?: number): Promise<any>
 {
 	let ret: any = [];
 	const fullUrl = 'http://localhost:9999/api/' + url + '?';
@@ -42,8 +42,30 @@ export async function getPaginatedRequest(url: string, setResult: Function, page
 				break;
 		}
 	}
-	
-	setResult(ret)
+	return ret;
+}
+
+export async function getAllPaginated(url: string, take = 30): Promise<any>
+{
+	let ret: any = [];
+	const fullUrl = 'http://localhost:9999/api/' + url + '?';
+	for (let i: number = 0;; i++)
+	{
+		const params = new URLSearchParams({
+			take: take.toString(),
+			page: (i + 1).toString()
+		});
+		const data = await fetch(fullUrl + params, {
+			method: "GET",
+			credentials: 'include'
+		});
+		const jsonData = await data.json();
+		ret = ret.concat(jsonData.data);
+		if (!jsonData.meta.hasNextPage)
+			break;
+	}
+
+	return ret;
 }
 
 export function userStatus(status: string){
