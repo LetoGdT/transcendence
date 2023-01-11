@@ -69,5 +69,3 @@ export function SignOn(){
 		</div>
 	);
 }
-
-	
