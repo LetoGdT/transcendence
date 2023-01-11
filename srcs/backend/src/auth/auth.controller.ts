@@ -135,7 +135,7 @@ export class AuthController
 			throw new UnauthorizedException('You first need to generate a QR code')
 		const isCodeValid = this.authService.is2faCodeValid(code, req.user);
 		if (!isCodeValid)
-			throw new UnauthorizedException('Wrong authentication code');
+			throw new UnauthorizedException('Invalid code');
 		return this.usersService.enable2fa(req.user);
 	}
 
@@ -159,7 +159,7 @@ export class AuthController
 			throw new UnauthorizedException('You don\'t have 2fa enabled');
 		const isCodeValid = this.authService.is2faCodeValid(code, req.user);
 		if (!isCodeValid)
-			throw new UnauthorizedException('Wrong authentication code');
+			throw new UnauthorizedException('Invalid code');
 		const { access_token, refresh_token } = await this.authService.createTokens(req.user.id, true);
 		res.cookie('access_token', access_token,
 			{
