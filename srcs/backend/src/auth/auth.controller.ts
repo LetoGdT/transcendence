@@ -14,7 +14,7 @@ import { CreateUserDto } from '../dto/users.dto';
 import { UsersService } from '../users/users.service';
 import { User } from '../typeorm/user.entity';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from '../guards/jwt.guard';
+import { JwtAuthGuard, JwtAuthGuardWithout2Fa } from '../guards/jwt.guard';
 import { AuthInterceptor } from './auth.interceptor';
 import { RequestWithUser } from '../interfaces/RequestWithUser.interface';
 
@@ -58,7 +58,7 @@ export class AuthController
 		await api.setToken(query.code);
 		let me = await api.get('/v2/me');
 		const user: User = await this.usersService.addUser({ uid: me.id, username: me.login, email: me.email, image_url: me.image.link });
-		const { access_token, refresh_token } = await this.authService.createTokens(user.id, false);
+		const { access_token, refresh_token } = await this.authService.createTokens(user.id, !user.enabled2fa);
 		res.cookie('access_token', access_token,
 			{
 				httpOnly: true,		// Prevent xss
@@ -135,7 +135,7 @@ export class AuthController
 			throw new UnauthorizedException('You first need to generate a QR code')
 		const isCodeValid = this.authService.is2faCodeValid(code, req.user);
 		if (!isCodeValid)
-			throw new UnauthorizedException('Wrong authentication code');
+			throw new UnauthorizedException('Invalid code');
 		return this.usersService.enable2fa(req.user);
 	}
 
@@ -149,7 +149,7 @@ export class AuthController
 	}
 
 	@Post('/2fa/authenticate')
-	@UseGuards(JwtAuthGuard)
+	@UseGuards(JwtAuthGuardWithout2Fa)
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
 	async authenticate(@Req() req: RequestWithUser, @Body() { code } : { code: string },
@@ -159,7 +159,7 @@ export class AuthController
 			throw new UnauthorizedException('You don\'t have 2fa enabled');
 		const isCodeValid = this.authService.is2faCodeValid(code, req.user);
 		if (!isCodeValid)
-			throw new UnauthorizedException('Wrong authentication code');
+			throw new UnauthorizedException('Invalid code');
 		const { access_token, refresh_token } = await this.authService.createTokens(req.user.id, true);
 		res.cookie('access_token', access_token,
 			{

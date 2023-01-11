@@ -26,7 +26,6 @@ export class Conversation
 	@JoinColumn()
 	messages: Message[];
 
-	@Exclude()
 	@IsDate()
 	@Column({
 		type: 'timestamptz',

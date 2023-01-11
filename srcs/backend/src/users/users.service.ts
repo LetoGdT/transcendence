@@ -79,7 +79,12 @@ export class UsersService
 	{
 		if (id > this.IdMax)
 			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
-		return await this.userRepository.update(id, updateUserDto);
+		const user: User | null = await this.userRepository.findOne({
+			where: { username: updateUserDto.username }
+		})
+		if (updateUserDto.username != null && user != null)
+			throw new BadRequestException('Username already exists')
+		return this.userRepository.update(id, updateUserDto);
 	}
 
 	// Create a user in the database
@@ -385,7 +390,12 @@ export class UsersService
 
 	async deleteOldPhoto(user: User, filename: string): Promise<void>
 	{
-		const oldPath = './src/static' + (new URL(user.image_url)).pathname;
+		let oldPath;
+		try
+		{
+			oldPath = './src/static' + (new URL(user.image_url)).pathname;
+		}
+		catch (err) {}
 		if (fs.existsSync(oldPath))
 			fs.unlink(oldPath, (err) => {
 				if (err)
