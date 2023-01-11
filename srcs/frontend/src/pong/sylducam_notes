@@ -18,6 +18,8 @@ INSTALL REACT :
 npx create-react-app my-app --template typescript
 npm install react-scripts@2.1.0
 
+Le starting point est /Users/sylmac/Desktop/transcendence/srcs/frontend/src/index.tsx (info de mgama)
+
 Dans le dockerfile eviter d'utiliser la version node:latest, toujours specifier la version
 car si il y a une mise a jour majeure cela peut casser l'application
 

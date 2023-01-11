@@ -22,7 +22,7 @@ import { Link } from 'react-router-dom'
 type resultProps = {
 }
 
-export function ListUser(){//vouer à disparaitre
+export function ListUser() {//vouer à disparaitre
 
 	const [data, setResult] = useState<resultProps>();
 
@@ -86,7 +86,6 @@ function App() {
 			</Router>
 
 	</React.Fragment>
-	
   );
 }
 
