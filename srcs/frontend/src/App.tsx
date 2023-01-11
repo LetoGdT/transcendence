@@ -44,7 +44,8 @@ export function ListUser(){//vouer à disparaitre
 
 	useEffect(() => {
 			const call = async () => {
-				await getPaginatedRequest('users', setResult, 1, 2);
+				await getPaginatedRequest('users', 1, 2)
+				.then(data => setResult(data));
 			};
 			call();
 	}, []);

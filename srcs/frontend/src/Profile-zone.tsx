@@ -14,7 +14,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 
 import { PleaseConnect } from './adaptable-zone';
-import {FromEXPtoLvl, ToNextLevel} from './tools'
+import {FromEXPtoLvl, ToNextLevel, getAllPaginated} from './tools'
 
 type resultProps = {
 	email: string;
@@ -94,13 +94,9 @@ export function Profile(){
 			});
 			const jsonData = await data.json();
 			setResult(jsonData);
-			
-			const invites = await fetch("http://localhost:9999/api/users/me/friends/invites", {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonInvites = await invites.json();
-			setInvites(jsonInvites);
+
+			await getAllPaginated('users/me/friends/invites')
+			.then(data => setInvites(data));
 			
 			const stats = await fetch("http://localhost:9999/api/users/me/winrate", {
 				method: "GET",
@@ -109,13 +105,8 @@ export function Profile(){
 			const jsonStats = await stats.json();
 			setStats(jsonStats);
 
-			const achievements = await fetch("http://localhost:9999/api/users/me/achievements", {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonAchievement = await achievements.json();
-			setAchievements(jsonAchievement);
-			// console.log(jsonAchievement);//
+			await getAllPaginated('users/me/achievements')
+			.then(data => setInvites(data));
 		};
 	
 		api();

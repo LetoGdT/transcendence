@@ -4,6 +4,7 @@ import './MatchHistory.css'
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from "react";
+import { getPaginatedRequest, getAllPaginated } from './tools';
 
 import { PleaseConnect } from './adaptable-zone';
 
@@ -124,28 +125,21 @@ function OneMatch(match:any){
 }
 
 export function MatchHistory(){
-	const [matchs, setMatchs] = useState<matchHistoryProps>();
+	const [matchs, setMatchs] = useState<matchHistoryProps[]>([]);
 
 	useEffect(() => {
-		const api = async () => {
-			const data = await fetch("http://localhost:9999/api/users/me/matches/", {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonData = await data.json();
-			setMatchs(jsonData);
-			// console.log(jsonData);//
-
+		const call = async () => {
+			await getAllPaginated('users/me/matches')
+			.then(data => setMatchs(data));
 		};
-	
-		api();
-	  }, []);
+		call();
+	}, []);
 	return(
 		<React.Fragment>
 			<h1>Your Matchs History</h1>
 			<div className='Match-container'>
 				
-					{matchs?.data.map((match:any) => {
+					{matchs.map((match:any) => {
 						return(
 							
 								<OneMatch match={match} />

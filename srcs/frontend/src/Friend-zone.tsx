@@ -7,6 +7,7 @@ import { userStatus } from './tools';
 import { PleaseConnect } from './adaptable-zone';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from "react";
+import { getAllPaginated } from './tools';
 
 type resultProps = {
 	data: [];
@@ -16,22 +17,13 @@ export function Friends(){
 	const [data, setResult] = useState<resultProps>();
 
 	useEffect(() => {
-		const api = async () => {
-			let urltofetch : string;
-			urltofetch = `http://localhost:9999/api/users/me/friends`;
-			const data = await fetch(urltofetch, {
-			method: "GET",
-			credentials: 'include'
-		  });
-		  const jsonData = await data.json();
-		  setResult(jsonData);
-		//   console.log(jsonData);//
+		const call = async () => {
+			await getAllPaginated('users/me/friends')
+			.then(data => setResult(data));
 		};
-	
-		api();
+		call();
 	}, []);
 
-	// console.log(data);//
 	return(
 		<React.Fragment>
 			<h1>Friends</h1>
