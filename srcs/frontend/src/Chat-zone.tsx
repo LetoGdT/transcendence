@@ -114,26 +114,26 @@ export class ChatZone extends React.Component<{}, { current_conv: number,
 		})
 		.then(response=>response.json())
 		.then(data => this.setState({conv_list: data.data.map((elem: any) => {
-			//let name: string;
-			//if (this.state.current_user_id === -1)
-			//	name = "not leaded";
-			//else if (this.state.current_user_id === elem.user1.id)
-			//	name = elem.user2.username;
-			//else
-			//	name = elem.user1.username;
-			//return {id: elem.id,
-			//		is_channel: false,
-			//		name: name,
-			//		new_message: false};
+			let name: string;
+			if (this.state.current_user_id === -1)
+				name = "not leaded";
+			else if (this.state.current_user_id === elem.user1.id)
+				name = elem.user2.username;
+			else
+				name = elem.user1.username;
+			return {id: elem.id,
+					is_channel: false,
+					name: name,
+					new_message: false};
 		})}));
 
-		fetch('http://localhost:9999/api/channels/', {
-			method: "GET",
-			credentials: 'include'
-		})
-		.then(response=>response.json())
-		.then(data => this.setState({conv_list: data.data.map((elem: any) => {
-		})}));
+		//fetch('http://localhost:9999/api/channels/', {
+		//	method: "GET",
+		//	credentials: 'include'
+		//})
+		//.then(response=>response.json())
+		//.then(data => this.setState({conv_list: data.data.map((elem: any) => {
+		//})}));
 
 			// The condition is necessary because the users/me fetch request is async
 		if (this.state.conv_list.length !== 0)
