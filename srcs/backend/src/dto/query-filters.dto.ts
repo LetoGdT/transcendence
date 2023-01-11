@@ -43,7 +43,7 @@ export class MessageQueryFilterDto
 	@Min(1)
 	@Max(Number.MAX_SAFE_INTEGER)
 	@IsOptional()
-	message_id?: number;
+	message_id: number;
 
 	@Type(() => Date)
 	@IsDate()

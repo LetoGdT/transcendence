@@ -17,6 +17,7 @@ import { SignOn } from './adaptable-zone';
 import { AuthWith2FA } from './authWith2fa';
 import { Activate2FA } from './activate2fa';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
+import { socket, websocketContext } from './WebsocketContext'
 
 import { useState, useEffect} from "react";
 import { Link } from 'react-router-dom'
@@ -62,17 +63,15 @@ export function ListUser(){//vouer à disparaitre
 }
 
 function App() {
-  return (
-	<React.Fragment>
-			<Router>
-				<header>
-					<OurHeader/>
-				</header>
-				<div className='Menu'>
-					<OurMenu/>
-				</div>
-				<div className='Adaptable'>
-					
+	const router = 
+		<Router>
+			<header>
+				<OurHeader/>
+			</header>
+			<div className='Menu'>
+				<OurMenu/>
+			</div>
+			<div className='Adaptable'>
 					<Routes>
 						<Route path="/chat" element={<ChatZone/>} />
 						<Route path="/friends" element={<FriendsZone/>} />
@@ -94,9 +93,20 @@ function App() {
 				</div>
 			</Router>
 
-	</React.Fragment>
-	
+	if (true) // à changer quand on pourra savoir si le user est log ou pas
+		return (
+			<React.Fragment>
+				<websocketContext.Provider value={socket}>
+					{router}
+				</websocketContext.Provider>
+			</React.Fragment>
   );
+	  else
+		  return (
+			  <React.Fragment>
+				  {router}
+			  </React.Fragment>
+		  );
 }
 
 export default App;
