@@ -510,7 +510,7 @@ export function OtherProfile(){
 		["Defeats", stats?.losses],
 	];
 
-	if (error) {
+	if (error) {//Tim, l'idée c'est que quand on a une erreur ça lance la fonction NotFound
 		return(
 			<NotFound />
 		);
