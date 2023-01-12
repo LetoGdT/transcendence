@@ -76,11 +76,15 @@ class PongGame
 
     collide(opponent: Player)
     {
+	    console.log("C"); // del
         // The player misses the ball
         if (this.ball.y < opponent.y || this.ball.y > opponent.y + PLAYER_HEIGHT)
         {
+	        console.log("D"); // del
             // The player who scores gets 1 point
             if (opponent == this.player1)
+	        {
+                console.log("D"); // del
                 this.scorePlayer2++;
             else
                 this.scorePlayer1++;
