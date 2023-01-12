@@ -465,16 +465,21 @@ export function OtherProfile(){
 				method: "GET",
 				credentials: 'include'
 			})
-			.then(data => {
-				const jsonData = data.json()
-				if (!data.ok)
-					return (jsonData);
-				setResult(jsonData);
-				return null;
+			.then(response => {
+				if (!response.ok)
+				{
+					throw new Error("Api returned an error", { cause: response });
+				}
+				return response.json();
+			})
+			.then(jsonData => setResult(jsonData))
+			.catch((err) => {
+				if (err.cause.status === 404)
+					console.log("Here we should throw the 404");
+				else
+					return err.cause.json();
 			})
 			.then(data => setError(data != null ? data.message : null));
-			// const jsonData = await data.json();
-			// setResult(jsonData);
 
 			const blocked = await fetch("http://localhost:9999/api/users/me/banlist/", {
 				method: "GET",
