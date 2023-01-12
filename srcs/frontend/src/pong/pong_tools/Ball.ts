@@ -1,5 +1,5 @@
 
-const BALL_SPEED = 5; // TODO needs to be random (ball speed means 2 directions x and y)
+const BALL_SPEED = 0; // TODO needs to be random (ball speed means 2 directions x and y)
 
 class Ball
 {

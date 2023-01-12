@@ -1,4 +1,4 @@
-import Ball from "./Ball";
+import Ball, { BALL_SPEED } from "./Ball";
 import Player, { PLAYER_WIDTH, PLAYER_HEIGHT } from "./Player";
 
 const PLAYER1_DOWN_KEY = 'KeyS';
@@ -60,10 +60,12 @@ class PongGame
         // The ball reaches the right or left limit
         if (this.ball.x < PLAYER_WIDTH)
         {
+            console.log("A"); // del
             this.collide(this.player1);
         }
         else if (this.ball.x > this.width - PLAYER_WIDTH)
         {
+            console.log("B"); // del
             this.collide(this.player2);
         }
 
@@ -83,11 +85,10 @@ class PongGame
             else
                 this.scorePlayer1++;
             // End of the game when one player has 5 points
-            console.log(this.scorePlayer1); // del
-            console.log(this.scorePlayer2); // del
+            // console.log(this.scorePlayer1); // del
+            // console.log(this.scorePlayer2); // del
 
-            console.log(this.over); // del	
-            console.log("STILL PLAYING"); // del
+            // console.log(this.over); // del	
             if (this.scorePlayer1 === 5 || this.scorePlayer2 === 5)
             {
                 console.log("T"); // del
