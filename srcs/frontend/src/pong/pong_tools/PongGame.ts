@@ -60,12 +60,12 @@ class PongGame
         // The ball reaches the right or left limit
         if (this.ball.x < PLAYER_WIDTH)
         {
-            console.log("A"); // del
+            console.log("A"); // del 5 9 13 17 21
             this.collide(this.player1);
         }
         else if (this.ball.x > this.width - PLAYER_WIDTH)
         {
-            console.log("B"); // del
+            console.log("B"); // del 1
             this.collide(this.player2);
         }
 
@@ -76,20 +76,20 @@ class PongGame
 
     collide(opponent: Player)
     {
-	    console.log("C"); // del
+	    console.log("C"); // del 2 6 10 14 18 22
         // The player misses the ball
         if (this.ball.y < opponent.y || this.ball.y > opponent.y + PLAYER_HEIGHT)
         {
-	        console.log("D"); // del
+	        console.log("D"); // del 3 7 11 15 19 23
             // The player who scores gets 1 point
             if (opponent == this.player1)
 	        {
-                console.log("D"); // del
+                console.log("E"); // del 8 12 16 20 24
                 this.scorePlayer2++;
 			}
             else
 			{
-                console.log("E"); // del
+                console.log("F"); // del 4
                 this.scorePlayer1++;
 			}
             // End of the game when one player has 5 points
@@ -99,9 +99,9 @@ class PongGame
             // console.log(this.over); // del	
             if (this.scorePlayer1 === 5 || this.scorePlayer2 === 5)
             {
-                console.log("T"); // del
+                console.log("G"); // del 25
                 this.over = true
-                console.log(this.over); // del	
+                console.log(this.over); // del 26
                 gameOver();
                 return;
             }
@@ -117,6 +117,7 @@ class PongGame
         }
         else
         {
+            console.log("G"); // del
             // Increase speed and change direction
             this.ball.x *= -1.2;
             changeDirection(opponent.y);
