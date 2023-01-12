@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-// import { useState, useEffect } from "react";
+import React from 'react';
 
 import OffLine from './offline.png';
 import OnLine from './online.png';
@@ -117,10 +116,6 @@ export function ToNextLevel(exp: number | undefined){
 		toNextLevel
 	);
 }
-
-type userProps = {
-	exp: number;
-};
 
 // type isConnectedResult = {
 

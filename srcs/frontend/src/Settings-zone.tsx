@@ -157,7 +157,6 @@ export function Settings(){
 	const [data, setResult] = useState<resultProps>();
 	const [newAvatar, setNewAvatar] = React.useState("");
 	const [newAlias, setNewAlias] = React.useState("");
-	let file: File;
 
 	useEffect(() => {
 		const api = async () => {
@@ -217,7 +216,7 @@ export function Settings(){
 			});
 		};
 
-	}, []);
+	});
 
 	const uploadAvatar = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		const input = document.querySelector('input[type="file"]') as HTMLInputElement;

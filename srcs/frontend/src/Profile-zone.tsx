@@ -39,7 +39,7 @@ type achievementProps = {
 }
 
 export function OneAchievement(achievement: any){
-	const {achievementType, user} = achievement.achievement;
+	const {achievementType} = achievement.achievement;
 
 	if (achievementType.name === "I'm a sociable person"){
 		return(
@@ -81,9 +81,9 @@ export function OneAchievement(achievement: any){
 
 export function Profile(){
 	const [data, setResult] = useState<resultProps>();
-	const [invites, setInvites] = useState<invitesProps>();
+	const [invites, setInvites] = useState<invitesProps[]>([]);
 	const [stats, setStats] = useState<statsProps>();
-	const [achievements, setAchievements] = useState<achievementProps>();
+	const [achievements, setAchievements] = useState<achievementProps[]>([]);
 
 	useEffect(() => {
 		const api = async () => {
@@ -105,7 +105,7 @@ export function Profile(){
 			setStats(jsonStats);
 
 			await getAllPaginated('users/me/achievements')
-			.then(data => setInvites(data));
+			.then(data => setAchievements(data));
 		};
 	
 		api();
@@ -152,7 +152,7 @@ export function Profile(){
 					</div>
 					<h4>Achievements</h4>
 					<div className='Profile-achievement-container'>
-						{achievements?.data.map((achievement:any) => {
+						{achievements.length > 0 && achievements.map((achievement:any) => {
 							return(
 								<OneAchievement achievement={achievement} />
 							);
@@ -160,7 +160,7 @@ export function Profile(){
 					</div>
 					<h4>Invitations received</h4>
 					<div>
-						{invites?.data.map((user: any) => {
+						{invites.length > 0 && invites.map((user: any) => {
 							var url: string = "/otherprofile";
 							url = url.concat("/");
 							url = url.concat(user.id);
