@@ -86,8 +86,12 @@ class PongGame
 	        {
                 console.log("D"); // del
                 this.scorePlayer2++;
+			}
             else
+			{
+                console.log("E"); // del
                 this.scorePlayer1++;
+			}
             // End of the game when one player has 5 points
             // console.log(this.scorePlayer1); // del
             // console.log(this.scorePlayer2); // del
