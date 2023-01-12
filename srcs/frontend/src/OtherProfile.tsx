@@ -437,7 +437,7 @@ export function OtherProfile(){
 	const [data, setResult] = useState<resultProps>();
 	const [blocked, setBlocked] = useState<blockedProps>();
 	const [stats, setStats] = useState<statsProps>();
-	const [achievements, setAchievements] = useState<achievementProps>();
+	const [achievements, setAchievements] = useState<achievementProps[]>([]);
 	const [matchs, setMatchs] = useState<matchHistoryProps[]>([]);
 	const [error, setError] = React.useState("");
 	const [is404, setIs404] = React.useState(false);
@@ -482,23 +482,10 @@ export function OtherProfile(){
 			});
 			const jsonStats = await stats.json();
 			setStats(jsonStats);
-			
-			urltofetch = `http://localhost:9999/api/users/${uid}/achievements`;
-			const achievements = await fetch(urltofetch, {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonAchievement = await achievements.json();
-			setAchievements(jsonAchievement);
 
-			//Tim, ici j'ai besoin de ta magie blanche
-			const matchs = await fetch(`http://localhost:9999/api/matches?user_id=${uid}`, {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonMatchs = await matchs.json();
-			setMatchs(jsonMatchs);
-			urltofetch = 'matches';
+			await getAllPaginated(`users/${uid}/achievements`)
+			.then(data => setAchievements(data));
+
 			if (uid !== undefined)
 			{
 				await getAllPaginated('matches', { params: new URLSearchParams({ user_id: uid }) })
@@ -559,7 +546,7 @@ export function OtherProfile(){
 						</div>
 						<h4>Achievements</h4>
 						<div className='Profile-achievement-container'>
-							{achievements?.data.map((achievement:any) => {
+							{achievements.length > 0 && achievements.map((achievement:any) => {
 								return(
 									<OneAchievement achievement={achievement} />
 								);
