@@ -41,7 +41,6 @@ type achievementProps = {
 export function OneAchievement(achievement: any){
 	const {achievementType, user} = achievement.achievement;
 
-	console.log(achievementType);
 	if (achievementType.name === "I'm a sociable person"){
 		return(
 			<div className='Profile-achievement-container-div'>
@@ -194,9 +193,7 @@ export function Profile(){
 											{/* <IconButton color="error" aria-label="reject" onClick={handleClickReject(user.id)}> */}
 											<IconButton color="error" aria-label="reject" onClick={()=>{
 												let urltofetch : string;
-												urltofetch = 'http://localhost:9999/api/users/me/friends/invites/' + uid;
-												// console.log(urltofetch);//
-												const response = fetch(urltofetch, {
+												urltofetch = 'http://localhost:9999/api/users/me/friends/invites/' + uid;												const response = fetch(urltofetch, {
 													headers: {
 														'Accept': 'application/json',
 														'Content-Type': 'application/json'

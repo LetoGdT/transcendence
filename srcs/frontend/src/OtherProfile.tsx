@@ -9,7 +9,7 @@ import { styled } from '@mui/material/styles';
 import { Chart } from "react-google-charts";
 import { useState, useEffect } from "react";
 import { NotFound } from './adaptable-zone';
-import { FromEXPtoLvl, ToNextLevel } from './tools';
+import { FromEXPtoLvl, getAllPaginated, ToNextLevel } from './tools';
 import { OneAchievement } from './Profile-zone';
 
 type resultProps = {
@@ -299,21 +299,7 @@ function BlockOrUnblockButton(uid: string | undefined){
 		api();
 	}, []);
 
-
-	// console.log(blocked);//
-	// const res1 = blocked?.find(({ id }) => id === uid);
-
 	return(<div></div>);
-	// if (typeof res1 === "undefined"){
-	// 	return(
-	// 		<AddButton variant="contained" disableRipple onClick={handleClickBlock}>Block user</AddButton>
-	// 	);
-	// }
-	// else {
-	// 	return(
-	// 		<RemoveButton variant="contained" disableRipple onClick={handleClickUnblock}>Unblock user</RemoveButton>
-	// 	);
-	// }
 }
 
 function OneMatch(match:any){
@@ -322,8 +308,6 @@ function OneMatch(match:any){
 	const [data1, setResult1] = useState<opponentProps>();
 	const [data2, setResult2] = useState<opponentProps>();
 	const [me, setMe] = useState<meProps>();
-
-	// console.log(match.match.user1);//
 
 	useEffect(() => {
 		const api = async () => {
@@ -456,6 +440,7 @@ export function OtherProfile(){
 	const [achievements, setAchievements] = useState<achievementProps>();
 	const [matchs, setMatchs] = useState<matchHistoryProps>();
 	const [error, setError] = React.useState("");
+	const [is404, setIs404] = React.useState(false);
 	
 	useEffect(() => {
 		const api = async () => {
@@ -475,7 +460,10 @@ export function OtherProfile(){
 			.then(jsonData => setResult(jsonData))
 			.catch((err) => {
 				if (err.cause.status === 404)
-					console.log("Here we should throw the 404");
+				{
+					setIs404(true);
+					return null;
+				}
 				else
 					return err.cause.json();
 			})
@@ -503,12 +491,16 @@ export function OtherProfile(){
 			const jsonAchievement = await achievements.json();
 			setAchievements(jsonAchievement);
 
+			//Tim, ici j'ai besoin de ta magie blanche
 			const matchs = await fetch(`http://localhost:9999/api/matches?user_id=${uid}`, {
 				method: "GET",
 				credentials: 'include'
 			});
 			const jsonMatchs = await matchs.json();
 			setMatchs(jsonMatchs);
+			urltofetch = `matches?user_id=${uid}`;
+			await getAllPaginated(urltofetch)
+			.then(data => setMatchs(data));
 		};
 	
 		api();
@@ -527,7 +519,7 @@ export function OtherProfile(){
 		["Defeats", stats?.losses],
 	];
 
-	if (error) {
+	if (is404) {//Tim, l'idée c'est que quand on a une erreur ça lance la fonction NotFound
 		return(
 			<NotFound />
 		);
@@ -574,9 +566,7 @@ export function OtherProfile(){
 						<div className='Match-container-otherProfile'>
 							{matchs?.data.map((match:any) => {
 								return(
-									
 										<OneMatch match={match} />
-									
 								);
 							})}
 						</div>

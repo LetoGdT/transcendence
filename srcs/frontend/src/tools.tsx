@@ -5,11 +5,12 @@ import OffLine from './offline.png';
 import OnLine from './online.png';
 import InGame from './ingame.png';
 
-export async function getPaginatedRequest(url: string, pageStart: number, pageEnd: number, take?: number): Promise<any>
+export async function getPaginatedRequest(url: string, pageStart: number, pageEnd: number,
+	options?: { take?: number, params?: URLSearchParams }): Promise<any>
 {
 	let ret: any = [];
 	const fullUrl = 'http://localhost:9999/api/' + url + '?';
-	if (take === undefined){
+	if (options === undefined || options.take === undefined){
 		for (let i: number = pageStart - 1; i !== pageEnd; i++)
 		{
 			const params = new URLSearchParams({
@@ -29,7 +30,7 @@ export async function getPaginatedRequest(url: string, pageStart: number, pageEn
 		for (let i: number = pageStart - 1; i !== pageEnd; i++)
 		{
 			const params = new URLSearchParams({
-				take: take.toString(),
+				take: options.take.toString(),
 				page: (i + 1).toString()
 			});
 			const data = await fetch(fullUrl + params, {
@@ -45,26 +46,34 @@ export async function getPaginatedRequest(url: string, pageStart: number, pageEn
 	return ret;
 }
 
-export async function getAllPaginated(url: string, take = 30): Promise<any>
+export async function getAllPaginated(url: string, options?: { take?: 30 }): Promise<any>
 {
 	let ret: any = [];
+	let take: string = "30";
+	if (options !== undefined && options.take !== undefined)
+		take = options.take.toString();
 	const fullUrl = 'http://localhost:9999/api/' + url + '?';
 	for (let i: number = 0;; i++)
 	{
 		const params = new URLSearchParams({
-			take: take.toString(),
+			take: take,
 			page: (i + 1).toString()
 		});
 		const data = await fetch(fullUrl + params, {
 			method: "GET",
 			credentials: 'include'
+		})
+		.then(response => {
+			if (!response.ok)
+				throw new Error(`An error occured while fetching the api. Url: ${fullUrl + params}`,
+					{ cause: response });
+			return response.json();
 		});
 		const jsonData = await data.json();
 		ret = ret.concat(jsonData.data);
 		if (!jsonData.meta.hasNextPage)
 			break;
 	}
-
 	return ret;
 }
 
@@ -86,7 +95,7 @@ export function FromEXPtoLvl(exp: number | undefined){
 			0
 		);
 	
-	let level: number = Math.floor(exp/EXPtoNewLevel);	
+	let level: number = Math.floor(exp / EXPtoNewLevel);	
 	return(
 		level
 	);
