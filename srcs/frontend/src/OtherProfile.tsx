@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import { NotFound } from './adaptable-zone';
 import { FromEXPtoLvl, getAllPaginated, ToNextLevel } from './tools';
 import { OneAchievement } from './Profile-zone';
+import { maxHeaderSize } from 'http';
 
 type resultProps = {
 	email: string;
@@ -407,6 +408,10 @@ function OneMatch(match:any){
 
 export function OtherProfile(){
 	let { uid } = useParams();
+	const [is404, setIs404] = React.useState(false);
+
+
+	
 
 	const handleClickBlock = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		const response = await fetch('http://localhost:9999/api/users/me/banlist', {
@@ -440,7 +445,6 @@ export function OtherProfile(){
 	const [achievements, setAchievements] = useState<achievementProps>();
 	const [matchs, setMatchs] = useState<matchHistoryProps[]>([]);
 	const [error, setError] = React.useState("");
-	const [is404, setIs404] = React.useState(false);
 	
 	useEffect(() => {
 		const api = async () => {
@@ -522,11 +526,7 @@ export function OtherProfile(){
 		["Defeats", stats?.losses],
 	];
 
-	if (is404) {//Tim, l'idée c'est que quand on a une erreur ça lance la fonction NotFound
-		return(
-			<NotFound />
-		);
-	} else {
+	if (!is404) {
 		return(
 			<React.Fragment>
 				<h1>Profile - Stats</h1>
@@ -576,6 +576,12 @@ export function OtherProfile(){
 					</div>
 				</div>
 			</React.Fragment>
+		);
+	}
+	else
+	{
+		return (
+			<NotFound />
 		);
 	}
 }

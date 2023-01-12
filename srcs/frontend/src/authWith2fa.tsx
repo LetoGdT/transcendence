@@ -20,42 +20,6 @@ const CodeOf2FATextField = styled(TextField)({
 	},
 });
 
-const SettingsButton = styled(Button)({
-	boxShadow: 'none',
-	textTransform: 'none',
-	fontSize: 16,
-	padding: '6px 12px',
-	border: '1px solid',
-	lineHeight: 1.5,
-	backgroundColor: '#646464',
-	borderColor: '#646464',
-	fontFamily: [
-		'-apple-system',
-		'BlinkMacSystemFont',
-		'"Segoe UI"',
-		'Roboto',
-		'"Helvetica Neue"',
-		'Arial',
-		'sans-serif',
-		'"Apple Color Emoji"',
-		'"Segoe UI Emoji"',
-		'"Segoe UI Symbol"',
-	].join(','),
-	'&:hover': {
-		backgroundColor: '#3b9b3b',
-		borderColor: '#646464',
-		boxShadow: 'none',
-	},
-	'&:active': {
-		boxShadow: 'none',
-		backgroundColor: '#4a7a4a',
-		borderColor: '#646464',
-	},
-	'&:focus': {
-		xShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
-	},
-});
-
 const SendButton = styled(Button)({
 	boxShadow: 'none',
 	textTransform: 'none',

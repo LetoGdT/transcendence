@@ -4,7 +4,7 @@ import './MatchHistory.css'
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from "react";
-import { getPaginatedRequest, getAllPaginated } from './tools';
+import { getAllPaginated } from './tools';
 
 import { PleaseConnect } from './adaptable-zone';
 
@@ -56,11 +56,12 @@ function OneMatch(match:any){
 		};
 	
 		api();
-	}, []);
+	});
+
+	var url: string = "/otherprofile"; 
 
 	if (user1.id === me?.id){
 		const result: string = (score_user1 > score_user2) ? "Victory" : "Defeat";
-		var url: string = "/otherprofile";
 		url = url.concat("/");
 		url = url.concat(user2.id.toString());
 		return (
@@ -91,7 +92,6 @@ function OneMatch(match:any){
 		);
 	} else {
 		const result: string = (score_user2 > score_user1) ? "Victory" : "Defeat";
-		var url: string = "/otherprofile";
 		url = url.concat("/");
 		url = url.concat(user1.id.toString());
 		return (
