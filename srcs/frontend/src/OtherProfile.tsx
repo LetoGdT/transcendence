@@ -11,7 +11,6 @@ import { useState, useEffect } from "react";
 import { NotFound } from './adaptable-zone';
 import { FromEXPtoLvl, getAllPaginated, ToNextLevel } from './tools';
 import { OneAchievement } from './Profile-zone';
-import { maxHeaderSize } from 'http';
 
 type resultProps = {
 	email: string;
@@ -26,7 +25,7 @@ type friendProps = {
 };
 
 type blockedProps = {
-	// data:[]; 
+	id: number;
 };
 
 type statsProps = {
@@ -285,7 +284,7 @@ function BlockOrUnblockButton(uid: string | undefined){
 		});
 	};
 
-	const [blocked, setBlocked] = useState<blockedProps>();
+	const [blocked, setBlocked] = useState<blockedProps[]>([]);
 
 	useEffect(() => {
 		const api = async () => {
@@ -300,7 +299,19 @@ function BlockOrUnblockButton(uid: string | undefined){
 		api();
 	}, []);
 
-	return(<div></div>);
+	const toFind: number = blocked.findIndex((user) => {
+		return user.id == Number(uid);
+	});
+
+	if (toFind === -1){
+		return(
+			<BlockButton variant="contained" disableRipple onClick={handleClickBlock}>Block</BlockButton>
+		);
+	} else {
+		return(
+			<UnblockButton variant="contained" disableRipple onClick={handleClickUnblock}>Unblock</UnblockButton>
+		);
+	}
 }
 
 function OneMatch(match:any){
@@ -340,12 +351,13 @@ function OneMatch(match:any){
 		};
 	
 		api();
-	}, []);
+	});
+	
+	var url: string = "/otherprofile";
+	url = url.concat("/");
 
 	if (user1.id === me?.id){
 		const result: string = (score_user1 > score_user2) ? "Victory" : "Defeat";
-		var url: string = "/otherprofile";
-		url = url.concat("/");
 		url = url.concat(user2.id.toString());
 		return (
 			<div className='Match-container-div'>
@@ -375,8 +387,6 @@ function OneMatch(match:any){
 		);
 	} else {
 		const result: string = (score_user2 > score_user1) ? "Victory" : "Defeat";
-		var url: string = "/otherprofile";
-		url = url.concat("/");
 		url = url.concat(user1.id.toString());
 		return (
 			<div className='Match-container-div'>
@@ -409,38 +419,7 @@ function OneMatch(match:any){
 export function OtherProfile(){
 	let { uid } = useParams();
 	const [is404, setIs404] = React.useState(false);
-
-
-	
-
-	const handleClickBlock = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('http://localhost:9999/api/users/me/banlist', {
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'POST',
-			credentials: 'include',
-			body: JSON.stringify({ id: uid })
-		});
-	};
-
-	const handleClickUnblock = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		let urltofetch : string;
-		urltofetch = 'http://localhost:9999/api/users/me/banlist/' + uid;
-
-		const response = await fetch(urltofetch, {
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'DELETE',
-			credentials: 'include',
-		});
-	};
-
 	const [data, setResult] = useState<resultProps>();
-	const [blocked, setBlocked] = useState<blockedProps>();
 	const [stats, setStats] = useState<statsProps>();
 	const [achievements, setAchievements] = useState<achievementProps[]>([]);
 	const [matchs, setMatchs] = useState<matchHistoryProps[]>([]);
@@ -473,13 +452,6 @@ export function OtherProfile(){
 			})
 			.then(data => setError(data != null ? data.message : null));
 
-			const blocked = await fetch("http://localhost:9999/api/users/me/banlist/", {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonBlocked = await blocked.json();
-			setBlocked(jsonBlocked);
-
 			const stats = await fetch(`http://localhost:9999/api/matches/${uid}/winrate`, {
 				method: "GET",
 				credentials: 'include'
@@ -498,7 +470,7 @@ export function OtherProfile(){
 		};
 	
 		api();
-	}, []);
+	});
 
 	const options = {
 		title: "Your matches' results",
@@ -521,9 +493,7 @@ export function OtherProfile(){
 					<div className='Profile-Alias'>
 						<div className='Profile-Alias-div'>{data?.username}</div>
 						<div className='Profile-Alias-div'>{AddOrRemoveButton(uid)}</div>
-						{/* <div className='Profile-Alias-div'>{BlockOrUnblockButton(uid)}</div> */}
-						<div className='Profile-Alias-div'><BlockButton variant="contained" disableRipple onClick={handleClickBlock}>Block user</BlockButton></div>
-						<div className='Profile-Alias-div'><UnblockButton variant="contained" disableRipple onClick={handleClickUnblock}>Unblock user</UnblockButton></div>
+						<div className='Profile-Alias-div'>{BlockOrUnblockButton(uid)}</div>
 					</div>
 					<div className='Profile-container-row-lvl1'>
 						<div className='Profile-Avatar'>
