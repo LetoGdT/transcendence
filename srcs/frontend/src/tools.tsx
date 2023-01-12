@@ -14,7 +14,8 @@ export async function getPaginatedRequest(url: string, pageStart: number, pageEn
 		for (let i: number = pageStart - 1; i !== pageEnd; i++)
 		{
 			const params = new URLSearchParams({
-				page: (i + 1).toString()
+				page: (i + 1).toString(),
+				...(options && options.params && Object.fromEntries(options.params))
 			});
 			const data = await fetch(fullUrl + params, {
 				method: "GET",
@@ -31,7 +32,8 @@ export async function getPaginatedRequest(url: string, pageStart: number, pageEn
 		{
 			const params = new URLSearchParams({
 				take: options.take.toString(),
-				page: (i + 1).toString()
+				page: (i + 1).toString(),
+				...(options && options.params && Object.fromEntries(options.params))
 			});
 			const data = await fetch(fullUrl + params, {
 				method: "GET",
@@ -46,7 +48,8 @@ export async function getPaginatedRequest(url: string, pageStart: number, pageEn
 	return ret;
 }
 
-export async function getAllPaginated(url: string, options?: { take?: 30 }): Promise<any>
+export async function getAllPaginated(url: string,
+	options?: { take?: 30, params?: URLSearchParams }): Promise<any>
 {
 	let ret: any = [];
 	let take: string = "30";
@@ -57,7 +60,8 @@ export async function getAllPaginated(url: string, options?: { take?: 30 }): Pro
 	{
 		const params = new URLSearchParams({
 			take: take,
-			page: (i + 1).toString()
+			page: (i + 1).toString(),
+			...(options && options.params && Object.fromEntries(options.params))
 		});
 		const data = await fetch(fullUrl + params, {
 			method: "GET",
@@ -67,13 +71,14 @@ export async function getAllPaginated(url: string, options?: { take?: 30 }): Pro
 			if (!response.ok)
 				throw new Error(`An error occured while fetching the api. Url: ${fullUrl + params}`,
 					{ cause: response });
-			return response.json();
+			return response;
 		});
 		const jsonData = await data.json();
 		ret = ret.concat(jsonData.data);
 		if (!jsonData.meta.hasNextPage)
 			break;
 	}
+
 	return ret;
 }
 

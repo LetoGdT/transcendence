@@ -438,7 +438,7 @@ export function OtherProfile(){
 	const [blocked, setBlocked] = useState<blockedProps>();
 	const [stats, setStats] = useState<statsProps>();
 	const [achievements, setAchievements] = useState<achievementProps>();
-	const [matchs, setMatchs] = useState<matchHistoryProps>();
+	const [matchs, setMatchs] = useState<matchHistoryProps[]>([]);
 	const [error, setError] = React.useState("");
 	const [is404, setIs404] = React.useState(false);
 	
@@ -498,9 +498,12 @@ export function OtherProfile(){
 			});
 			const jsonMatchs = await matchs.json();
 			setMatchs(jsonMatchs);
-			urltofetch = `matches?user_id=${uid}`;
-			await getAllPaginated(urltofetch)
-			.then(data => setMatchs(data));
+			urltofetch = 'matches';
+			if (uid !== undefined)
+			{
+				await getAllPaginated('matches', { params: new URLSearchParams({ user_id: uid }) })
+				.then(data => setMatchs(data));
+			}
 		};
 	
 		api();
@@ -564,7 +567,7 @@ export function OtherProfile(){
 						</div>
 						<h4>Match History</h4>
 						<div className='Match-container-otherProfile'>
-							{matchs?.data.map((match:any) => {
+							{matchs.length > 0 && matchs.map((match:any) => {
 								return(
 										<OneMatch match={match} />
 								);
