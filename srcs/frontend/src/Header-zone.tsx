@@ -15,6 +15,7 @@ import { styled } from '@mui/material/styles';
 
 import { useState, useEffect } from "react";
 
+import { socket } from './WebsocketContext';
 
 type resultProps = {
 	image_url: string;
@@ -147,21 +148,29 @@ function UserLogged(){
 		api();
 	}, []);
 	
-	return(
-		<div className='Avatar-zone'>
-			<div className='Avatar-zone-img'>
-				<img src={data?.image_url} alt='avatar' className='Avatar-zone-img'></img>
-			</div>
-			<div className='Avatar-zone-buttons'>
-				<a href='http://localhost:9999/logout'>
-					<LogOutButton variant="contained" disableRipple>Log Out</LogOutButton>
-				</a>
-			</div>
-		</div>
-	);
+	const handleSocketClose = (event: React.MouseEvent<HTMLButtonElement>) => {
+        socket.close();
+    };
+    
+    return(
+        <div className='Avatar-zone'>
+            <div className='Avatar-zone-img'>
+                <img src={data?.image_url} alt='avatar' className='Avatar-zone-img'></img>
+            </div>
+            <div className='Avatar-zone-buttons'>
+                <a href='http://localhost:9999/logout'>
+                    <LogOutButton variant="contained" disableRipple onClick={handleSocketClose}>Log Out</LogOutButton>
+                </a>
+            </div>
+        </div>
+    );
 }
 
 function UserNotLogged(){
+	const handleSocketOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+        socket.open();
+    };
+
 	return(
 		<div className='Avatar-zone'>
 			<div className='Avatar-zone-buttons'>

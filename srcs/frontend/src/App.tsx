@@ -93,7 +93,28 @@ function App() {
 				</div>
 			</Router>
 
-	if (true) // à changer quand on pourra savoir si le user est log ou pas
+	type meProps = {
+		id: number;
+		username: string;
+		image_url: string;
+	}
+	const [me, setMe] = useState<meProps>();
+
+	useEffect(() => {
+		const api = async () => {
+			const data = await fetch("http://localhost:9999/api/users/isconnected", {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonData = await data.json();
+			setMe(jsonData);
+		};
+	
+		api();
+	}, []);
+	
+	const isLoggedIn = me;
+	if (isLoggedIn) // à changer quand on pourra savoir si le user est log ou pas
 		return (
 			<React.Fragment>
 				<websocketContext.Provider value={socket}>

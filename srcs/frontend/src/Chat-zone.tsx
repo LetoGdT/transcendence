@@ -323,16 +323,16 @@ export function ChatZone(){
 	}, []);
 	
 	const isLoggedIn = me;
-	// if (isLoggedIn){
+	if (isLoggedIn){
 		return (
 			<Chat />
 		);
-	// }
-	// else 
-	// {
-	// 	return (
-	// 		<PleaseConnect />
-	// 	);
-	// }
+	}
+	else 
+	{
+		return (
+			<PleaseConnect />
+		 );
+	}
 }
 
