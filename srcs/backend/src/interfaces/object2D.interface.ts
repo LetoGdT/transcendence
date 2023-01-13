@@ -8,8 +8,8 @@ export interface Object2D
 
 export interface Window
 {
-	min: Vector2D;
-	max: Vector2D;
+	height: number;
+	width: number;
 }
 
 export interface Vector2D

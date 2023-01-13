@@ -15,9 +15,14 @@ export class Paddle implements Object2D
 	readonly height: number;
 	readonly width: number;
 
+	readonly left: number;
+	readonly right: number;
+	readonly top: number;
+	readonly bottom: number;
+
 	constructor(window: Window = {
-			max: { x: 1040, y: 680 },
-			min: { x: 0, y: 0 }
+			width: 1040,
+			height: 680
 		},
 		initial_coordinates: Vector2D = { x: 0, y: 0 },
 		speed: number = 10, height: number = 10, width: number = 10)
@@ -28,18 +33,22 @@ export class Paddle implements Object2D
 		this.height = height;
 		this.width = width;
 
+		this.left = this.coordinates.x;
+		this.right = this.left + this.width;
+		this.bottom = this.coordinates.y;
+		this.top = this.bottom + this.height;
+
 		if (this.collides(this.coordinates))
-			throw new RangeError('Paddle is not in the window')
+			throw new RangeError('Paddle is not in the window');
 	}
 
 	collides(new_position: Vector2D): boolean
 	{
-		if (new_position.x + this.height > this.window.max.x || new_position.x < this.window.min.x)
-			return true;
-		return false;
+		return new_position.y + this.height > this.window.height
+			|| new_position.y < 0;
 	}
 
-	moveUp()
+	moveUp(): void
 	{
 		const new_position = this.coordinates;
 		new_position.x += this.speed;
@@ -47,7 +56,7 @@ export class Paddle implements Object2D
 			this.coordinates.x += this.speed;
 	}
 
-	moveDown()
+	moveDown(): void
 	{
 		const new_position = this.coordinates;
 		new_position.x -= this.speed;

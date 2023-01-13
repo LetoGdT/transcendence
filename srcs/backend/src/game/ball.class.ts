@@ -11,7 +11,7 @@ export class Ball implements Object2D
 	readonly coordinates: Vector2D;
 
 	// The current speed of the ball
-	readonly speed: number;
+	speed: number;
 
 	// The direction of the ball
 	readonly direction: Vector2D;
@@ -27,12 +27,14 @@ export class Ball implements Object2D
 	private paddle1: Paddle;
 	private paddle2: Paddle;
 
-	private latest_time: number = performance.now()
+	private latest_time: number = performance.now();
+
+	private factor: number = 1;
 
 	constructor(paddle1: Paddle, paddle2: Paddle,
 		window: Window = {
-			max: { x: 1040, y: 680 },
-			min: { x: 0, y: 0 }
+			width: 1040,
+			height: 680
 		},
 		initial_coordinates: Vector2D = { x: 520, y: 340 },
 		initial_speed: number = 10, acceleration: number = 0.03, radius: number = 5)
@@ -50,25 +52,61 @@ export class Ball implements Object2D
 
 	collides(position: Vector2D): boolean
 	{
-		if (position.x + this.radius > this.window.max.x
-			|| position.x - this.radius < this.window.min.x
-			|| position.y + this.radius > this.window.max.y
-			|| position.y - this.radius < this.window.min.y)
+		return position.y + this.radius > this.window.height
+			|| position.y - this.radius < 0;
+	}
+
+	paddleCollides(position: Vector2D): boolean
+	{
+		if ((position.x - this.radius < this.paddle1.right
+				&& position.y - this.radius < this.paddle1.top
+				&& position.y + this.radius < this.paddle1.bottom)
+			|| (position.x - this.radius < this.paddle2.right
+				&& position.y - this.radius < this.paddle2.top
+				&& position.y + this.radius < this.paddle2.bottom))
 			return true;
 		return false;
 	}
 
 	launchBallRandom(): void
 	{
-		this.direction.x = Math.random() * this.window.max.x / 2;
-		this.direction.y = Math.random() * this.window.max.y / 2;
+		this.direction.y = Math.random() / 2;
+		this.direction.x = Math.random() / 2;
 	}
 
-	bounce(): void
+	bounce(position: Vector2D): void
 	{
-		if (this.collides(this.coordinates))
+		if (this.collides(position))
 		{
-
+			this.coordinates.y -= 1;
+			this.direction.y *= -1;
 		}
+	}
+
+	paddleBounce(position: Vector2D): void
+	{
+		if (this.paddleCollides(position))
+		{
+			this.coordinates.x -= 1;
+			this.direction.x *= -1;
+			this.speed += this.speed * this.acceleration;
+		}
+	}
+
+	// Je ne prend  pas en compte le délai que prend le for à s'exécuter, on verra si ça joue
+	updateCoordinates(): void
+	{
+		const current_time = performance.now();
+		let deltaTime = (current_time - this.latest_time) * (60 / 1000);
+		this.latest_time = current_time;
+		for (; deltaTime >= 0; deltaTime--)
+		{
+			if (deltaTime > 0)
+				this.factor = deltaTime;
+			let new_coordinates: Vector2D = this.coordinates;
+			new_coordinates.x += this.direction.x * this.speed;
+		}
+
+		this.factor = 1;
 	}
 }
