@@ -12,7 +12,7 @@ import { MatchHistoryZone } from './MatchHistory-zone';
 import { SettingsZone } from './Settings-zone';
 import { ProfileZone} from './Profile-zone';
 import { OtherProfile } from './OtherProfile';
-import { SignOn } from './adaptable-zone';
+import { SignUp } from './adaptable-zone';
 import { AuthWith2FA } from './authWith2fa';
 import { Activate2FA } from './activate2fa';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
@@ -40,7 +40,7 @@ function App() {
 							<Route path=':uid' element={<OtherProfile />} />
 						</Route>
 						<Route path="/profile" element={<ProfileZone/>} />
-						<Route path="/signon" element={<SignOn/>} />
+						<Route path="/signup" element={<SignUp/>} />
 						<Route path='/2fa' element={<AuthWith2FA />} />
 						<Route path='/activate2fa' element={<Activate2FA />} />
 						<Route path='*' element={<NotFound/>} />
