@@ -4,10 +4,13 @@ function Play(){
 	return(
 		<React.Fragment>
 			<h1>Play</h1>
-			
+
 		</React.Fragment>
 	);
 }
+
+type meProps = {
+};
 
 export function PlayZone(){
 	const [me, setMe] = useState<meProps>();
