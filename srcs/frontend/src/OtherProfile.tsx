@@ -201,7 +201,6 @@ const UnblockButton = styled(Button)({
 
 const DuelButton = styled(Button)({
 	boxShadow: 'none',
-	width: '100px',
 	textTransform: 'none',
 	fontSize: 16,
 	padding: '6px 12px',
@@ -222,17 +221,17 @@ const DuelButton = styled(Button)({
 		'"Segoe UI Symbol"',
 	].join(','),
 	'&:hover': {
-		backgroundColor: '#bb1d03',
+		backgroundColor: '#007dd6',
 		borderColor: '#646464',
 		boxShadow: 'none',
 	},
 	'&:active': {
 		boxShadow: 'none',
-		backgroundColor: '#891d03',
+		backgroundColor: '#004d7b',
 		borderColor: '#646464',
 	},
 	'&:focus': {
-		boxShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
+		adow: '0 0 0 0.2rem rgba(0,0,0,.5)',
 	},
 });
 
