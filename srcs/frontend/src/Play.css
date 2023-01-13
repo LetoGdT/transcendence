@@ -2,5 +2,12 @@
 	display: flex;
 	flex-wrap: wrap;
 	flex-direction: column;
-	justify-content: center;
+	align-items: center;
+	padding-bottom: 1em;
+}
+
+.Play-button{
+	display: flex;
+	flex-direction: column;
+	padding-bottom: 1em;
 }
