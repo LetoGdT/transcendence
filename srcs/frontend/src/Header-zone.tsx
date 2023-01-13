@@ -21,7 +21,7 @@ type resultProps = {
 	image_url: string;
 };
 
-const LogInButton = styled(Button)({
+export const LogInButton = styled(Button)({
 	boxShadow: 'none',
 	width: '100px',
 	textTransform: 'none',
@@ -58,7 +58,7 @@ const LogInButton = styled(Button)({
 	},
 });
 
-const SignOnButton = styled(Button)({
+export const SignUpButton = styled(Button)({
 	boxShadow: 'none',
 	width: '100px',
 	textTransform: 'none',
@@ -176,7 +176,7 @@ function UserNotLogged(){
 			<div className='Avatar-zone-buttons'>
 				<div className='Avatar-zone-1button'>
 					<Link to='/signup'>
-						<SignOnButton variant="contained" disableRipple>Sign Up</SignOnButton>
+						<SignUpButton variant="contained" disableRipple>Sign Up</SignUpButton>
 					</Link>
 				</div>
 				<div className='Avatar-zone-1button'>
