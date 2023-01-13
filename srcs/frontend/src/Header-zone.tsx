@@ -175,8 +175,8 @@ function UserNotLogged(){
 		<div className='Avatar-zone'>
 			<div className='Avatar-zone-buttons'>
 				<div className='Avatar-zone-1button'>
-					<Link to='/signon'>
-						<SignOnButton variant="contained" disableRipple>Sign On</SignOnButton>
+					<Link to='/signup'>
+						<SignOnButton variant="contained" disableRipple>Sign Up</SignOnButton>
 					</Link>
 				</div>
 				<div className='Avatar-zone-1button'>

@@ -1,7 +1,6 @@
 import './App.css'
 import './Profile.css'
 import './MatchHistory.css'
-
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import { Link, useParams } from 'react-router-dom';
@@ -9,7 +8,7 @@ import { styled } from '@mui/material/styles';
 import { Chart } from "react-google-charts";
 import { useState, useEffect } from "react";
 import { NotFound } from './adaptable-zone';
-import { FromEXPtoLvl, ToNextLevel } from './tools';
+import { FromEXPtoLvl, getAllPaginated, ToNextLevel } from './tools';
 import { OneAchievement } from './Profile-zone';
 
 type resultProps = {
@@ -25,7 +24,7 @@ type friendProps = {
 };
 
 type blockedProps = {
-	// data:[]; 
+	id: number;
 };
 
 type statsProps = {
@@ -200,6 +199,43 @@ const UnblockButton = styled(Button)({
 	},
 });
 
+const DuelButton = styled(Button)({
+	boxShadow: 'none',
+	width: '100px',
+	textTransform: 'none',
+	fontSize: 16,
+	padding: '6px 12px',
+	border: '1px solid',
+	lineHeight: 1.5,
+	backgroundColor: '#646464',
+	borderColor: '#646464',
+	fontFamily: [
+		'-apple-system',
+		'BlinkMacSystemFont',
+		'"Segoe UI"',
+		'Roboto',
+		'"Helvetica Neue"',
+		'Arial',
+		'sans-serif',
+		'"Apple Color Emoji"',
+		'"Segoe UI Emoji"',
+		'"Segoe UI Symbol"',
+	].join(','),
+	'&:hover': {
+		backgroundColor: '#bb1d03',
+		borderColor: '#646464',
+		boxShadow: 'none',
+	},
+	'&:active': {
+		boxShadow: 'none',
+		backgroundColor: '#891d03',
+		borderColor: '#646464',
+	},
+	'&:focus': {
+		boxShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
+	},
+});
+
 function AddOrRemoveButton(uid: string | undefined){
 
 	const handleClickInvite = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -237,6 +273,7 @@ function AddOrRemoveButton(uid: string | undefined){
 			});
 			const jsonFriend = await friend.json();
 			setFriend(jsonFriend);
+			
 		};
 	
 		api();
@@ -283,7 +320,7 @@ function BlockOrUnblockButton(uid: string | undefined){
 		});
 	};
 
-	const [blocked, setBlocked] = useState<blockedProps>();
+	const [blocked, setBlocked] = useState<blockedProps[]>([]);
 
 	useEffect(() => {
 		const api = async () => {
@@ -298,21 +335,19 @@ function BlockOrUnblockButton(uid: string | undefined){
 		api();
 	}, []);
 
+	const toFind: number = blocked.findIndex((user) => {
+		return user.id == Number(uid);
+	});
 
-	// console.log(blocked);//
-	// const res1 = blocked?.find(({ id }) => id === uid);
-
-	return(<div></div>);
-	// if (typeof res1 === "undefined"){
-	// 	return(
-	// 		<AddButton variant="contained" disableRipple onClick={handleClickBlock}>Block user</AddButton>
-	// 	);
-	// }
-	// else {
-	// 	return(
-	// 		<RemoveButton variant="contained" disableRipple onClick={handleClickUnblock}>Unblock user</RemoveButton>
-	// 	);
-	// }
+	if (toFind === -1){
+		return(
+			<BlockButton variant="contained" disableRipple onClick={handleClickBlock}>Block</BlockButton>
+		);
+	} else {
+		return(
+			<UnblockButton variant="contained" disableRipple onClick={handleClickUnblock}>Unblock</UnblockButton>
+		);
+	}
 }
 
 function OneMatch(match:any){
@@ -321,8 +356,6 @@ function OneMatch(match:any){
 	const [data1, setResult1] = useState<opponentProps>();
 	const [data2, setResult2] = useState<opponentProps>();
 	const [me, setMe] = useState<meProps>();
-
-	// console.log(match.match.user1);//
 
 	useEffect(() => {
 		const api = async () => {
@@ -354,12 +387,13 @@ function OneMatch(match:any){
 		};
 	
 		api();
-	}, []);
+	});
+	
+	var url: string = "/otherprofile";
+	url = url.concat("/");
 
 	if (user1.id === me?.id){
 		const result: string = (score_user1 > score_user2) ? "Victory" : "Defeat";
-		var url: string = "/otherprofile";
-		url = url.concat("/");
 		url = url.concat(user2.id.toString());
 		return (
 			<div className='Match-container-div'>
@@ -389,8 +423,6 @@ function OneMatch(match:any){
 		);
 	} else {
 		const result: string = (score_user2 > score_user1) ? "Victory" : "Defeat";
-		var url: string = "/otherprofile";
-		url = url.concat("/");
 		url = url.concat(user1.id.toString());
 		return (
 			<div className='Match-container-div'>
@@ -422,38 +454,12 @@ function OneMatch(match:any){
 
 export function OtherProfile(){
 	let { uid } = useParams();
-
-	const handleClickBlock = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('http://localhost:9999/api/users/me/banlist', {
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'POST',
-			credentials: 'include',
-			body: JSON.stringify({ id: uid })
-		});
-	};
-
-	const handleClickUnblock = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		let urltofetch : string;
-		urltofetch = 'http://localhost:9999/api/users/me/banlist/' + uid;
-
-		const response = await fetch(urltofetch, {
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'DELETE',
-			credentials: 'include',
-		});
-	};
-
+	const [is404, setIs404] = React.useState(false);
 	const [data, setResult] = useState<resultProps>();
-	const [blocked, setBlocked] = useState<blockedProps>();
 	const [stats, setStats] = useState<statsProps>();
-	const [achievements, setAchievements] = useState<achievementProps>();
-	const [matchs, setMatchs] = useState<matchHistoryProps>();
+	const [achievements, setAchievements] = useState<achievementProps[]>([]);
+	const [matchs, setMatchs] = useState<matchHistoryProps[]>([]);
+	const [error, setError] = React.useState("");
 	
 	useEffect(() => {
 		const api = async () => {
@@ -462,42 +468,45 @@ export function OtherProfile(){
 			const data = await fetch(urltofetch, {
 				method: "GET",
 				credentials: 'include'
-			});
-			const jsonData = await data.json();
-			setResult(jsonData);
+			})
+			.then(response => {
+				if (!response.ok)
+				{
+					throw new Error("Api returned an error", { cause: response });
+				}
+				return response.json();
+			})
+			.then(jsonData => setResult(jsonData))
+			.catch((err) => {
+				if (err.cause.status === 404)
+				{
+					setIs404(true);
+					return null;
+				}
+				else
+					return err.cause.json();
+			})
+			.then(data => setError(data != null ? data.message : null));
 
-			const blocked = await fetch("http://localhost:9999/api/users/me/banlist/", {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonBlocked = await blocked.json();
-			setBlocked(jsonBlocked);
-
-			const stats = await fetch("http://localhost:9999/api/matches/2/winrate", {
+			const stats = await fetch(`http://localhost:9999/api/matches/${uid}/winrate`, {
 				method: "GET",
 				credentials: 'include'
 			});
 			const jsonStats = await stats.json();
 			setStats(jsonStats);
-			
-			urltofetch = `http://localhost:9999/api/users/${uid}/achievements`;
-			const achievements = await fetch(urltofetch, {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonAchievement = await achievements.json();
-			setAchievements(jsonAchievement);
 
-			const matchs = await fetch(`http://localhost:9999/api/matches?user_id=${uid}`, {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonMatchs = await matchs.json();
-			setMatchs(jsonMatchs);
+			await getAllPaginated(`users/${uid}/achievements`)
+			.then(data => setAchievements(data));
+
+			if (uid !== undefined)
+			{
+				await getAllPaginated('matches', { params: new URLSearchParams({ user_id: uid }) })
+				.then(data => setMatchs(data));
+			}
 		};
 	
 		api();
-	}, []);
+	});
 
 	const options = {
 		title: "Your matches' results",
@@ -512,56 +521,62 @@ export function OtherProfile(){
 		["Defeats", stats?.losses],
 	];
 
-	return(
-		<React.Fragment>
-			<h1>Profile - Stats</h1>
-			<div className='Profile-container'>
-				<div className='Profile-Alias'>
-					<div className='Profile-Alias-div'>{data?.username}</div>
-					<div className='Profile-Alias-div'>{AddOrRemoveButton(uid)}</div>
-					{/* <div className='Profile-Alias-div'>{BlockOrUnblockButton(uid)}</div> */}
-					<div className='Profile-Alias-div'><BlockButton variant="contained" disableRipple onClick={handleClickBlock}>Block user</BlockButton></div>
-					<div className='Profile-Alias-div'><UnblockButton variant="contained" disableRipple onClick={handleClickUnblock}>Unblock user</UnblockButton></div>
+	if (!is404) {
+		return(
+			<React.Fragment>
+				<h1>Profile - Stats</h1>
+				<div className='Profile-container'>
+					<div className='Profile-Alias'>
+						<div className='Profile-Alias-div'>{data?.username}</div>
+						<div className='Profile-Alias-div'>{AddOrRemoveButton(uid)}</div>
+						<div className='Profile-Alias-div'>{BlockOrUnblockButton(uid)}</div>
+						<div className='Profile-Alias-div'><DuelButton variant="contained" disableRipple>Ask for a game</DuelButton></div>{/*deux épées qui se croisent*/}
+						{/*button pour spec*/}
+					</div>
+					<div className='Profile-container-row-lvl1'>
+						<div className='Profile-Avatar'>
+							<img src={data?.image_url} alt="alias' avatar" className='Profile-avatar-img'></img>
+						</div>
+						<div className='Profile-Pie-Charts'>
+							<Chart
+								chartType="PieChart"
+								data={gameData}
+								options={options}
+								width={"100%"}
+								height={"400"}
+							/>
+						</div>
+					</div>
+					<div>
+						<div className='Profile-game-info'>
+							<div><b>Level:</b> {FromEXPtoLvl(data?.exp)}</div>
+							<div><b>To next level:</b> {ToNextLevel(data?.exp)} EXP</div>
+						</div>
+						<h4>Achievements</h4>
+						<div className='Profile-achievement-container'>
+							{achievements.length > 0 && achievements.map((achievement:any) => {
+								return(
+									<OneAchievement achievement={achievement} />
+								);
+							})}
+						</div>
+						<h4>Match History</h4>
+						<div className='Match-container-otherProfile'>
+							{matchs.length > 0 && matchs.map((match:any) => {
+								return(
+										<OneMatch match={match} />
+								);
+							})}
+						</div>
+					</div>
 				</div>
-				<div className='Profile-container-row-lvl1'>
-					<div className='Profile-Avatar'>
-						<img src={data?.image_url} alt="alias' avatar" className='Profile-avatar-img'></img>
-					</div>
-					<div className='Profile-Pie-Charts'>
-						<Chart
-							chartType="PieChart"
-							data={gameData}
-							options={options}
-							width={"100%"}
-							height={"400"}
-						/>
-					</div>
-				</div>
-				<div>
-					<div className='Profile-game-info'>
-						<div><b>Level:</b> {FromEXPtoLvl(data?.exp)}</div>
-						<div><b>To next level:</b> {ToNextLevel(data?.exp)} EXP</div>
-					</div>
-					<h4>Achievements</h4>
-					<div className='Profile-achievement-container'>
-						{achievements?.data.map((achievement:any) => {
-							return(
-								<OneAchievement achievement={achievement} />
-							);
-						})}
-					</div>
-					<h4>Match History</h4>
-					<div className='Match-container-otherProfile'>
-						{matchs?.data.map((match:any) => {
-							return(
-								
-									<OneMatch match={match} />
-								
-							);
-						})}
-					</div>
-				</div>
-			</div>
-		</React.Fragment>
-	);
+			</React.Fragment>
+		);
+	}
+	else
+	{
+		return (
+			<NotFound />
+		);
+	}
 }

@@ -12,9 +12,9 @@ export class Achievement
 	})
 	id: number;
 
-	@ManyToOne(() => AchievementType, (achievementType) => achievementType.achievements)
+	@ManyToOne(() => AchievementType, (achievementType) => achievementType.achievements, { nullable: false })
 	achievementType: AchievementType;
 
-	@ManyToOne(() => User, (user) => user.achievements)
+	@ManyToOne(() => User, (user) => user.achievements, { nullable: false })
 	user: User;
 }

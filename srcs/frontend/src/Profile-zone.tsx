@@ -14,7 +14,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 
 import { PleaseConnect } from './adaptable-zone';
-import {FromEXPtoLvl, ToNextLevel} from './tools'
+import {FromEXPtoLvl, ToNextLevel, getAllPaginated} from './tools'
 
 type resultProps = {
 	email: string;
@@ -39,9 +39,8 @@ type achievementProps = {
 }
 
 export function OneAchievement(achievement: any){
-	const {achievementType, user} = achievement.achievement;
+	const {achievementType} = achievement.achievement;
 
-	console.log(achievementType);
 	if (achievementType.name === "I'm a sociable person"){
 		return(
 			<div className='Profile-achievement-container-div'>
@@ -82,9 +81,9 @@ export function OneAchievement(achievement: any){
 
 export function Profile(){
 	const [data, setResult] = useState<resultProps>();
-	const [invites, setInvites] = useState<invitesProps>();
+	const [invites, setInvites] = useState<invitesProps[]>([]);
 	const [stats, setStats] = useState<statsProps>();
-	const [achievements, setAchievements] = useState<achievementProps>();
+	const [achievements, setAchievements] = useState<achievementProps[]>([]);
 
 	useEffect(() => {
 		const api = async () => {
@@ -94,13 +93,9 @@ export function Profile(){
 			});
 			const jsonData = await data.json();
 			setResult(jsonData);
-			
-			const invites = await fetch("http://localhost:9999/api/users/me/friends/invites", {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonInvites = await invites.json();
-			setInvites(jsonInvites);
+
+			await getAllPaginated('users/me/friends/invites')
+			.then(data => setInvites(data));
 			
 			const stats = await fetch("http://localhost:9999/api/users/me/winrate", {
 				method: "GET",
@@ -109,13 +104,8 @@ export function Profile(){
 			const jsonStats = await stats.json();
 			setStats(jsonStats);
 
-			const achievements = await fetch("http://localhost:9999/api/users/me/achievements", {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonAchievement = await achievements.json();
-			setAchievements(jsonAchievement);
-			// console.log(jsonAchievement);//
+			await getAllPaginated('users/me/achievements')
+			.then(data => setAchievements(data));
 		};
 	
 		api();
@@ -162,7 +152,7 @@ export function Profile(){
 					</div>
 					<h4>Achievements</h4>
 					<div className='Profile-achievement-container'>
-						{achievements?.data.map((achievement:any) => {
+						{achievements.length > 0 && achievements.map((achievement:any) => {
 							return(
 								<OneAchievement achievement={achievement} />
 							);
@@ -170,7 +160,7 @@ export function Profile(){
 					</div>
 					<h4>Invitations received</h4>
 					<div>
-						{invites?.data.map((user: any) => {
+						{invites.length > 0 && invites.map((user: any) => {
 							var url: string = "/otherprofile";
 							url = url.concat("/");
 							url = url.concat(user.id);
@@ -203,9 +193,7 @@ export function Profile(){
 											{/* <IconButton color="error" aria-label="reject" onClick={handleClickReject(user.id)}> */}
 											<IconButton color="error" aria-label="reject" onClick={()=>{
 												let urltofetch : string;
-												urltofetch = 'http://localhost:9999/api/users/me/friends/invites/' + uid;
-												// console.log(urltofetch);//
-												const response = fetch(urltofetch, {
+												urltofetch = 'http://localhost:9999/api/users/me/friends/invites/' + uid;												const response = fetch(urltofetch, {
 													headers: {
 														'Accept': 'application/json',
 														'Content-Type': 'application/json'

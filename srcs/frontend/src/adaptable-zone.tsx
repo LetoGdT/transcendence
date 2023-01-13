@@ -59,7 +59,7 @@ export function PleaseConnect(){
 	);
 }
 
-export function SignOn(){
+export function SignUp(){
 	return(
 		<div className='Default'>
 			To register you need to apply to a 42 campus and valid the piscine. Good luck, have fun.

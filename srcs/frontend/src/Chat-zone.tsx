@@ -1,31 +1,15 @@
 import './App.css'
 import './Chat.css'
 import React, { useState, useEffect } from 'react';
-import TextField from '@mui/material/TextField';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 
-import Avatar from './link_botw_avatar.jpg';
-import Banniere from './link_botw_banniere.jpg';
+// import Avatar from './link_botw_avatar.jpg';
+// import Banniere from './link_botw_banniere.jpg';
 
 import { PleaseConnect } from './adaptable-zone';
-import { isPlainObject } from '@mui/utils';
-
-const MessageTextField = styled(TextField)({
-	'& input:valid + fieldset': {
-		borderColor: 'white',
-		borderWidth: 2,
-	},
-	'& input:invalid + fieldset': {
-		borderColor: 'red',
-		borderWidth: 2,
-	},
-	'& input:valid:focus + fieldset': {
-		borderLeftWidth: 6,
-		padding: '4px !important', // override inline-style
-	},
-});
+// import { isPlainObject } from '@mui/utils';
 
 const SendButton = styled(Button)({
 	boxShadow: 'none',
@@ -70,7 +54,7 @@ type meProps = {
 }
 
 function DisplayChannel(obj: any){
-	const {id, is_channel, date_of_last_message, name, new_message} = obj.obj;
+	// const {id, is_channel, date_of_last_message, name, new_message} = obj.obj;
 
 	if (obj.new_message === true){
 		return(
@@ -88,7 +72,7 @@ function DisplayChannel(obj: any){
 }
 
 function DisplayMessage(obj: any){
-	const {sender_uid, content, time_sent} = obj.obj;	
+	// const {sender_uid, content, time_sent} = obj.obj;
 	const [me, setMe] = useState<meProps>();
 	const [other, setOther] = useState<meProps>();
 
@@ -113,7 +97,7 @@ function DisplayMessage(obj: any){
 		};
 	
 		api();
-	}, []);
+	});
 
 	if (obj.sender_uid === me?.id){
 		return(
