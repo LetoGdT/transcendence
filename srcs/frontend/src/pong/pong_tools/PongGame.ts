@@ -82,21 +82,17 @@ class PongGame
  
     async collide(opponent: Player)
     {
-	    console.log("C"); // del 2 6 10 14 18 22
         // await this.sleep(5000); // del
         // The player misses the ball
         if (this.ball.y < opponent.y || this.ball.y > opponent.y + PLAYER_HEIGHT)
         {
-	        console.log("D"); // del 3 7 11 15 19 23
             // The player who scores gets 1 point
             if (opponent == this.player1)
 	        {
-                console.log("E"); // del 8 12 16 20 24
                 this.scorePlayer2++;
 			}
             else
 			{
-                console.log("F"); // del 4
                 this.scorePlayer1++;
 			}
             // End of the game when one player has 5 points
@@ -106,16 +102,12 @@ class PongGame
             // console.log(this.over); // del	
             if (this.scorePlayer1 === 5 || this.scorePlayer2 === 5)
             {
-                console.log("G"); // del 25
                 this.over = true
                 console.log(this.over); // del 26
                 // gameOver(); // TODO
                 return;
             }
             // Set ball and players to the center
-            console.log("I"); // del 25
-			console.log(this.width); // del
-			console.log(this.height); // del
             this.ball.x = this.width / 2;
             this.ball.y = this.height / 2;
             this.player1.y = this.height / 2 - PLAYER_HEIGHT / 2;
@@ -128,13 +120,20 @@ class PongGame
 		// The player hits the ball
         else
         {
-            console.log("H"); // del
             // Increase speed and change direction
             this.ball.x += 1;
 			this.ball.speedX *= -1.2;
-            // this.changeDirection(opponent.y); // TODO needs to be implemented from js
+            this.changeDirection(opponent.y); // TODO needs to be implemented from js
         }
     }
+
+	changeDirection(playerPosition: number)
+	{
+		let impact = this.ball.y - playerPosition - PLAYER_HEIGHT / 2;
+		let ratio = 100 / (PLAYER_HEIGHT / 2);
+		// Get a value between 0 and 10
+		this.ball.speedY = Math.round(impact * ratio / 10);
+	}
 
 	/**
 	 * Fonction appelée toutes les 20ms (50 Hz / 50 fois par seconde)
