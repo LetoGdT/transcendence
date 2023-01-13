@@ -5,7 +5,8 @@ import './Menu.css';
 import { OurHeader } from './Header-zone';
 import { OurMenu } from './Menu-zone';
 import { Home, NotFound } from './adaptable-zone';
-import { Play, SpecAMatch} from './adaptable-zone';
+import { PlayZone } from './Play';
+import { SpecZone } from './Spec';
 import { ChatZone } from './Chat-zone';
 import { FriendsZone } from './Friend-zone';
 import { MatchHistoryZone } from './MatchHistory-zone';
@@ -34,9 +35,9 @@ function App() {
 						<Route path="/friends" element={<FriendsZone/>} />
 						<Route path="/" element={<Home />} />
 						<Route path="/matchhistory" element={<MatchHistoryZone/>} />
-						<Route path="/play" element={<Play/>} />
+						<Route path="/play" element={<PlayZone/>} />
 						<Route path="/settings" element={<SettingsZone/>} />
-						<Route path="/specamatch" element={<SpecAMatch/>} />
+						<Route path="/specamatch" element={<SpecZone/>} />
 						<Route path="/otherprofile/">
 							<Route path=':uid' element={<OtherProfile />} />
 						</Route>

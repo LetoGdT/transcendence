@@ -25,22 +25,6 @@ export function NotFound(){
 	);
 }
 
-export function Play(){
-	return(
-		<div>
-			Play
-		</div>
-	);
-}
-
-export function SpecAMatch(){
-	return(
-		<div>
-			SpecAMatch
-		</div>
-	);
-}
-
 export function PleaseConnect(){
 	return(
 		<div className='Default'>
