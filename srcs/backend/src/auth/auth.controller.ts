@@ -83,11 +83,11 @@ export class AuthController
 	@Get('/logout')
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
-	logout(@Res({ passthrough: true }) res: Response,
+	async logout(@Res({ passthrough: true }) res: Response,
 			@Req() req: RequestWithUser)
 	{
 		req.user.refresh_expires = Date();
-		this.usersService.updateOne(req.user.id, req.user);
+		await this.usersService.updateOne(req.user);
 		res.clearCookie('access_token',
 			{
 				httpOnly: true,
