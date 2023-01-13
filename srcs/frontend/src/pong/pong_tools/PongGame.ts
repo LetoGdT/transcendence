@@ -21,6 +21,8 @@ class PongGame
     private ball: Ball;
     private keyStates: any;
     private movePlayer: boolean = false;
+	private ctx: any = CanvasRenderingContext2D;
+	private timer: number; // del ?
 
 
 	constructor(width: number, height: number)
@@ -33,129 +35,341 @@ class PongGame
 		this.scorePlayer2 = 0;
         this.ball = new Ball(width / 2, height / 2);
         this.keyStates = [];
+		this.timer = 225;
     }
 
-	/**
-	 * Appelée quand le navigateur a besoin de rafraichir le canvas
-	 * @param ctx Le context de rendu de canvas
-	 */
+	async startScreen()
+	{
+		return await new Promise(async (resolve, reject) => {
 
-	sleep(ms: number)
+			console.log(this.start);
+			
+			if (this.start === true)
+			{
+				this.ctx.fillStyle = 'black';
+				this.ctx.fillRect(0, 0, this.width, this.height);
+				
+				this.drawNet(this.ctx)
+				this.player1.draw(this.ctx);
+				this.player2.draw(this.ctx);
+				this.drawScore(this.ctx);
+	
+				// Display set = start game
+				this.ctx.lineWidth = 27;
+				this.ctx.strokeStyle = 'white';
+				this.ctx.fillStyle='white';
+				// Draw 3
+				this.ctx.fillRect(445, 225, 150, 27);
+				this.ctx.fillRect(568, 252, 27, 200);
+				this.ctx.fillRect(495, 325, 85, 27);
+				this.ctx.fillRect(445, 425, 150, 27);
+				console.log("A") // del
+				await this.sleep(SECOND);
+				console.log("B") // del
+				// Erase 3
+				this.ctx.fillStyle='black';
+				this.ctx.fillRect(445, 225, 150, 27);
+				this.ctx.fillRect(568, 252, 27, 200);
+				this.ctx.fillRect(495, 325, 85, 27);
+				this.ctx.fillRect(445, 425, 150, 27);
+				this.drawNet(this.ctx);
+				// Draw 2
+				this.ctx.fillStyle='white';
+				this.ctx.fillRect(445, 225, 150, 27);
+				this.ctx.fillRect(568, 252, 27, 100);
+				this.ctx.fillRect(445, 325, 150, 27);
+				this.ctx.fillRect(445, 325, 27, 100);
+				this.ctx.fillRect(445, 425, 150, 27);
+				await this.sleep(SECOND);
+				// Erase 2
+				this.ctx.fillStyle='black';
+				this.ctx.fillRect(445, 225, 150, 27);
+				this.ctx.fillRect(568, 252, 27, 100);
+				this.ctx.fillRect(445, 325, 150, 27);
+				this.ctx.fillRect(445, 325, 27, 100);
+				this.ctx.fillRect(445, 425, 150, 27);
+				this.ctx.lineWidth = 5;
+				this.ctx.strokeStyle = 'white';
+				this.ctx.beginPath();
+				this.ctx.setLineDash([5, 15]); // dotted line for the net
+				this.ctx.moveTo(this.width / 2, 0);
+				this.ctx.lineTo(this.width / 2, this.height);
+				this.ctx.stroke();
+				this.ctx.setLineDash([]); // sets the line back to solid
+				// Draw 1
+				this.ctx.fillStyle='white';
+				this.ctx.fillRect(480, 225, 27, 27);
+				this.ctx.fillRect(507, 225, 27, 200);
+				await this.sleep(SECOND);
+				// Erase 1
+				this.ctx.fillStyle='black';
+				this.ctx.fillRect(480, 225, 27, 27);
+				this.ctx.fillRect(507, 225, 27, 200);
+				this.ctx.lineWidth = 5;
+				this.ctx.strokeStyle = 'white';
+				this.ctx.beginPath();
+				this.ctx.setLineDash([5, 15]); // dotted line for the net
+				this.ctx.moveTo(this.width / 2, 0);
+				this.ctx.lineTo(this.width / 2, this.height);
+				this.ctx.stroke();
+				this.ctx.setLineDash([]); // sets the line back to solid
+				console.log("D") // del
+				// Erase 3
+				// await sleep(0); // del ?
+				console.log("B") // del
+			}
+			console.log("tt");
+			this.start = false;
+			resolve(null);
+			// await this.sleep(TIMER);
+		});
+	}
+
+	async sleep(ms: number)
 	{
 		return new Promise( resolve => setTimeout(resolve, ms) );
 	}
 
+	/**
+	 * Called when the browser need to refresh the canvas
+	 * @param ctx the rendering context of the canvas
+	 */
 	async render(ctx: CanvasRenderingContext2D)
 	{
+		this.ctx = ctx;
         // Clear the screen
-		ctx.fillStyle = 'black';
-		ctx.fillRect(0, 0, this.width, this.height);
-
-		if (this.start === true)
-		{
-			this.startScreen(ctx);
-			this.start = false;
-		}
 		
-		await this.sleep(TIMER);
+		// console.log("render");
 
-		if (this.over === false)
-        {
-			this.drawNet(ctx)
-			this.player1.draw(ctx);
- 	 	    this.player2.draw(ctx);
-	    	this.ball.draw(ctx);
-			this.drawScore(ctx);
-		}
-		else if (this.over === true)
-		{
-			this.drawNet(ctx)
-            this.ball.x = this.width / 2;
-            this.ball.y = this.height / 2;
-			this.player1.draw(ctx);
- 	 	    this.player2.draw(ctx);
-			this.drawScore(ctx);
-		}
-	}
+		// if (this.start === true)
+		// {
+		// 	this.ctx.fillStyle = 'black';
+		// 	this.ctx.fillRect(0, 0, this.width, this.height);
+			
+		// 	this.drawNet(this.ctx)
+		// 	this.player1.draw(this.ctx);
+		// 	this.player2.draw(this.ctx);
+		// 	this.drawScore(this.ctx);
 
-	async startScreen(ctx: CanvasRenderingContext2D)
-	{
-		this.drawNet(ctx)
-		this.player1.draw(ctx);
-		this.player2.draw(ctx);
-		this.drawScore(ctx);
+			
+		// 	// Display set = start game
+		// 	this.ctx.lineWidth = 27;
+		// 	this.ctx.strokeStyle = 'white';
+		// 	this.ctx.fillStyle='white';
+		// 	// Draw 3
+		// 	this.ctx.fillRect(445, 225, 150, 27);
+		// 	this.ctx.fillRect(568, 252, 27, 200);
+		// 	this.ctx.fillRect(495, 325, 85, 27);
+		// 	this.ctx.fillRect(445, 425, 150, 27);
+		// 	console.log("A") // del
+		// 	await this.sleep(SECOND);
+		// 	console.log("B") // del
+		// 	// Erase 3
+		// 	this.ctx.fillStyle='black';
+		// 	this.ctx.fillRect(445, 225, 150, 27);
+		// 	this.ctx.fillRect(568, 252, 27, 200);
+		// 	this.ctx.fillRect(495, 325, 85, 27);
+		// 	this.ctx.fillRect(445, 425, 150, 27);
+		// 	this.drawNet(this.ctx);
+		// 	// Draw 2
+		// 	this.ctx.fillStyle='white';
+		// 	this.ctx.fillRect(445, 225, 150, 27);
+		// 	this.ctx.fillRect(568, 252, 27, 100);
+		// 	this.ctx.fillRect(445, 325, 150, 27);
+		// 	this.ctx.fillRect(445, 325, 27, 100);
+		// 	this.ctx.fillRect(445, 425, 150, 27);
+		// 	await this.sleep(SECOND);
+		// 	// Erase 2
+		// 	this.ctx.fillStyle='black';
+		// 	this.ctx.fillRect(445, 225, 150, 27);
+		// 	this.ctx.fillRect(568, 252, 27, 100);
+		// 	this.ctx.fillRect(445, 325, 150, 27);
+		// 	this.ctx.fillRect(445, 325, 27, 100);
+		// 	this.ctx.fillRect(445, 425, 150, 27);
+		// 	this.ctx.lineWidth = 5;
+		// 	this.ctx.strokeStyle = 'white';
+		// 	this.ctx.beginPath();
+		// 	this.ctx.setLineDash([5, 15]); // dotted line for the net
+		// 	this.ctx.moveTo(this.width / 2, 0);
+		// 	this.ctx.lineTo(this.width / 2, this.height);
+		// 	this.ctx.stroke();
+		// 	this.ctx.setLineDash([]); // sets the line back to solid
+		// 	// Draw 1
+		// 	this.ctx.fillStyle='white';
+		// 	this.ctx.fillRect(480, 225, 27, 27);
+		// 	this.ctx.fillRect(507, 225, 27, 200);
+		// 	await this.sleep(SECOND);
+		// 	// Erase 1
+		// 	this.ctx.fillStyle='black';
+		// 	this.ctx.fillRect(480, 225, 27, 27);
+		// 	this.ctx.fillRect(507, 225, 27, 200);
+		// 	this.ctx.lineWidth = 5;
+		// 	this.ctx.strokeStyle = 'white';
+		// 	this.ctx.beginPath();
+		// 	this.ctx.setLineDash([5, 15]); // dotted line for the net
+		// 	this.ctx.moveTo(this.width / 2, 0);
+		// 	this.ctx.lineTo(this.width / 2, this.height);
+		// 	this.ctx.stroke();
+		// 	this.ctx.setLineDash([]); // sets the line back to solid
+		// 	console.log("D") // del
+		// 	// Erase 3
+		// 	// await sleep(0); // del ?
+		// 	console.log("B") // del
+		// 	// this.start = false; // del ?
+		// 	await this.sleep(TIMER); // del
+		// }
 		
-		// Display set = start game
-		ctx.lineWidth = 27;
-		ctx.strokeStyle = 'white';
-		// Draw 3
-		ctx.fillStyle='white';
-		ctx.fillRect(445, 225, 150, 27);
-		ctx.fillRect(568, 252, 27, 200);
-		ctx.fillRect(495, 325, 85, 27);
-		ctx.fillRect(445, 425, 150, 27);
-		console.log("A") // del
-		await sleep(SECOND);
-		console.log("B") // del
-		// Erase 3
-		ctx.fillStyle='black';
-		ctx.fillRect(445, 225, 150, 27);
-		ctx.fillRect(568, 252, 27, 200);
-		ctx.fillRect(495, 325, 85, 27);
-		ctx.fillRect(445, 425, 150, 27);
-		ctx.lineWidth = 5;
-		ctx.strokeStyle = 'white';
-		ctx.beginPath();
-		ctx.setLineDash([5, 15]); // dotted line for the net
-		ctx.moveTo(this.width / 2, 0);
-		ctx.lineTo(this.width / 2, this.height);
-		ctx.stroke();
-		ctx.setLineDash([]); // sets the line back to solid
-		// Draw 2
-		ctx.fillStyle='white';
-		ctx.fillRect(445, 225, 150, 27);
-		ctx.fillRect(568, 252, 27, 100);
-		ctx.fillRect(445, 325, 150, 27);
-		ctx.fillRect(445, 325, 27, 100);
-		ctx.fillRect(445, 425, 150, 27);
-		await sleep(SECOND);
-		// Erase 2
-		ctx.fillStyle='black';
-		ctx.fillRect(445, 225, 150, 27);
-		ctx.fillRect(568, 252, 27, 100);
-		ctx.fillRect(445, 325, 150, 27);
-		ctx.fillRect(445, 325, 27, 100);
-		ctx.fillRect(445, 425, 150, 27);
-		ctx.lineWidth = 5;
-		ctx.strokeStyle = 'white';
-		ctx.beginPath();
-		ctx.setLineDash([5, 15]); // dotted line for the net
-		ctx.moveTo(this.width / 2, 0);
-		ctx.lineTo(this.width / 2, this.height);
-		ctx.stroke();
-		ctx.setLineDash([]); // sets the line back to solid
-		// Draw 1
-		ctx.fillStyle='white';
-		ctx.fillRect(480, 225, 27, 27);
-		ctx.fillRect(507, 225, 27, 200);
-		await sleep(SECOND);
-		// Erase 1
-		ctx.fillStyle='black';
-		ctx.fillRect(480, 225, 27, 27);
-		ctx.fillRect(507, 225, 27, 200);
-		ctx.lineWidth = 5;
-		ctx.strokeStyle = 'white';
-		ctx.beginPath();
-		ctx.setLineDash([5, 15]); // dotted line for the net
-		ctx.moveTo(this.width / 2, 0);
-		ctx.lineTo(this.width / 2, this.height);
-		ctx.stroke();
-		ctx.setLineDash([]); // sets the line back to solid
-		console.log("D") // del
-		// Erase 3
-		await sleep(0);
-		console.log("B") // del
-	}
+		if (this.start === false)
+		{
+			ctx.fillStyle = 'black';
+			ctx.fillRect(0, 0, this.width, this.height);
+			console.log("X"); // del
+			
+			if (this.over === false)
+			{
+				this.drawNet(ctx)
+				this.player1.draw(ctx);
+				this.player2.draw(ctx);
+				this.ball.draw(ctx);
+				this.drawScore(ctx);
+			}
+			else if (this.over === true)
+			{
+				this.drawNet(ctx)
+				this.ball.x = this.width / 2;
+				this.ball.y = this.height / 2;
+				this.player1.draw(ctx);
+				this.player2.draw(ctx);
+				this.drawScore(ctx);
+				if (this.scorePlayer1 === 5)
+				{
+					// Draw 'VICTORY'
+					ctx.strokeStyle = 'white';
+					ctx.lineWidth = 20;
+					// Draw 'V'
+					ctx.beginPath();
+					ctx.moveTo(145, 270);
+					ctx.lineTo(195, 390);
+					ctx.lineTo(245, 270);
+					ctx.stroke();
+					// Draw 'I'
+					ctx.beginPath();
+					ctx.moveTo(290, 265);
+					ctx.lineTo(290, 415);
+					ctx.stroke();
+					// Draw 'C'
+					ctx.beginPath();
+					ctx.moveTo(415, 275);
+					ctx.lineTo(340, 275);
+					ctx.lineTo(340, 405);
+					ctx.lineTo(415, 405);
+					ctx.stroke();
+					// Draw 'T'
+					ctx.beginPath();
+					ctx.moveTo(445, 275);
+					ctx.lineTo(540, 275);
+					ctx.stroke();
+					ctx.moveTo(492, 275);
+					ctx.lineTo(492, 415);
+					ctx.stroke();
+					// Draw 'O'
+					ctx.beginPath();
+					ctx.moveTo(580, 275);
+					ctx.lineTo(655, 275);
+					ctx.lineTo(655, 405);
+					ctx.lineTo(580, 405);
+					ctx.lineTo(580, 265);
+					ctx.stroke();
+					// Draw 'R'
+					ctx.beginPath();
+					ctx.moveTo(705, 265);
+					ctx.lineTo(705, 415);
+					ctx.stroke();
+					ctx.moveTo(705, 275);
+					ctx.lineTo(780, 275);
+					ctx.lineTo(780, 340);
+					ctx.lineTo(720, 340);
+					ctx.lineTo(780, 410);
+					ctx.stroke();
+					// Draw 'Y'
+					ctx.beginPath();
+					ctx.moveTo(830, 272);
+					ctx.lineTo(877, 335);
+					ctx.stroke();
+					ctx.beginPath();
+					ctx.moveTo(915, 272);
+					ctx.lineTo(830, 415);
+					ctx.stroke();
+				}
+				else if (this.scorePlayer2 === 5)
+				{
+					// Draw 'DEFEAT'
+					ctx.strokeStyle = 'white';
+					ctx.lineWidth = 20;
+					// Draw 'D'
+					ctx.beginPath();
+					ctx.moveTo(145, 275);
+					ctx.lineTo(220, 290);
+					ctx.lineTo(220, 390);
+					ctx.lineTo(145, 405);
+					ctx.lineTo(145, 275);
+					ctx.lineTo(220, 290);
+					ctx.stroke();
+					// Draw 'E'
+					ctx.beginPath();
+					ctx.moveTo(365, 275);
+					ctx.lineTo(290, 275);
+					ctx.lineTo(290, 405);
+					ctx.lineTo(365, 405);
+					ctx.stroke();
+					ctx.beginPath();
+					ctx.moveTo(290, 340);
+					ctx.lineTo(330, 340);
+					ctx.stroke();
+					// Draw 'F'
+					ctx.beginPath();
+					ctx.moveTo(425, 415);
+					ctx.lineTo(425, 275);
+					ctx.lineTo(500, 275);
+					ctx.stroke();
+					ctx.beginPath();
+					ctx.moveTo(425, 320);
+					ctx.lineTo(465, 320);
+					ctx.stroke();
+					// Draw 'E'
+					ctx.beginPath();
+					ctx.moveTo(635, 275);
+					ctx.lineTo(560, 275);
+					ctx.lineTo(560, 405);
+					ctx.lineTo(635, 405);
+					ctx.stroke();
+					ctx.beginPath();
+					ctx.moveTo(560, 340);
+					ctx.lineTo(600, 340);
+					ctx.stroke();
+					// Draw 'A'
+					ctx.beginPath();
+					ctx.moveTo(695, 415);
+					ctx.lineTo(695, 275);
+					ctx.lineTo(770, 275);
+					ctx.lineTo(770, 415);
+					ctx.stroke();
+					ctx.beginPath();
+					ctx.moveTo(695, 330);
+					ctx.lineTo(770, 330);
+					ctx.stroke();
+					// Draw 'T'
+					ctx.beginPath();
+					ctx.moveTo(830, 275);
+					ctx.lineTo(925, 275);
+					ctx.stroke();
+					ctx.moveTo(877, 275);
+					ctx.lineTo(877, 415);
+					ctx.stroke();
+				}
+			}
+		}
+	}	
 
 	drawNet(ctx: CanvasRenderingContext2D)
 	{
@@ -426,12 +640,10 @@ class PongGame
 		this.ball.speedY = Math.round(impact * ratio / 10);
 	}
 
-	/**
-	 * Fonction appelée toutes les 20ms (50 Hz / 50 fois par seconde)
-	 */
+	// Function called every 20ms (50 Hz / 50 times per second)
 	update()
 	{
-        if (this.keyStates[PLAYER1_UP_KEY])
+		if (this.keyStates[PLAYER1_UP_KEY])
 		{
             this.player1.y -= 7;
             if (this.player1.y < 0)
