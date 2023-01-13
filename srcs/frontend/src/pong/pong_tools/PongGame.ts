@@ -109,18 +109,21 @@ class PongGame
                 console.log("G"); // del 25
                 this.over = true
                 console.log(this.over); // del 26
-                gameOver();
+                // gameOver(); // TODO
                 return;
             }
             // Set ball and players to the center
+            console.log("I"); // del 25
+			console.log(this.width); // del
+			console.log(this.height); // del
             this.ball.x = this.width / 2;
             this.ball.y = this.height / 2;
             this.player1.y = this.height / 2 - PLAYER_HEIGHT / 2;
             this.player2.y = this.height / 2 - PLAYER_HEIGHT / 2;
 
             // Reset speed
-            this.ball.x = BALL_SPEED;
-            this.ball.y = BALL_SPEED;
+            this.ball.speedX = BALL_SPEED;
+            this.ball.speedY = BALL_SPEED;
         }
 		// The player hits the ball
         else
