@@ -49,8 +49,14 @@ class PongGame
         // this.score2.draw(ctx);
 	}
 
-    updatePhysics()
+	sleep(ms: number)
 	{
+		return new Promise( resolve => setTimeout(resolve, ms) );
+	}
+
+    async updatePhysics()
+	{
+        // await this.sleep(1000); // del
         // Rebounds on top and bottom
         if (this.ball.y > this.height || this.ball.y < 0)
         {
@@ -73,10 +79,11 @@ class PongGame
         this.ball.x += this.ball.speedX;
         this.ball.y += this.ball.speedY;
     }
-
-    collide(opponent: Player)
+ 
+    async collide(opponent: Player)
     {
 	    console.log("C"); // del 2 6 10 14 18 22
+        // await this.sleep(5000); // del
         // The player misses the ball
         if (this.ball.y < opponent.y || this.ball.y > opponent.y + PLAYER_HEIGHT)
         {
@@ -115,12 +122,14 @@ class PongGame
             this.ball.x = BALL_SPEED;
             this.ball.y = BALL_SPEED;
         }
+		// The player hits the ball
         else
         {
-            console.log("G"); // del
+            console.log("H"); // del
             // Increase speed and change direction
-            this.ball.x *= -1.2;
-            changeDirection(opponent.y);
+            this.ball.x += 1;
+			this.ball.speedX *= -1.2;
+            // this.changeDirection(opponent.y); // TODO needs to be implemented from js
         }
     }
 
