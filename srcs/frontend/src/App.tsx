@@ -17,6 +17,7 @@ import { AuthWith2FA } from './authWith2fa';
 import { Activate2FA } from './activate2fa';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 import { socket, websocketContext } from './WebsocketContext'
+import { useState, useEffect } from 'react';
 
 function App() {
 	const router = 
