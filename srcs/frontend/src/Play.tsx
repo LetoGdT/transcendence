@@ -1,4 +1,5 @@
 import React from "react";
+import { PleaseConnect } from "./adaptable-zone";
 
 function Play(){
 	return(
@@ -13,9 +14,9 @@ type meProps = {
 };
 
 export function PlayZone(){
-	const [me, setMe] = useState<meProps>();
+	const [me, setMe] = React.useState<meProps>();
 
-	useEffect(() => {
+	React.useEffect(() => {
 		const api = async () => {
 			const data = await fetch("http://localhost:9999/api/users/isconnected", {
 				method: "GET",
