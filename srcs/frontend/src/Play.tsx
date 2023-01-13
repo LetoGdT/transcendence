@@ -49,7 +49,7 @@ const UnicornModeButton = styled(Button)({
 	width: '400px',
 	height: '126px',
 	textTransform: 'none',
-	fontSize: 20,
+	fontSize: 25gi,
 	padding: '6px 12px',
 	border: '1px solid',
 	lineHeight: 1.5,
@@ -57,7 +57,8 @@ const UnicornModeButton = styled(Button)({
 	borderColor: '#646464',
 	color: '#34ebe5',
 	fontFamily: [
-		'"Comic Sans"'
+		'Chilanka',
+      	'cursive',
 	].join(','),
 	'&:hover': {
 		backgroundColor: '#9542f5',
