@@ -49,7 +49,7 @@ const UnicornModeButton = styled(Button)({
 	width: '400px',
 	height: '126px',
 	textTransform: 'none',
-	fontSize: 25,
+	fontSize: 27,
 	padding: '6px 12px',
 	border: '1px solid',
 	lineHeight: 1.5,
