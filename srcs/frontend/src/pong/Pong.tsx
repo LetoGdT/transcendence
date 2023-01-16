@@ -66,7 +66,7 @@ function useGame()
 	return ref.current;
 }
 
-// async function startTimer()
+// async function startTimer() // del ?
 // {
 // 		await sleep(4500); 
 // }
@@ -84,7 +84,7 @@ const PongGameBootstrap = () =>
 			console.log("timer ended");
 			timer = setInterval(() => game.update(), 20);
 		})
-		// startTimer();
+		// startTimer(); // del ?
 
 		return () => clearInterval(timer);
 	}, []);

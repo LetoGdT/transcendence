@@ -40,9 +40,10 @@ class PongGame
 
 	async startScreen()
 	{
-		return await new Promise(async (resolve, reject) => {
+		return await new Promise(async (resolve, reject) =>
+		{
 
-			console.log(this.start);
+			console.log(this.start); // del
 			
 			if (this.start === true)
 			{
@@ -118,7 +119,7 @@ class PongGame
 				// await sleep(0); // del ?
 				console.log("B") // del
 			}
-			console.log("tt");
+			console.log("tt"); // del
 			this.start = false;
 			resolve(null);
 			// await this.sleep(TIMER);
