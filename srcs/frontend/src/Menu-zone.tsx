@@ -1,4 +1,4 @@
-import './App.css'
+// import './App.css'
 import './Menu.css'
 
 import * as React from 'react';
@@ -94,6 +94,9 @@ export function OurMenu() {
 			anchorEl={anchorElPong}
 			open={openPong}
 			onClose={handleClosePong}
+			sx={{
+				color:"black"
+			}}
 			MenuListProps={{
 			'aria-labelledby': 'basic-button',
 			}}

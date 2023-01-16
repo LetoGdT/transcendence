@@ -1,6 +1,5 @@
 import React from 'react';
 import './App.css';
-import './Menu.css';
 
 import { OurHeader } from './Header-zone';
 import { OurMenu } from './Menu-zone';
