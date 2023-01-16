@@ -1,4 +1,5 @@
 TODO :
+sockets : creer rooms avec socket et broadcast room qd spec
 faire croquis pages web Lucille
 Understand what a react component is
 read useEffect doc
