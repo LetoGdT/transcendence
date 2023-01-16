@@ -20,6 +20,11 @@ import PongGame from './pong_tools/PongGame';
 const GAME_WIDTH = 1040; // TODO needs to be responsive
 const GAME_HEIGHT = 680; // TODO needs to be responsive
 
+// async function sleep(ms: number)
+// {
+// 	return new Promise( resolve => setTimeout(resolve, ms) );
+// }
+
 const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 {
 	const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -61,6 +66,11 @@ function useGame()
 	return ref.current;
 }
 
+// async function startTimer()
+// {
+// 		await sleep(4500); 
+// }
+
 const PongGameBootstrap = () =>
 {
 	const game = useGame();
@@ -68,7 +78,13 @@ const PongGameBootstrap = () =>
 	
 	React.useEffect(() =>
 	{
-		const timer = setInterval(() => game.update(), 20);
+		let timer: any;
+		game.startScreen()
+		.then(() => {
+			console.log("timer ended");
+			timer = setInterval(() => game.update(), 20);
+		})
+		// startTimer();
 
 		return () => clearInterval(timer);
 	}, []);
