@@ -10,9 +10,6 @@ import { useState, useEffect } from "react";
 import { NotFound } from './adaptable-zone';
 import { FromEXPtoLvl, getAllPaginated, ToNextLevel } from './tools';
 import { OneAchievement } from './Profile-zone';
-// import { faSwords } from '@fortawesome/free-solid-svg-icons/faSwords';
-// import { IconButton } from '@mui/material';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 type resultProps = {
 	email: string;
@@ -532,16 +529,7 @@ export function OtherProfile(){
 						<div className='Profile-Alias-div'>{data?.username}</div>
 						<div className='Profile-Alias-div'>{AddOrRemoveButton(uid)}</div>
 						<div className='Profile-Alias-div'>{BlockOrUnblockButton(uid)}</div>
-						<div className='Profile-Alias-div'><DuelButton variant="contained" disableRipple>Ask for a game</DuelButton></div>deux épées qui se croisent
-						{/* <div className='Profile-Alias-div'>
-							<IconButton
-							sx={{fontSize:"2rem"}}
-							size="large"
-							// onClick={handleClicksee}
-							>
-								<FontAwesomeIcon icon={faSwords} />
-							</IconButton>
-						</div> */}
+						<div className='Profile-Alias-div'><DuelButton variant="contained" disableRipple>Ask for a game</DuelButton></div>
 						{/*button pour spec*/}
 					</div>
 					<div className='Profile-container-row-lvl1'>
