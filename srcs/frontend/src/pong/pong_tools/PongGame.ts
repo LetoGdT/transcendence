@@ -44,6 +44,33 @@ class PongGame
 		this.currentTicks = 0;
     }
 
+	drawStatusScreen(ctx: CanvasRenderingContext2D, label: string) {
+		const r = this.currentTicks * 10 / TICKRATE;
+
+		const w = Math.sin(Date.now() * 0.005) * 10 + 30;
+
+		ctx.strokeStyle = 'white';
+		ctx.lineWidth = 4;
+		ctx.beginPath();
+		ctx.arc(this.width / 2, this.height / 2, w, r, r + Math.PI / 2);
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.arc(this.width / 2, this.height / 2, w, r + Math.PI, r + Math.PI * 1.5);
+		ctx.stroke();
+
+		const w2 = Math.sin(1 + Date.now() * 0.005) * 10 + 30;
+
+		ctx.beginPath();
+		ctx.arc(this.width / 2, this.height / 2, w2, 0, Math.PI * 2);
+		ctx.stroke();
+
+		ctx.fillStyle = 'white';
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'bottom';
+		ctx.font = '18px sans-serif';
+		ctx.fillText(label, this.width / 2, this.height / 2 + 70);
+	}
+
 	/**
 	 * Called when the browser need to refresh the canvas
 	 * @param ctx the rendering context of the canvas
@@ -54,22 +81,7 @@ class PongGame
 		ctx.fillStyle = 'black';
 		ctx.fillRect(0, 0, this.width, this.height);
 
-		const r = this.currentTicks * 10 / TICKRATE;
-
-		ctx.strokeStyle = 'white';
-		ctx.lineWidth = 4;
-		ctx.beginPath();
-		ctx.arc(this.width / 2, this.height / 2, 30, r, r + Math.PI / 2);
-		ctx.stroke();
-		ctx.beginPath();
-		ctx.arc(this.width / 2, this.height / 2, 30, r + Math.PI, r + Math.PI * 1.5);
-		ctx.stroke();
-
-		ctx.fillStyle = 'white';
-		ctx.textAlign = 'center';
-		ctx.textBaseline = 'bottom';
-		ctx.font = '18px sans-serif';
-		ctx.fillText('Connecting...', this.width / 2, this.height / 2 + 60);
+		this.drawStatusScreen(ctx, 'Finding a game...');
 
 		return ;
 		
