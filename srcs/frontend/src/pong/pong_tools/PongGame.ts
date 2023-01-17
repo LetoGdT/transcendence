@@ -1,5 +1,6 @@
 import Ball, { BALL_SPEED } from "./Ball";
 import Player, { PLAYER_WIDTH, PLAYER_HEIGHT } from "./Player";
+import { io, Socket } from 'socket.io-client';
 
 const PLAYER1_DOWN_KEY = 'KeyS';
 const PLAYER1_UP_KEY = 'KeyW';
@@ -24,6 +25,8 @@ class PongGame
     private keyStates: any;
     private movePlayer: boolean = false;
 	private timer: number; // del ?
+	private connecting: boolean = true;
+	private socket: Socket;
 
 	private startTimer: number;
 	private currentTicks: number;
@@ -42,6 +45,11 @@ class PongGame
 
 		this.startTimer = 0;
 		this.currentTicks = 0;
+
+		this.socket = io('http://localhost:1234', { transports: [ 'websocket' ] });
+		this.socket.on('connect', () => {
+			this.connecting = false;
+		});
     }
 
 	drawStatusScreen(ctx: CanvasRenderingContext2D, label: string) {
@@ -81,9 +89,11 @@ class PongGame
 		ctx.fillStyle = 'black';
 		ctx.fillRect(0, 0, this.width, this.height);
 
-		this.drawStatusScreen(ctx, 'Finding a game...');
-
-		return ;
+		if (this.connecting)
+		{
+			this.drawStatusScreen(ctx, 'Connecting...');
+			return ;
+		}
 		
 		this.drawNet(ctx)
 		this.player1.draw(ctx);
