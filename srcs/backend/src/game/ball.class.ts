@@ -1,6 +1,5 @@
 import { Object2D, Window, Vector2D } from '../interfaces/object2D.interface';
 import { Paddle } from './paddle.class';
-import { performance } from "perf_hooks";
 
 export class Ball implements Object2D
 {
@@ -28,8 +27,6 @@ export class Ball implements Object2D
 	private paddle2: Paddle;
 
 	private latest_time: number = performance.now();
-
-	private factor: number = 1;
 
 	constructor(paddle1: Paddle, paddle2: Paddle,
 		window: Window = {
@@ -98,15 +95,11 @@ export class Ball implements Object2D
 	{
 		const current_time = performance.now();
 		let deltaTime = (current_time - this.latest_time) * (60 / 1000);
-		this.latest_time = current_time;
 		for (; deltaTime >= 0; deltaTime--)
 		{
-			if (deltaTime > 0)
-				this.factor = deltaTime;
 			let new_coordinates: Vector2D = this.coordinates;
 			new_coordinates.x += this.direction.x * this.speed;
 		}
-
-		this.factor = 1;
+		this.latest_time = current_time - deltaTime;
 	}
 }

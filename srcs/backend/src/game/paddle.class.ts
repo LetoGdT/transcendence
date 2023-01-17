@@ -20,6 +20,8 @@ export class Paddle implements Object2D
 	readonly top: number;
 	readonly bottom: number;
 
+	private latest_time: number = performance.now();
+
 	constructor(window: Window = {
 			width: 1040,
 			height: 680
@@ -50,17 +52,29 @@ export class Paddle implements Object2D
 
 	moveUp(): void
 	{
-		const new_position = this.coordinates;
-		new_position.x += this.speed;
-		if (!this.collides(new_position))
-			this.coordinates.x += this.speed;
+		const current_time = performance.now();
+		const deltaTime = (current_time - this.latest_time) * (60 / 1000);
+		if (deltaTime >= 1)
+		{
+			const new_position = this.coordinates;
+			new_position.x += this.speed;
+			if (!this.collides(new_position))
+				this.coordinates.x += this.speed;
+			this.latest_time = current_time;
+		}
 	}
 
 	moveDown(): void
 	{
-		const new_position = this.coordinates;
-		new_position.x -= this.speed;
-		if (!this.collides(new_position))
-			this.coordinates.x -= this.speed;
+		const current_time = performance.now();
+		const deltaTime = (current_time - this.latest_time) * (60 / 1000);
+		if (deltaTime >= 1)
+		{
+			const new_position = this.coordinates;
+			new_position.x -= this.speed;
+			if (!this.collides(new_position))
+				this.coordinates.x -= this.speed;
+			this.latest_time = current_time;
+		}
 	}
 }
