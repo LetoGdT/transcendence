@@ -1,6 +1,20 @@
 TODO :
 change ball's angle according to where it hits on the paddle
 check del, TODO, commentaries
+websockets :
+add this line in App.tsx : import { socket, websocketContext } from './WebsocketContext'
+1 partie entierement dans le back, 1 entierement dans le front
+objet socket dans le front, tu vas faire toutes les requetes avec
+websockets permettent communication dans les 2 sens, pas seulement du client vers le serveur
+connexion par websocket deja faites par Léto, dans branche main (donc merge ta partie dans main des que possible)
+communicaiton en temps reel, a l'inverse d'http
+fichier pour faire le routing, dans le back : websocket.gateway.ts
+socket.emit msg pour envoyer un message
+dans le front : frontend/src/WebsocketContext.tsx > variable socket (export const socket...)
+messages ont un "titre" et un message
+socket.on pour recevoir les messages
+gerer les rooms, avec savoir quels clients sont dans la room
+
 
 
 TO START THE PROJECT PROPERLY EVERYTIME
