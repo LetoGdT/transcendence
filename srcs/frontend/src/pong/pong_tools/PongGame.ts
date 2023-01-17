@@ -8,6 +8,8 @@ const PLAYER2_UP_KEY = 'ArrowUp';
 // const TIMER = 4500 // del not used anymore ?
 const SECOND = 1500
 
+const TICKRATE = 50;
+
 class PongGame
 {
 	private width: number;
@@ -21,9 +23,10 @@ class PongGame
     private ball: Ball;
     private keyStates: any;
     private movePlayer: boolean = false;
-	private ctx: any = CanvasRenderingContext2D;
 	private timer: number; // del ?
 
+	private startTimer: number;
+	private currentTicks: number;
 
 	constructor(width: number, height: number)
     {
@@ -36,211 +39,86 @@ class PongGame
         this.ball = new Ball(width / 2, height / 2);
         this.keyStates = [];
 		this.timer = 225;
+
+		this.startTimer = 0;
+		this.currentTicks = 0;
     }
-
-	async startScreen()
-	{
-		return await new Promise(async (resolve, reject) =>
-		{
-
-			console.log(this.start); // del
-			
-			if (this.start === true)
-			{
-				this.ctx.fillStyle = 'black';
-				this.ctx.fillRect(0, 0, this.width, this.height);
-				
-				this.drawNet(this.ctx)
-				this.player1.draw(this.ctx);
-				this.player2.draw(this.ctx);
-				this.drawScore(this.ctx);
-	
-				// Display set = start game
-				this.ctx.lineWidth = 27;
-				this.ctx.strokeStyle = 'white';
-				this.ctx.fillStyle='white';
-				// Draw 3
-				this.ctx.fillRect(445, 225, 150, 27);
-				this.ctx.fillRect(568, 252, 27, 200);
-				this.ctx.fillRect(495, 325, 85, 27);
-				this.ctx.fillRect(445, 425, 150, 27);
-				console.log("A") // del
-				await this.sleep(SECOND);
-				console.log("B") // del
-				// Erase 3
-				this.ctx.fillStyle='black';
-				this.ctx.fillRect(445, 225, 150, 27);
-				this.ctx.fillRect(568, 252, 27, 200);
-				this.ctx.fillRect(495, 325, 85, 27);
-				this.ctx.fillRect(445, 425, 150, 27);
-				this.drawNet(this.ctx);
-				// Draw 2
-				this.ctx.fillStyle='white';
-				this.ctx.fillRect(445, 225, 150, 27);
-				this.ctx.fillRect(568, 252, 27, 100);
-				this.ctx.fillRect(445, 325, 150, 27);
-				this.ctx.fillRect(445, 325, 27, 100);
-				this.ctx.fillRect(445, 425, 150, 27);
-				await this.sleep(SECOND);
-				// Erase 2
-				this.ctx.fillStyle='black';
-				this.ctx.fillRect(445, 225, 150, 27);
-				this.ctx.fillRect(568, 252, 27, 100);
-				this.ctx.fillRect(445, 325, 150, 27);
-				this.ctx.fillRect(445, 325, 27, 100);
-				this.ctx.fillRect(445, 425, 150, 27);
-				this.ctx.lineWidth = 5;
-				this.ctx.strokeStyle = 'white';
-				this.ctx.beginPath();
-				this.ctx.setLineDash([5, 15]); // dotted line for the net
-				this.ctx.moveTo(this.width / 2, 0);
-				this.ctx.lineTo(this.width / 2, this.height);
-				this.ctx.stroke();
-				this.ctx.setLineDash([]); // sets the line back to solid
-				// Draw 1
-				this.ctx.fillStyle='white';
-				this.ctx.fillRect(480, 225, 27, 27);
-				this.ctx.fillRect(507, 225, 27, 200);
-				await this.sleep(SECOND);
-				// Erase 1
-				this.ctx.fillStyle='black';
-				this.ctx.fillRect(480, 225, 27, 27);
-				this.ctx.fillRect(507, 225, 27, 200);
-				this.ctx.lineWidth = 5;
-				this.ctx.strokeStyle = 'white';
-				this.ctx.beginPath();
-				this.ctx.setLineDash([5, 15]); // dotted line for the net
-				this.ctx.moveTo(this.width / 2, 0);
-				this.ctx.lineTo(this.width / 2, this.height);
-				this.ctx.stroke();
-				this.ctx.setLineDash([]); // sets the line back to solid
-				console.log("D") // del
-				// Erase 3
-				// await sleep(0); // del ?
-				console.log("B") // del
-			}
-			console.log("tt"); // del
-			this.start = false;
-			resolve(null);
-			// await this.sleep(TIMER);
-		});
-	}
-
-	async sleep(ms: number)
-	{
-		return new Promise( resolve => setTimeout(resolve, ms) );
-	}
 
 	/**
 	 * Called when the browser need to refresh the canvas
 	 * @param ctx the rendering context of the canvas
 	 */
-	async render(ctx: CanvasRenderingContext2D)
+	render(ctx: CanvasRenderingContext2D)
 	{
-		this.ctx = ctx;
         // Clear the screen
-		
-		// console.log("render");
+		ctx.fillStyle = 'black';
+		ctx.fillRect(0, 0, this.width, this.height);
 
-		// if (this.start === true)
-		// {
-		// 	this.ctx.fillStyle = 'black';
-		// 	this.ctx.fillRect(0, 0, this.width, this.height);
-			
-		// 	this.drawNet(this.ctx)
-		// 	this.player1.draw(this.ctx);
-		// 	this.player2.draw(this.ctx);
-		// 	this.drawScore(this.ctx);
+		const r = this.currentTicks * 10 / TICKRATE;
 
-			
-		// 	// Display set = start game
-		// 	this.ctx.lineWidth = 27;
-		// 	this.ctx.strokeStyle = 'white';
-		// 	this.ctx.fillStyle='white';
-		// 	// Draw 3
-		// 	this.ctx.fillRect(445, 225, 150, 27);
-		// 	this.ctx.fillRect(568, 252, 27, 200);
-		// 	this.ctx.fillRect(495, 325, 85, 27);
-		// 	this.ctx.fillRect(445, 425, 150, 27);
-		// 	console.log("A") // del
-		// 	await this.sleep(SECOND);
-		// 	console.log("B") // del
-		// 	// Erase 3
-		// 	this.ctx.fillStyle='black';
-		// 	this.ctx.fillRect(445, 225, 150, 27);
-		// 	this.ctx.fillRect(568, 252, 27, 200);
-		// 	this.ctx.fillRect(495, 325, 85, 27);
-		// 	this.ctx.fillRect(445, 425, 150, 27);
-		// 	this.drawNet(this.ctx);
-		// 	// Draw 2
-		// 	this.ctx.fillStyle='white';
-		// 	this.ctx.fillRect(445, 225, 150, 27);
-		// 	this.ctx.fillRect(568, 252, 27, 100);
-		// 	this.ctx.fillRect(445, 325, 150, 27);
-		// 	this.ctx.fillRect(445, 325, 27, 100);
-		// 	this.ctx.fillRect(445, 425, 150, 27);
-		// 	await this.sleep(SECOND);
-		// 	// Erase 2
-		// 	this.ctx.fillStyle='black';
-		// 	this.ctx.fillRect(445, 225, 150, 27);
-		// 	this.ctx.fillRect(568, 252, 27, 100);
-		// 	this.ctx.fillRect(445, 325, 150, 27);
-		// 	this.ctx.fillRect(445, 325, 27, 100);
-		// 	this.ctx.fillRect(445, 425, 150, 27);
-		// 	this.ctx.lineWidth = 5;
-		// 	this.ctx.strokeStyle = 'white';
-		// 	this.ctx.beginPath();
-		// 	this.ctx.setLineDash([5, 15]); // dotted line for the net
-		// 	this.ctx.moveTo(this.width / 2, 0);
-		// 	this.ctx.lineTo(this.width / 2, this.height);
-		// 	this.ctx.stroke();
-		// 	this.ctx.setLineDash([]); // sets the line back to solid
-		// 	// Draw 1
-		// 	this.ctx.fillStyle='white';
-		// 	this.ctx.fillRect(480, 225, 27, 27);
-		// 	this.ctx.fillRect(507, 225, 27, 200);
-		// 	await this.sleep(SECOND);
-		// 	// Erase 1
-		// 	this.ctx.fillStyle='black';
-		// 	this.ctx.fillRect(480, 225, 27, 27);
-		// 	this.ctx.fillRect(507, 225, 27, 200);
-		// 	this.ctx.lineWidth = 5;
-		// 	this.ctx.strokeStyle = 'white';
-		// 	this.ctx.beginPath();
-		// 	this.ctx.setLineDash([5, 15]); // dotted line for the net
-		// 	this.ctx.moveTo(this.width / 2, 0);
-		// 	this.ctx.lineTo(this.width / 2, this.height);
-		// 	this.ctx.stroke();
-		// 	this.ctx.setLineDash([]); // sets the line back to solid
-		// 	console.log("D") // del
-		// 	// Erase 3
-		// 	// await sleep(0); // del ?
-		// 	console.log("B") // del
-		// 	// this.start = false; // del ?
-		// 	await this.sleep(TIMER); // del
-		// }
+		ctx.strokeStyle = 'white';
+		ctx.lineWidth = 4;
+		ctx.beginPath();
+		ctx.arc(this.width / 2, this.height / 2, 30, r, r + Math.PI / 2);
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.arc(this.width / 2, this.height / 2, 30, r + Math.PI, r + Math.PI * 1.5);
+		ctx.stroke();
+
+		ctx.fillStyle = 'white';
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'bottom';
+		ctx.font = '18px sans-serif';
+		ctx.fillText('Connecting...', this.width / 2, this.height / 2 + 60);
+
+		return ;
 		
-		if (this.start === false)
+		this.drawNet(ctx)
+		this.player1.draw(ctx);
+		this.player2.draw(ctx);
+
+		if (this.start)
 		{
-			ctx.fillStyle = 'black';
-			ctx.fillRect(0, 0, this.width, this.height);
-			console.log("X"); // del
-			
+			const timeSinceStart = this.startTimer / TICKRATE / 1.5;
+
+			this.drawScore(ctx);
+
+			// Display set = start game
+			ctx.lineWidth = 27;
+			ctx.strokeStyle = 'white';
+			ctx.fillStyle = 'white';
+			if (timeSinceStart < 1) {
+				// Draw 3
+				ctx.fillRect(445, 225, 150, 27);
+				ctx.fillRect(568, 252, 27, 200);
+				ctx.fillRect(495, 325, 85, 27);
+				ctx.fillRect(445, 425, 150, 27);
+			} else if (timeSinceStart < 2) {
+				// Draw 2
+				ctx.fillStyle='white';
+				ctx.fillRect(445, 225, 150, 27);
+				ctx.fillRect(568, 252, 27, 100);
+				ctx.fillRect(445, 325, 150, 27);
+				ctx.fillRect(445, 325, 27, 100);
+				ctx.fillRect(445, 425, 150, 27);
+			} else if (timeSinceStart < 3) {
+				// Draw 1
+				ctx.fillStyle='white';
+				ctx.fillRect(480, 225, 27, 27);
+				ctx.fillRect(507, 225, 27, 200);
+			}
+		}
+		else
+		{
 			if (this.over === false)
 			{
-				this.drawNet(ctx)
-				this.player1.draw(ctx);
-				this.player2.draw(ctx);
 				this.ball.draw(ctx);
 				this.drawScore(ctx);
 			}
-			else if (this.over === true)
+			else
 			{
-				this.drawNet(ctx)
 				this.ball.x = this.width / 2;
 				this.ball.y = this.height / 2;
-				this.player1.draw(ctx);
-				this.player2.draw(ctx);
 				this.drawScore(ctx);
 				if (this.scorePlayer1 === 5)
 				{
@@ -534,7 +412,7 @@ class PongGame
 		}
 	}
 
-    async updatePhysics()
+    updatePhysics()
 	{
         // await this.sleep(1000); // del
         // Rebounds on top and bottom
@@ -558,7 +436,7 @@ class PongGame
         this.ball.y += this.ball.speedY;
     }
  
-    async collide(opponent: Player)
+    collide(opponent: Player)
     {
         // await this.sleep(5000); // del
         // The player misses the ball
@@ -616,35 +494,51 @@ class PongGame
 	// Function called every 20ms (50 Hz / 50 times per second)
 	update()
 	{
-		if (this.keyStates[PLAYER1_UP_KEY])
-		{
-            this.player1.y -= 7;
-            if (this.player1.y < 0)
-                this.player1.y = 0;
-        }
+		this.currentTicks++;
 
-        if (this.keyStates[PLAYER1_DOWN_KEY])
+		if (this.start)
 		{
-            this.player1.y += 7;
-            if (this.player1.y < 0)
-                this.player1.y = 0;
-        }
+			this.startTimer++;
 
-        if (this.keyStates[PLAYER2_DOWN_KEY])
+			if (this.startTimer >= (TICKRATE * 1.5 * 3))
+			{
+				this.start = false;
+			}
+		} 
+		else if (!this.over)
 		{
-            this.player2.y += 7;
-            if (this.player2.y < 0)
-                this.player2.y = 0;
-        }
+			const maxPlayerY = this.height - PLAYER_HEIGHT;
 
-        if (this.keyStates[PLAYER2_UP_KEY])
-		{
-            this.player2.y -= 7;
-            if (this.player2.y < 0)
-                this.player2.y = 0;
-        }
+			if (this.keyStates[PLAYER1_UP_KEY])
+			{
+				this.player1.y -= 7;
+				if (this.player1.y < 0)
+					this.player1.y = 0;
+			}
 
-        this.updatePhysics();
+			if (this.keyStates[PLAYER1_DOWN_KEY])
+			{
+				this.player1.y += 7;
+				if (this.player1.y >= maxPlayerY)
+					this.player1.y = maxPlayerY;
+			}
+
+			if (this.keyStates[PLAYER2_DOWN_KEY])
+			{
+				this.player2.y += 7;
+				if (this.player2.y >= maxPlayerY)
+					this.player2.y = maxPlayerY;
+			}
+
+			if (this.keyStates[PLAYER2_UP_KEY])
+			{
+				this.player2.y -= 7;
+				if (this.player2.y < 0)
+					this.player2.y = 0;
+			}
+
+			this.updatePhysics();
+		}
 	}
 
     handleKeyUp(code: string)

@@ -1,29 +1,8 @@
 import React from 'react';
 import PongGame from './pong_tools/PongGame';
 
-// TODO from Lucille. I think, the last line "export { Pong };" does the same
-// import * as React from 'react';
-
-// export function Pong(){
-// 	let title: string = "PONG";
-
-// 	return(
-// 		<React.Fragment>
-// 			<h1>{title}</h1>
-// 			<div>
-
-// 			</div>
-// 		</React.Fragment>
-// 	);
-// }
-
 const GAME_WIDTH = 1040; // TODO needs to be responsive
 const GAME_HEIGHT = 680; // TODO needs to be responsive
-
-// async function sleep(ms: number)
-// {
-// 	return new Promise( resolve => setTimeout(resolve, ms) );
-// }
 
 const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 {
@@ -66,11 +45,6 @@ function useGame()
 	return ref.current;
 }
 
-// async function startTimer() // del ?
-// {
-// 		await sleep(4500); 
-// }
-
 const PongGameBootstrap = () =>
 {
 	const game = useGame();
@@ -78,19 +52,18 @@ const PongGameBootstrap = () =>
 	
 	React.useEffect(() =>
 	{
-		let timer: any;
-		game.startScreen()
-		.then(() => {
-			console.log("timer ended");
-			timer = setInterval(() => game.update(), 20);
-		})
-		// startTimer(); // del ?
-
+		const timer = setInterval(() => game.update(), 20);
 		return () => clearInterval(timer);
 	}, [game]);
 
-	const onKeyUp = (e: React.KeyboardEvent) => game.handleKeyUp(e.code);
-	const onKeyDown = (e: React.KeyboardEvent) => game.handleKeyDown(e.code);
+	const onKeyUp = (e: React.KeyboardEvent) => {
+		e.preventDefault();
+		game.handleKeyUp(e.code);
+	};
+	const onKeyDown = (e: React.KeyboardEvent) => {
+		e.preventDefault();
+		game.handleKeyDown(e.code);
+	};
 
 	return (
 		<canvas
