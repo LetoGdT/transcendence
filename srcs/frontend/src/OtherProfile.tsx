@@ -530,7 +530,7 @@ export function OtherProfile(){
 						<div className='Profile-Alias-div'>{AddOrRemoveButton(uid)}</div>
 						<div className='Profile-Alias-div'>{BlockOrUnblockButton(uid)}</div>
 						<div className='Profile-Alias-div'><DuelButton variant="contained" disableRipple>Ask for a game</DuelButton></div>
-						{/*button pour spec*/}
+						{/*button pour spec ?*/}
 					</div>
 					<div className='Profile-container-row-lvl1'>
 						<div className='Profile-Avatar'>

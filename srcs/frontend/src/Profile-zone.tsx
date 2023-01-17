@@ -4,17 +4,15 @@ import './Profile.css'
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { Chart } from "react-google-charts";
-import { useState, useEffect } from "react";
-import MessageAchievement from './message_achievement.png';
-import FriendAchievement from './friend_achievement.png';
-import GameAchievement from './game_achievement.png';
-
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
-
+import { useState, useEffect } from "react";
 import { PleaseConnect } from './adaptable-zone';
 import {FromEXPtoLvl, ToNextLevel, getAllPaginated} from './tools'
+import GameAchievement from './game_achievement.png';
+import MessageAchievement from './message_achievement.png';
+import FriendAchievement from './friend_achievement.png';
 
 type resultProps = {
 	email: string;

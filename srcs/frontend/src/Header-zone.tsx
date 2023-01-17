@@ -1,21 +1,13 @@
 import './App.css'
 import './Header.css'
 import * as React from 'react';
-
-// import { IsConnected } from './tools';
-
 import { Link } from 'react-router-dom';
-
-import Banniere from './banniere-transcendence_1.png';
-// import Avatar from './link_botw_avatar.jpg';
-import Logo42blanc from './logo_42_white.png';
-
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
-
 import { useState, useEffect } from "react";
-
 import { socket } from './WebsocketContext';
+import Banniere from './banniere-transcendence_1.png';
+import Logo42blanc from './logo_42_white.png';
 
 type resultProps = {
 	image_url: string;
@@ -230,7 +222,6 @@ export function OurHeader(){
 			</div>
 			<div className='Banniere'>
 				<img src={Banniere} alt='banniere' className='Banniere-img'></img>
-				{/* <img src={Banniere} alt='banniere' className='Banniere-img'></img> */}
 			</div>
 			<div>
 				<AvatarZone />

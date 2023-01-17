@@ -8,7 +8,6 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
 import { useState, useEffect } from "react";
-
 import { PleaseConnect } from './adaptable-zone';
 
 type resultProps = {
