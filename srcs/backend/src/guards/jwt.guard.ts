@@ -69,3 +69,35 @@ export class JwtAuthGuard extends AuthGuard('jwt')
 		return true;
 	}
 }
+
+@Injectable()
+export class JwtAuthGuardWithout2Fa extends AuthGuard('jwt')
+{
+	private logger = new Logger(JwtAuthGuard.name);
+
+	constructor(
+		private readonly authService: AuthService,
+		private readonly usersService: UsersService,
+		)
+	{
+		super();
+	}
+
+	async canActivate(context: ExecutionContext): Promise<boolean>
+	{
+		const request = context.switchToHttp().getRequest();
+
+		const accessToken: string = request?.cookies["access_token"];
+
+		// Access granted if the token is already valid, else we check the refresh
+		const isValidAccessToken = this.authService.verifyToken(accessToken);
+		if (isValidAccessToken)
+		{
+			const tokenInfos = await this.authService.tokenInfos(accessToken);
+			if (tokenInfos.enabled2fa)
+				throw new UnauthorizedException('You are already authenticated');
+			return true;
+		}
+		return false;
+	}
+}

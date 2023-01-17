@@ -1,18 +1,14 @@
-import './App.css'
 import './Menu.css'
 
 import * as React from 'react';
-
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-
 import { faHouse } from '@fortawesome/free-solid-svg-icons/faHouse';
 import { faTableTennisPaddleBall } from '@fortawesome/free-solid-svg-icons/faTableTennisPaddleBall';
 import { faComments } from '@fortawesome/free-solid-svg-icons/faComments';
 import { faUser } from '@fortawesome/free-solid-svg-icons/faUser';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import IconButton from '@mui/material/IconButton';
-
 import { Link } from 'react-router-dom'
 
 export function OurMenu() {
@@ -94,6 +90,9 @@ export function OurMenu() {
 			anchorEl={anchorElPong}
 			open={openPong}
 			onClose={handleClosePong}
+			sx={{
+				color:"black"
+			}}
 			MenuListProps={{
 			'aria-labelledby': 'basic-button',
 			}}

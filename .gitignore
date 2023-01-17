@@ -15,6 +15,7 @@ srcs/db/postgres/**
 srcs/db/pgadmin/**
 **/pgadmin/**
 **uploads**
+**!.keep**
 
 # Logs
 logs

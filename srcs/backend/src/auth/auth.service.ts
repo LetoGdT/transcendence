@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { HttpService } from "@nestjs/axios";
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -37,9 +37,15 @@ export class AuthService
 	async tokenOwner(token: string): Promise<User>
 	{
 		const decoded = this.jwtService.decode(token) as { username: string, sub: number };
-		return await this.userRepository.createQueryBuilder("user")
+		const ret = await this.userRepository.createQueryBuilder("user")
 			.where("user.id = :id", { id: decoded.sub })
 			.getOne();
+
+		if (ret == null)
+			throw new HttpException('An unexpected error occured: token owner does not exist',
+				HttpStatus.INTERNAL_SERVER_ERROR);
+
+		return ret;
 	}
 
 	tokenInfos(token: string): { username: string, sub: number, enabled2fa: boolean }
@@ -52,6 +58,10 @@ export class AuthService
 		enabled2fa: boolean): Promise<{ access_token: string, refresh_token: string }>
 	{
 		const user = await this.userRepository.findOne({where: { id: id }});
+		if (user == null)
+			throw new HttpException('An unexpected error occured: user does not exist',
+				HttpStatus.INTERNAL_SERVER_ERROR);
+
 		const payload = { username: user.username, sub: user.id, enabled2fa: enabled2fa };
 		const access_token = await this.jwtService.sign(payload);
 		const refresh_token = randtoken.generate(16);

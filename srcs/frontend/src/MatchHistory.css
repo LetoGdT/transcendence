@@ -6,6 +6,13 @@
 	justify-content: center;
 }
 
+.Match-container-otherProfile{
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	justify-content: left;
+}
+
 .Match-container-div{
 	background-color: rgb(30, 32, 32);
 	display: flex;
@@ -14,7 +21,7 @@
 	align-items: center;
 	width: 400px;
 	margin: 10px;
-	height: 106px;
+	height: 126px;
 }
 
 .Match-Resultat{

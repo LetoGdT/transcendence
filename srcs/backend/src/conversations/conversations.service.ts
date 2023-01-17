@@ -173,13 +173,24 @@ export class ConversationsService
 
 		const conversation = await queryBuilder.getOne();
 
+		if (conversation == null)
+			throw new HttpException("An unexpected error occured", HttpStatus.INTERNAL_SERVER_ERROR);
+
 		const userSelect = conversation.user1.id == user.id ? 'user2': 'user1'
 
 		const queryBuilder2 = this.conversationsRepository.createQueryBuilder('conversation')
 			.leftJoinAndSelect('conversation.' + userSelect, userSelect)
-			.leftJoinAndSelect(userSelect + '.banlist', 'banlist');
+			.leftJoinAndSelect(userSelect + '.banlist', 'banlist')
+			.where('conversation.id = :conversation_id', { conversation_id: conversation_id })
+			.andWhere(new Brackets(qb => {
+				qb.where("conversation.user1 = :user_id", { user_id: user.id })
+				.orWhere("conversation.user2 = :user_id", { user_id: user.id })
+			}));
 
 		const receiverConversation = await queryBuilder2.getOne();
+
+		if (receiverConversation == null)
+			throw new HttpException("An unexpected error occured", HttpStatus.INTERNAL_SERVER_ERROR);
 
 		const receiver = receiverConversation[userSelect];
 
@@ -199,8 +210,15 @@ export class ConversationsService
 		conversation.latest_sent = newMessage.sent_date;
 
 		conversation.messages.push(newMessage);
-		const ret = await this.conversationsRepository.save(conversation);
-		await this.achievementsService.createUserAchievement(user, 'I\'m a sociable person');
+		const ret: Conversation = await this.conversationsRepository.save(conversation);
+		try
+		{
+			await this.achievementsService.createUserAchievement(user, 'I\'m a sociable person');
+		}
+		catch (err)
+		{
+			console.log('No achievement for you');
+		}
 		return ret;
 	}
 
@@ -229,6 +247,9 @@ export class ConversationsService
 			throw new HttpException('You are not a part of this conversation', HttpStatus.FORBIDDEN);
 
 		const conversation = await queryBuilder.getOne();
+
+		if (conversation == null)
+			throw new HttpException("An unexpected error occured", HttpStatus.INTERNAL_SERVER_ERROR);
 
 		let messageIndex: number = conversation.messages.findIndex((message) => {
 			return message.id == message_id;
@@ -266,7 +287,10 @@ export class ConversationsService
 		if (count != 1)
 			throw new HttpException('You are not a part of this conversation', HttpStatus.FORBIDDEN);
 
-		const conversation = await queryBuilder.getOne();
+		const conversation: Conversation | null = await queryBuilder.getOne();
+
+		if (conversation == null)
+			throw new HttpException("An unexpected error occured", HttpStatus.INTERNAL_SERVER_ERROR);
 
 		let messageIndex: number = conversation.messages.findIndex((message) => {
 			return message.id == message_id;

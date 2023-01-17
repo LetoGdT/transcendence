@@ -1,26 +1,19 @@
 import './App.css'
 import './Header.css'
 import * as React from 'react';
-
-// import { IsConnected } from './tools';
-
 import { Link } from 'react-router-dom';
-
-import Banniere from './link_botw_banniere.jpg';
-// import Avatar from './link_botw_avatar.jpg';
-import Logo42blanc from './logo_42_white.png';
-
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
-
 import { useState, useEffect } from "react";
-
+import { socket } from './WebsocketContext';
+import Banniere from './banniere-transcendence_1.png';
+import Logo42blanc from './logo_42_white.png';
 
 type resultProps = {
 	image_url: string;
 };
 
-const LogInButton = styled(Button)({
+export const LogInButton = styled(Button)({
 	boxShadow: 'none',
 	width: '100px',
 	textTransform: 'none',
@@ -57,7 +50,7 @@ const LogInButton = styled(Button)({
 	},
 });
 
-const SignOnButton = styled(Button)({
+export const SignUpButton = styled(Button)({
 	boxShadow: 'none',
 	width: '100px',
 	textTransform: 'none',
@@ -147,27 +140,35 @@ function UserLogged(){
 		api();
 	}, []);
 	
-	return(
-		<div className='Avatar-zone'>
-			<div className='Avatar-zone-img'>
-				<img src={data?.image_url} alt='avatar' className='Avatar-zone-img'></img>
-			</div>
-			<div className='Avatar-zone-buttons'>
-				<a href='http://localhost:9999/logout'>
-					<LogOutButton variant="contained" disableRipple>Log Out</LogOutButton>
-				</a>
-			</div>
-		</div>
-	);
+	const handleSocketClose = (event: React.MouseEvent<HTMLButtonElement>) => {
+        socket.close();
+    };
+    
+    return(
+        <div className='Avatar-zone'>
+            <div className='Avatar-zone-img'>
+                <img src={data?.image_url} alt='avatar' className='Avatar-zone-img'></img>
+            </div>
+            <div className='Avatar-zone-buttons'>
+                <a href='http://localhost:9999/logout'>
+                    <LogOutButton variant="contained" disableRipple onClick={handleSocketClose}>Log Out</LogOutButton>
+                </a>
+            </div>
+        </div>
+    );
 }
 
 function UserNotLogged(){
+	const handleSocketOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+        socket.open();
+    };
+
 	return(
 		<div className='Avatar-zone'>
 			<div className='Avatar-zone-buttons'>
 				<div className='Avatar-zone-1button'>
-					<Link to='/signon'>
-						<SignOnButton variant="contained" disableRipple>Sign On</SignOnButton>
+					<Link to='/signup'>
+						<SignUpButton variant="contained" disableRipple>Sign Up</SignUpButton>
 					</Link>
 				</div>
 				<div className='Avatar-zone-1button'>
@@ -221,7 +222,6 @@ export function OurHeader(){
 			</div>
 			<div className='Banniere'>
 				<img src={Banniere} alt='banniere' className='Banniere-img'></img>
-				{/* <img src={Banniere} alt='banniere' className='Banniere-img'></img> */}
 			</div>
 			<div>
 				<AvatarZone />

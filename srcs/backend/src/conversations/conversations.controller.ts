@@ -15,6 +15,7 @@ import {
 	PostConversationDto, PostConversationMessageDto, UpdateConversationMessageDto
 } from '../dto/conversations.dto';
 import { JwtAuthGuard } from '../guards/jwt.guard';
+import { RequestWithUser } from '../interfaces/RequestWithUser.interface';
 
 /**
 * Get a conversation between 2 users (DMs).
@@ -54,7 +55,7 @@ export class ConversationsController
 	@UseInterceptors(AuthInterceptor)
 	getConversations(@Query() pageOptionsDto: PageOptionsDto,
 		@Query() conversationQueryFilterDto: ConversationQueryFilterDto,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.conversationsService.getConversations(pageOptionsDto, conversationQueryFilterDto, req.user);
 	}
@@ -71,15 +72,17 @@ export class ConversationsController
 	* 	Fish fingers and custard.
 	**/
 
+   /*
 	@Post()
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
-	async createConversation(@Req() req,
+	async createConversation(@Req() req: RequestWithUser,
 		@Body() postConversationDto: PostConversationDto)
 	{
 		return this.conversationsService.createConversation(req.user, postConversationDto);
 	}
+	*/
 
 	@Get('/:id/messages')
 	@UseInterceptors(ClassSerializerInterceptor)
@@ -89,7 +92,7 @@ export class ConversationsController
 		@Param('id', ParseIntPipe) id: number,
 		@Query() messageQueryFilterDto: MessageQueryFilterDto,
 		@Query() userSelectDto: UserSelectDto,
-		@Req() req): Promise<PageDto<Message>>
+		@Req() req: RequestWithUser): Promise<PageDto<Message>>
 	{
 		return this.conversationsService.getConversationMessages(pageOptionsDto, id,
 			messageQueryFilterDto, userSelectDto, req.user);
@@ -123,7 +126,7 @@ export class ConversationsController
 		@Param('id', ParseIntPipe) id: number,
 		@Query() messageQueryFilterDto: MessageQueryFilterDto,
 		@Query() userSelectDto: UserSelectDto,
-		@Req() req): Promise<PageDto<Message>>
+		@Req() req: RequestWithUser): Promise<PageDto<Message>>
 	{
 		return this.conversationsService.getConversationMessages(pageOptionsDto, id,
 			messageQueryFilterDto, userSelectDto, req.user, { as_sender: true });
@@ -157,7 +160,7 @@ export class ConversationsController
 		@Param('id', ParseIntPipe) id: number,
 		@Query() messageQueryFilterDto: MessageQueryFilterDto,
 		@Query() userSelectDto: UserSelectDto,
-		@Req() req): Promise<PageDto<Message>>
+		@Req() req: RequestWithUser): Promise<PageDto<Message>>
 	{
 		return this.conversationsService.getConversationMessages(pageOptionsDto, id,
 			messageQueryFilterDto, userSelectDto, req.user, { as_recipient: true });
@@ -168,7 +171,8 @@ export class ConversationsController
 	* 
 	* Args:
 	* 	:id (Number): The conversation's id.
-	* 	OTHER HERE AFTER
+	* 	postConversationMessageDto:
+	* 		content (string): The content of the message.
 	* 		
 	* 
 	* Return: The created message.
@@ -183,7 +187,7 @@ export class ConversationsController
 	@UseInterceptors(AuthInterceptor)
 	createConversationMessage(@Body() postConversationMessageDto: PostConversationMessageDto,
 		@Param('id', ParseIntPipe) id: number,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.conversationsService.createConversationMessage(postConversationMessageDto, id, req.user);
 	}
@@ -211,8 +215,8 @@ export class ConversationsController
 	@UseInterceptors(AuthInterceptor)
 	updateConversationMessage(@Param('id', ParseIntPipe) id: number,
 		@Param('message_id', ParseIntPipe) message_id: number,
-		@Query() updateConversationMessageDto: UpdateConversationMessageDto,
-		@Req() req)
+		@Body() updateConversationMessageDto: UpdateConversationMessageDto,
+		@Req() req: RequestWithUser)
 	{
 		return this.conversationsService.updateConversationMessage(updateConversationMessageDto,
 			id, message_id, req.user);
@@ -236,7 +240,7 @@ export class ConversationsController
 	@UseInterceptors(AuthInterceptor)
 	deleteConversationMessage(@Param('id', ParseIntPipe) id: number,
 		@Param('message_id', ParseIntPipe) message_id: number,
-		@Req() req)
+		@Req() req: RequestWithUser)
 	{
 		return this.conversationsService.deleteConversationMessage(id, message_id, req.user);
 	}

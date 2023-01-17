@@ -58,7 +58,7 @@ export class UsersService
 	// Get a user (using a general User dto)
 	// IMPORTANT: NEVER use when id might be undefined, or it returns the first
 	// user of the db
-	async getOneById(id: number): Promise<User>
+	async getOneById(id: number): Promise<User | null>
 	{
 		if (id == null)
 			throw new HttpException('id is undefined', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -67,14 +67,7 @@ export class UsersService
 		return this.userRepository.findOne({ where: { id: id } });
 	}
 
-	async getOneByLogin(username: string): Promise<User>
-	{
-		if (username == null)
-			throw new HttpException('username is undefined', HttpStatus.INTERNAL_SERVER_ERROR);
-		return this.userRepository.findOne({ where: { username: username } });
-	}
-
-	async getOneByRefresh(refresh: string): Promise<User>
+	async getOneByRefresh(refresh: string): Promise<User | null>
 	{
 		if (refresh == null)
 			throw new HttpException('refresh is undefined', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -82,11 +75,24 @@ export class UsersService
 	}
 
 	// Update a user
-	async updateOne(id: number, updateUserDto: UpdateUserDto): Promise<UpdateResult>
+	async updateOnePartial(id: number, updateUserDto: UpdateUserDto): Promise<UpdateResult>
 	{
 		if (id > this.IdMax)
 			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
-		return await this.userRepository.update(id, updateUserDto);
+		const user: User | null = await this.userRepository.findOne({
+			where: { username: updateUserDto.username }
+		})
+		if (updateUserDto.username != null && user != null)
+			throw new BadRequestException('Username already exists')
+		return this.userRepository.update(id, {
+			...(updateUserDto.username && { username: updateUserDto.username }),
+			...(updateUserDto.image_url && { image_url: updateUserDto.image_url }),
+		});
+	}
+
+	updateOne(user: User)
+	{
+		return this.userRepository.save(user);
 	}
 
 	// Create a user in the database
@@ -245,7 +251,12 @@ export class UsersService
 			.leftJoinAndSelect('user.banlist', 'banlist')
 			.where('user.id = :id', { id: createUserFriendDto.id });
 
-		const user2 = await queryBuilder2.getOne();
+		const user2: User | null = await queryBuilder2.getOne();
+
+		if (user2 == null)
+			throw new HttpException("An unexpected error occured: invalid id",
+				HttpStatus.INTERNAL_SERVER_ERROR);
+
 		let checkBan: number = user2.banlist.findIndex((users) => {
 			return users.id == user.id;
 		});
@@ -305,7 +316,10 @@ export class UsersService
 			.skip(pageOptionsDto.skip)
 			.take(pageOptionsDto.take);
 
-		const retUser = await queryBuilder.getOne();
+		const retUser: User | null = await queryBuilder.getOne();
+
+		if (retUser == null)
+			throw new BadRequestException("User doesn\'t exist");
 
 		return retUser.banlist;
 	}
@@ -335,10 +349,11 @@ export class UsersService
 		queryBuilder2
 			.where('user.id = :id', { id: createUserFriendDto.id });
 
-		const newBan = await queryBuilder2.getOne();
+		const newBan: User | null = await queryBuilder2.getOne();
 
 		if (newBan == null)
-			throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+			throw new HttpException("An unexpected error occured: invalid id",
+				HttpStatus.INTERNAL_SERVER_ERROR);
 
 		user.banlist.push(newBan);
 		return this.userRepository.save(user);
@@ -368,9 +383,11 @@ export class UsersService
 		return this.userRepository.save(user);
 	}
 
-	async getAchievements(user: User, pageOptionsDto: PageOptionsDto)
+	async getAchievements(id: number, pageOptionsDto: PageOptionsDto)
 	{
-		return this.achievementsService.getUserAchievements(pageOptionsDto, user);
+		if (id > this.IdMax)
+			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
+		return this.achievementsService.getUserAchievements(pageOptionsDto, id);
 	}
 
 	async changeRank(user: User, new_rank: number)
@@ -381,7 +398,12 @@ export class UsersService
 
 	async deleteOldPhoto(user: User, filename: string): Promise<void>
 	{
-		const oldPath = './src/static' + (new URL(user.image_url)).pathname;
+		let oldPath;
+		try
+		{
+			oldPath = './src/static' + (new URL(user.image_url)).pathname;
+		}
+		catch (err) {}
 		if (fs.existsSync(oldPath))
 			fs.unlink(oldPath, (err) => {
 				if (err)
@@ -401,6 +423,12 @@ export class UsersService
 	async disable2fa(user: User): Promise<User>
 	{
 		user.enabled2fa = false;
+		return this.userRepository.save(user);
+	}
+
+	async changeUserStatus(user: User, status: 'online' | 'offline' | 'in-game')
+	{
+		user.status = status;
 		return this.userRepository.save(user);
 	}
 }

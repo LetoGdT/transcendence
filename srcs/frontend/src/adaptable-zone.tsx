@@ -4,6 +4,7 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import { Link } from 'react-router-dom';
+import { LogInButton, SignUpButton } from './Header-zone';
 
 export function Home(){
 	return(
@@ -50,16 +51,18 @@ export function PleaseConnect(){
 				justifyContent="center"
 				spacing={0.5}
 			>
-				<Link to='/signon'>
-					<Button variant="text" size='small'>Sign On</Button>
+				<Link to='/signup'>
+					<SignUpButton variant="contained" disableRipple>Sign Up</SignUpButton>
 				</Link>
-				<Button variant="text" size='small'>Log In</Button>
+				<a href='http://localhost:9999/log'>
+					<LogInButton variant="contained" disableRipple>Log In</LogInButton>
+				</a>
 			</Stack>
 		</div>
 	);
 }
 
-export function SignOn(){
+export function SignUp(){
 	return(
 		<div className='Default'>
 			To register you need to apply to a 42 campus and valid the piscine. Good luck, have fun.
@@ -69,5 +72,3 @@ export function SignOn(){
 		</div>
 	);
 }
-
-	

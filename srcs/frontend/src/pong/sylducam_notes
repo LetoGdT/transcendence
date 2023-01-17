@@ -1,4 +1,8 @@
 TODO :
+changes from main to incorporate on my branch :
+1) import { PlayZone } from './Play';
+2) import { SpecZone } from './Spec';
+from adaptable-zone.tsx
 change ball's angle according to where it hits on the paddle
 check del, TODO, commentaries
 websockets :

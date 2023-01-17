@@ -20,7 +20,7 @@ const CodeOf2FATextField = styled(TextField)({
 	},
 });
 
-const SettingsButton = styled(Button)({
+const SendButton = styled(Button)({
 	boxShadow: 'none',
 	textTransform: 'none',
 	fontSize: 16,
@@ -56,34 +56,36 @@ const SettingsButton = styled(Button)({
 	},
 });
 
-function SendCode2FA(code2FA: string | undefined){
-	React.useEffect(() => {
-		const api = async () => {
-			const response = await fetch('http://localhost:9999/api/2fa/enable',{
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json'
-				},
-				method: 'POST',
-				credentials: 'include',
-				body: JSON.stringify({code: code2FA})
-			});
-		};
-
-	}, []);	
-}
-
 export function AuthWith2FA(): React.ReactElement{
 	const [code2FA, setCode2FA] = React.useState("");
+	const [error, setError] = React.useState("");
 
 	const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setCode2FA(e.target.value);
-		SendCode2FA(code2FA);
 	};
+
+	const handleSend = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		const response = await fetch('http://localhost:9999/api/2fa/authenticate',{
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			credentials: 'include',
+			body: JSON.stringify({code: code2FA})
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+			return null;
+		})
+		.then(data => setError(data != null ? data.message : null));
+	}
 	
 	return(
 		<React.Fragment>
 			<h1>2FA</h1>
+			{ error && <h3 className="Error"> { error } </h3> }
 			<CodeOf2FATextField
 				label="6 digits code"
 				InputLabelProps={{
@@ -92,11 +94,13 @@ export function AuthWith2FA(): React.ReactElement{
 					}
 				}}
 				variant="outlined"
-				// defaultValue="000000"
 				sx={{ input: {color: "grey"} }}
 				id="validation-outlined-input"
 				onChange={handleInput}
 			/>
+			<SendButton variant="contained" disableRipple onClick={
+				handleSend
+			}>Send</SendButton>
 		</React.Fragment>
 	);
 }

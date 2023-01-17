@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Achievement } from '../typeorm/achievement.entity';
@@ -33,13 +33,14 @@ export class AchievementsService
 		return new PageDto(entities, pageMetaDto);
 	}
 
-	async getUserAchievements(pageOptionsDto: PageOptionsDto, user: User)
+	async getUserAchievements(pageOptionsDto: PageOptionsDto, user_id: number)
 	{
 		const queryBuilder = this.achievementRepository.createQueryBuilder("achievement");
 
 		queryBuilder
 			.leftJoinAndSelect('achievement.user', 'user')
-			.where('user.id = :id', { id: user.id })
+			.leftJoinAndSelect('achievement.achievementType', 'achievementType')
+			.where('user.id = :id', { id: user_id })
 			.orderBy("achievement.id", pageOptionsDto.order)
 			.skip(pageOptionsDto.skip)
 			.take(pageOptionsDto.take);
@@ -67,6 +68,10 @@ export class AchievementsService
 			.where('achievementType.name = :name', { name: achievementType_name});
 
 		const achievementType = await queryBuilder.getOne();
+
+		if (achievementType == null)
+			throw new HttpException("You forgot to create this achievement type in the database",
+				HttpStatus.INTERNAL_SERVER_ERROR);
 
 		const newAchievement = await this.achievementRepository.create({
 			achievementType: achievementType,
