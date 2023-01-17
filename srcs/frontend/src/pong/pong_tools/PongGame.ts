@@ -5,7 +5,7 @@ const PLAYER1_DOWN_KEY = 'KeyS';
 const PLAYER1_UP_KEY = 'KeyW';
 const PLAYER2_DOWN_KEY = 'ArrowDown';
 const PLAYER2_UP_KEY = 'ArrowUp';
-const TIMER = 4500
+// const TIMER = 4500 // del not used anymore ?
 const SECOND = 1500
 
 class PongGame
@@ -395,7 +395,6 @@ class PongGame
 		switch (this.scorePlayer1)
 		{
 			case 0:
-			{
 				ctx.beginPath();
 				ctx.moveTo(240, 100);
 				ctx.lineTo(280, 100);
@@ -403,19 +402,15 @@ class PongGame
 				ctx.lineTo(240, 160);
 				ctx.lineTo(240, 96);
 				ctx.stroke();
-			}
 				break;
 			case 1:
-			{
 				ctx.beginPath();
 				ctx.moveTo(257, 100);
 				ctx.lineTo(270, 100);
 				ctx.lineTo(270, 160);
 				ctx.stroke();
-			}
 				break;
 			case 2:
-			{
 				ctx.beginPath();
 				ctx.moveTo(236, 100);
 				ctx.lineTo(280, 100);
@@ -424,10 +419,8 @@ class PongGame
 				ctx.lineTo(240, 160);
 				ctx.lineTo(284, 160);
 				ctx.stroke();
-			}
 				break;
 			case 3:
-			{
 				ctx.beginPath();
 				ctx.moveTo(250, 100);
 				ctx.lineTo(280, 100);
@@ -437,10 +430,8 @@ class PongGame
 				ctx.lineTo(280, 160);
 				ctx.lineTo(250, 160);
 				ctx.stroke();
-			}
 				break;
 			case 4:
-			{
 				ctx.beginPath();
 				ctx.moveTo(240, 100);
 				ctx.lineTo(240, 140);
@@ -450,10 +441,8 @@ class PongGame
 				ctx.moveTo(260, 125);
 				ctx.lineTo(260, 155);
 				ctx.stroke();
-			}
 				break;
 			case 5:
-			{
 				ctx.beginPath();
 				ctx.moveTo(285, 100);
 				ctx.lineTo(240, 100);
@@ -462,10 +451,8 @@ class PongGame
 				ctx.lineTo(280, 160);
 				ctx.lineTo(236, 160);
 				ctx.stroke();
-			}
 				break;
 			default: // never gets in
-			{
 				ctx.beginPath();
 				ctx.moveTo(165, 100);
 				ctx.moveTo(330, 100);
@@ -473,14 +460,12 @@ class PongGame
 				ctx.moveTo(165, 200);
 				ctx.moveTo(165, 100);
 				ctx.stroke();
-			}
 		}
 
 		// Draw player 2 score
 		switch (this.scorePlayer2)
 		{
 			case 0:
-			{
 				ctx.beginPath();
 				ctx.moveTo(760, 100);
 				ctx.lineTo(800, 100);
@@ -488,19 +473,15 @@ class PongGame
 				ctx.lineTo(760, 160);
 				ctx.lineTo(760, 96);
 				ctx.stroke();
-			}
 				break;
 			case 1:
-			{
 				ctx.beginPath();
 				ctx.moveTo(792, 100);
 				ctx.lineTo(805, 100);
 				ctx.lineTo(805, 160);
 				ctx.stroke();
-			}
 				break;
 			case 2:
-			{
 				ctx.beginPath();
 				ctx.moveTo(771, 100);
 				ctx.lineTo(815, 100);
@@ -509,10 +490,8 @@ class PongGame
 				ctx.lineTo(775, 160);
 				ctx.lineTo(819, 160);
 				ctx.stroke();
-			}
 				break;
 			case 3:
-			{
 				ctx.beginPath();
 				ctx.moveTo(785, 100);
 				ctx.lineTo(815, 100);
@@ -522,10 +501,8 @@ class PongGame
 				ctx.lineTo(815, 160);
 				ctx.lineTo(785, 160);
 				ctx.stroke();
-			}
 				break;
 			case 4:
-			{
 				ctx.beginPath();
 				ctx.moveTo(775, 100);
 				ctx.lineTo(775, 140);
@@ -535,10 +512,8 @@ class PongGame
 				ctx.moveTo(795, 125);
 				ctx.lineTo(795, 155);
 				ctx.stroke();
-			}
 				break;
 			case 5:
-			{
 				ctx.beginPath();
 				ctx.moveTo(819, 100);
 				ctx.lineTo(775, 100);
@@ -547,10 +522,8 @@ class PongGame
 				ctx.lineTo(815, 160);
 				ctx.lineTo(771, 160);
 				ctx.stroke();
-			}
 				break;
 			default: // never gets in
-			{
 				ctx.beginPath();
 				ctx.moveTo(165, 100);
 				ctx.moveTo(330, 100);
@@ -558,7 +531,6 @@ class PongGame
 				ctx.moveTo(165, 200);
 				ctx.moveTo(165, 100);
 				ctx.stroke();
-			}
 		}
 	}
 
@@ -593,7 +565,7 @@ class PongGame
         if (this.ball.y < opponent.y || this.ball.y > opponent.y + PLAYER_HEIGHT)
         {
             // The player who scores gets 1 point
-            if (opponent == this.player1)
+            if (opponent === this.player1)
 	        {
                 this.scorePlayer2++;
 			}

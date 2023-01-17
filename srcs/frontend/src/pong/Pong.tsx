@@ -87,7 +87,7 @@ const PongGameBootstrap = () =>
 		// startTimer(); // del ?
 
 		return () => clearInterval(timer);
-	}, []);
+	}, [game]);
 
 	const onKeyUp = (e: React.KeyboardEvent) => game.handleKeyUp(e.code);
 	const onKeyDown = (e: React.KeyboardEvent) => game.handleKeyDown(e.code);
