@@ -11,6 +11,8 @@ export class Paddle implements Object2D
 	// The current speed of the paddle.
 	readonly speed: number;
 
+	readonly refresh_rate: number;
+
 	// The size of the paddle.
 	readonly height: number;
 	readonly width: number;
@@ -22,17 +24,17 @@ export class Paddle implements Object2D
 
 	private latest_time: number = performance.now();
 
-	constructor(window: Window = {
+	constructor(new_window: Window = {
 			width: 1040,
 			height: 680
 		},
-		initial_coordinates: Vector2D = { x: 0, y: 0 },
-		speed: number = 10, height: number = 10, width: number = 10)
+		refresh_rate: number = 50, speed: number = 10,
+		height: number = 10, width: number = 1)
 	{
-		this.window = window;
-		this.coordinates = initial_coordinates;
+		this.window = new_window;
 		this.speed = speed;
 		this.height = height;
+		this.coordinates = { x: 10, y: this.window.height / 2 - this.height / 2 };
 		this.width = width;
 
 		this.left = this.coordinates.x;
@@ -53,7 +55,7 @@ export class Paddle implements Object2D
 	moveUp(): void
 	{
 		const current_time = performance.now();
-		const deltaTime = (current_time - this.latest_time) * (60 / 1000);
+		const deltaTime = (current_time - this.latest_time) * (this.refresh_rate / 1000);
 		if (deltaTime >= 1)
 		{
 			const new_position = this.coordinates;
@@ -67,7 +69,7 @@ export class Paddle implements Object2D
 	moveDown(): void
 	{
 		const current_time = performance.now();
-		const deltaTime = (current_time - this.latest_time) * (60 / 1000);
+		const deltaTime = (current_time - this.latest_time) * (this.refresh_rate / 1000);
 		if (deltaTime >= 1)
 		{
 			const new_position = this.coordinates;

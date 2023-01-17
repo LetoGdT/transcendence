@@ -1,5 +1,6 @@
 import { Object2D, Window, Vector2D } from '../interfaces/object2D.interface';
 import { Paddle } from './paddle.class';
+import { Score } from './score.class';
 
 export class Ball implements Object2D
 {
@@ -19,6 +20,8 @@ export class Ball implements Object2D
 	// e.g: A value of 0.1 accelerates the ball by 10%.
 	readonly acceleration: number;
 
+	readonly refresh_rate: number;
+
 	readonly radius: number;
 
 	// These are ABSOLUTELY needed since they are passed by reference
@@ -26,21 +29,25 @@ export class Ball implements Object2D
 	private paddle1: Paddle;
 	private paddle2: Paddle;
 
+	private score: Score;
+
 	private latest_time: number = performance.now();
 
 	constructor(paddle1: Paddle, paddle2: Paddle,
-		window: Window = {
+		new_window: Window = {
 			width: 1040,
 			height: 680
 		},
-		initial_coordinates: Vector2D = { x: 520, y: 340 },
-		initial_speed: number = 10, acceleration: number = 0.03, radius: number = 5)
+		refresh_rate: number = 50, initial_speed: number = 10,
+		acceleration: number = 0.03, radius: number = 5,
+		score: Score = new Score(5))
 	{
-		this.window = window;
-		this.coordinates = initial_coordinates;
+		this.window = new_window;
+		this.coordinates = { x: this.window.width / 2, y: this.window.height / 2 };
 		this.speed = initial_speed;
 		this.acceleration = acceleration;
 		this.radius = radius;
+		this.score = score;
 		this.paddle1 = paddle1;
 		this.paddle2 = paddle2;
 		if (this.collides(this.coordinates))
@@ -55,10 +62,10 @@ export class Ball implements Object2D
 
 	paddleCollides(position: Vector2D): boolean
 	{
-		if ((position.x - this.radius < this.paddle1.right
+		if ((position.x - this.radius <= this.paddle1.right
 				&& position.y - this.radius < this.paddle1.top
 				&& position.y + this.radius < this.paddle1.bottom)
-			|| (position.x - this.radius < this.paddle2.right
+			|| (position.x - this.radius <= this.paddle2.right
 				&& position.y - this.radius < this.paddle2.top
 				&& position.y + this.radius < this.paddle2.bottom))
 			return true;
@@ -71,35 +78,55 @@ export class Ball implements Object2D
 		this.direction.x = Math.random() / 2;
 	}
 
-	bounce(position: Vector2D): void
+	bounce(): void
 	{
-		if (this.collides(position))
+		if (this.collides(this.coordinates))
 		{
 			this.coordinates.y -= 1;
 			this.direction.y *= -1;
 		}
 	}
 
-	paddleBounce(position: Vector2D): void
+	paddleBounce(): void
 	{
-		if (this.paddleCollides(position))
+		if (this.paddleCollides(this.coordinates))
 		{
 			this.coordinates.x -= 1;
 			this.direction.x *= -1;
 			this.speed += this.speed * this.acceleration;
 		}
+		else
+		{
+			this.direction.x > 0 ? this.score.player1() : this.score.player2();
+			this.reset();
+		}
+	}
+
+	reset()
+	{
+		this.launchBallRandom();
+		this.coordinates.x = this.window.width / 2;
+		this.coordinates.y = this.window.height / 2;
 	}
 
 	// Je ne prend  pas en compte le délai que prend le for à s'exécuter, on verra si ça joue
 	updateCoordinates(): void
 	{
 		const current_time = performance.now();
-		let deltaTime = (current_time - this.latest_time) * (60 / 1000);
+		let deltaTime = (current_time - this.latest_time) * (this.refresh_rate / 1000);
 		for (; deltaTime >= 0; deltaTime--)
 		{
-			let new_coordinates: Vector2D = this.coordinates;
-			new_coordinates.x += this.direction.x * this.speed;
+			this.bounce();
+			this.paddleBounce();
+			this.coordinates.x += this.direction.x * this.speed;
+			this.coordinates.y += this.direction.y * this.speed;
 		}
 		this.latest_time = current_time - deltaTime;
+	}
+
+	getCoordinates(): Vector2D
+	{
+		this.updateCoordinates();
+		return this.coordinates;
 	}
 }
