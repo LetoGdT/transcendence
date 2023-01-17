@@ -34,6 +34,10 @@ type invitesProps = {
 	data: [];
 };
 
+type gamesProps = {
+	data: [];
+}
+
 type achievementProps = {
 	data: [];
 }
@@ -82,6 +86,7 @@ export function OneAchievement(achievement: any){
 export function Profile(){
 	const [data, setResult] = useState<resultProps>();
 	const [invites, setInvites] = useState<invitesProps[]>([]);
+	const [games, setGames] = useState<gamesProps[]>([]);
 	const [stats, setStats] = useState<statsProps>();
 	const [achievements, setAchievements] = useState<achievementProps[]>([]);
 
@@ -96,6 +101,9 @@ export function Profile(){
 
 			await getAllPaginated('users/me/friends/invites')
 			.then(data => setInvites(data));
+
+			// await getAllPaginated('?')
+			// .then(data => setGames(data));
 			
 			const stats = await fetch("http://localhost:9999/api/users/me/winrate", {
 				method: "GET",
@@ -158,7 +166,7 @@ export function Profile(){
 							);
 						})}
 					</div>
-					<h4>Invitations received</h4>
+					<h4>Invitations received for friendship</h4>
 					<div>
 						{invites.length > 0 && invites.map((user: any) => {
 							var url: string = "/otherprofile";
@@ -190,7 +198,6 @@ export function Profile(){
 											</IconButton>
 										</div>
 										<div>
-											{/* <IconButton color="error" aria-label="reject" onClick={handleClickReject(user.id)}> */}
 											<IconButton color="error" aria-label="reject" onClick={()=>{
 												let urltofetch : string;
 												urltofetch = 'http://localhost:9999/api/users/me/friends/invites/' + uid;												const response = fetch(urltofetch, {
@@ -210,6 +217,58 @@ export function Profile(){
 							);
 						})}
 					</div>
+					{/* <h4>Invitations received for playing a game</h4>
+					<div>
+						{games.length > 0 && games.map((user: any) => {
+							var url: string = "/otherprofile";
+							url = url.concat("/");
+							url = url.concat(user.id);
+							var uid = user.id;
+							return(
+								<div className='Profile-invitation-received'>
+									<div>
+										<Link to={url} >
+											<div>
+												<img src={user.image_url} alt={user.username + "'s avatar"} className='Profile-invitation-received-img'></img>
+											</div>
+											<div>{user.username}</div>
+										</Link>
+										<div>
+											<IconButton color="success" aria-label="accept" onClick={()=>{
+												const response = fetch('?', {//?
+													headers: {
+														'Accept': 'application/json',
+														'Content-Type': 'application/json'
+													},
+													method: 'POST',
+													credentials: 'include',
+													body: JSON.stringify({ id: uid })
+												});
+											}}>
+												<CheckIcon />
+											</IconButton>
+										</div>
+										<div>
+											<IconButton color="error" aria-label="reject" onClick={()=>{
+												let urltofetch : string;
+												urltofetch = '?' + uid;//?
+												const response = fetch(urltofetch, {
+													headers: {
+														'Accept': 'application/json',
+														'Content-Type': 'application/json'
+													},
+													method: 'DELETE',
+													credentials: 'include',
+												});
+											}}>
+												<CloseIcon />
+											</IconButton>
+										</div>
+									</div>
+								</div>
+							);
+						})}
+					</div> */}
 				</div>
 			</div>
 		</React.Fragment>
