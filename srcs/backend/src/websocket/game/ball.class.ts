@@ -1,4 +1,4 @@
-import { Object2D, Window, Vector2D } from '../interfaces/object2D.interface';
+import { Object2D, Window, Vector2D } from '../../interfaces/object2D.interface';
 import { Paddle } from './paddle.class';
 import { Score } from './score.class';
 
@@ -33,14 +33,13 @@ export class Ball implements Object2D
 
 	private latest_time: number = performance.now();
 
-	constructor(paddle1: Paddle, paddle2: Paddle,
+	constructor(paddle1: Paddle, paddle2: Paddle, score: Score,
 		new_window: Window = {
 			width: 1040,
 			height: 680
 		},
 		refresh_rate: number = 50, initial_speed: number = 10,
-		acceleration: number = 0.03, radius: number = 5,
-		score: Score = new Score(5))
+		acceleration: number = 0.03, radius: number = 5)
 	{
 		this.window = new_window;
 		this.coordinates = { x: this.window.width / 2, y: this.window.height / 2 };
@@ -124,9 +123,9 @@ export class Ball implements Object2D
 		this.latest_time = current_time - deltaTime;
 	}
 
-	getCoordinates(): Vector2D
+	getCoordinates(): { coordinates: Vector2D, speed: number, direction: Vector2D }
 	{
 		this.updateCoordinates();
-		return this.coordinates;
+		return { coordinates: this.coordinates, speed: this.speed, direction: this.direction};
 	}
 }

@@ -1,6 +1,5 @@
 import React from 'react';
 import PongGame from './pong_tools/PongGame';
-import { socket } from '../WebsocketContext';
 
 const GAME_WIDTH = 1040; // TODO needs to be responsive
 const GAME_HEIGHT = 680; // TODO needs to be responsive
@@ -48,8 +47,6 @@ function useGame()
 
 const PongGameBootstrap = () =>
 {
-	socket.on('connect', () => { console.log('connected') });
-	socket.emit('testGame', { test: 'coucou' });
 	const game = useGame();
 	const canvasRef = useCanvas(ctx => game.render(ctx))
 	

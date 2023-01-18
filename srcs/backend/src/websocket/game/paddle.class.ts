@@ -1,4 +1,4 @@
-import { Object2D, Window, Vector2D } from '../interfaces/object2D.interface';
+import { Object2D, Window, Vector2D } from '../../interfaces/object2D.interface';
 
 export class Paddle implements Object2D
 {
@@ -24,12 +24,12 @@ export class Paddle implements Object2D
 
 	private latest_time: number = performance.now();
 
-	constructor(new_window: Window = {
+	constructor(refresh_rate: number = 50, speed: number = 10,
+		height: number = 10, width: number = 1,
+		new_window: Window = {
 			width: 1040,
 			height: 680
-		},
-		refresh_rate: number = 50, speed: number = 10,
-		height: number = 10, width: number = 1)
+		})
 	{
 		this.window = new_window;
 		this.speed = speed;

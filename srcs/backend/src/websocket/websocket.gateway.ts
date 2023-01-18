@@ -4,18 +4,19 @@ import {WebSocketGateway,
 		SubscribeMessage,
 		MessageBody,
 		WebSocketServer,
+		ConnectedSocket
 } from '@nestjs/websockets';
+import { UseInterceptors, Req } from '@nestjs/common';
 import { Server,
 		 Socket,
 } from 'socket.io';
-import { serialize, parse } from "cookie";
+import { parse } from "cookie";
 import { AuthService } from '../auth/auth.service';
 import { User } from '../typeorm/user.entity';
 import { ChatService } from './chat.service';
 import { UsersService } from '../users/users.service';
 import { Connection } from '../interfaces/connection.interface';
-import { Ball } from '../game/ball.class';
-import { Paddle } from '../game/paddle.class';
+import { Game } from './game/game.class';
 
 @WebSocketGateway(9998, { cors: true })
 export class MySocketGateway implements OnGatewayConnection, 
@@ -28,12 +29,17 @@ export class MySocketGateway implements OnGatewayConnection,
 	@WebSocketServer()
 	server: Server;
 
+	queue = new Map<number, Connection[]>();
+
 	async handleConnection(client: Socket) {
 		// Vérification du token de l’utilisateur
 		// Si le token est invalide, la socket est fermée de suite
-		console.log("connection par websocket tentée");
+		if (client.request.headers.cookie == undefined)
+		{
+			client.disconnect();
+			return ;
+		}
 		const cookies = parse(client.request.headers.cookie);
-		// console.log(cookies.access_token);
 		if(cookies.access_token == null || await !this.auth.verifyToken(cookies.access_token)) {
 			client.disconnect();
 			return ;
@@ -89,10 +95,11 @@ export class MySocketGateway implements OnGatewayConnection,
 	sendMessage(recipient: Socket) {
 	}
 
-	@SubscribeMessage('testGame')
-	testGame(client: Socket, @MessageBody() body: any)
+	@SubscribeMessage('queue')
+	queueGame(@MessageBody() body: any,
+		@ConnectedSocket() client: Socket,)
 	{
-		console.log('coucou');
-		console.log(body.test)
+		const index = this.clients.findIndex(connection => connection.client.id == client.id);
+		// const game = new Game(req.user, req.user, 21);
 	}
 }
