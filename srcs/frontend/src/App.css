@@ -15,6 +15,13 @@
 	margin: 5px;
 }
 
+.Notif{
+	background-color: #007dd6;
+	color: antiquewhite;
+	border-radius: 10px;
+	padding: 10px;
+}
+
 a:link {
 	text-decoration: none;
 	color: rgb(0, 125, 214);
