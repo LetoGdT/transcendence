@@ -104,6 +104,7 @@ function App() {
 						<Route path="/signup" element={<SignUp/>} />
 						<Route path='/2fa' element={<AuthWith2FA />} />
 						<Route path='/activate2fa' element={<Activate2FA />} />
+						<Route path='/pong' element={<Pong/>} />
 						<Route path='*' element={<NotFound/>} />
 					</Routes>
 				</div>
