@@ -25,8 +25,8 @@ class PongGame
     private keyStates: any;
     private movePlayer: boolean = false;
 	private timer: number; // del ?
-	private connecting: boolean = true;
-	private socket: Socket;
+	// private connecting: boolean = true;
+	// private socket: Socket;
 
 	private startTimer: number;
 	private currentTicks: number;
@@ -46,10 +46,10 @@ class PongGame
 		this.startTimer = 0;
 		this.currentTicks = 0;
 
-		this.socket = io('http://localhost:1234', { transports: [ 'websocket' ] });
-		this.socket.on('connect', () => {
-			this.connecting = false;
-		});
+		// this.socket = io('http://localhost:1234', { transports: [ 'websocket' ] });
+		// this.socket.on('connect', () => {
+			// this.connecting = false;
+		// });
     }
 
 	drawStatusScreen(ctx: CanvasRenderingContext2D, label: string) {
@@ -89,11 +89,11 @@ class PongGame
 		ctx.fillStyle = 'black';
 		ctx.fillRect(0, 0, this.width, this.height);
 
-		if (this.connecting)
-		{
-			this.drawStatusScreen(ctx, 'Connecting...');
-			return ;
-		}
+		// if (this.connecting)
+		// {
+		// 	this.drawStatusScreen(ctx, 'Connecting...');
+		// 	return ;
+		// }
 		
 		this.drawNet(ctx)
 		this.player1.draw(ctx);
