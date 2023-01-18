@@ -69,24 +69,6 @@ type meProps = {
 	image_url: string;
 }
 
-function DisplayChannel(obj: any){
-	const {id, is_channel, date_of_last_message, name, new_message} = obj.obj;
-
-	if (obj.new_message === true){
-		return(
-			<div className='Chat-navigate-new-message' key={obj.id}>
-				{obj.name}
-			</div>
-		);
-	} else {
-		return(
-			<div key={obj.id}>
-				{obj.name}
-			</div>
-		);
-	}
-}
-
 function DisplayMessage(obj: any){
 	const {sender_uid, content, time_sent} = obj.obj;	
 	const [me, setMe] = useState<meProps>();
@@ -138,13 +120,29 @@ function DisplayMessage(obj: any){
 	}
 }
 
+function DisplayChannel(props: any){
+	const conv = props?.conv;
+	if (conv.new_message === true){
+		return(
+			<div className='Chat-navigate-new-message'>
+				{conv.name}
+			</div>
+		);
+	} else {
+		return(
+			<div>
+				{conv.name}
+			</div>
+		);
+	}
+}
+
 function ChatNavigate(props: any) {
 	return(
 		<div className='Chat-navigate'>
-			{props?.conv_list?.map((obj: Conversation) => {
-				return(
-					// <div key={obj.id}>{obj.name}</div>
-					<DisplayChannel obj={obj} />
+			{props?.conv_list?.map((conv: Conversation) => {
+				return (
+					<DisplayChannel conv={conv} key={conv.id}/>
 				);
 			})}
 		</div>
@@ -152,9 +150,12 @@ function ChatNavigate(props: any) {
 }
 
 type Message = {
-	sender_uid: number;
+	id: number;
 	content: string;
-	time_sent: Date;
+	sender: {
+		username: string;
+		image_url: string;
+	}
 }
 
 type Conversation = {
@@ -198,19 +199,29 @@ export class Chat extends React.Component<{}, { current_conv: number,
 				name = elem.user2.username;
 			else
 				name = elem.user1.username;
-			return {id: elem.id,
-					is_channel: false,
-					name: name,
-					new_message: false};
+			return ({
+				id: elem.id,
+				is_channel: false,
+				date_of_last_message: elem.latest_sent,
+				name: name,
+				new_message: false
+			});
 		})}));
 
-		//fetch('http://localhost:9999/api/channels/', {
-		//	method: "GET",
-		//	credentials: 'include'
-		//})
-		//.then(response=>response.json())
-		//.then(data => this.setState({conv_list: data.data.map((elem: any) => {
-		//})}));
+		fetch('http://localhost:9999/api/channels/', {
+			method: "GET",
+			credentials: 'include'
+		})
+		.then(response=>response.json())
+		.then(data => this.setState({conv_list: this.state.conv_list.concat(data.data.map((elem: any) => {
+			return ({
+				id: elem.id,
+				is_channel: true,
+				date_of_last_message: elem.latest_sent,
+				name: elem.name,
+				new_message: false
+			});
+		}))}));
 
 			// The condition is necessary because the users/me fetch request is async
 		if (this.state.conv_list.length !== 0)
@@ -230,13 +241,28 @@ export class Chat extends React.Component<{}, { current_conv: number,
 	updateMessages() {
 		// Fetch messages according to the selected conversation or channel
 		if (this.state.current_conv !== -1) {
-			let uri: string = 'http://localhost:9999/api/messages?order=DESC';
+			let uri: string = 'http://localhost:9999/api/';
+			if (this.state.isChannel)
+				uri += 'channels/';
+			else 
+				uri += 'conversations/';
+			uri += this.state.current_conv +
+				'/messages?order=DESC';
 			fetch(uri, {
 				method: "GET",
 				credentials: 'include'
 			})
 			.then(response=>response.json())
-			.then(data => this.setState({ messages: data })); // ne pas oublier de faire un joli map pour remplir le tableau comme il faut
+			.then(data => this.setState({ messages: data.map((elem: any) => {
+				return ({
+					id: elem.id,
+					content: elem.content,
+					sender: {
+						username: elem.sender.username,
+						image_url: elem.sender.image_url
+					}
+				});
+			})}));
 		}
 	}
 
@@ -275,7 +301,7 @@ export class Chat extends React.Component<{}, { current_conv: number,
 			<React.Fragment>
 				<h1>Chat</h1>
 				<div className='Chat-container'>
-					<ChatNavigate conv_list={this.state.conv_list} current_user_id={this.state.current_user_id}/>
+					<ChatNavigate conv_list={this.state.conv_list}/>
 					<div>
 						<div className='Chat-history-container'>
 							
