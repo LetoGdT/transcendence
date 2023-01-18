@@ -18,6 +18,35 @@ import { Activate2FA } from './activate2fa';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 import { socket, websocketContext } from './WebsocketContext'
 import { useState, useEffect } from 'react';
+import toast, {Toaster} from 'react-hot-toast';
+
+const notify = () => {toast('Hello World', {
+	duration: 5000,
+	position: 'top-center',
+  
+	// Styling
+	style: {
+		borderRadius: '10px',
+		background: '#007dd6',
+		color: '#fff',
+	},
+	className: '',
+  
+	// Custom Icon
+	// icon: '👏',
+  
+	// Change colors of success/error/loading icon
+	// iconTheme: {
+	//   primary: '#000',
+	//   secondary: '#fff',
+	// },
+  
+	// Aria
+	ariaProps: {
+	  role: 'status',
+	  'aria-live': 'polite',
+	},
+  });};
 
 function App() {
 	const router = 
@@ -27,6 +56,10 @@ function App() {
 			</header>
 			<div className='Menu'>
 				<OurMenu/>
+			</div>
+			<div>
+				<button onClick={notify}>Make me a toast</button>
+				<Toaster />
 			</div>
 			<div className='Adaptable'>
 					<Routes>
