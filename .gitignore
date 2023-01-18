@@ -42,6 +42,7 @@ tests.py
 *.launch
 .settings/
 *.sublime-workspace
+.vscode
 
 # IDE - VSCode
 .vscode/*
@@ -54,3 +55,4 @@ tests.py
 .env
 srcs/backend/.env
 **.env**
+node_modules

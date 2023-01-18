@@ -29,6 +29,22 @@ export function NotFound(){
 	);
 }
 
+export function Play(){
+	return(
+		<div className='Pong'>
+			Play {/* TODO syl : here is pong's place */}
+		</div>
+	);
+}
+
+export function SpecAMatch(){
+	return(
+		<div>
+			SpecAMatch
+		</div>
+	);
+}
+
 export function PleaseConnect(){
 	return(
 		<div className='Default'>

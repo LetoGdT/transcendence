@@ -1,0 +1,203 @@
+var context: CanvasRenderingContext2D | null | undefined = gameCanvasRef.current?.getContext("2d");
+
+    const handleChange = () => {
+        setChecked(!checked)
+    }
+
+    game.setContext(context);
+const gameCanvasRef = useRef<HTMLCanvasElement>(null);
+    setContext (context : CanvasRenderingContext2D)
+    {
+        this.context = context;
+    }
+  {
+                var p1Avatar = document.getElementById("account-picture-img-P1")
+                p1Avatar.setAttribute("src", player_1.data.avatar);
+                var p1Info = document.createElement("div");
+                p1Info.className = "NamePlayerInfo";
+                p1Info.textContent = "Name: " + player_1.data.username;
+                document.getElementById("players1_infos").appendChild(p1Info);
+                var p1Info_Level = document.createElement("div");
+                p1Info_Level.className = "NamePlayerInfo";
+                p1Info_Level.textContent = "Level: " + player_1.data.level;
+                document.getElementById("players1_infos").appendChild(p1Info_Level);
+                var p1Info_Rank = document.createElement("div");
+                p1Info_Rank.className = "NamePlayerInfo";
+                p1Info_Rank.textContent = "Rank: " + player_1.data.rank;
+                document.getElementById("players1_infos").appendChild(p1Info_Rank);
+
+                var p2Avatar = document.getElementById("account-picture-img-P2")
+                p2Avatar.setAttribute("src", player_2.data.avatar);
+                var p2Info_Name = document.createElement("div");
+                p2Info_Name.className = "NamePlayerInfo";
+                p2Info_Name.textContent = "Name: " + player_2.data.username;
+                document.getElementById("players2_infos").appendChild(p2Info_Name);
+                var p2Info_Level = document.createElement("div");
+               
+        socketClient.on("receiveHitWall", function (x: number, y: number)
+        {
+            effect.hit_wall(x, y);
+            game.createInGameText(hitTexts[Math.trunc(utils.randomInRange(0, hitTexts.length))], "rgba(0, 255, 0, 1)", 20);
+        });
+
+        socketClient.on("receivePlayerScore", function (scores : number[])
+        {
+            game.setScore(1, scores[1]);
+            game.setScore(2, scores[2]);
+        });
+
+        socketClient.on("receiveHitScore", function (x:number, y:number, id:number)
+        {
+            if (id === myId)
+                game.createInGameText(victoryTexts[Math.trunc(utils.randomInRange(0, victoryTexts.length))], "rgba(0, 0, 128, 1)", 30);
+            else
+                game.createInGameText(looserTexts[Math.trunc(utils.randomInRange(0, looserTexts.length))], "rgba(128, 0, 0, 1)", 30);
+            game.lastIndexWin = id;
+            effect.playerScore(game, x, y);
+        });
+
+        socketClient.on("receiveGameStart", function ()
+        {
+            utils.startGame(game);
+        });
+
+        socketClient.on("receiveGameRestart", function ()
+        {
+            utils.restartGame(game);
+        });
+
+        socketClient.on("receiveCreatePowerUp", function (x, y, name, index)
+        {
+            game.createPower_Up(x, y, name, index);
+        })
+
+        socketClient.on("activBigBall", function()
+        {
+            game.getBall().radius = 30;
+        })
+
+        socketClient.on("deactivBigBall", function()
+        {
+            game.getBall().radius = 15;
+        })
+
+        socketClient.on("destroyPower_Up", function (index)
+        {
+            for(var i = 0; i < game.power_ups.length; i++)
+            {
+                if (game.power_ups[i] && game.power_ups[i].index === index)
+                    destroy(game.power_ups[i], game.power_ups);
+            }
+        })
+        socketClient.on("finishGame", function (winnerName)
+        {
+            game.endText.setText(winnerName + " win !");
+            game.gameEnded = true;
+            return new Promise(resolve => {
+                setTimeout(function() {
+        resolve("lente");
+        var p1Avatar = document.getElementById("account-picture-img-P1")
+    p1Avatar.setAttribute("src", "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png")
+    var p2Avatar = document.getElementById("account-picture-img-P2")
+    p2Avatar.setAttribute("src", "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png");
+        utils.timedEvent(exitGame, 100);
+    }, 4000);
+    });
+        })
+    }
+export function GameWindow():React.ReactElement{
+    return (
+                    <button className="button" id="JoinRoomName" onClick={() => joinRoom(true)}>Launch game</button>
+                </div>
+                <div id='quitGame_button'>
+                    <button id="qGame" onClick={() => exitButton()}>Exit game</button>
+                </div>
+                <div id="RoomId" style= {{maxHeight: "10%", fontSize: "2rem"}}>
+                </div>
+                <div id="game_context" style={{display: 'none'}}>
+                    <div className='game_Room'>
+                        <div className="players_infos">
+                            <div className='p_infos'>
+                                <div id="players1_infos" className="player_Infos_Box">
+                                </div>
+                                <div id="account-picture-P1"  className="account_Pic">
+                                        <img id="account-picture-img-P1" alt="" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" />
+                                </div>
+                            </div>
+                            <div className="vs_picture"></div>
+                            <div className='p_infos' style={{flexDirection: "row"}}>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="game_window">
+                            <canvas ref={gameCanvasRef} width="1100" height="600" id='pong'></canvas>
+                        </div>
+        
+}
+```ts
+    return (
+    <section className="page" id="page2">
+        <div className="page-content">
+            <div className="windows">
+                <div id='rooms_buttons'>
+Expand
+message.txt
+3 KB
+class
+className
+return(<div></div)
+return <div></div><div></div>)
+export function useEventListener(eventName, handler, element = window)
+{
+    const savedHandler = useRef();
+
+    useEffect(() =>
+    {
+        savedHandler.current = handler;
+    }, [handler]);
+
+    useEffect(() =>
+    {
+        //@ts-ignore
+        const eventListener = (event) => savedHandler.current(event);
+        element.addEventListener(eventName, eventListener);
+        return () =>
+        {
+            element.removeEventListener(eventName, eventListener);
+        };
+    }, [eventName, element]);
+};
+    utils.useEventListener("keydown", handler_down);
+    utils.useEventListener("keyup", handler_up);
+const joinRoom = (named : boolean) => {
+        if (socketClient)
+        {
+            socketClient.emit("refreshUserInfos", user.username, user.id, user.rank);
+            if (named && roomNameText.current !== null && roomNameText.current.value !== "")
+            {
+                socketClient.emit("joinRoom", roomNameText.current.value, rankedCheckboxRef.current.checked);
+            }
+            else
+                socketClient.emit("joinRoom", "", rankedCheckboxRef.current.checked);
+        }
+    }
+    React.useEffect(() =>
+    {
+        if (user.username !== undefined && is_init === false)
+        {
+            is_init = true;
+            socketClient = io(`http://localhost:8000`, {
+                transports: ["websocket"],
+                withCredentials: true,
+                extraHeaders: {
+                    "Access-Control-Allow-Origin": `http://localhost:8000`
+                }
+            })
+
+            if (socketClient)
+            {
+                game.setSocket(socketClient);
+                initSockets(socketClient);
+            }
+        }
+    },[users]

@@ -1,0 +1,559 @@
+
+Skip to content
+Pull requests
+Issues
+Codespaces
+Marketplace
+Explore
+@hamanmax
+hamanmax /
+ft_transcendence
+Private
+
+Code
+Issues 6
+Pull requests
+Actions
+Projects 1
+Security
+Insights
+
+    Settings
+
+ft_transcendence/React/client/src/scripts/game/GameWindow.tsx /
+@hamanmax
+hamanmax fix spectate chat
+Latest commit 1a9964e Aug 14, 2022
+History
+3 contributors
+@hamanmax
+@JCambakidis
+@sohechai
+executable file 511 lines (452 sloc) 16 KB
+import React, { useRef, useState } from 'react';
+import { io } from "socket.io-client"
+import { initGame, display, destroy } from "../main"
+import * as effect from "../effects/hit_effects"
+import * as utils from "../utils"
+import { Game } from "../game"
+import { Player } from "../player";
+import { Ball } from "../ball";
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '../../store';
+import { useCookies } from 'react-cookie';
+
+const axios = require('axios');
+var is_init: boolean = false;
+var socketClient;
+var otherPlayerConnected : boolean = false;
+var looserTexts : string[] =  [
+	"T'as perdu gros chien !",
+	"Gros naze",
+	"Elle est pas rentrée celle la !",
+	"Nuuuuuuul",
+	"Echec comme toi",
+	"Tes morts tes morts !",
+	"Nique tes morts",
+	"Ta race",
+	"Ta mere elle est tellement grosse",
+	"Vive zemzem"
+];
+var victoryTexts : string[] =  [
+	"Bravo Jerimouille",
+	"Succes BG",
+	"Bonfiacho",
+	"Bonifiachi",
+	"Estos bien",
+	"Perfecto los bogossito",
+	"Pas mal mais t'est toujours un connard",
+	"BG de Wouf",
+	"T'es bo comme ma bite",
+	"Michalakos toko",
+	"hola le succees"
+];
+var hitTexts : string[] = [
+	"WOW",
+	"WOUHOU",
+	"SUPER",
+	"OLEOLE",
+	"GREAT"
+]
+
+var myId: number = 0;
+var game = new Game();
+var canReceivePlayerInfo = true;
+
+const useAnimationFrame = callback =>
+{
+	const requestRef = React.useRef<number>();
+	const previousTimeRef = React.useRef();
+
+	const animate = time =>
+	{
+		if (previousTimeRef.current !== undefined)
+		{
+			//@ts-ignore check previusly
+			const deltaTime = time - previousTimeRef.current;
+			callback(deltaTime);
+		}
+
+		previousTimeRef.current = time;
+		requestRef.current = requestAnimationFrame(animate);
+	};
+	requestRef.current = requestAnimationFrame(animate);
+}
+
+export function getInfo(username:string,type:string,user:any) {
+
+	if (socketClient !== undefined)
+	{
+		if (username === "" && type === "invite" )
+			{
+				socketClient.emit("refreshUserInfos", user.username, user.id, user.rank);
+				socketClient.emit("joinRoom", utils.generateRandomString(8),false);
+				window.location.assign("#game")
+			}
+			if (username === "" && type === "play")
+			{
+				socketClient.emit("refreshUserInfos", user.username, user.id, user.rank);
+				socketClient.emit("joinRoom", "",false);
+				window.location.assign("#game")
+			}
+		socketClient.emit("hello from client", username);
+		socketClient.on("hello from server", function(data:any) {
+			if (data.Roomname !== "" && type === "spectate")
+			{
+				socketClient.emit("refreshUserInfos", user.username, user.infos.id_base, user.rank);
+				socketClient.emit("joinRoom", data.Roomname,data.is_ranked);
+				window.location.assign("#game")
+			} if (data.Roomname !== "" && type === "join") {
+				socketClient.emit("refreshUserInfos", user.username, user.id, user.rank);
+				socketClient.emit("joinRoom", data.Roomname,data.is_ranked);
+				window.location.assign("#game")
+			}});
+	}
+}
+
+
+export function GameWindow():React.ReactElement{
+
+    const gameCanvasRef = useRef<HTMLCanvasElement>(null);
+	const dispatch = useDispatch()
+
+	const roomNameText = useRef(null);
+	const rankedCheckboxRef = useRef(null);
+	const [checked, setChecked] = useState(false)
+	const user = useSelector((state: RootState) => state).user
+	const [cookies] = useCookies(['transcendence']); // getting react hooks
+
+	var context: CanvasRenderingContext2D | null | undefined = gameCanvasRef.current?.getContext("2d");
+
+	const handleChange = () => {
+		setChecked(!checked)
+	}
+
+	game.setContext(context);
+
+	const initSockets = (socketClient) => {
+		socketClient.on('connected', function (id: number, otherConnected : boolean, room_Name : string, is_Ranked : boolean)
+		{
+			myId = id;
+			initGame(socketClient, game, myId);
+
+			if (id >= 2 || otherConnected)
+				otherPlayerConnected = true;
+			game.roomName = room_Name;
+			game.gameEnded = false;
+			game.is_Ranked = is_Ranked;
+			utils.disableKeyboard();
+			document.getElementById("rooms_buttons").style.opacity = "0";
+			document.getElementById("rooms_buttons").style.pointerEvents = "none";
+			document.getElementById("quitGame_button").style.opacity = "1";
+			document.getElementById("quitGame_button").style.pointerEvents = "auto";
+			document.getElementById("game_context").style.display = "block";
+			document.getElementById("rooms_buttons").style.display = "none";
+		});
+
+		socketClient.on('otherConnected', function (id: number)
+		{
+			if ((id === 1 || id === 2) && id !== myId)
+				otherPlayerConnected = true;
+		});
+
+		socketClient.on('updatePlayer', function (data, id: number)
+		{
+			let player: Player | null = game.getPlayer(id);
+
+			if (player !== null && id !== myId)
+			{
+				player.x = data.x;
+				player.y = data.y;
+				player.vitesseX = data.vx;
+				player.vitesseY = data.vy;
+				player.velocityX = data.vex;
+				player.velocityY = data.vey;
+			}
+		});
+
+		socketClient.on('updatePositionBall', function (x: number, y: number)
+		{
+			let ball: Ball | null = game.getBall();
+			if (ball !== null)
+			{
+				ball.refreshTrail();
+				ball.setnewPosition(x, y);
+			}
+		});
+
+		socketClient.on("receiveHitPlayer", function (x: number, y: number)
+		{
+			effect.hit_player(game, x, y);
+			game.createInGameText(hitTexts[Math.trunc(utils.randomInRange(0, hitTexts.length))], "rgba(0, 255, 0, 1)", 20);
+		});
+
+		socketClient.on("receivePlayerInfos", function (p1Infos, p2Infos, roomName)
+		{
+			axios.get(`http://localhost:4200/user/id/${p1Infos.level}`, {headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + cookies.transcendence}})
+			.then(player_1 => {
+				dispatch({type: "user/updateStatus", payload:"Ingame"})
+				axios.get(`http://localhost:4200/user/id/${p2Infos.level}`, {headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + cookies.transcendence}})
+				.then(player_2 => {
+				dispatch({type: "user/updateStatus", payload:"Ingame"})
+			if (canReceivePlayerInfo)
+			{
+				var p1Avatar = document.getElementById("account-picture-img-P1")
+				p1Avatar.setAttribute("src", player_1.data.avatar);
+				var p1Info = document.createElement("div");
+				p1Info.className = "NamePlayerInfo";
+				p1Info.textContent = "Name: " + player_1.data.username;
+				document.getElementById("players1_infos").appendChild(p1Info);
+				var p1Info_Level = document.createElement("div");
+				p1Info_Level.className = "NamePlayerInfo";
+				p1Info_Level.textContent = "Level: " + player_1.data.level;
+				document.getElementById("players1_infos").appendChild(p1Info_Level);
+				var p1Info_Rank = document.createElement("div");
+				p1Info_Rank.className = "NamePlayerInfo";
+				p1Info_Rank.textContent = "Rank: " + player_1.data.rank;
+				document.getElementById("players1_infos").appendChild(p1Info_Rank);
+
+				var p2Avatar = document.getElementById("account-picture-img-P2")
+				p2Avatar.setAttribute("src", player_2.data.avatar);
+				var p2Info_Name = document.createElement("div");
+				p2Info_Name.className = "NamePlayerInfo";
+				p2Info_Name.textContent = "Name: " + player_2.data.username;
+				document.getElementById("players2_infos").appendChild(p2Info_Name);
+				var p2Info_Level = document.createElement("div");
+				p2Info_Level.className = "NamePlayerInfo";
+				p2Info_Level.textContent = "Level: " + player_2.data.level;
+				document.getElementById("players2_infos").appendChild(p2Info_Level);
+				var p2Info_Rank = document.createElement("div");
+				p2Info_Rank.className = "NamePlayerInfo";
+				p2Info_Rank.textContent = "Rank: " + player_2.data.rank;
+				document.getElementById("players2_infos").appendChild(p2Info_Rank);
+
+				var room_Name = document.createElement("div");
+				room_Name.className = "NamePlayerInfo";
+				room_Name.textContent = "Room id: " + roomName;
+				document.getElementById("RoomId").appendChild(room_Name);
+
+				canReceivePlayerInfo = false;
+			}
+			})
+			})
+		});
+
+		socketClient.on("receiveHitWall", function (x: number, y: number)
+		{
+			effect.hit_wall(x, y);
+			game.createInGameText(hitTexts[Math.trunc(utils.randomInRange(0, hitTexts.length))], "rgba(0, 255, 0, 1)", 20);
+		});
+
+		socketClient.on("receivePlayerScore", function (scores : number[])
+		{
+			game.setScore(1, scores[1]);
+			game.setScore(2, scores[2]);
+		});
+
+		socketClient.on("receiveHitScore", function (x:number, y:number, id:number)
+		{
+			if (id === myId)
+				game.createInGameText(victoryTexts[Math.trunc(utils.randomInRange(0, victoryTexts.length))], "rgba(0, 0, 128, 1)", 30);
+			else
+				game.createInGameText(looserTexts[Math.trunc(utils.randomInRange(0, looserTexts.length))], "rgba(128, 0, 0, 1)", 30);
+			game.lastIndexWin = id;
+			effect.playerScore(game, x, y);
+		});
+
+		socketClient.on("receiveGameStart", function ()
+		{
+			utils.startGame(game);
+		});
+
+		socketClient.on("receiveGameRestart", function ()
+		{
+			utils.restartGame(game);
+		});
+
+		socketClient.on("receiveCreatePowerUp", function (x, y, name, index)
+		{
+			game.createPower_Up(x, y, name, index);
+		})
+
+		socketClient.on("activBigBall", function()
+		{
+			game.getBall().radius = 30;
+		})
+
+		socketClient.on("deactivBigBall", function()
+		{
+			game.getBall().radius = 15;
+		})
+
+		socketClient.on("destroyPower_Up", function (index)
+		{
+			for(var i = 0; i < game.power_ups.length; i++)
+			{
+				if (game.power_ups[i] && game.power_ups[i].index === index)
+					destroy(game.power_ups[i], game.power_ups);
+			}
+		})
+
+		socketClient.on("finishGame", function (winnerName)
+		{
+			game.endText.setText(winnerName + " win !");
+			game.gameEnded = true;
+			return new Promise(resolve => {
+				setTimeout(function() {
+				  resolve("lente");
+						var p1Avatar = document.getElementById("account-picture-img-P1")
+						p1Avatar.setAttribute("src", "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png")
+						var p2Avatar = document.getElementById("account-picture-img-P2")
+						p2Avatar.setAttribute("src", "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png");
+						utils.timedEvent(exitGame, 100);
+				}, 4000);
+			  });
+		})
+	}
+
+
+	React.useEffect(() =>
+	{
+		if (user.username !== undefined && is_init === false)
+		{
+			is_init = true;
+			socketClient = io(`http://localhost:8000`, {
+				transports: ["websocket"],
+				withCredentials: true,
+				extraHeaders: {
+					"Access-Control-Allow-Origin": `http://localhost:8000`
+				}
+			})
+
+			if (socketClient)
+			{
+				game.setSocket(socketClient);
+				initSockets(socketClient);
+			}
+		}
+	},[user]);
+
+	React.useEffect(() =>
+	{
+		document.getElementById("quitGame_button").style.opacity = "0";
+		document.getElementById("quitGame_button").style.pointerEvents = "none";
+	}, []);
+
+	const joinRoom = (named : boolean) => {
+		if (socketClient)
+		{
+			socketClient.emit("refreshUserInfos", user.username, user.id, user.rank);
+			if (named && roomNameText.current !== null && roomNameText.current.value !== "")
+			{
+				socketClient.emit("joinRoom", roomNameText.current.value, rankedCheckboxRef.current.checked);
+			}
+			else
+				socketClient.emit("joinRoom", "", rankedCheckboxRef.current.checked);
+		}
+	}
+
+	const exitButton = () => {
+		if(socketClient && (myId === 1 || myId === 2))
+			socketClient.emit("playerExit", myId);
+		exitGame();
+	}
+
+	const exitGame = () => {
+		utils.enableKeyboard();
+						var p1AvatarExit = document.getElementById("account-picture-img-P1")
+						p1AvatarExit.setAttribute("src", "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png")
+						var p2AvatarExit = document.getElementById("account-picture-img-P2")
+						p2AvatarExit.setAttribute("src", "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png");
+				dispatch({
+					type: "user/updateStatus", payload: "Connected"
+			})
+
+		game.gameStarted = false;
+		game.ballLaunched = false;
+
+		for (let i = 0; i < game.power_ups.length; i++)
+			delete game.power_ups[i];
+
+		game.getContext().clearRect(0, 0, game.canvas_width, game.canvas_height);
+
+		if (socketClient)
+			socketClient.emit("exitGame", user.username, game.roomName);
+
+		game.setScore(1, 0);
+		game.setScore(2, 0);
+
+		for (let i = 0; i < game.getPlayers().length; i++)
+			delete game.getPlayers()[i];
+
+		var elements = document.getElementsByClassName("NamePlayerInfo");
+		while(elements.length > 0)
+			elements[0].parentNode.removeChild(elements[0]);
+
+		document.getElementById("rooms_buttons").style.opacity = "1";
+		document.getElementById("rooms_buttons").style.pointerEvents = "auto";
+		document.getElementById("quitGame_button").style.opacity = "0";
+		document.getElementById("quitGame_button").style.pointerEvents = "none";
+		document.getElementById("game_context").style.display = "none";
+		document.getElementById("rooms_buttons").style.display = "flex";
+
+		otherPlayerConnected = false;
+		canReceivePlayerInfo = true;
+	}
+
+	const handler_down = ({key}) =>
+	{
+		game.inputsPressed[key] = true;
+	}
+
+	const handler_up = ({key}) =>
+	{
+		game.inputsPressed[key] = false;
+	}
+
+	utils.useEventListener("keydown", handler_down);
+	utils.useEventListener("keyup", handler_up);
+	useAnimationFrame(deltaTime =>
+	{
+        if (socketClient && game.getContext() != null && deltaTime !== 0 && game.gameStarted)
+		{
+			game.getContext().clearRect(0, 0, game.canvas_width, game.canvas_height);
+			if (otherPlayerConnected)
+			{
+				let player: Player | null = game.getPlayer(myId);
+				if (player != null)
+				{
+					if (myId === 1 || myId === 2)
+					{
+						player.checkControls(socketClient, game.inputsPressed);
+						player.update(socketClient, 0.01);
+					}
+					let data = {
+						x: player.x,
+						y: player.y,
+						vx: player.vitesseX,
+						vy: player.vitesseY,
+						vex: player.velocityX,
+						vey: player.velocityY,
+					}
+					socketClient.emit('refreshPlayer', data, myId);
+				}
+
+				game.update(deltaTime);
+
+				if(game.gameEnded)
+					game.endText.display(game.getContext(), "center");
+				else
+				{
+					let ball: Ball | null = game.getBall();
+					if (ball != null)
+						ball.update(socketClient, 0.01);
+
+					for (var i = 0; i < game.getParticles().length; i++)
+					{
+						if (game.getParticles()[i])
+							game.getParticles()[i].update(0.05);
+					}
+
+					if(game.is_Ranked)
+						game.rankedText.display(game.getContext(), "center");
+				}
+				display(game);
+			}
+			else
+				game.waitingText.display(game.getContext(), "center");
+		}
+	});
+
+    return (
+    <section className="page" id="page2">
+        <div className="page-content">
+            <div className="windows">
+                <div id='rooms_buttons'>
+					<form>
+						<div>
+							<label>
+								<h3 style= {{display: 'inline-flex',marginTop: '10%'}}>Ranked ?</h3><input type="checkbox" ref={rankedCheckboxRef} />
+							</label>
+						</div>
+						<div>
+							<label>
+								<h3 style= {{display: 'inline-flex'}}>Private ?</h3><input type="checkbox" checked={checked} onChange={handleChange} />
+								{checked && (<input ref={roomNameText} id="roomNameText" placeholder="Private Code" maxLength={10}></input>)}
+							</label>
+						</div>
+					</form>
+                    <button className="button" id="JoinRoomName" onClick={() => joinRoom(true)}>Launch game</button>
+                </div>
+				<div id='quitGame_button'>
+					<button id="qGame" onClick={() => exitButton()}>Exit game</button>
+				</div>
+				<div id="RoomId" style= {{maxHeight: "10%", fontSize: "2rem"}}>
+				</div>
+				<div id="game_context" style={{display: 'none'}}>
+					<div className='game_Room'>
+						<div className="players_infos">
+							<div className='p_infos'>
+								<div id="players1_infos" className="player_Infos_Box">
+								</div>
+								<div id="account-picture-P1"  className="account_Pic">
+										<img id="account-picture-img-P1" alt="" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" />
+								</div>
+							</div>
+							<div className="vs_picture"></div>
+							<div className='p_infos' style={{flexDirection: "row"}}>
+								<div id="players2_infos" className="player_Infos_Box">
+								</div>
+								<div id="account-picture-P2"  className="account_Pic">
+										<img id="account-picture-img-P2" alt="" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" />
+								</div>
+							</div>
+						</div>
+						<div id="game_window">
+							<canvas ref={gameCanvasRef} width="1100" height="600" id='pong'></canvas>
+						</div>
+					</div>
+				</div>
+            </div>
+        </div>
+    </section>)
+}
+Footer
+© 2023 GitHub, Inc.
+Footer navigation
+
+    Terms
+    Privacy
+    Security
+    Status
+    Docs
+    Contact GitHub
+    Pricing
+    API
+    Training
+    Blog
+    About
+

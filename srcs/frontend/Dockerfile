@@ -2,8 +2,10 @@ FROM node:latest
 
 WORKDIR /usr/src/app
 
-COPY . .
+COPY package*.json .
 
-RUN npm i
+RUN npm ci
+
+COPY . .
 
 CMD ["npm", "run", "start"]
