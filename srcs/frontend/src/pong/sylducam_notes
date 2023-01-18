@@ -16,6 +16,7 @@ dans le front : frontend/src/WebsocketContext.tsx > variable socket (export cons
 messages ont un "titre" et un message
 socket.on pour recevoir les messages
 gerer les rooms, avec savoir quels clients sont dans la room
+page /otherprofile, est-ce normal ce qu'il s'y affiche ?
 
 
 
