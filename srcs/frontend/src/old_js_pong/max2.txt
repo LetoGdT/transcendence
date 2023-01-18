@@ -1,0 +1,46 @@
+```ts
+    return (
+    <section className="page" id="page2">
+        <div className="page-content">
+            <div className="windows">
+                <div id='rooms_buttons'>
+                    <form>
+                        <div>
+                            <label>
+                                <h3 style= {{display: 'inline-flex',marginTop: '10%'}}>Ranked ?</h3><input type="checkbox" ref={rankedCheckboxRef} />
+                            </label>
+                        </div>
+                        <div>
+                            <label>
+                                <h3 style= {{display: 'inline-flex'}}>Private ?</h3><input type="checkbox" checked={checked} onChange={handleChange} />
+                                {checked && (<input ref={roomNameText} id="roomNameText" placeholder="Private Code" maxLength={10}></input>)}
+                            </label>
+                        </div>
+                    </form>
+                    <button className="button" id="JoinRoomName" onClick={() => joinRoom(true)}>Launch game</button>
+                </div>
+                <div id='quitGame_button'>
+                    <button id="qGame" onClick={() => exitButton()}>Exit game</button>
+                </div>
+                <div id="RoomId" style= {{maxHeight: "10%", fontSize: "2rem"}}>
+                </div>
+                <div id="game_context" style={{display: 'none'}}>
+                    <div className='game_Room'>
+                        <div className="players_infos">
+                            <div className='p_infos'>
+                                <div id="players1_infos" className="player_Infos_Box">
+                                </div>
+                                <div id="account-picture-P1"  className="account_Pic">
+                                        <img id="account-picture-img-P1" alt="" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" />
+                                </div>
+                            </div>
+                            <div className="vs_picture"></div>
+                            <div className='p_infos' style={{flexDirection: "row"}}>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="game_window">
+                            <canvas ref={gameCanvasRef} width="1100" height="600" id='pong'></canvas>
+                        </div>
+        
+}```

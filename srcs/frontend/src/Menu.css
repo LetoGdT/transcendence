@@ -1,5 +1,3 @@
-
-
 .Menu_button:hover { /*permet un ombrage quand pointé a reutiliser pour le menu :3*/
 	filter: drop-shadow(0 0 2em #000dfcaa);
 }

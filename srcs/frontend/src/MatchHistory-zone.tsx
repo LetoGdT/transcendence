@@ -5,7 +5,6 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from "react";
 import { getAllPaginated } from './tools';
-
 import { PleaseConnect } from './adaptable-zone';
 
 type opponentProps = {

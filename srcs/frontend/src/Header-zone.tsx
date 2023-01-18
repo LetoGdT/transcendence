@@ -1,27 +1,19 @@
 import './App.css'
 import './Header.css'
 import * as React from 'react';
-
-// import { IsConnected } from './tools';
-
 import { Link } from 'react-router-dom';
-
-import Banniere from './banniere-transcendence_1.png';
-// import Avatar from './link_botw_avatar.jpg';
-import Logo42blanc from './logo_42_white.png';
-
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
-
 import { useState, useEffect } from "react";
-
 import { socket } from './WebsocketContext';
+import Banniere from './banniere-transcendence_1.png';
+import Logo42blanc from './logo_42_white.png';
 
 type resultProps = {
 	image_url: string;
 };
 
-const LogInButton = styled(Button)({
+export const LogInButton = styled(Button)({
 	boxShadow: 'none',
 	width: '100px',
 	textTransform: 'none',
@@ -58,7 +50,7 @@ const LogInButton = styled(Button)({
 	},
 });
 
-const SignOnButton = styled(Button)({
+export const SignUpButton = styled(Button)({
 	boxShadow: 'none',
 	width: '100px',
 	textTransform: 'none',
@@ -176,7 +168,7 @@ function UserNotLogged(){
 			<div className='Avatar-zone-buttons'>
 				<div className='Avatar-zone-1button'>
 					<Link to='/signup'>
-						<SignOnButton variant="contained" disableRipple>Sign Up</SignOnButton>
+						<SignUpButton variant="contained" disableRipple>Sign Up</SignUpButton>
 					</Link>
 				</div>
 				<div className='Avatar-zone-1button'>
@@ -230,7 +222,6 @@ export function OurHeader(){
 			</div>
 			<div className='Banniere'>
 				<img src={Banniere} alt='banniere' className='Banniere-img'></img>
-				{/* <img src={Banniere} alt='banniere' className='Banniere-img'></img> */}
 			</div>
 			<div>
 				<AvatarZone />

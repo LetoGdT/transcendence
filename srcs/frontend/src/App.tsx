@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect} from 'react';
 import './App.css';
-import './Menu.css';
 
 import { OurHeader } from './Header-zone';
 import { OurMenu } from './Menu-zone';
 import { Home, NotFound } from './adaptable-zone';
-import { Play, SpecAMatch} from './adaptable-zone';
+// import { PlayZone } from './Play';
+// import { SpecZone } from './Spec';
+import { Pong } from './pong/Pong';
 import { ChatZone } from './Chat-zone';
 import { FriendsZone } from './Friend-zone';
 import { MatchHistoryZone } from './MatchHistory-zone';
@@ -17,7 +18,6 @@ import { AuthWith2FA } from './authWith2fa';
 import { Activate2FA } from './activate2fa';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 import { socket, websocketContext } from './WebsocketContext'
-import { useState, useEffect } from 'react';
 
 function App() {
 	const router = 
@@ -34,9 +34,10 @@ function App() {
 						<Route path="/friends" element={<FriendsZone/>} />
 						<Route path="/" element={<Home />} />
 						<Route path="/matchhistory" element={<MatchHistoryZone/>} />
-						<Route path="/play" element={<Play/>} />
+						<Route path="/play" element={<Pong/>} />
+						{/* <Route path="/play" element={<PlayZone/>} /> */}
 						<Route path="/settings" element={<SettingsZone/>} />
-						<Route path="/specamatch" element={<SpecAMatch/>} />
+						{/* <Route path="/specamatch" element={<SpecZone/>} /> */}
 						<Route path="/otherprofile/">
 							<Route path=':uid' element={<OtherProfile />} />
 						</Route>

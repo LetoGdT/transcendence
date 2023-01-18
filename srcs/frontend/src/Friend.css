@@ -15,7 +15,6 @@
 .Friend-Name-status{
 	display: flex;
 	flex-direction: row;
-	/* align-content: center; */
 }
 
 .Friend-name{

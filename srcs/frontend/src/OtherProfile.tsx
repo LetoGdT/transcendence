@@ -201,7 +201,6 @@ const UnblockButton = styled(Button)({
 
 const DuelButton = styled(Button)({
 	boxShadow: 'none',
-	width: '100px',
 	textTransform: 'none',
 	fontSize: 16,
 	padding: '6px 12px',
@@ -222,17 +221,17 @@ const DuelButton = styled(Button)({
 		'"Segoe UI Symbol"',
 	].join(','),
 	'&:hover': {
-		backgroundColor: '#bb1d03',
+		backgroundColor: '#007dd6',
 		borderColor: '#646464',
 		boxShadow: 'none',
 	},
 	'&:active': {
 		boxShadow: 'none',
-		backgroundColor: '#891d03',
+		backgroundColor: '#004d7b',
 		borderColor: '#646464',
 	},
 	'&:focus': {
-		boxShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
+		adow: '0 0 0 0.2rem rgba(0,0,0,.5)',
 	},
 });
 
@@ -530,8 +529,8 @@ export function OtherProfile(){
 						<div className='Profile-Alias-div'>{data?.username}</div>
 						<div className='Profile-Alias-div'>{AddOrRemoveButton(uid)}</div>
 						<div className='Profile-Alias-div'>{BlockOrUnblockButton(uid)}</div>
-						<div className='Profile-Alias-div'><DuelButton variant="contained" disableRipple>Ask for a game</DuelButton></div>{/*deux épées qui se croisent*/}
-						{/*button pour spec*/}
+						<div className='Profile-Alias-div'><DuelButton variant="contained" disableRipple>Ask for a game</DuelButton></div>
+						{/*button pour spec ?*/}
 					</div>
 					<div className='Profile-container-row-lvl1'>
 						<div className='Profile-Avatar'>
