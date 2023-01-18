@@ -3,6 +3,7 @@ import PongGame from './pong_tools/PongGame';
 
 const GAME_WIDTH = 1040; // TODO needs to be responsive
 const GAME_HEIGHT = 680; // TODO needs to be responsive
+const HEIGHT_RATIO = 1.5; // del. to make the canvas responsive
 
 const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 {
