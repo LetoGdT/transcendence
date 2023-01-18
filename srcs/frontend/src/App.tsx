@@ -15,6 +15,7 @@ import { OtherProfile } from './OtherProfile';
 import { SignUp } from './adaptable-zone';
 import { AuthWith2FA } from './authWith2fa';
 import { Activate2FA } from './activate2fa';
+import { Pong } from './pong/Pong';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 import { socket, websocketContext } from './WebsocketContext'
 import { useState, useEffect } from 'react';
