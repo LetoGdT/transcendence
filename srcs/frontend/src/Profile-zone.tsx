@@ -172,8 +172,8 @@ export function Profile(){
 							url = url.concat(user.id);
 							var uid = user.id;
 							return(
-								<div className='Profile-invitation-received'>
-									<div>
+								<React.Fragment>
+									<div className='Profile-invitation-received'>
 										<Link to={url} >
 											<div>
 												<img src={user.image_url} alt={user.username + "'s avatar"} className='Profile-invitation-received-img'></img>
@@ -211,7 +211,7 @@ export function Profile(){
 											</IconButton>
 										</div>
 									</div>
-								</div>
+								</React.Fragment>
 							);
 						})}
 					</div>
@@ -223,8 +223,8 @@ export function Profile(){
 							url = url.concat(user.id);
 							var uid = user.id;
 							return(
-								<div className='Profile-invitation-received'>
-									<div>
+								<React.Fragment>
+									<div className='Profile-invitation-received'>
 										<Link to={url} >
 											<div>
 												<img src={user.image_url} alt={user.username + "'s avatar"} className='Profile-invitation-received-img'></img>
@@ -263,7 +263,7 @@ export function Profile(){
 											</IconButton>
 										</div>
 									</div>
-								</div>
+								</React.Fragment>
 							);
 						})}
 					</div> */}
