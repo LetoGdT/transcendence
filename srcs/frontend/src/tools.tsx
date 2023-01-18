@@ -1,3 +1,5 @@
+import './Friend.css'
+
 import React from 'react';
 
 import OffLine from './offline.png';
@@ -83,11 +85,11 @@ export async function getAllPaginated(url: string,
 
 export function userStatus(status: string){
 	if(status === "online"){
-		return(<img src={OnLine} alt='online'></img>);
+		return(<img src={OnLine} alt='online' className='Friend-status'></img>);
 	} else if (status === "offline") {
-		return(<img src={OffLine} alt='offline'></img>);
+		return(<img src={OffLine} alt='offline' className='Friend-status'></img>);
 	} else {
-		return(<img src={InGame} alt='in game'></img>);
+		return(<img src={InGame} alt='in game' className='Friend-status'></img>);
 	}
 }
 
