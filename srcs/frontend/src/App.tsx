@@ -4,8 +4,8 @@ import './App.css';
 import { OurHeader } from './Header-zone';
 import { OurMenu } from './Menu-zone';
 import { Home, NotFound } from './adaptable-zone';
-// import { PlayZone } from './Play';
-// import { SpecZone } from './Spec';
+import { PlayZone } from './Play';
+import { SpecZone } from './Spec';
 import { Pong } from './pong/Pong';
 import { ChatZone } from './Chat-zone';
 import { FriendsZone } from './Friend-zone';
@@ -16,11 +16,10 @@ import { OtherProfile } from './OtherProfile';
 import { SignUp } from './adaptable-zone';
 import { AuthWith2FA } from './authWith2fa';
 import { Activate2FA } from './activate2fa';
-import { Pong } from './pong/Pong';
+// import { Pong } from './pong/Pong';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 import { socket, websocketContext } from './WebsocketContext'
-<<<<<<< HEAD
-import { useState, useEffect } from 'react';
+// import { useState, useEffect } from 'react';
 import toast, {Toaster} from 'react-hot-toast';
 
 const newGame = () => {
@@ -76,8 +75,6 @@ const newMessage = () => {
 		}
 	);
 };
-=======
->>>>>>> main
 
 function App() {
 	const router = 
@@ -99,10 +96,10 @@ function App() {
 						<Route path="/friends" element={<FriendsZone/>} />
 						<Route path="/" element={<Home />} />
 						<Route path="/matchhistory" element={<MatchHistoryZone/>} />
-						<Route path="/play" element={<Pong/>} />
-						{/* <Route path="/play" element={<PlayZone/>} /> */}
+						{/* <Route path="/play" element={<Pong/>} /> */}
+						<Route path="/play" element={<PlayZone/>} />
 						<Route path="/settings" element={<SettingsZone/>} />
-						{/* <Route path="/specamatch" element={<SpecZone/>} /> */}
+						<Route path="/specamatch" element={<SpecZone/>} />
 						<Route path="/otherprofile/">
 							<Route path=':uid' element={<OtherProfile />} />
 						</Route>
