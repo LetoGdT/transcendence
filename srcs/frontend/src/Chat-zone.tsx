@@ -69,55 +69,43 @@ type meProps = {
 	image_url: string;
 }
 
-function DisplayMessage(obj: any){
-	const {sender_uid, content, time_sent} = obj.obj;	
-	const [me, setMe] = useState<meProps>();
-	const [other, setOther] = useState<meProps>();
+function DisplayMessage(props: any){
+	const message: Message = props?.message;	
+	const me: User = props?.me;
 
-
-	useEffect(() => {
-		const api = async () => {
-			const me = await fetch("http://localhost:9999/api/users/me", {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonMe = await me.json();
-			setMe(jsonMe);
-
-			let urltofetch1 : string;
-			urltofetch1 = `http://localhost:9999/api/users/${obj.sender_uid}`;
-			const other = await fetch(urltofetch1, {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonOther = await other.json();
-			setOther(jsonOther);
-		};
-	
-		api();
-	}, []);
-
-	if (obj.sender_uid === me?.id){
+	if (message.sender.id === me.id){
 		return(
 			<div className='Chat-message-from-self-lvl1'>
 				<div className='Chat-div-empty'></div>
 				<div className='Chat-message-from-self-lvl2'>
-					{obj.content}
+					{message.content}
 				</div>
-				<img src={me?.image_url} alt={me?.username} className='Chat-who'></img>
+				<img src={me.image_url} alt={me.username} className='Chat-who'></img>
 			</div>
 		);
 	} else {
 		return(
 			<div className='Chat-message-from-other-lvl1'>
-				<img src={other?.image_url} alt={other?.username} className='Chat-who'></img>
+				<img src={message.sender.image_url} alt={message.sender.username} className='Chat-who'></img>
 				<div className='Chat-message-from-other-lvl2'>
-					{obj.content}
+					{message.content}
 				</div>
 				<div className='Chat-div-empty'></div>
 			</div>
 		);
 	}
+}
+
+function DisplayMessageHistory(props: any) {
+	return (
+		<div className='Chat-history-container'>
+			{props?.messages.map((elem: Message) => {
+				return (
+					<DisplayMessage message={elem} me={props?.me} key={elem.id}/>
+				); 
+			})}
+		</div>
+	);
 }
 
 function DisplayChannel(props: any){
@@ -149,13 +137,16 @@ function ChatNavigate(props: any) {
 	);
 }
 
+type User = {
+	id: number;
+	username: string;
+	image_url: string;
+}
+
 type Message = {
 	id: number;
 	content: string;
-	sender: {
-		username: string;
-		image_url: string;
-	}
+	sender: User;
 }
 
 type Conversation = {
@@ -168,15 +159,15 @@ type Conversation = {
 
 export class Chat extends React.Component<{}, { current_conv: number,
 												isChannel: boolean,
-												current_user_id: number,
+												current_user: User,
 												messages: Message[],
 												conv_list: Conversation[] }> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			current_conv: -1,
+			current_conv: 1,
 			isChannel: false,
-			current_user_id: -1,
+			current_user: {id: -1, username: "", image_url: ""},
 			messages: [],
 			conv_list: []
 		};
@@ -193,9 +184,9 @@ export class Chat extends React.Component<{}, { current_conv: number,
 		.then(response=>response.json())
 		.then(data => this.setState({conv_list: data.data.map((elem: any) => {
 			let name: string;
-			if (this.state.current_user_id === -1)
+			if (this.state.current_user.id === -1)
 				name = "not leaded";
-			else if (this.state.current_user_id === elem.user1.id)
+			else if (this.state.current_user.id === elem.user1.id)
 				name = elem.user2.username;
 			else
 				name = elem.user1.username;
@@ -235,7 +226,9 @@ export class Chat extends React.Component<{}, { current_conv: number,
 			credentials: 'include'
 		})
 		.then(response=>response.json())
-		.then(data => this.setState({ current_user_id: data.id }));
+		.then(data => this.setState({ current_user: {id: data.id,
+													 username: data.username,
+													 image_url: data.image_url}}));
 	}
 
 	updateMessages() {
@@ -253,11 +246,12 @@ export class Chat extends React.Component<{}, { current_conv: number,
 				credentials: 'include'
 			})
 			.then(response=>response.json())
-			.then(data => this.setState({ messages: data.map((elem: any) => {
+			.then(data => this.setState({ messages: data?.data.map((elem: any) => {
 				return ({
 					id: elem.id,
 					content: elem.content,
 					sender: {
+						id: elem.sender.id,
 						username: elem.sender.username,
 						image_url: elem.sender.image_url
 					}
@@ -303,11 +297,7 @@ export class Chat extends React.Component<{}, { current_conv: number,
 				<div className='Chat-container'>
 					<ChatNavigate conv_list={this.state.conv_list}/>
 					<div>
-						<div className='Chat-history-container'>
-							
-							{/* il faut utiliser cette balise pour afficher un message comme on le souhaite <DisplayMessage obj={obj} /> */}
-							
-						</div>
+						<DisplayMessageHistory messages={this.state.messages} me={this.state.current_user}/>
 						<div className='Chat-TextField-send-button'>
 							<div className='Chat-TextField'>
 								<TextareaAutosize
