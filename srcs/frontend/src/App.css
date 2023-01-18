@@ -8,8 +8,13 @@
 	z-index: 2;
 }
 
+#responsive-canvas /* del added it here to make the game canvas responsive */
+{
+	width: 100%;
+}
+
 .Adaptable{
-	background-color:#000000;
+	/* background-color:#000000; del, commented this line so the canvas doesn't mix with the black background */
 	color: antiquewhite;
 	height: 100%;
 	margin: 5px;

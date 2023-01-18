@@ -14,7 +14,7 @@ const NormalModeButton = styled(Button)({
 	padding: '6px 12px',
 	border: '1px solid',
 	lineHeight: 1.5,
-	backgroundColor: '#646464', // TODO del black background color from here ?
+	backgroundColor: '#3aeb34', // TODO del black background color from here ?
 	borderColor: '#646464',
 	fontFamily: [
 		'-apple-system',

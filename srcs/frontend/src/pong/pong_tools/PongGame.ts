@@ -7,7 +7,7 @@ const PLAYER1_UP_KEY = 'KeyW';
 const PLAYER2_DOWN_KEY = 'ArrowDown';
 const PLAYER2_UP_KEY = 'ArrowUp';
 // const TIMER = 4500 // del not used anymore ?
-const SECOND = 1500
+// const SECOND = 1500 // del not used anymore ?
 
 const TICKRATE = 50;
 

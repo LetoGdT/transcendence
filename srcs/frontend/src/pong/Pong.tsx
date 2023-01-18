@@ -67,12 +67,13 @@ const PongGameBootstrap = () =>
 
 	return (
 		<canvas
+			id="responsive-canvas"
 			ref={canvasRef}
 			onKeyDown={onKeyDown}
 			onKeyUp={onKeyUp}
 			tabIndex={-1}
-			width={GAME_WIDTH}
-			height={GAME_HEIGHT}></canvas>
+		</canvas>
+		/* del above width={GAME_WIDTH} and height={GAME_HEIGHT}> not responsive way */
 	);
 }
 
