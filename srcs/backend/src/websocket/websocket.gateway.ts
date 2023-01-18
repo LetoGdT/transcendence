@@ -8,6 +8,7 @@ import {WebSocketGateway,
 import { Server,
 		 Socket,
 } from 'socket.io';
+import { serialize, parse } from "cookie";
 import { AuthService } from '../auth/auth.service';
 import { User } from '../typeorm/user.entity';
 import { ChatService } from './chat.service';
@@ -31,12 +32,19 @@ export class MySocketGateway implements OnGatewayConnection,
 		// Vérification du token de l’utilisateur
 		// Si le token est invalide, la socket est fermée de suite
 		console.log("connection par websocket tentée");
-		if(client.request.headers.cookie == null || !this.auth.verifyToken(client.request.headers.cookie)) {
+		const cookies = parse(client.request.headers.cookie);
+		// console.log(cookies.access_token);
+		if(cookies.access_token == null || await !this.auth.verifyToken(cookies.access_token)) {
 			client.disconnect();
 			return ;
 		}
-		let token = client.request.headers.cookie;
-		let user = await this.auth.tokenOwner(token);
+		const user = await this.auth.tokenOwner(cookies.access_token);
+		if (user == null)
+		{
+			client.disconnect();
+			return ;
+		}
+
 		this.clients.push({user, client});
 		await this.usersService.changeUserStatus(user, 'online');
 		console.log(user.username + " has connected to the websocket");
@@ -79,5 +87,12 @@ export class MySocketGateway implements OnGatewayConnection,
 	}
 
 	sendMessage(recipient: Socket) {
+	}
+
+	@SubscribeMessage('testGame')
+	testGame(client: Socket, @MessageBody() body: any)
+	{
+		console.log('coucou');
+		console.log(body.test)
 	}
 }
