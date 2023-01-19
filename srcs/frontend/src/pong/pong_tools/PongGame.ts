@@ -35,8 +35,8 @@ class PongGame
     {
 		this.width = width;
 		this.height = height;
-        this.player1 = new Player(0, (height - PLAYER_HEIGHT) / 2);
-        this.player2 = new Player(width - PLAYER_WIDTH, (height - PLAYER_HEIGHT) / 2);
+        this.player1 = new Player(0, (height - this.recursivePlayerHeight()) / 2);
+        this.player2 = new Player(width - this.recursivePlayerWidth(), (height - this.recursivePlayerHeight()) / 2);
 		this.scorePlayer1 = 0;
 		this.scorePlayer2 = 0;
         this.ball = new Ball(width / 2, height / 2);
@@ -51,6 +51,24 @@ class PongGame
 			// this.connecting = false;
 		// });
     }
+
+	canvasRecursiveWidth()
+	{
+		const x: number = window.screen.width; // TODO needs more stuff in the calculation
+		return(x);
+	}
+
+	canvasRecursiveHeight()
+	{
+		const y: number = window.screen.height; // TODO needs more stuff in the calculation
+		return(y);
+	}
+
+	recursivePlayerHeight()
+	{
+		const height: number = this.height * 0.2; // TODO test it, is 0.2 right ?
+		return(height);
+	}
 
 	drawStatusScreen(ctx: CanvasRenderingContext2D, label: string) {
 		const r = this.currentTicks * 10 / TICKRATE;
@@ -516,8 +534,11 @@ class PongGame
 	// Function called every 20ms (50 Hz / 50 times per second)
 	update()
 	{
-		this.currentTicks++;
+		this.width = this.canvasRecursiveWidth(); // TODO doest it work fine ?
+		this.height = this.canvasRecursiveHeight(); // TODO doest it work fine ?
 
+		this.currentTicks++;
+		
 		if (this.start)
 		{
 			this.startTimer++;

@@ -1,11 +1,13 @@
 
-const PLAYER_HEIGHT = 100; // TODO needs to be responsive
-const PLAYER_WIDTH = 13; // TODO needs to be responsive
+// const PLAYER_HEIGHT = 100; // TODO needs to be responsive
+// const PLAYER_WIDTH = 13; // TODO needs to be responsive
 
 class Player
 {
 	public x: number;
 	public y: number;
+	public width: number
+	public height: number
 	public win: boolean;
 	
 	constructor(x: number, y: number)
@@ -17,6 +19,7 @@ class Player
 
 	draw(ctx: CanvasRenderingContext2D)
 	{
+		this.width = 
 		ctx.fillStyle = 'white';
 		ctx.fillRect(this.x, this.y, PLAYER_WIDTH, PLAYER_HEIGHT);
 	}
