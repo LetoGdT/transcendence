@@ -8,7 +8,6 @@ import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
 
 import { PleaseConnect } from './adaptable-zone';
-import { isPlainObject } from '@mui/utils';
 
 const MessageTextField = styled(TextField)({
 	'& input:valid + fieldset': {
