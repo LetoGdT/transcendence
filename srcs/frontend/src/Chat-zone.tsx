@@ -82,15 +82,14 @@ function DisplayMessage(props: any){
 			</div>
 		);
 	} else {
-		var uid = message.sender.id;
-		console.log(typeof(uid));//
+		var uid : string = toString(message.sender.id);
 		var url : string = "/otherprofile";
-		// url = url.concat(toString(uid));
+		url = url.concat(uid);
 		return(
 			<div className='Chat-message-from-other-lvl1'>
-				{/* <Link to={url}> */}
+				<Link to={url}>
 					<img src={message.sender.image_url} alt={message.sender.username} className='Chat-who'></img>
-				{/* </Link> */}
+				</Link>
 				<div className='Chat-message-from-other-lvl2'>
 					{message.content}
 				</div>
