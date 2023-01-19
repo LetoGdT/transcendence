@@ -14,16 +14,19 @@ class Player
 	{
 		this.x = x;
 		this.y = y;
+		this.width = window.screen.width * 0.1; // TODO 0.1 enough ?
+		this.height = window.screen.height * 0.1; // TODO 0.1 enough ?
 		this.win = false; // TODO Alexis thinks it would be better in PongGame class
 	}
 
 	draw(ctx: CanvasRenderingContext2D)
 	{
-		this.width = 
+		this.width = window.screen.width * 0.1; // TODO 0.1 enough ?
+		this.height = window.screen.height * 0.1; // TODO 0.1 enough ?
 		ctx.fillStyle = 'white';
-		ctx.fillRect(this.x, this.y, PLAYER_WIDTH, PLAYER_HEIGHT);
+		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
 }
 
-export { PLAYER_WIDTH, PLAYER_HEIGHT };
+// export { PLAYER_WIDTH, PLAYER_HEIGHT }; // del
 export default Player;

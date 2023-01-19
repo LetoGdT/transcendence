@@ -9,7 +9,7 @@ import PongGame from './pong_tools/PongGame';
 
 const refreshSize = (ctx: HTMLCanvasElement) => // del new
 {
-	console.log(ctx.clientWidth);
+	console.log(ctx.clientWidth); // TODO this function does nothing
 	console.log(ctx.clientHeight);
 }
 
