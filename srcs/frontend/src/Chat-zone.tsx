@@ -63,12 +63,6 @@ const SendButton = styled(Button)({
 	},
 });
 
-type meProps = {
-	id: number;
-	username: string;
-	image_url: string;
-}
-
 function DisplayMessage(props: any){
 	const message: Message = props?.message;	
 	const me: User = props?.me;
@@ -99,7 +93,7 @@ function DisplayMessage(props: any){
 function DisplayMessageHistory(props: any) {
 	return (
 		<div className='Chat-history-container'>
-			{props?.messages.map((elem: Message) => {
+			{props?.messages?.map((elem: Message) => {
 				return (
 					<DisplayMessage message={elem} me={props?.me} key={elem.id}/>
 				); 
@@ -110,6 +104,7 @@ function DisplayMessageHistory(props: any) {
 
 function DisplayChannel(props: any){
 	const conv = props?.conv;
+
 	if (conv.new_message === true){
 		return(
 			<div className='Chat-navigate-new-message'>
@@ -182,7 +177,7 @@ export class Chat extends React.Component<{}, { current_conv: number,
 			credentials: 'include'
 		})
 		.then(response=>response.json())
-		.then(data => this.setState({conv_list: data.data.map((elem: any) => {
+		.then(data => this.setState({conv_list: [].concat(data.data.map((elem: any) => {
 			let name: string;
 			if (this.state.current_user.id === -1)
 				name = "not leaded";
@@ -197,7 +192,7 @@ export class Chat extends React.Component<{}, { current_conv: number,
 				name: name,
 				new_message: false
 			});
-		})}));
+		}))}));
 
 		fetch('http://localhost:9999/api/channels/', {
 			method: "GET",
@@ -213,6 +208,8 @@ export class Chat extends React.Component<{}, { current_conv: number,
 				new_message: false
 			});
 		}))}));
+
+	// penser à gérer la conservation de la var new_message
 
 			// The condition is necessary because the users/me fetch request is async
 		if (this.state.conv_list.length !== 0)
@@ -320,6 +317,12 @@ export class Chat extends React.Component<{}, { current_conv: number,
 			</React.Fragment>
 		);
 	}
+}
+
+type meProps = {
+	id: number;
+	username: string;
+	image_url: string;
 }
 
 export function ChatZone(){
