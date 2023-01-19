@@ -30,6 +30,7 @@ export class MySocketGateway implements OnGatewayConnection,
 	server: Server;
 
 	queue = new Map<number, Connection[]>();
+	games: Game[] = [];
 
 	async handleConnection(client: Socket) {
 		// Vérification du token de l’utilisateur
@@ -95,16 +96,29 @@ export class MySocketGateway implements OnGatewayConnection,
 	sendMessage(recipient: Socket) {
 	}
 
+	@SubscribeMessage('moveUp')
+	moveUp(@MessageBody() body: any,
+		@ConnectedSocket() client: Socket,)
+	{
+		const index: number = this.games.findIndex(game => game.getPlayer1Socket().id == client.id
+			|| game.getPlayer2Socket().id == client.id);
+
+		if (index === -1)
+			throw new WsException('You are not in a game');
+
+		const game = this.games[index];
+	}
+
 	@SubscribeMessage('queue')
 	queueGame(@MessageBody() body: any,
 		@ConnectedSocket() client: Socket,)
 	{
 		console.log('Queue initiated');
-		// const index: number = this.clients.findIndex(connection => connection.client.id == client.id);
-		// if (index === -1)
-		// 	throw new WsException('An unknown socket is connected');
-		// const client_exp = this.clients[index].user.exp;
-		// this.queue.set(client_exp, this.clients[index]);
-		// return 
+		const index: number = this.clients.findIndex(connection => connection.client.id == client.id);
+		if (index === -1)
+			throw new WsException('We don\'t know you sir, but that\'s our bad');
+		const client_exp = this.clients[index].user.exp;
+		this.queue.set(client_exp, [...this.clients, this.clients[index]]);
+		return this.clients[index];
 	}
 }

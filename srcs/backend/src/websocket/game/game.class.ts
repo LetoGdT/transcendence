@@ -27,6 +27,16 @@ export class Game
 		this.refresh_rate = refresh_rate;
 	}
 
+	getPlayer1Socket()
+	{
+		return this.player1?.client;
+	}
+
+	getPlayer2Socket()
+	{
+		return this.player2?.client;
+	}
+
 	setWinningScore(winning_score: number): number
 	{
 		try

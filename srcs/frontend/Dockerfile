@@ -4,8 +4,6 @@ WORKDIR /usr/src/app
 
 COPY . .
 
-RUN npm ci
-
-# COPY . .
+RUN npm i
 
 CMD ["npm", "run", "start"]
