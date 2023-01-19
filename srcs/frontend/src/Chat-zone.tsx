@@ -162,7 +162,7 @@ export class Chat extends React.Component<{}, { current_conv: number,
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			current_conv: 1,
+			current_conv: -1,
 			isChannel: false,
 			current_user: {id: -1, username: "", image_url: ""},
 			messages: [],
@@ -171,9 +171,9 @@ export class Chat extends React.Component<{}, { current_conv: number,
 	}
 
 	updateConv_list() {
+		const old_conv_list = this.state.conv_list;
+
 		// Set the list of conversations for chat-navigate
-		//
-		// penser à faire le fetch pour les channels, et à les trier par ordre de date
 		fetch('http://localhost:9999/api/conversations/', {
 			method: "GET",
 			credentials: 'include'
@@ -211,11 +211,20 @@ export class Chat extends React.Component<{}, { current_conv: number,
 			});
 		}))}));
 
-	// penser à gérer la conservation de la var new_message
+	old_conv_list.forEach((elem: Conversation) => {
+		let index;
+		for (index = 0 ; index < this.state.conv_list.length ; index++)
+			if (this.state.conv_list[index].id == elem.id)
+				continue ;
+		if (index != this.state.conv_list.length) {
+			let tmp = this.state.conv_list;
+			tmp[index].new_message = elem.new_message;
+			this.setState({ conv_list: tmp });
+		}
 
-			// The condition is necessary because the users/me fetch request is async
-		if (this.state.conv_list.length !== 0)
-			this.setState({current_conv: this.state.conv_list[0].id});
+	});
+
+	// penser à gérer la conservation de la var new_message
 	}
 
 	updateUsersMe() {
@@ -267,6 +276,8 @@ export class Chat extends React.Component<{}, { current_conv: number,
 		this.updateUsersMe();
 		this.updateConv_list();
 		this.updateMessages();
+		if (this.state.current_conv == -1 && this.state.conv_list.length != 0)
+			this.setState({ current_conv: this.state.conv_list[0].id, isChannel: this.state.conv_list[0].is_channel });
 	}
 
 	render() {
