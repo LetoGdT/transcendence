@@ -75,8 +75,8 @@ function DisplayMessage(props: any){
 			</div>
 		);
 	} else {
-		var uid : string = toString(message.sender.id);
-		var url : string = "/otherprofile";
+		var uid : string = message.sender.id.toString();
+		var url : string = "/otherprofile/";
 		url = url.concat(uid);
 		return(
 			<div className='Chat-message-from-other-lvl1'>
