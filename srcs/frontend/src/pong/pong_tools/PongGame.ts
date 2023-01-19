@@ -86,6 +86,7 @@ class PongGame
 		if (this.connecting)
 		{
 			this.drawStatusScreen(ctx, 'Connecting...');
+			// socket.emit('queue', {});
 			return ;
 		}
 		

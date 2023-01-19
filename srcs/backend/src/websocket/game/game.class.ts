@@ -125,7 +125,7 @@ export class Game
 			this.player2.client.emit('ball', this.getBall());
 			this.player2.client.emit('players', this.getPlayers());
 			this.player2.client.emit('score', this.getScore());
-			await new Promise(r => setTimeout(r, 1000 / 50));
+			await new Promise(r => setTimeout(r, 1000 / this.refresh_rate));
 		}
 	}
 

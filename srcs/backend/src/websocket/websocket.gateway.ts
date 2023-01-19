@@ -4,9 +4,9 @@ import {WebSocketGateway,
 		SubscribeMessage,
 		MessageBody,
 		WebSocketServer,
-		ConnectedSocket
+		ConnectedSocket,
+		WsException
 } from '@nestjs/websockets';
-import { UseInterceptors, Req } from '@nestjs/common';
 import { Server,
 		 Socket,
 } from 'socket.io';
@@ -99,7 +99,12 @@ export class MySocketGateway implements OnGatewayConnection,
 	queueGame(@MessageBody() body: any,
 		@ConnectedSocket() client: Socket,)
 	{
-		const index = this.clients.findIndex(connection => connection.client.id == client.id);
-		// const game = new Game(req.user, req.user, 21);
+		console.log('Queue initiated');
+		// const index: number = this.clients.findIndex(connection => connection.client.id == client.id);
+		// if (index === -1)
+		// 	throw new WsException('An unknown socket is connected');
+		// const client_exp = this.clients[index].user.exp;
+		// this.queue.set(client_exp, this.clients[index]);
+		// return 
 	}
 }
