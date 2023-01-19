@@ -6,6 +6,8 @@ import { PageDto } from "../dto/page.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
 import { MessageQueryFilterDto } from '../dto/query-filters.dto';
 import { UserSelectDto } from '../dto/messages.dto';
+import { Connection } from '../interfaces/connection.interface';
+import { Game } from './game/game.class';
 
 @Injectable()
 export class ChatService {
@@ -38,5 +40,31 @@ export class ChatService {
 		 * Create a message at POST 'http://localhost:9999/conversations/<conversation_id>/messages'
 		 * with body: { content : 'The message's content' }
 		 **/
+	}
+
+	searchOpponent(queue: Map<number, Connection[]>, client_exp: number): Connection | null
+	{
+		let index = -1;
+		for (let [exp, connection] of queue)
+		{
+			if (connection.length > 0 && Math.abs(client_exp - exp) < Math.abs(client_exp - index))
+				index = exp;
+		}
+
+		if (index != -1)
+		{
+			const ret = queue.get(index)[0];
+			queue.get(index).splice(0);
+			return ret;
+		}
+		return null;
+	}
+
+	async startGame(client: Connection, opponent: Connection)
+	{
+		const game = new Game(50);
+		game.addPlayer({ user: client.user, client: client.client });
+		game.addPlayer({ user: opponent.user, client: opponent.client });
+		game.run();
 	}
 }

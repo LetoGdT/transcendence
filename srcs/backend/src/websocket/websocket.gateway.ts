@@ -100,6 +100,9 @@ export class MySocketGateway implements OnGatewayConnection,
 	moveUp(@MessageBody() body: any,
 		@ConnectedSocket() client: Socket,)
 	{
+		if (this.games == null)
+			throw new WsException('No game created');
+
 		const index: number = this.games.findIndex(game => game.getPlayer1Socket().id == client.id
 			|| game.getPlayer2Socket().id == client.id);
 
@@ -107,8 +110,32 @@ export class MySocketGateway implements OnGatewayConnection,
 			throw new WsException('You are not in a game');
 
 		const game = this.games[index];
+
+		if (game.getPlayer1Socket().id == client.id)
+			game.player1Up();
+		else game.player2Up();
 	}
 
+	@SubscribeMessage('moveDown')
+	moveDown(@MessageBody() body: any,
+		@ConnectedSocket() client: Socket,)
+	{
+		if (this.games == null)
+			throw new WsException('No game created');
+
+		const index: number = this.games.findIndex(game => game.getPlayer1Socket().id == client.id
+			|| game.getPlayer2Socket().id == client.id);
+
+		if (index === -1)
+			throw new WsException('You are not in a game');
+
+		const game = this.games[index];
+		if (game.getPlayer1Socket().id == client.id)
+			game.player1Up();
+		else game.player2Up();
+	}
+
+	// Think that non ranked dont join a queue
 	@SubscribeMessage('queue')
 	queueGame(@MessageBody() body: any,
 		@ConnectedSocket() client: Socket,)
@@ -118,6 +145,12 @@ export class MySocketGateway implements OnGatewayConnection,
 		if (index === -1)
 			throw new WsException('We don\'t know you sir, but that\'s our bad');
 		const client_exp = this.clients[index].user.exp;
+		const opponent: Connection | null = this.chat.searchOpponent(this.queue, client_exp);
+		if (opponent != null)
+		{
+			this.chat.startGame(this.clients[index], opponent);
+			return ;
+		}
 		this.queue.set(client_exp, [...this.clients, this.clients[index]]);
 		return this.clients[index];
 	}
