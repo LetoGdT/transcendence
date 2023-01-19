@@ -5,47 +5,50 @@ import PongGame from './pong_tools/PongGame';
 
 const GAME_WIDTH = 1040; // TODO needs to be responsive, needs a function to get the value, based on the div maybe ?
 const GAME_HEIGHT = 680; // TODO needs to be responsive, needs a function to get the value, based on the div maybe ?
-// const HEIGHT_RATIO = 1.5; // del. to make the canvas responsive
-
-const refreshSize = (ctx: HTMLCanvasElement) => // del new
-{
-	console.log(ctx.clientWidth); // TODO this function does nothing
-	console.log(ctx.clientHeight);
-}
 
 const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 {
 	const canvasRef = React.useRef<HTMLCanvasElement>(null);
-	const containerRef = React.useRef<HTMLElement>(null);
+	const resizeHandler = () => {
+		if (canvasRef.current instanceof HTMLCanvasElement) {
+			const c = canvasRef.current;
+			const pixelRatio = window.devicePixelRatio || 1;
+
+			c.width = c.clientWidth * pixelRatio;
+			c.height = c.clientHeight * pixelRatio;
+		}
+	};
+
+	React.useEffect(() => {
+		window.addEventListener('resize', resizeHandler);
+
+		return () => {
+			window.removeEventListener('resize', resizeHandler);
+		};
+	}, []);
 
 	React.useEffect(() =>
 	{
 		const canvas = canvasRef.current;
 		let animFrameId: number;
 		
-		if(canvasRef.current) // del new
-		refreshSize(canvasRef.current); // del new
-
 		if (null === canvas)
 			return ;
 		const ctx = canvas.getContext('2d');
 		if (null === ctx)
 			return ;
+		
+		// Force a size update to keep it in sync
+		resizeHandler();
 
 		function render()
 		{
-			const c = canvas as HTMLCanvasElement;
+			const c = ctx as CanvasRenderingContext2D;
 
-			(ctx as CanvasRenderingContext2D).setTransform(
-				c.clientWidth / GAME_WIDTH, 0,
-				0, c.clientHeight / GAME_HEIGHT, 0, 0);
-
-
-			(ctx as CanvasRenderingContext2D).setTransform(
-				1, 0,
-				0, 1, 0, 0);
-			
-			draw(ctx as CanvasRenderingContext2D);
+			c.setTransform(
+				c.canvas.width / GAME_WIDTH, 0,
+				0, c.canvas.height / GAME_HEIGHT,0, 0);
+			draw(c);
 
 			animFrameId = window.requestAnimationFrame(render);
 		}

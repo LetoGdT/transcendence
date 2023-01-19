@@ -14,15 +14,13 @@ class Player
 	{
 		this.x = x;
 		this.y = y;
-		this.width = window.screen.width * 0.001; // TODO 0.1 enough ?
-		this.height = window.screen.height * 0.01; // TODO 0.1 enough ?
+		this.width = PLAYER_WIDTH;
+		this.height = PLAYER_HEIGHT;
 		this.win = false; // TODO Alexis thinks it would be better in PongGame class
 	}
 
 	draw(ctx: CanvasRenderingContext2D)
 	{
-		this.width = window.screen.width * 0.001; // TODO 0.1 enough ?
-		this.height = window.screen.height * 0.1; // TODO 0.1 enough ?
 		ctx.fillStyle = 'white';
 		ctx.fillRect(this.x, this.y, this.width, this.height);
 	}

@@ -13,8 +13,8 @@ const TICKRATE = 50;
 
 class PongGame
 {
-	private width: number = 1;
-	private height: number = 1;
+	public width: number;
+	public height: number;
 	private player1: Player;
     private player2: Player;
 	private scorePlayer1: number; // TODO only get it from the back. private or public ? 
@@ -37,9 +37,9 @@ class PongGame
 		this.height = height;
 		// this.refreshSize(width, height);
         this.player1 = new Player(0, (height - PLAYER_HEIGHT) / 2);
-		// this.player1 = new Player(0, (height - this.responsivePlayerHeight()) / 2);
+		// this.player1 = new Player(0, (height - PLAYER_HEIGHT) / 2);
         this.player2 = new Player(width - PLAYER_WIDTH, (height - PLAYER_HEIGHT) / 2);
-		// this.player2 = new Player(width - this.responsivePlayerWidth(), (height - this.responsivePlayerHeight()) / 2);
+		// this.player2 = new Player(width - PLAYER_WIDTH, (height - PLAYER_HEIGHT) / 2);
 		this.scorePlayer1 = 0;
 		this.scorePlayer2 = 0;
         this.ball = new Ball(width / 2, height / 2);
@@ -63,7 +63,6 @@ class PongGame
 
 	canvasResponsiveWidth()
 	{
-		console.log("A"); // del
 		const x: number = window.screen.width; // TODO needs more stuff in the calculation
 		// return(x);
 		return this.width;
@@ -129,8 +128,8 @@ class PongGame
 
 		// if (this.connecting)
 		// {
-		// 	this.drawStatusScreen(ctx, 'Connecting...');
-		// 	return ;
+			// this.drawStatusScreen(ctx, 'Connecting...');
+			// return ;
 		// }
 		
 		this.drawNet(ctx)
@@ -482,11 +481,11 @@ class PongGame
         }
 
         // The ball reaches the right or left limit
-        if (this.ball.x < this.responsivePlayerWidth())
+        if (this.ball.x < PLAYER_WIDTH)
         {
             this.collide(this.player1);
         }
-        else if (this.ball.x > this.width - this.responsivePlayerHeight())
+        else if (this.ball.x > this.width - PLAYER_WIDTH)
         {
             this.collide(this.player2);
         }
@@ -500,7 +499,7 @@ class PongGame
     {
         // await this.sleep(5000); // del
         // The player misses the ball
-        if (this.ball.y < opponent.y || this.ball.y > opponent.y + this.responsivePlayerHeight())
+        if (this.ball.y < opponent.y || this.ball.y > opponent.y + PLAYER_HEIGHT)
         {
             // The player who scores gets 1 point
             if (opponent === this.player1)
@@ -526,8 +525,8 @@ class PongGame
             // Set ball and players to the center
             this.ball.x = this.width / 2;
             this.ball.y = this.height / 2;
-            this.player1.y = this.height / 2 - this.responsivePlayerHeight() / 2;
-            this.player2.y = this.height / 2 - this.responsivePlayerHeight() / 2;
+            this.player1.y = this.height / 2 - PLAYER_HEIGHT / 2;
+            this.player2.y = this.height / 2 - PLAYER_HEIGHT / 2;
 
             // Reset speed
             this.ball.speedX = BALL_SPEED;
@@ -545,8 +544,8 @@ class PongGame
 
 	changeDirection(playerPosition: number)
 	{
-		let impact = this.ball.y - playerPosition - this.responsivePlayerHeight() / 2;
-		let ratio = 100 / (this.responsivePlayerHeight() / 2);
+		let impact = this.ball.y - playerPosition - PLAYER_HEIGHT / 2;
+		let ratio = 100 / (PLAYER_HEIGHT / 2);
 		// Get a value between 0 and 10
 		this.ball.speedY = Math.round(impact * ratio / 10);
 	}
@@ -570,7 +569,7 @@ class PongGame
 		} 
 		else if (!this.over)
 		{
-			const maxPlayerY = this.height - this.responsivePlayerHeight();
+			const maxPlayerY = this.height - PLAYER_HEIGHT;
 
 			if (this.keyStates[PLAYER1_UP_KEY])
 			{
