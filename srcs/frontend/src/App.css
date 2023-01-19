@@ -20,6 +20,7 @@
 	color: antiquewhite;
 	border-radius: 10px;
 	padding: 10px;
+	justify-items: center;
 }
 
 a:link {
