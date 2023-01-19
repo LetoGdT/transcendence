@@ -1,10 +1,10 @@
-import { bottomNavigationActionClasses } from '@mui/material';
+// import { bottomNavigationActionClasses } from '@mui/material'; // del where the h is it coming from ?
 import { red } from '@mui/material/colors';
 import React from 'react';
 import PongGame from './pong_tools/PongGame';
 
-// const GAME_WIDTH = 1040; // TODO needs to be responsive, needs a function to get the value, based on the div maybe ?
-// const GAME_HEIGHT = 680; // TODO needs to be responsive, needs a function to get the value, based on the div maybe ?
+const GAME_WIDTH = 1040; // TODO needs to be responsive, needs a function to get the value, based on the div maybe ?
+const GAME_HEIGHT = 680; // TODO needs to be responsive, needs a function to get the value, based on the div maybe ?
 // const HEIGHT_RATIO = 1.5; // del. to make the canvas responsive
 
 const refreshSize = (ctx: HTMLCanvasElement) => // del new
@@ -34,6 +34,17 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 
 		function render()
 		{
+			const c = canvas as HTMLCanvasElement;
+
+			(ctx as CanvasRenderingContext2D).setTransform(
+				c.clientWidth / GAME_WIDTH, 0,
+				0, c.clientHeight / GAME_HEIGHT, 0, 0);
+
+
+			(ctx as CanvasRenderingContext2D).setTransform(
+				1, 0,
+				0, 1, 0, 0);
+			
 			draw(ctx as CanvasRenderingContext2D);
 
 			animFrameId = window.requestAnimationFrame(render);
@@ -54,7 +65,7 @@ function useGame()
 {
 	const ref = React.useRef<PongGame>();
 	if (!ref.current)
-		ref.current = new PongGame(window.screen.width, window.screen.height);
+		ref.current = new PongGame(GAME_WIDTH, GAME_HEIGHT);
 	return ref.current;
 }
 

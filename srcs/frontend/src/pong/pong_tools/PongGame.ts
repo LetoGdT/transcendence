@@ -1,6 +1,5 @@
 import Ball, { BALL_SPEED } from "./Ball";
-import Player from "./Player";
-// import Player, { PLAYER_WIDTH, this.responsivePlayerHeight() } from "./Player"; // del
+import Player, { PLAYER_WIDTH, PLAYER_HEIGHT } from "./Player";
 // import { io, Socket } from 'socket.io-client'; // TODO uncomment when you use socketd
 
 const PLAYER1_DOWN_KEY = 'KeyS';
@@ -14,9 +13,9 @@ const TICKRATE = 50;
 
 class PongGame
 {
-	private width: number;
-	private height: number;
-    private player1: Player;
+	private width: number = 1;
+	private height: number = 1;
+	private player1: Player;
     private player2: Player;
 	private scorePlayer1: number; // TODO only get it from the back. private or public ? 
 	private scorePlayer2: number; // TODO only get it from the back. private or public ?
@@ -36,8 +35,11 @@ class PongGame
     {
 		this.width = width;
 		this.height = height;
-        this.player1 = new Player(0, (height - this.responsivePlayerHeight()) / 2);
-        this.player2 = new Player(width - this.responsivePlayerWidth(), (height - this.responsivePlayerHeight()) / 2);
+		// this.refreshSize(width, height);
+        this.player1 = new Player(0, (height - PLAYER_HEIGHT) / 2);
+		// this.player1 = new Player(0, (height - this.responsivePlayerHeight()) / 2);
+        this.player2 = new Player(width - PLAYER_WIDTH, (height - PLAYER_HEIGHT) / 2);
+		// this.player2 = new Player(width - this.responsivePlayerWidth(), (height - this.responsivePlayerHeight()) / 2);
 		this.scorePlayer1 = 0;
 		this.scorePlayer2 = 0;
         this.ball = new Ball(width / 2, height / 2);
@@ -53,29 +55,39 @@ class PongGame
 		// });
     }
 
-	canvasresponsiveWidth()
+	// refreshSize(width: number, height: number)
+	// {
+	// 	this.width = width;
+	// 	this.height = height;
+	// }
+
+	canvasResponsiveWidth()
 	{
 		console.log("A"); // del
 		const x: number = window.screen.width; // TODO needs more stuff in the calculation
-		return(x);
+		// return(x);
+		return this.width;
 	}
 
-	canvasresponsiveHeight()
+	canvasResponsiveHeight()
 	{
 		const y: number = window.screen.height; // TODO needs more stuff in the calculation
-		return(y);
+		// return(y);
+		return this.height;
 	}
 
 	responsivePlayerWidth()
 	{
 		const height: number = this.height * 0.2; // TODO test it, is 0.2 right ?
-		return(height);
+		// return(height);/
+		return PLAYER_WIDTH;
 	}
 
 	responsivePlayerHeight()
 	{
 		const height: number = this.height * 0.2; // TODO test it, is 0.2 right ?
-		return(height);
+		// return(height);
+		return PLAYER_HEIGHT;
 	}
 
 	drawStatusScreen(ctx: CanvasRenderingContext2D, label: string) {
@@ -542,8 +554,8 @@ class PongGame
 	// Function called every 20ms (50 Hz / 50 times per second)
 	update()
 	{
-		this.width = this.canvasresponsiveWidth(); // TODO doest it work fine ?
-		this.height = this.canvasresponsiveHeight(); // TODO doest it work fine ?
+		this.width = this.canvasResponsiveWidth(); // TODO doest it work fine ?
+		this.height = this.canvasResponsiveHeight(); // TODO doest it work fine ?
 
 		this.currentTicks++;
 		
