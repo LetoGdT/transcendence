@@ -64,7 +64,7 @@ export class ConversationsController
 	* Create a conversation.
 	* 
 	* Args:
-	* 	:id (Number): The conversation's id.
+	* 	:id (Number): The recipient's id.
 	* 
 	* Return: The created conversation.
 	* 
@@ -72,7 +72,6 @@ export class ConversationsController
 	* 	Fish fingers and custard.
 	**/
 
-   /*
 	@Post()
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseGuards(JwtAuthGuard)
@@ -82,7 +81,6 @@ export class ConversationsController
 	{
 		return this.conversationsService.createConversation(req.user, postConversationDto);
 	}
-	*/
 
 	@Get('/:id/messages')
 	@UseInterceptors(ClassSerializerInterceptor)
