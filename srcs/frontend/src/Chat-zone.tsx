@@ -5,9 +5,7 @@ import TextField from '@mui/material/TextField';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
-
-import Avatar from './link_botw_avatar.jpg';
-import Banniere from './link_botw_banniere.jpg';
+import { Link } from 'react-router-dom';
 
 import { PleaseConnect } from './adaptable-zone';
 import { isPlainObject } from '@mui/utils';
@@ -84,9 +82,15 @@ function DisplayMessage(props: any){
 			</div>
 		);
 	} else {
+		var uid = message.sender.id;
+		console.log(typeof(uid));//
+		var url : string = "/otherprofile";
+		// url = url.concat(toString(uid));
 		return(
 			<div className='Chat-message-from-other-lvl1'>
-				<img src={message.sender.image_url} alt={message.sender.username} className='Chat-who'></img>
+				{/* <Link to={url}> */}
+					<img src={message.sender.image_url} alt={message.sender.username} className='Chat-who'></img>
+				{/* </Link> */}
 				<div className='Chat-message-from-other-lvl2'>
 					{message.content}
 				</div>
