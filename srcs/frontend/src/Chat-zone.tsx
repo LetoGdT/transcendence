@@ -69,7 +69,7 @@ function DisplayMessage(props: any){
 			<div className='Chat-message-from-self-lvl1'>
 				<div className='Chat-div-empty'></div>
 				<div className='Chat-message-from-self-lvl2'>
-					{message.content}
+					<p className='p.chat'>{message.content}</p>
 				</div>
 				<img src={me.image_url} alt={me.username} className='Chat-who'></img>
 			</div>
@@ -84,7 +84,7 @@ function DisplayMessage(props: any){
 					<img src={message.sender.image_url} alt={message.sender.username} className='Chat-who'></img>
 				</Link>
 				<div className='Chat-message-from-other-lvl2'>
-					{message.content}
+					<p className='p.chat'>{message.content}</p>
 				</div>
 				<div className='Chat-div-empty'></div>
 			</div>

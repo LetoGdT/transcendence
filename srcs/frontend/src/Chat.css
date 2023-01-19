@@ -89,7 +89,7 @@
 	border-radius: 10px 15px 0px 10px;
 	border-color: #3b9b3b;
 	padding: 5px;
-	/* overflow-wrap: break-word; */
+	overflow-wrap: break-word;
 }
 
 .Chat-message-from-other-lvl2{
@@ -99,7 +99,10 @@
 	border-radius: 10px 15px 10px 0px;
 	border-color: #007dd6;
 	padding: 5px;
-	/* overflow-wrap: break-word; */
+	overflow-wrap: break-word;
 	word-break: break-all;
 }
 
+.p.chat{
+	word-break: break-all;
+}
