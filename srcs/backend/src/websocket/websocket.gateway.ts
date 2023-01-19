@@ -52,7 +52,7 @@ export class MySocketGateway implements OnGatewayConnection,
 		}
 
 		this.clients.push({user, client});
-		await this.usersService.changeUserStatus(user, 'online');
+		await this.usersService.changeUserStatus(user.id, 'online');
 		console.log(user.username + " has connected to the websocket");
 	}
 
@@ -60,7 +60,7 @@ export class MySocketGateway implements OnGatewayConnection,
 		let index = this.clients.findIndex(element => element.client == client);
 		if (index != -1) {
 			console.log(this.clients[index].user.username + " has disconnected from the websocket.");
-			await this.usersService.changeUserStatus(this.clients[index].user, 'offline');
+			await this.usersService.changeUserStatus(this.clients[index].user.id, 'offline');
 			this.clients.splice(index, 1);
 		}
 	}
