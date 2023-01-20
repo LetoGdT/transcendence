@@ -75,19 +75,20 @@ export class UsersService
 	}
 
 	// Update a user
-	async updateOnePartial(id: number, updateUserDto: UpdateUserDto): Promise<UpdateResult>
+	async updateOnePartial(user: User, updateUserDto: UpdateUserDto): Promise<User>
 	{
-		if (id > this.IdMax)
-			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
-		const user: User | null = await this.userRepository.findOne({
+		const dup: User | null = await this.userRepository.findOne({
 			where: { username: updateUserDto.username }
-		})
-		if (updateUserDto.username != null && user != null)
-			throw new BadRequestException('Username already exists')
-		return this.userRepository.update(id, {
-			...(updateUserDto.username && { username: updateUserDto.username }),
-			...(updateUserDto.image_url && { image_url: updateUserDto.image_url }),
 		});
+		if (updateUserDto.username != null && dup != null)
+			throw new BadRequestException('Username already exists');
+
+		if (updateUserDto.username != null)
+			user.username = updateUserDto.username;
+
+		if (updateUserDto.image_url != null)
+			user.image_url = updateUserDto.image_url;
+		return this.userRepository.save(user);
 	}
 
 	updateOne(user: User)
@@ -426,8 +427,9 @@ export class UsersService
 		return this.userRepository.save(user);
 	}
 
-	async changeUserStatus(user: User, status: 'online' | 'offline' | 'in-game')
+	async changeUserStatus(id: number, status: 'online' | 'offline' | 'in-game')
 	{
+		const user = await this.userRepository.findOne({ where: { id: id }});
 		user.status = status;
 		return this.userRepository.save(user);
 	}

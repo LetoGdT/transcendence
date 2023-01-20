@@ -76,7 +76,7 @@ export class UsersController
 	{
 		if (Object.keys(updateUserDto).length === 0)
 			throw new BadRequestException('Empty parameters');
-		return this.usersService.updateOnePartial(req.user.id, updateUserDto);
+		return this.usersService.updateOnePartial(req.user, updateUserDto);
 	}
 
 	@Get('/:id')
