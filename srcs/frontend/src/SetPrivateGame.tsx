@@ -5,6 +5,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import Slider from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
+import Button from '@mui/material/Button';
 
 const MaxPtsSlider = styled(Slider)({
   color: '#3b9b3b',
@@ -32,7 +33,8 @@ const MaxPtsSlider = styled(Slider)({
     width: 32,
     height: 32,
     borderRadius: '50% 50% 50% 0',
-    backgroundColor: '#52af77',
+    backgroundColor: '#3b9b3b',
+	color: '#faebd7',
     transformOrigin: 'bottom left',
     transform: 'translate(50%, -100%) rotate(-45deg) scale(0)',
     '&:before': { display: 'none' },
@@ -71,7 +73,8 @@ const BallSpeedSlider = styled(Slider)({
     width: 32,
     height: 32,
     borderRadius: '50% 50% 50% 0',
-    backgroundColor: '#52af77',
+    backgroundColor: '#007dd6',
+	color: '#faebd7',
     transformOrigin: 'bottom left',
     transform: 'translate(50%, -100%) rotate(-45deg) scale(0)',
     '&:before': { display: 'none' },
@@ -84,14 +87,61 @@ const BallSpeedSlider = styled(Slider)({
   },
 });
 
+const AskButton = styled(Button)({
+	boxShadow: 'none',
+	textTransform: 'none',
+	fontSize: 16,
+	padding: '6px 12px',
+	border: '1px solid',
+	lineHeight: 1.5,
+	backgroundColor: '#646464',
+	borderColor: '#646464',
+	fontFamily: [
+		'-apple-system',
+		'BlinkMacSystemFont',
+		'"Segoe UI"',
+		'Roboto',
+		'"Helvetica Neue"',
+		'Arial',
+		'sans-serif',
+		'"Apple Color Emoji"',
+		'"Segoe UI Emoji"',
+		'"Segoe UI Symbol"',
+	].join(','),
+	'&:hover': {
+		backgroundColor: '#007dd6',
+		borderColor: '#646464',
+		boxShadow: 'none',
+	},
+	'&:active': {
+		boxShadow: 'none',
+		backgroundColor: '#004d7b',
+		borderColor: '#646464',
+	},
+	'&:focus': {
+		adow: '0 0 0 0.2rem rgba(0,0,0,.5)',
+	},
+});
+
 export function SetPrivateGame(){
 	let { uid } = useParams();
 
+	const handleClickSetParams = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		const response = await fetch(' ', {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			credentials: 'include'
+		});
+	};
+
 	return(
 		<React.Fragment>
-			<h1>Set Parameter for a Quick Play</h1>
+			<h1>Set Parameters for a Quick Play</h1>
 			<div className='Set-Private-Game-container'>
-				<div className='Set-Privaite-Game-Slider'>
+				<div className='Set-Private-Game-Slider'>
 				number of points needed to win the game
 				<MaxPtsSlider
 					valueLabelDisplay="auto"
@@ -101,7 +151,7 @@ export function SetPrivateGame(){
 					defaultValue={10}
 				/>
 				</div>
-				<div className='Set-Privaite-Game-Slider'>
+				<div className='Set-Private-Game-Slider'>
 				ball speed
 				<BallSpeedSlider
 					valueLabelDisplay="auto"
@@ -112,6 +162,7 @@ export function SetPrivateGame(){
 				/>
 				</div>
 			</div>
+			<div className='Set-Private-Game-Button'><AskButton variant="contained" disableRipple>Set Parameters</AskButton></div>
 		</React.Fragment>
 	);
 }
