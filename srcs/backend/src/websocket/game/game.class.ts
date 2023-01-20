@@ -144,27 +144,23 @@ export class Game
 			throw new Error("You need 2 players to start a game");
 		this.ball = new Ball(this.player1.paddle, this.player2.paddle, this.score,
 			this.refresh_rate, this.ball_speed);
-		this.player1.client.emit('ball', {
-				coordinates: { x: 10, y: 10 },
-				speed: 10,
-				direction: { x: 0.5, y: 0.5 },
-			});
+
+		this.player1.client.emit('ball', this.getBall());
 		this.player1.client.emit('players', this.getPlayers());
 		this.player1.client.emit('score', this.getScore());
 		this.player2.client.emit('ball', this.getBall());
 		this.player2.client.emit('players', this.getPlayers());
 		this.player2.client.emit('score', this.getScore());
+		this.score.player1();
+		// this.score.player1();
+		// this.score.player2();
 		this.start = true;
 		while (true)
 		{
 			this.update();
 			if (this.winner)
 				break;
-			this.player1.client.emit('ball', {
-				coordinates: { x: 10, y: 10 },
-				speed: 10,
-				direction: { x: 0.5, y: 0.5 },
-			});
+			this.player1.client.emit('ball', this.getBall());
 			this.player1.client.emit('players', this.getPlayers());
 			this.player1.client.emit('score', this.getScore());
 			this.player2.client.emit('ball', this.getBall());
