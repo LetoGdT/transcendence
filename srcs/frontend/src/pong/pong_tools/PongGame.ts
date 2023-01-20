@@ -1,6 +1,6 @@
 import Ball, { BALL_SPEED } from "./Ball";
 import Player, { PLAYER_WIDTH, PLAYER_HEIGHT } from "./Player";
-// import { io, Socket } from 'socket.io-client'; // TODO uncomment when you use socketd
+import { socket } from '../../WebsocketContext';
 
 const PLAYER1_DOWN_KEY = 'KeyS';
 const PLAYER1_UP_KEY = 'KeyW';

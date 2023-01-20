@@ -34,9 +34,11 @@ export class AuthService
 
 	// Return the token info.
 	// Doesn't check the token validity, so use with caution !
-	async tokenOwner(token: string): Promise<User>
+	async tokenOwner(token: string): Promise<User | null>
 	{
 		const decoded = this.jwtService.decode(token) as { username: string, sub: number };
+		if (decoded == null)
+			return null;
 		const ret = await this.userRepository.createQueryBuilder("user")
 			.where("user.id = :id", { id: decoded.sub })
 			.getOne();
