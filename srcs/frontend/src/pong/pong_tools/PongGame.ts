@@ -36,11 +36,8 @@ class PongGame
     {
 		this.width = width;
 		this.height = height;
-		// this.refreshSize(width, height);
         this.player1 = new Player(0, (height - PLAYER_HEIGHT) / 2);
-		// this.player1 = new Player(0, (height - PLAYER_HEIGHT) / 2);
         this.player2 = new Player(width - PLAYER_WIDTH, (height - PLAYER_HEIGHT) / 2);
-		// this.player2 = new Player(width - PLAYER_WIDTH, (height - PLAYER_HEIGHT) / 2);
 		this.scorePlayer1 = 0;
 		this.scorePlayer2 = 0;
 		this.scoreToWin = 5; // TODO get it from slider in the front when game launched (customization option)
@@ -52,17 +49,11 @@ class PongGame
 		this.startTimer = 0;
 		this.currentTicks = 0;
 
-		// this.socket = io('http://localhost:1234', { transports: [ 'websocket' ] });
+		// this.socket = io('http://localhost:1234', { transports: [ 'websocket' ] }); // del ?
 		// this.socket.on('connect', () => {
 			// this.connecting = false;
 		// });
     }
-
-	// refreshSize(width: number, height: number)
-	// {
-	// 	this.width = width;
-	// 	this.height = height;
-	// }
 
 	canvasResponsiveWidth()
 	{
