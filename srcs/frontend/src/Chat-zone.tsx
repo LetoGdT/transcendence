@@ -170,16 +170,17 @@ export class Chat extends React.Component<{}, { current_conv: number,
 		};
 	}
 
-	updateConv_list() {
+	async updateConv_list() {
+		let res: Conversation[] = [];
 		const old_conv_list = this.state.conv_list;
 
 		// Set the list of conversations for chat-navigate
-		fetch('http://localhost:9999/api/conversations/', {
+		await fetch('http://localhost:9999/api/conversations/', {
 			method: "GET",
 			credentials: 'include'
 		})
 		.then(response=>response.json())
-		.then(data => this.setState({conv_list: [].concat(data.data.map((elem: any) => {
+		.then(data => res = res.concat(data.data.map((elem: any) => {
 			let name: string;
 			if (this.state.current_user.id === -1)
 				name = "not leaded";
@@ -194,14 +195,14 @@ export class Chat extends React.Component<{}, { current_conv: number,
 				name: name,
 				new_message: false
 			});
-		}))}));
+		})));
 
-		fetch('http://localhost:9999/api/channels/', {
+		await fetch('http://localhost:9999/api/channels/', {
 			method: "GET",
 			credentials: 'include'
 		})
 		.then(response=>response.json())
-		.then(data => this.setState({conv_list: this.state.conv_list.concat(data.data.map((elem: any) => {
+		.then(data => res = res.concat(data.data.map((elem: any) => {
 			return ({
 				id: elem.id,
 				is_channel: true,
@@ -209,27 +210,23 @@ export class Chat extends React.Component<{}, { current_conv: number,
 				name: elem.name,
 				new_message: false
 			});
-		}))}));
+		})));
 
-	old_conv_list.forEach((elem: Conversation) => {
-		let index;
-		for (index = 0 ; index < this.state.conv_list.length ; index++)
-			if (this.state.conv_list[index].id == elem.id)
-				continue ;
-		if (index != this.state.conv_list.length) {
-			let tmp = this.state.conv_list;
-			tmp[index].new_message = elem.new_message;
-			this.setState({ conv_list: tmp });
-		}
-
-	});
-
-	// penser à gérer la conservation de la var new_message
+		old_conv_list.forEach((elem: Conversation) => {
+			let index;
+			for (index = 0 ; index < res.length ; index++)
+				if (res[index].id == elem.id)
+					continue ;
+			if (index != res.length)
+				res[index].new_message = elem.new_message;
+		});
+		this.setState({ conv_list: res });
+		return res;
 	}
 
-	updateUsersMe() {
+	async updateUsersMe() {
 		// set Current_user_id
-		fetch('http://localhost:9999/api/users/me/', {
+		await fetch('http://localhost:9999/api/users/me/', {
 			method: "GET",
 			credentials: 'include'
 		})
@@ -239,7 +236,7 @@ export class Chat extends React.Component<{}, { current_conv: number,
 													 image_url: data.image_url}}));
 	}
 
-	updateMessages() {
+	async updateMessages() {
 		// Fetch messages according to the selected conversation or channel
 		if (this.state.current_conv !== -1) {
 			let uri: string = 'http://localhost:9999/api/';
@@ -272,13 +269,14 @@ export class Chat extends React.Component<{}, { current_conv: number,
 		this.setState({ current_conv: id, isChannel: isChannel });
 	}
 
-	componentDidMount() {
-		this.updateUsersMe();
-		this.updateConv_list();
-		this.updateMessages();
-		if (this.state.current_conv == -1 && this.state.conv_list.length != 0)
-			this.setState({ current_conv: this.state.conv_list[0].id, isChannel: this.state.conv_list[0].is_channel });
+	async componentDidMount() {
+		await this.updateUsersMe();
+		let conv_list = await this.updateConv_list();
+		if (this.state.current_conv == -1 && conv_list.length != 0)
+			this.setState({ current_conv: conv_list[0].id, isChannel: conv_list[0].is_channel });
+		await this.updateMessages();
 	}
+
 
 	render() {
 		/*
