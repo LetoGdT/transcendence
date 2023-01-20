@@ -19,6 +19,7 @@ class PongGame
     private player2: Player;
 	private scorePlayer1: number; // TODO only get it from the back. private or public ? 
 	private scorePlayer2: number; // TODO only get it from the back. private or public ?
+	private scoreToWin: number;
     private start: boolean = true; // Meaning game over
     private over: boolean = false; // Meaning game over
     private ball: Ball;
@@ -42,6 +43,8 @@ class PongGame
 		// this.player2 = new Player(width - PLAYER_WIDTH, (height - PLAYER_HEIGHT) / 2);
 		this.scorePlayer1 = 0;
 		this.scorePlayer2 = 0;
+		this.scoreToWin = 5; // TODO get it from slider in the front when game launched (customization option)
+
         this.ball = new Ball(width / 2, height / 2);
         this.keyStates = [];
 		this.timer = 225;
@@ -179,7 +182,7 @@ class PongGame
 				this.ball.x = this.width / 2;
 				this.ball.y = this.height / 2;
 				this.drawScore(ctx);
-				if (this.scorePlayer1 === 5)
+				if (this.scorePlayer1 === this.scoreToWin)
 				{
 					// Draw 'VICTORY'
 					ctx.strokeStyle = 'white';
