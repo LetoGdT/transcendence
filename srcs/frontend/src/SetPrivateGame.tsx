@@ -129,15 +129,8 @@ export function SetPrivateGame(){
 	const [newSpeed, setNewSpeed] = React.useState(10);
 
 	const handleClickSetParams = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		// const response = await fetch(' ', {
-		// 	headers: {
-		// 		'Accept': 'application/json',
-		// 		'Content-Type': 'application/json'
-		// 	},
-		// 	method: 'POST',
-		// 	credentials: 'include'
-		// });
-		console.log(newPts);
+		//Tim, newPts contient le resultat du curseur vert
+		//newSpeed contient le resultat du curseur bleu
 	};
 
 	const handleNewPts = (value: any) => {
