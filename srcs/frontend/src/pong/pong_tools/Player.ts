@@ -1,6 +1,6 @@
 
-const PLAYER_HEIGHT = 100; // TODO needs to be responsive
-const PLAYER_WIDTH = 13; // TODO needs to be responsive
+const PLAYER_HEIGHT = 100;
+const PLAYER_WIDTH = 13;
 
 class Player
 {
