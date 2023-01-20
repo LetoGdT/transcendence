@@ -100,7 +100,7 @@ const PongGameBootstrap = () =>
 	};
 
 	return (
-		<div style={{position: 'fixed', top:'350px', bottom:0, left:0, right:0}}>
+		<div style={{position: 'fixed', top:'350px', bottom:'25px', left:0, right:0}}>
 
 			<div style={{aspectRatio: 16 / 9 , maxHeight:'100%', maxWidth:'100%', marginLeft:'auto', marginRight:'auto'}}>
 				<canvas
@@ -119,7 +119,6 @@ const PongGameBootstrap = () =>
 const Pong = () =>
 (
 	<>
-		<h1>PONG</h1>
 		<div>
 			<PongGameBootstrap/>
 		</div>
