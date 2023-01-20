@@ -1,14 +1,15 @@
 TODO :
+build without -d and check the warnings
+virer le joueur 2
 changes from main to incorporate on my branch :
 1) import { PlayZone } from './Play';
 2) import { SpecZone } from './Spec';
 from adaptable-zone.tsx
-randomize the direction of the ball at the beginning (recupere via websocket)
+change ball's angle according to where it hits on the paddle
 check del, TODO, commentaries
+randomize the direction of the ball at the beginning (recupere via websocket)
 
-
-
-Keep it :
+Keep it:
 websockets :
 1 partie entierement dans le back, 1 entierement dans le front
 objet socket dans le front, tu vas faire toutes les requetes avec

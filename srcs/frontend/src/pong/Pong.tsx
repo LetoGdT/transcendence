@@ -1,10 +1,8 @@
-// import { bottomNavigationActionClasses } from '@mui/material'; // del where the h is it coming from ?
-import { red } from '@mui/material/colors';
 import React from 'react';
 import PongGame from './pong_tools/PongGame';
 
-const GAME_WIDTH = 1040; // TODO needs to be responsive, needs a function to get the value, based on the div maybe ?
-const GAME_HEIGHT = 680; // TODO needs to be responsive, needs a function to get the value, based on the div maybe ?
+const GAME_WIDTH = 1040;
+const GAME_HEIGHT = 680;
 
 const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 {
@@ -55,11 +53,11 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 
 		render();
 
-		return () => // TODO Ax
+		return () =>
 		{
 			window.cancelAnimationFrame(animFrameId);
 		}
-	}, [draw]); // TODO Ax
+	}, [draw]);
 
 	return canvasRef;
 };
@@ -79,8 +77,17 @@ const PongGameBootstrap = () =>
 	
 	React.useEffect(() =>
 	{
-		const timer = setInterval(() => game.update(), 20);
-		return () => clearInterval(timer);
+		const timer = setInterval(() => game.update(), 20); // del old version
+		// const timer = setInterval(() =>  // TODO new version in progress (see with Tim how to create deltaTime in this front version)
+			// if (this.deltaTime > 1)		// this is supposed to be called only when new information is received from the back
+			// {							// meaning that update is called only if the front
+			// 	game.update(), 20);			// version has to run on itself (predict the position of
+			// }							// the ball, the players and the score). Else, update is
+											// simply not called and the ball, players and score are
+											// "updated" by the back. So you need another function,
+											// for when it doesn't go inside front update, that will
+											// update all the variables directly.
+			return () => clearInterval(timer);
 	}, [game]);
 
 	const onKeyUp = (e: React.KeyboardEvent) => {
@@ -93,7 +100,6 @@ const PongGameBootstrap = () =>
 	};
 
 	return (
-		/* del line underneath new */
 		<div style={{position: 'fixed', top:'200px', bottom:0, left:0, right:0}} >
 
 			<div style={{aspectRatio: 16 / 9 , maxHeight:'100%', maxWidth:'100%', marginLeft:'auto', marginRight:'auto'}} >
@@ -107,7 +113,6 @@ const PongGameBootstrap = () =>
 				</canvas>
 			</div>
 		</div>
-		/* del above width={GAME_WIDTH} and height={GAME_HEIGHT}> not responsive way */
 	);
 }
 
