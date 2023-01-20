@@ -125,17 +125,28 @@ const AskButton = styled(Button)({
 
 export function SetPrivateGame(){
 	let { uid } = useParams();
+	const [newPts, setNewPts] = React.useState(10);
+	const [newSpeed, setNewSpeed] = React.useState(10);
 
 	const handleClickSetParams = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch(' ', {
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'POST',
-			credentials: 'include'
-		});
+		// const response = await fetch(' ', {
+		// 	headers: {
+		// 		'Accept': 'application/json',
+		// 		'Content-Type': 'application/json'
+		// 	},
+		// 	method: 'POST',
+		// 	credentials: 'include'
+		// });
+		console.log(newPts);
 	};
+
+	const handleNewPts = (value: any) => {
+		setNewPts(value);
+	}
+
+	const handleNewSpeed = (value: any) => {
+		setNewSpeed(value);
+	}
 
 	return(
 		<React.Fragment>
@@ -149,6 +160,7 @@ export function SetPrivateGame(){
 					min={5}
 					max={20}
 					defaultValue={10}
+					onChangeCommitted={(_, v) => handleNewPts(v)}
 				/>
 				</div>
 				<div className='Set-Private-Game-Slider'>
@@ -159,10 +171,11 @@ export function SetPrivateGame(){
 					min={5}
 					max={20}
 					defaultValue={10}
+					onChangeCommitted={(_, v) => handleNewSpeed(v)}
 				/>
 				</div>
 			</div>
-			<div className='Set-Private-Game-Button'><AskButton variant="contained" disableRipple>Set Parameters</AskButton></div>
+			<div className='Set-Private-Game-Button'><AskButton variant="contained" disableRipple onClick={handleClickSetParams}>Set Parameters</AskButton></div>
 		</React.Fragment>
 	);
 }
