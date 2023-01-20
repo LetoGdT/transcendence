@@ -11,6 +11,39 @@ const PLAYER2_UP_KEY = 'ArrowUp';
 
 const TICKRATE = 50;
 
+interface Object2D
+{
+	x: number;
+	y: number;
+}
+
+interface BallData
+{
+	coordinates: Object2D;
+	speed: number;
+	direction: Object2D;
+}
+
+interface Players
+{
+	player1:
+	{
+	  x: number,
+	  y: number,
+	},
+	player2:
+	{
+	  x: number,
+	  y: number,
+	},
+}
+
+interface Score
+{
+	player1: number,
+	player2: number,
+}
+
 class PongGame
 {
 	public width: number;
@@ -54,6 +87,28 @@ class PongGame
 			// this.connecting = false;
 		// });
     }
+
+	setBall(data: BallData)
+	{
+		this.ball.x = data.coordinates.x;
+		this.ball.y = data.coordinates.y;
+		this.ball.speedX = data.direction.x * data.speed;
+		this.ball.speedY = data.direction.y * data.speed;
+	}
+
+	setPlayers(data: Players)
+	{
+		this.player1.x = data.player1.x;
+		this.player1.y = data.player1.y;
+		this.player2.x = data.player2.x;
+		this.player2.y = data.player2.y;
+	}
+
+	setScore(data: Score)
+	{
+		this.scorePlayer1 = data.player1;
+		this.scorePlayer2 = data.player2;
+	}
 
 	canvasResponsiveWidth()
 	{
@@ -588,20 +643,6 @@ class PongGame
 			this.updatePhysics();
 		}
 	}
-
-	// { 					// update ball coordinate (here are what you receive in json via websockets)
-	// 	coordinates: {
-	// 	  x: number;
-	// 	  y: number;
-	// 	},
-	  
-	// 	speed: number,
-	  
-	// 	direction: {
-	// 	  x: number;
-	// 	  y: number;
-	// 	},
-	//   }
 
     handleKeyUp(code: string)
 	{
