@@ -24,6 +24,7 @@ export class Game
 	readonly type: 'Ranked' | 'Quick play';
 	private readonly refresh_rate: number;
 	private start: boolean = false;
+	// private games: 
 
 	constructor(refresh_rate: number, type: 'Ranked' | 'Quick play')
 	{
@@ -163,7 +164,8 @@ export class Game
 			this.player2.client.emit('score', this.getScore());
 			await new Promise(r => setTimeout(r, 1000 / this.refresh_rate));
 		}
+
+		this.player1.client.emit('winner', { winner: this.winner });
+		this.player2.client.emit('winner', { winner: this.winner });
 	}
-
-
 }

@@ -1,7 +1,8 @@
 // import { bottomNavigationActionClasses } from '@mui/material'; // del where the h is it coming from ?
 import { red } from '@mui/material/colors';
-import React from 'react';
+import React, { useState } from 'react';
 import PongGame from './pong_tools/PongGame';
+import { socket } from '../WebsocketContext';
 
 const GAME_WIDTH = 1040; // TODO needs to be responsive, needs a function to get the value, based on the div maybe ?
 const GAME_HEIGHT = 680; // TODO needs to be responsive, needs a function to get the value, based on the div maybe ?
@@ -74,12 +75,33 @@ function useGame()
 
 const PongGameBootstrap = () =>
 {
+	const [winner, setWinner] = useState(-1);
+	const [lastUpdate, setLastUpdate] = useState(performance.now());
+	
 	const game = useGame();
-	const canvasRef = useCanvas(ctx => game.render(ctx))
+	const canvasRef = useCanvas(ctx => game.render(ctx));
 	
 	React.useEffect(() =>
 	{
-		const timer = setInterval(() => game.update(), 20);
+		// socket.on('queuing', () => setIsQueuing(true));
+		socket.on('ball', (data) => {
+			setLastUpdate(performance.now());
+			// game.setBall(data);
+		});
+		socket.on('players', (data) => {
+			setLastUpdate(performance.now());
+			// game.setPlayers(data);
+		});
+		socket.on('score', (data) => {
+			setLastUpdate(performance.now());
+			// game.setScore(data);
+		});
+		socket.on('gameFound', () => game.setConnecting());
+		socket.on('winner', (win: number) => setWinner(win));
+		const timer = setInterval(() => {
+			if (performance.now() - lastUpdate > 1000 / 50)
+				game.update()
+		}, 20);
 		return () => clearInterval(timer);
 	}, [game]);
 

@@ -1,6 +1,5 @@
 import Ball, { BALL_SPEED } from "./Ball";
 import Player, { PLAYER_WIDTH, PLAYER_HEIGHT } from "./Player";
-import { socket } from '../../WebsocketContext';
 
 const PLAYER1_DOWN_KEY = 'KeyS';
 const PLAYER1_UP_KEY = 'KeyW';
@@ -25,7 +24,7 @@ class PongGame
     private keyStates: any;
     private movePlayer: boolean = false;
 	private timer: number; // del ?
-	// private connecting: boolean = true;
+	private connecting: boolean = true;
 	// private socket: Socket;
 
 	private startTimer: number;
@@ -60,6 +59,11 @@ class PongGame
 	// 	this.width = width;
 	// 	this.height = height;
 	// }
+
+	setConnecting()
+	{
+		this.connecting = false;
+	}
 
 	canvasResponsiveWidth()
 	{

@@ -126,6 +126,6 @@ export class Ball implements Object2D
 	getCoordinates(): { coordinates: Vector2D, speed: number, direction: Vector2D }
 	{
 		this.updateCoordinates();
-		return { coordinates: this.coordinates, speed: this.speed, direction: this.direction};
+		return { coordinates: this.coordinates, speed: this.speed, direction: this.direction };
 	}
 }
