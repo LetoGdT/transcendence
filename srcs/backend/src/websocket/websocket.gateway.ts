@@ -61,6 +61,15 @@ export class MySocketGateway implements OnGatewayConnection,
 		let index = this.clients.findIndex(element => element.client == client);
 		if (index != -1) {
 			console.log(this.clients[index].user.username + " has disconnected from the websocket.");
+			const connections = this.queue.get(this.clients[index].user.exp);
+			if (connections != null)
+			{
+				const conn_id = connections.findIndex(conn => {
+					conn.user.id == this.clients[index].user.id;
+				});
+				if (conn_id != -1)
+					this.queue.get(this.clients[index].user.exp).splice(conn_id, 1);
+			}
 			await this.usersService.changeUserStatus(this.clients[index].user.id, 'offline');
 			this.clients.splice(index, 1);
 		}
@@ -143,7 +152,7 @@ export class MySocketGateway implements OnGatewayConnection,
 		},
 		@ConnectedSocket() client: Socket,)
 	{
-		console.log('Queue initiated');
+		// this.chat.printQ(this.queue);
 		const index: number = this.clients.findIndex(connection => connection.client.id == client.id);
 		if (index === -1)
 			throw new WsException('We don\'t know you sir, but that\'s our bad');
@@ -161,13 +170,28 @@ export class MySocketGateway implements OnGatewayConnection,
 		if (body.type == 'Ranked')
 		{
 			const client_exp = this.clients[index].user.exp;
-			const opponent: Connection | null = this.chat.searchOpponent(this.queue, client_exp);
+
+			for (let connections of this.queue.values())
+			{
+				for (let connection of connections)
+					if (connection.user.id == this.clients[index].user.id)
+					{
+						throw new WsException('You are already in queue');
+					}
+			}
+
+			const opponent: Connection | null = this.chat.searchOpponent(this.queue, client_exp,
+				this.clients[index].user.id);
 			if (opponent != null)
 			{
 				this.chat.startGame(this.clients[index], opponent, this.games);
 				return ;
 			}
-			this.queue.set(client_exp, [...this.clients, this.clients[index]]);
+			if (this.queue.get(client_exp) != null)
+				this.queue.get(client_exp).push(this.clients[index]);
+			else
+				this.queue.set(client_exp, [this.clients[index]]);
+
 			client.emit('queuing');
 		}
 		else

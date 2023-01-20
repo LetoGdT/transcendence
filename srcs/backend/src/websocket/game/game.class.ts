@@ -81,10 +81,10 @@ export class Game
 	addPlayer(player: Player): void
 	{
 		if (this.player1 == null)
-			this.player1 = { ...player, paddle: structuredClone(this.referencePaddle) };
+			this.player1 = { ...player, paddle: new Paddle() };
 
 		else if (this.player2 == null)
-			this.player2 = { ...player, paddle: structuredClone(this.referencePaddle) };
+			this.player2 = { ...player, paddle: new Paddle() };
 
 		else
 			throw new Error("Both players are already set.");
@@ -144,7 +144,11 @@ export class Game
 			throw new Error("You need 2 players to start a game");
 		this.ball = new Ball(this.player1.paddle, this.player2.paddle, this.score,
 			this.refresh_rate, this.ball_speed);
-		this.player1.client.emit('ball', this.getBall());
+		this.player1.client.emit('ball', {
+				coordinates: { x: 10, y: 10 },
+				speed: 10,
+				direction: { x: 0.5, y: 0.5 },
+			});
 		this.player1.client.emit('players', this.getPlayers());
 		this.player1.client.emit('score', this.getScore());
 		this.player2.client.emit('ball', this.getBall());
@@ -156,7 +160,11 @@ export class Game
 			this.update();
 			if (this.winner)
 				break;
-			this.player1.client.emit('ball', this.getBall());
+			this.player1.client.emit('ball', {
+				coordinates: { x: 10, y: 10 },
+				speed: 10,
+				direction: { x: 0.5, y: 0.5 },
+			});
 			this.player1.client.emit('players', this.getPlayers());
 			this.player1.client.emit('score', this.getScore());
 			this.player2.client.emit('ball', this.getBall());
@@ -167,5 +175,6 @@ export class Game
 
 		this.player1.client.emit('winner', { winner: this.winner });
 		this.player2.client.emit('winner', { winner: this.winner });
+		console.log('We have a winner');
 	}
 }

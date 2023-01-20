@@ -10,6 +10,39 @@ const PLAYER2_UP_KEY = 'ArrowUp';
 
 const TICKRATE = 50;
 
+interface Object2D
+{
+	x: number;
+	y: number;
+}
+
+interface BallData
+{
+	coordinates: Object2D;
+	speed: number;
+	direction: Object2D;
+}
+
+interface Players
+{
+	player1:
+	{
+	  x: number,
+	  y: number,
+	},
+	player2:
+	{
+	  x: number,
+	  y: number,
+	},
+}
+
+interface Score
+{
+	player1: number,
+	player2: number,
+}
+
 class PongGame
 {
 	public width: number;
@@ -18,7 +51,8 @@ class PongGame
     private player2: Player;
 	private scorePlayer1: number; // TODO only get it from the back. private or public ? 
 	private scorePlayer2: number; // TODO only get it from the back. private or public ?
-    private start: boolean = true; // Meaning game over
+	private scoreToWin: number;
+    private start: boolean = true; // Meaning start screen
     private over: boolean = false; // Meaning game over
     private ball: Ball;
     private keyStates: any;
@@ -34,13 +68,12 @@ class PongGame
     {
 		this.width = width;
 		this.height = height;
-		// this.refreshSize(width, height);
         this.player1 = new Player(0, (height - PLAYER_HEIGHT) / 2);
-		// this.player1 = new Player(0, (height - PLAYER_HEIGHT) / 2);
         this.player2 = new Player(width - PLAYER_WIDTH, (height - PLAYER_HEIGHT) / 2);
-		// this.player2 = new Player(width - PLAYER_WIDTH, (height - PLAYER_HEIGHT) / 2);
 		this.scorePlayer1 = 0;
 		this.scorePlayer2 = 0;
+		this.scoreToWin = 5; // TODO get it from slider in the front when game launched (customization option)
+
         this.ball = new Ball(width / 2, height / 2);
         this.keyStates = [];
 		this.timer = 225;
@@ -48,17 +81,34 @@ class PongGame
 		this.startTimer = 0;
 		this.currentTicks = 0;
 
-		// this.socket = io('http://localhost:1234', { transports: [ 'websocket' ] });
+		// this.socket = io('http://localhost:1234', { transports: [ 'websocket' ] }); // del ?
 		// this.socket.on('connect', () => {
 			// this.connecting = false;
 		// });
     }
 
-	// refreshSize(width: number, height: number)
-	// {
-	// 	this.width = width;
-	// 	this.height = height;
-	// }
+	setBall(data: BallData)
+	{
+		this.ball.x = data.coordinates.x;
+		this.ball.y = data.coordinates.y;
+		console.log(data.direction);
+		this.ball.speedX = data.direction.x * data.speed;
+		this.ball.speedY = data.direction.y * data.speed;
+	}
+
+	setPlayers(data: Players)
+	{
+		this.player1.x = data.player1.x;
+		this.player1.y = data.player1.y;
+		this.player2.x = data.player2.x;
+		this.player2.y = data.player2.y;
+	}
+
+	setScore(data: Score)
+	{
+		this.scorePlayer1 = data.player1;
+		this.scorePlayer2 = data.player2;
+	}
 
 	setConnecting()
 	{
@@ -67,29 +117,21 @@ class PongGame
 
 	canvasResponsiveWidth()
 	{
-		const x: number = window.screen.width; // TODO needs more stuff in the calculation
-		// return(x);
 		return this.width;
 	}
 
 	canvasResponsiveHeight()
 	{
-		const y: number = window.screen.height; // TODO needs more stuff in the calculation
-		// return(y);
 		return this.height;
 	}
 
 	responsivePlayerWidth()
 	{
-		const height: number = this.height * 0.2; // TODO test it, is 0.2 right ?
-		// return(height);/
 		return PLAYER_WIDTH;
 	}
 
 	responsivePlayerHeight()
 	{
-		const height: number = this.height * 0.2; // TODO test it, is 0.2 right ?
-		// return(height);
 		return PLAYER_HEIGHT;
 	}
 
@@ -130,11 +172,11 @@ class PongGame
 		ctx.fillStyle = 'black';
 		ctx.fillRect(0, 0, this.width, this.height);
 
-		// if (this.connecting)
-		// {
-			// this.drawStatusScreen(ctx, 'Connecting...');
-			// return ;
-		// }
+		if (this.connecting)
+		{
+			this.drawStatusScreen(ctx, 'Connecting...');
+			return ;
+		}
 		
 		this.drawNet(ctx)
 		this.player1.draw(ctx);
@@ -180,10 +222,10 @@ class PongGame
 			}
 			else
 			{
-				this.ball.x = this.width / 2;
-				this.ball.y = this.height / 2;
+				this.ball.x = this.width / 2; // TODO ball update (websocket)
+				this.ball.y = this.height / 2; // TODO ball update (websocket)
 				this.drawScore(ctx);
-				if (this.scorePlayer1 === 5)
+				if (this.scorePlayer1 === this.scoreToWin)
 				{
 					// Draw 'VICTORY'
 					ctx.strokeStyle = 'white';
@@ -481,7 +523,7 @@ class PongGame
         // Rebounds on top and bottom
         if (this.ball.y > this.height || this.ball.y < 0)
         {
-            this.ball.speedY *= -1;
+            this.ball.speedY *= -1; // TODO ball update (websocket)
         }
 
         // The ball reaches the right or left limit
@@ -495,8 +537,8 @@ class PongGame
         }
 
         // The ball's speed increases each time
-        this.ball.x += this.ball.speedX;
-        this.ball.y += this.ball.speedY;
+        this.ball.x += this.ball.speedX; // TODO ball update (websocket)
+        this.ball.y += this.ball.speedY; // TODO ball update (websocket)
     }
  
     collide(opponent: Player)
@@ -527,21 +569,21 @@ class PongGame
                 return;
             }
             // Set ball and players to the center
-            this.ball.x = this.width / 2;
-            this.ball.y = this.height / 2;
+            this.ball.x = this.width / 2; // TODO ball update (websocket)
+            this.ball.y = this.height / 2; // TODO ball update (websocket)
             this.player1.y = this.height / 2 - PLAYER_HEIGHT / 2;
             this.player2.y = this.height / 2 - PLAYER_HEIGHT / 2;
 
             // Reset speed
-            this.ball.speedX = BALL_SPEED;
-            this.ball.speedY = BALL_SPEED;
+            this.ball.speedX = BALL_SPEED; // TODO ball update (websocket)
+            this.ball.speedY = BALL_SPEED; // TODO ball update (websocket)
         }
 		// The player hits the ball
         else
         {
             // Increase speed and change direction
-            this.ball.x += 1;
-			this.ball.speedX *= -1.2;
+            this.ball.x += 1; // TODO ball update (websocket)
+			this.ball.speedX *= -1.2; // TODO ball update (websocket)
             this.changeDirection(opponent.y); // TODO needs to be implemented from js
         }
     }
@@ -551,7 +593,7 @@ class PongGame
 		let impact = this.ball.y - playerPosition - PLAYER_HEIGHT / 2;
 		let ratio = 100 / (PLAYER_HEIGHT / 2);
 		// Get a value between 0 and 10
-		this.ball.speedY = Math.round(impact * ratio / 10);
+		this.ball.speedY = Math.round(impact * ratio / 10); // TODO ball update (websocket)
 	}
 
 	// Function called every 20ms (50 Hz / 50 times per second)

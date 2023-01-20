@@ -42,18 +42,29 @@ export class ChatService {
 		 **/
 	}
 
-	searchOpponent(queue: Map<number, Connection[]>, client_exp: number): Connection | null
+	searchOpponent(queue: Map<number, Connection[]>, client_exp: number, user_id: number): Connection | null
 	{
 		let index = -1;
-		for (let [exp, connection] of queue)
+		for (let [exp, connections] of queue)
 		{
-			if (connection.length > 0 && Math.abs(client_exp - exp) < Math.abs(client_exp - index))
+			// if (exp == client_exp && connections.length === 1)
+			// {
+			// 	console.log('Breaks');
+			// 	continue;
+			// }
+			if (connections.length > 0 && Math.abs(client_exp - exp) < Math.abs(client_exp - index))
 				index = exp;
 		}
 
 		if (index != -1)
 		{
-			const ret = queue.get(index)[0];
+			let ret = queue.get(index)[0];
+			if (ret.user.id == user_id)
+			{
+				ret = queue.get(index)[1];
+				queue.get(index).splice(1);
+				return ret;
+			}
 			queue.get(index).splice(0);
 			return ret;
 		}
@@ -69,5 +80,15 @@ export class ChatService {
 		opponent.client.emit('gameFound');
 		games.push(game);
 		game.run();
+	}
+
+	printQ(queue: Map<number, Connection[]>)
+	{
+		let users: User[] = [];
+		for (let connections of queue.values())
+		{
+			users = [...users, ...connections.map((connection) => connection.user)];
+		}
+		console.log(users);
 	}
 }
