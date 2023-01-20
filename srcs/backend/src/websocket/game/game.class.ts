@@ -15,21 +15,35 @@ interface Player
 export class Game
 {
 	private ball: Ball;
+	private ball_speed: number = 10;
 	private score: Score = new Score();
 	private player1: Player;
 	private player2: Player;
 	private winner: number | null = null ;
 	private referencePaddle: Paddle = new Paddle();
+	readonly type: 'Ranked' | 'Quick play';
 	private readonly refresh_rate: number;
+	private start: boolean = false;
 
-	constructor(refresh_rate: number)
+	constructor(refresh_rate: number, type: 'Ranked' | 'Quick play')
 	{
 		this.refresh_rate = refresh_rate;
+		this.type = type;
 	}
 
 	getPlayer1Socket()
 	{
 		return this.player1?.client;
+	}
+
+	getPlayer1Id()
+	{
+		return this.player1?.user?.id;
+	}
+
+	getPlayer2Id()
+	{
+		return this.player2?.user?.id;
 	}
 
 	getPlayer2Socket()
@@ -55,6 +69,12 @@ export class Game
 	setPaddleProperties(speed: number, height: number, width: number)
 	{
 		this.referencePaddle = new Paddle(this.refresh_rate, speed, height, width);
+	}
+
+	setBallSpeed(speed: number)
+	{
+		if (speed != null)
+			this.ball_speed = speed;
 	}
 
 	addPlayer(player: Player): void
@@ -106,6 +126,11 @@ export class Game
 		return { player1: this.score.getPlayer1(), player2: this.score.getPlayer2() };
 	}
 
+	started(): boolean
+	{
+		return this.start;
+	}
+
 	update()
 	{
 		this.ball.updateCoordinates();
@@ -116,14 +141,15 @@ export class Game
 	{
 		if (!this.player1 || !this.player2)
 			throw new Error("You need 2 players to start a game");
-		this.ball = new Ball(this.player1.paddle, this.player2.paddle, this.score);
+		this.ball = new Ball(this.player1.paddle, this.player2.paddle, this.score,
+			this.refresh_rate, this.ball_speed);
 		this.player1.client.emit('ball', this.getBall());
 		this.player1.client.emit('players', this.getPlayers());
 		this.player1.client.emit('score', this.getScore());
 		this.player2.client.emit('ball', this.getBall());
 		this.player2.client.emit('players', this.getPlayers());
 		this.player2.client.emit('score', this.getScore());
-
+		this.start = true;
 		while (true)
 		{
 			this.update();

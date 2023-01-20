@@ -97,8 +97,7 @@ export class MySocketGateway implements OnGatewayConnection,
 	}
 
 	@SubscribeMessage('moveUp')
-	moveUp(@MessageBody() body: any,
-		@ConnectedSocket() client: Socket,)
+	moveUp(@ConnectedSocket() client: Socket,)
 	{
 		if (this.games == null)
 			throw new WsException('No game created');
@@ -117,8 +116,7 @@ export class MySocketGateway implements OnGatewayConnection,
 	}
 
 	@SubscribeMessage('moveDown')
-	moveDown(@MessageBody() body: any,
-		@ConnectedSocket() client: Socket,)
+	moveDown(@ConnectedSocket() client: Socket,)
 	{
 		if (this.games == null)
 			throw new WsException('No game created');
@@ -137,21 +135,88 @@ export class MySocketGateway implements OnGatewayConnection,
 
 	// Think that non ranked dont join a queue
 	@SubscribeMessage('queue')
-	queueGame(@MessageBody() body: any,
+	queueGame(@MessageBody() body: {
+		type: 'Ranked' | 'Quick play',
+		opponent_id?: number,
+		ball_speed?: number,
+		winning_score?: number,
+		},
 		@ConnectedSocket() client: Socket,)
 	{
 		console.log('Queue initiated');
 		const index: number = this.clients.findIndex(connection => connection.client.id == client.id);
 		if (index === -1)
 			throw new WsException('We don\'t know you sir, but that\'s our bad');
-		const client_exp = this.clients[index].user.exp;
-		const opponent: Connection | null = this.chat.searchOpponent(this.queue, client_exp);
-		if (opponent != null)
+
+		const gameIndex: number = this.games.findIndex(game => {
+			game.getPlayer1Id() == body.opponent_id && game.started()
+			|| game.getPlayer1Id() == this.clients[index].user.id && game.started()
+			|| game.getPlayer2Id() == body.opponent_id && game.started()
+			|| game.getPlayer2Id() == this.clients[index].user.id && game.started()
+		});
+
+		if (gameIndex !== -1)
+			throw new WsException('You are already in a game');
+
+		if (body.type == 'Ranked')
 		{
-			this.chat.startGame(this.clients[index], opponent);
-			return ;
+			const client_exp = this.clients[index].user.exp;
+			const opponent: Connection | null = this.chat.searchOpponent(this.queue, client_exp);
+			if (opponent != null)
+			{
+				this.chat.startGame(this.clients[index], opponent, this.games);
+				return ;
+			}
+			this.queue.set(client_exp, [...this.clients, this.clients[index]]);
+			client.emit('queuing');
 		}
-		this.queue.set(client_exp, [...this.clients, this.clients[index]]);
-		return this.clients[index];
+		else
+		{
+			if (body.opponent_id == null)
+				throw new WsException('You must provide an opponent');
+
+			const opponentIndex: number = this.clients.findIndex(connection => {
+				connection.client.id == client.id
+			});
+
+			if (opponentIndex === -1)
+				throw new WsException('Opponent not connected');
+
+			const game = new Game(50, 'Quick play');
+			game.setWinningScore(body.winning_score);
+			game.setBallSpeed(body.ball_speed);
+			game.addPlayer({ user: this.clients[index].user, client: client });
+			game.addPlayer({ user: this.clients[opponentIndex].user,
+				client: this.clients[opponentIndex].client });
+			this.games.push(game);
+			client.emit('waitingForOpponent');
+		}
+	}
+
+	@SubscribeMessage('respondToInvite')
+	respondToInvite(@ConnectedSocket() client: Socket)
+	{
+		const index: number = this.clients.findIndex(connection => connection.client.id == client.id);
+		if (index === -1)
+			throw new WsException('We don\'t know you sir, but that\'s our bad');
+
+		let gameIndex: number = this.games.findIndex(game => {
+			game.getPlayer1Id() == this.clients[index].user.id && game.started()
+			|| game.getPlayer2Id() == this.clients[index].user.id && game.started()
+		});
+
+		if (gameIndex !== -1)
+			throw new WsException('You are already in a game');
+
+		gameIndex = this.games.findIndex(game => {
+			game.getPlayer1Id() == this.clients[index].user.id
+			|| game.getPlayer2Id() == this.clients[index].user.id
+		});
+
+		if (gameIndex === -1)
+			throw new WsException('You have not been invited in a game');
+
+		const game = this.games[gameIndex];
+		game.run();
 	}
 }

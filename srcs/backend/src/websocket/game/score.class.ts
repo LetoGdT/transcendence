@@ -7,7 +7,7 @@ export class Score
 
 	constructor(winning_score: number = 5)
 	{
-		if (winning_score > 20)
+		if (winning_score == null || winning_score > 20)
 			throw new RangeError('Score can not be more than 20');
 		this.winning_score = winning_score;
 	}

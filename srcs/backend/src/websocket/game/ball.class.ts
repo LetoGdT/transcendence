@@ -34,12 +34,12 @@ export class Ball implements Object2D
 	private latest_time: number = performance.now();
 
 	constructor(paddle1: Paddle, paddle2: Paddle, score: Score,
+		refresh_rate: number = 50, initial_speed: number = 10,
+		acceleration: number = 0.03, radius: number = 5,
 		new_window: Window = {
 			width: 1040,
 			height: 680
-		},
-		refresh_rate: number = 50, initial_speed: number = 10,
-		acceleration: number = 0.03, radius: number = 5)
+		})
 	{
 		this.window = new_window;
 		this.coordinates = { x: this.window.width / 2, y: this.window.height / 2 };
@@ -73,8 +73,8 @@ export class Ball implements Object2D
 
 	launchBallRandom(): void
 	{
-		this.direction.y = Math.random() / 2;
-		this.direction.x = Math.random() / 2;
+		this.direction.y = (Math.random() * 2 - 1) / 2;
+		this.direction.x = (Math.random() * 2 - 1) / 2;
 	}
 
 	bounce(): void

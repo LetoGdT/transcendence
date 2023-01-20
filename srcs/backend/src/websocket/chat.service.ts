@@ -60,11 +60,14 @@ export class ChatService {
 		return null;
 	}
 
-	async startGame(client: Connection, opponent: Connection)
+	async startGame(client: Connection, opponent: Connection, games: Game[])
 	{
-		const game = new Game(50);
+		const game = new Game(50, 'Ranked');
 		game.addPlayer({ user: client.user, client: client.client });
 		game.addPlayer({ user: opponent.user, client: opponent.client });
+		client.client.emit('gameFound');
+		opponent.client.emit('gameFound');
+		games.push(game);
 		game.run();
 	}
 }
