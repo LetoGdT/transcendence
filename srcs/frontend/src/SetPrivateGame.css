@@ -1,0 +1,8 @@
+.Set-Private-Game-container{
+	display: flex;
+	flex-direction: row;
+}
+
+.Set-Private-Game-Slider{
+	width: 400px;
+}

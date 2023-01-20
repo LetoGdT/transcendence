@@ -21,6 +21,7 @@ import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 import { socket, websocketContext } from './WebsocketContext'
 // import { useState, useEffect } from 'react';
 import toast, {Toaster} from 'react-hot-toast';
+import { SetPrivateGame } from './SetPrivateGame';
 
 const newGame = () => {
 	toast.custom(
@@ -96,12 +97,14 @@ function App() {
 						<Route path="/friends" element={<FriendsZone/>} />
 						<Route path="/" element={<Home />} />
 						<Route path="/matchhistory" element={<MatchHistoryZone/>} />
-						{/* <Route path="/play" element={<Pong/>} /> */}
 						<Route path="/play" element={<PlayZone/>} />
 						<Route path="/settings" element={<SettingsZone/>} />
 						<Route path="/specamatch" element={<SpecZone/>} />
 						<Route path="/otherprofile/">
 							<Route path=':uid' element={<OtherProfile />} />
+						</Route>
+						<Route path="/setprivategame">
+							<Route path=':uid' element={<SetPrivateGame />} />
 						</Route>
 						<Route path="/profile" element={<ProfileZone/>} />
 						<Route path="/signup" element={<SignUp/>} />

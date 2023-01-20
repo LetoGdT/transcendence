@@ -531,6 +531,8 @@ export function OtherProfile(){
 		});
 	};
 
+	var url_aksgame: string = "/otherprofile/";
+	url_aksgame = url_aksgame.concat(uid);
 
 	if (!is404) {
 		return(
@@ -541,7 +543,7 @@ export function OtherProfile(){
 						<div className='Profile-Alias-div'>{data?.username}</div>
 						<div className='Profile-Alias-div'>{AddOrRemoveButton(uid)}</div>
 						<div className='Profile-Alias-div'>{BlockOrUnblockButton(uid)}</div>
-						<div className='Profile-Alias-div'><AskButton variant="contained" disableRipple>Ask for a game</AskButton></div>
+						<div className='Profile-Alias-div'><Link to={url_aksgame}><AskButton variant="contained" disableRipple>Ask for a game</AskButton></Link></div>
 						<div className='Profile-Alias-div'><Link to="/chat"><AskButton variant="contained" disableRipple onClick={handleClickChat}>Chat in private</AskButton></Link></div>
 						{/*button pour spec ?*/}
 					</div>
