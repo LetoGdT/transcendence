@@ -238,7 +238,8 @@ function Chat() {
 														  image_url: ""});
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [convList, setConvList] = useState<Conversation[]>([]);
-
+	const [newMessage, setNewMessage] = React.useState("");
+		
 	useEffect(() => {
 		updateUsersMe();
 	}, []);
@@ -362,27 +363,23 @@ function Chat() {
 			}
 	}
 
+	const handleInputMessage = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+		setNewMessage(e.target.value);
+	}
+
+	const handleSendMessage = async () => {
+		await fetch(`http://localhost:9999/api/conversations/${currentUser.id}/messages`, {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			credentials: 'include',
+			body: JSON.stringify({content: newMessage})
+		});
+	}
+
 	return (
-		/*
-		const [newMessage, setNewMessage] = React.useState("");
-		
-		const handleInputMessage = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-			setNewMessage(e.target.value);
-		}
-
-		const handleSendMessage = async (event: React.MouseEvent<HTMLButtonElement>) => {
-			const response = await fetch(`http://localhost:9999/api/conversations/${this.state.current_user_id}/messages`, {
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json'
-				},
-				method: 'POST',
-				credentials: 'include',
-				body: JSON.stringify({content: newMessage})
-			});
-		}
-		*/
-
 			<React.Fragment>
 				<h1>Chat</h1>
 				<div className='Chat-container'>
@@ -397,12 +394,12 @@ function Chat() {
 									placeholder="Message"
 									
 									style={{ width: "100%", borderRadius: "10px"}}
-									// onChange={handleInputMessage}
+									onChange={handleInputMessage}
 								/> 
 							</div>
 							<div className='Chat-send-button'>
 								<SendButton variant="contained" disableRipple
-								// onClick={handleSendMessage}
+								onClick={handleSendMessage}
 								>Send</SendButton>
 							</div>
 						</div>
