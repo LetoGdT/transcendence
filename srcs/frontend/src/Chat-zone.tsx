@@ -60,6 +60,78 @@ const SendButton = styled(Button)({
 	},
 });
 
+const ChannelButton = styled(Button)({
+	boxShadow: 'none',
+	textTransform: 'none',
+	fontSize: 16,
+	padding: '6px 12px',
+	border: '1px solid',
+	lineHeight: 1.5,
+	backgroundColor: '#646464',
+	borderColor: '#646464',
+	fontFamily: [
+		'-apple-system',
+		'BlinkMacSystemFont',
+		'"Segoe UI"',
+		'Roboto',
+		'"Helvetica Neue"',
+		'Arial',
+		'sans-serif',
+		'"Apple Color Emoji"',
+		'"Segoe UI Emoji"',
+		'"Segoe UI Symbol"',
+	].join(','),
+	'&:hover': {
+		backgroundColor: '#3b9b3b',
+		borderColor: '#646464',
+		boxShadow: 'none',
+	},
+	'&:active': {
+		boxShadow: 'none',
+		backgroundColor: '#4a7a4a',
+		borderColor: '#646464',
+	},
+	'&:focus': {
+		xShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
+	},
+});
+
+const ChannelButtonNewMessage = styled(Button)({
+	boxShadow: 'none',
+	textTransform: 'none',
+	fontSize: 16,
+	padding: '6px 12px',
+	border: '1px solid',
+	lineHeight: 1.5,
+	backgroundColor: '#646464',
+	borderColor: '#646464',
+	fontFamily: [
+		'-apple-system',
+		'BlinkMacSystemFont',
+		'"Segoe UI"',
+		'Roboto',
+		'"Helvetica Neue"',
+		'Arial',
+		'sans-serif',
+		'"Apple Color Emoji"',
+		'"Segoe UI Emoji"',
+		'"Segoe UI Symbol"',
+	].join(','),
+	'&:hover': {
+		backgroundColor: '#3b9b3b',
+		borderColor: '#646464',
+		boxShadow: 'none',
+	},
+	'&:active': {
+		boxShadow: 'none',
+		backgroundColor: '#4a7a4a',
+		borderColor: '#646464',
+	},
+	'&:focus': {
+		xShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
+	},
+});
+
 function DisplayMessage(props: any){
 	const message: Message = props?.message;	
 	const me: User = props?.me;
@@ -109,14 +181,18 @@ function DisplayChannel(props: any){
 
 	if (conv.new_message === true){
 		return(
-			<div className='Chat-navigate-new-message'>
-				{conv.name}
+			<div>
+				<ChannelButtonNewMessage variant="contained" disableRipple onClick={props?.handleChangeConv} value={conv.id}>
+					{conv.name}
+				</ChannelButtonNewMessage>
 			</div>
 		);
 	} else {
 		return(
 			<div>
-				{conv.name}
+				<ChannelButton variant="contained" disableRipple onClick={props?.handleChangeConv} value={conv.id}>
+					{conv.name}
+				</ChannelButton>
 			</div>
 		);
 	}
@@ -127,7 +203,7 @@ function ChatNavigate(props: any) {
 		<div className='Chat-navigate'>
 			{props?.ConvList?.map((conv: Conversation) => {
 				return (
-					<DisplayChannel conv={conv} key={conv.id}/>
+					<DisplayChannel conv={conv} key={conv.id} handleChangeConv={props?.handleChangeConv}/>
 				);
 			})}
 		</div>
@@ -158,8 +234,8 @@ function Chat() {
 	const [currentConv, setCurrentConv] = useState<number>(-1);
 	const [isChannel, setIsChannel] = useState<boolean>(false);
 	const [currentUser, setCurrentUser] = useState<User>({id: -1,
-															username: "",
-															image_url: ""});
+														  username: "",
+														  image_url: ""});
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [convList, setConvList] = useState<Conversation[]>([]);
 
@@ -243,8 +319,8 @@ function Chat() {
 		})
 		.then(response=>response.json())
 		.then(data => setCurrentUser({id: data.id,
-													 username: data.username,
-													 image_url: data.image_url}));
+									  username: data.username,
+									  image_url: data.image_url}));
 	}
 
 	async function updateMessages() {
@@ -276,9 +352,15 @@ function Chat() {
 		}
 	}
 
-	//setCurrentConv(id: number, isChannel: boolean) {
-	//	this.setState({ current_conv: id, isChannel: isChannel });
-	//}
+	const handleChangeConv= async (event: any) => {
+		const id = event.target.value;
+		for (var elem of convList)
+			if (elem.id === id) {
+				setCurrentConv(id);
+				setIsChannel(elem.is_channel);
+				continue ;
+			}
+	}
 
 	return (
 		/*
@@ -304,7 +386,7 @@ function Chat() {
 			<React.Fragment>
 				<h1>Chat</h1>
 				<div className='Chat-container'>
-					<ChatNavigate ConvList={convList}/>
+					<ChatNavigate ConvList={convList} handleChangeConv={handleChangeConv}/>
 					<div>
 						<DisplayMessageHistory messages={messages} me={currentUser}/>
 						<div className='Chat-TextField-send-button'>
