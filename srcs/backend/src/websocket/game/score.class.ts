@@ -16,7 +16,7 @@ export class Score
 	{
 		if (this.score1 == this.winning_score || this.score2 == this.winning_score)
 			throw new RangeError('A player already won!');
-
+		console.log('player1');
 		this.score1++;
 	}
 
@@ -24,7 +24,7 @@ export class Score
 	{
 		if (this.score1 == this.winning_score || this.score2 == this.winning_score)
 			throw new RangeError('A player already won!');
-
+		console.log('player1');
 		this.score2++;
 	}
 

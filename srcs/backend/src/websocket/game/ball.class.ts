@@ -14,7 +14,7 @@ export class Ball implements Object2D
 	speed: number;
 
 	// The direction of the ball
-	readonly direction: Vector2D;
+	readonly direction: Vector2D = { x: 0, y: 0 };
 
 	// A percentage of the current speed added at every bounce.
 	// e.g: A value of 0.1 accelerates the ball by 10%.
@@ -49,8 +49,10 @@ export class Ball implements Object2D
 		this.score = score;
 		this.paddle1 = paddle1;
 		this.paddle2 = paddle2;
+		this.refresh_rate = refresh_rate;
 		if (this.collides(this.coordinates))
 			throw new RangeError('Ball is not in the window');
+		this.launchBallRandom();
 	}
 
 	collides(position: Vector2D): boolean

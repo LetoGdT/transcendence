@@ -151,9 +151,6 @@ export class Game
 		this.player2.client.emit('ball', this.getBall());
 		this.player2.client.emit('players', this.getPlayers());
 		this.player2.client.emit('score', this.getScore());
-		this.score.player1();
-		// this.score.player1();
-		// this.score.player2();
 		this.start = true;
 		while (true)
 		{
