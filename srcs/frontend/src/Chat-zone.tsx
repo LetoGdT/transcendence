@@ -125,7 +125,7 @@ function DisplayChannel(props: any){
 function ChatNavigate(props: any) {
 	return(
 		<div className='Chat-navigate'>
-			{props?.conv_list?.map((conv: Conversation) => {
+			{props?.ConvList?.map((conv: Conversation) => {
 				return (
 					<DisplayChannel conv={conv} key={conv.id}/>
 				);
@@ -154,25 +154,37 @@ type Conversation = {
 	new_message: boolean;
 }
 
-export class Chat extends React.Component<{}, { current_conv: number,
-												isChannel: boolean,
-												current_user: User,
-												messages: Message[],
-												conv_list: Conversation[] }> {
-	constructor(props: any) {
-		super(props);
-		this.state = {
-			current_conv: -1,
-			isChannel: false,
-			current_user: {id: -1, username: "", image_url: ""},
-			messages: [],
-			conv_list: []
-		};
-	}
+function Chat() {
+	const [currentConv, setCurrentConv] = useState<number>(-1);
+	const [isChannel, setIsChannel] = useState<boolean>(false);
+	const [currentUser, setCurrentUser] = useState<User>({id: -1,
+															username: "",
+															image_url: ""});
+	const [messages, setMessages] = useState<Message[]>([]);
+	const [convList, setConvList] = useState<Conversation[]>([]);
 
-	async updateConv_list() {
+	useEffect(() => {
+		updateUsersMe();
+	}, []);
+
+	useEffect(() => {
+		updateConvList();
+	}, [currentUser]);
+
+	useEffect(() => {
+		if (currentConv == -1 && convList.length != 0) {
+			setCurrentConv(convList[0].id);
+			setIsChannel(convList[0].is_channel);
+		}
+	}, [convList])
+
+	useEffect(() => {
+		updateMessages();
+	}, [currentConv])
+
+	async function updateConvList() {
 		let res: Conversation[] = [];
-		const old_conv_list = this.state.conv_list;
+		const old_ConvList = convList;
 
 		// Set the list of conversations for chat-navigate
 		await fetch('http://localhost:9999/api/conversations/', {
@@ -182,9 +194,9 @@ export class Chat extends React.Component<{}, { current_conv: number,
 		.then(response=>response.json())
 		.then(data => res = res.concat(data.data.map((elem: any) => {
 			let name: string;
-			if (this.state.current_user.id === -1)
+			if (currentUser.id === -1)
 				name = "not leaded";
-			else if (this.state.current_user.id === elem.user1.id)
+			else if (currentUser.id === elem.user1.id)
 				name = elem.user2.username;
 			else
 				name = elem.user1.username;
@@ -212,7 +224,7 @@ export class Chat extends React.Component<{}, { current_conv: number,
 			});
 		})));
 
-		old_conv_list.forEach((elem: Conversation) => {
+		old_ConvList.forEach((elem: Conversation) => {
 			let index;
 			for (index = 0 ; index < res.length ; index++)
 				if (res[index].id == elem.id)
@@ -220,38 +232,37 @@ export class Chat extends React.Component<{}, { current_conv: number,
 			if (index != res.length)
 				res[index].new_message = elem.new_message;
 		});
-		this.setState({ conv_list: res });
-		return res;
+		setConvList(res);
 	}
 
-	async updateUsersMe() {
+	async function updateUsersMe() {
 		// set Current_user_id
 		await fetch('http://localhost:9999/api/users/me/', {
 			method: "GET",
 			credentials: 'include'
 		})
 		.then(response=>response.json())
-		.then(data => this.setState({ current_user: {id: data.id,
+		.then(data => setCurrentUser({id: data.id,
 													 username: data.username,
-													 image_url: data.image_url}}));
+													 image_url: data.image_url}));
 	}
 
-	async updateMessages() {
+	async function updateMessages() {
 		// Fetch messages according to the selected conversation or channel
-		if (this.state.current_conv !== -1) {
+		if (currentConv !== -1) {
 			let uri: string = 'http://localhost:9999/api/';
-			if (this.state.isChannel)
+			if (isChannel)
 				uri += 'channels/';
 			else 
 				uri += 'conversations/';
-			uri += this.state.current_conv +
+			uri += currentConv +
 				'/messages?order=DESC';
 			fetch(uri, {
 				method: "GET",
 				credentials: 'include'
 			})
 			.then(response=>response.json())
-			.then(data => this.setState({ messages: data?.data.map((elem: any) => {
+			.then(data => setMessages(data?.data.map((elem: any) => {
 				return ({
 					id: elem.id,
 					content: elem.content,
@@ -261,24 +272,15 @@ export class Chat extends React.Component<{}, { current_conv: number,
 						image_url: elem.sender.image_url
 					}
 				});
-			})}));
+			})));
 		}
 	}
 
-	setCurrentConv(id: number, isChannel: boolean) {
-		this.setState({ current_conv: id, isChannel: isChannel });
-	}
+	//setCurrentConv(id: number, isChannel: boolean) {
+	//	this.setState({ current_conv: id, isChannel: isChannel });
+	//}
 
-	async componentDidMount() {
-		await this.updateUsersMe();
-		let conv_list = await this.updateConv_list();
-		if (this.state.current_conv == -1 && conv_list.length != 0)
-			this.setState({ current_conv: conv_list[0].id, isChannel: conv_list[0].is_channel });
-		await this.updateMessages();
-	}
-
-
-	render() {
+	return (
 		/*
 		const [newMessage, setNewMessage] = React.useState("");
 		
@@ -299,13 +301,12 @@ export class Chat extends React.Component<{}, { current_conv: number,
 		}
 		*/
 
-		return(
 			<React.Fragment>
 				<h1>Chat</h1>
 				<div className='Chat-container'>
-					<ChatNavigate conv_list={this.state.conv_list}/>
+					<ChatNavigate ConvList={convList}/>
 					<div>
-						<DisplayMessageHistory messages={this.state.messages} me={this.state.current_user}/>
+						<DisplayMessageHistory messages={messages} me={currentUser}/>
 						<div className='Chat-TextField-send-button'>
 							<div className='Chat-TextField'>
 								<TextareaAutosize
@@ -326,8 +327,7 @@ export class Chat extends React.Component<{}, { current_conv: number,
 					</div>
 				</div>
 			</React.Fragment>
-		);
-	}
+	)
 }
 
 type meProps = {
