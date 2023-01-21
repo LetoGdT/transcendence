@@ -103,7 +103,10 @@ const PongGameBootstrap = () =>
 			game.setScore(data);
 		});
 		socket.on('gameFound', () => game.setConnecting());
-		socket.on('winner', (win: number) => setWinner(win));
+		socket.on('winner', (data) => {
+			setLastUpdate(performance.now());
+			game.setScore(data)
+		});
 		const timer = setInterval(() => {
 			if (performance.now() - lastUpdate > 1000 / 50)
 				game.update()

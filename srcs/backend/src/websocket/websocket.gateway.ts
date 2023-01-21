@@ -106,45 +106,45 @@ export class MySocketGateway implements OnGatewayConnection,
 	}
 
 	@SubscribeMessage('moveUp')
-	moveUp(@ConnectedSocket() client: Socket,)
+	async moveUp(@ConnectedSocket() client: Socket,)
 	{
 		if (this.games == null)
 			throw new WsException('No game created');
 
-		const index: number = this.games.findIndex(game => game.getPlayer1Socket().id == client.id
-			|| game.getPlayer2Socket().id == client.id);
+		const index: number = this.games.findIndex(async game => (await game.getPlayer1Socket()).id == client.id
+			|| (await game.getPlayer2Socket()).id == client.id);
 
 		if (index === -1)
 			throw new WsException('You are not in a game');
 
 		const game = this.games[index];
 
-		if (game.getPlayer1Socket().id == client.id)
-			game.player1Up();
-		else game.player2Up();
+		if ((await game.getPlayer1Socket()).id == client.id)
+			await game.player1Up();
+		else await game.player2Up();
 	}
 
 	@SubscribeMessage('moveDown')
-	moveDown(@ConnectedSocket() client: Socket,)
+	async moveDown(@ConnectedSocket() client: Socket,)
 	{
 		if (this.games == null)
 			throw new WsException('No game created');
 
-		const index: number = this.games.findIndex(game => game.getPlayer1Socket().id == client.id
-			|| game.getPlayer2Socket().id == client.id);
+		const index: number = this.games.findIndex(async game => (await game.getPlayer1Socket()).id == client.id
+			|| (await game.getPlayer2Socket()).id == client.id);
 
 		if (index === -1)
 			throw new WsException('You are not in a game');
 
 		const game = this.games[index];
-		if (game.getPlayer1Socket().id == client.id)
-			game.player1Up();
-		else game.player2Up();
+		if ((await game.getPlayer1Socket()).id == client.id)
+			await game.player1Up();
+		else await game.player2Up();
 	}
 
 	// Think that non ranked dont join a queue
 	@SubscribeMessage('queue')
-	queueGame(@MessageBody() body: {
+	async queueGame(@MessageBody() body: {
 		type: 'Ranked' | 'Quick play',
 		opponent_id?: number,
 		ball_speed?: number,
@@ -157,11 +157,11 @@ export class MySocketGateway implements OnGatewayConnection,
 		if (index === -1)
 			throw new WsException('We don\'t know you sir, but that\'s our bad');
 
-		const gameIndex: number = this.games.findIndex(game => {
-			game.getPlayer1Id() == body.opponent_id && game.started()
-			|| game.getPlayer1Id() == this.clients[index].user.id && game.started()
-			|| game.getPlayer2Id() == body.opponent_id && game.started()
-			|| game.getPlayer2Id() == this.clients[index].user.id && game.started()
+		const gameIndex: number = this.games.findIndex(async game => {
+			await game.getPlayer1Id() == body.opponent_id && await game.started()
+			|| await game.getPlayer1Id() == this.clients[index].user.id && await game.started()
+			|| await game.getPlayer2Id() == body.opponent_id && await game.started()
+			|| await game.getPlayer2Id() == this.clients[index].user.id && await game.started()
 		});
 
 		if (gameIndex !== -1)
@@ -184,7 +184,7 @@ export class MySocketGateway implements OnGatewayConnection,
 				this.clients[index].user.id);
 			if (opponent != null)
 			{
-				this.chat.startGame(this.clients[index], opponent, this.games);
+				await this.chat.startGame(this.clients[index], opponent, this.games);
 				return ;
 			}
 			if (this.queue.get(client_exp) != null)
@@ -207,10 +207,10 @@ export class MySocketGateway implements OnGatewayConnection,
 				throw new WsException('Opponent not connected');
 
 			const game = new Game(50, 'Quick play');
-			game.setWinningScore(body.winning_score);
-			game.setBallSpeed(body.ball_speed);
-			game.addPlayer({ user: this.clients[index].user, client: client });
-			game.addPlayer({ user: this.clients[opponentIndex].user,
+			await game.setWinningScore(body.winning_score);
+			await game.setBallSpeed(body.ball_speed);
+			await game.addPlayer({ user: this.clients[index].user, client: client });
+			await game.addPlayer({ user: this.clients[opponentIndex].user,
 				client: this.clients[opponentIndex].client });
 			this.games.push(game);
 			client.emit('waitingForOpponent');
@@ -218,29 +218,29 @@ export class MySocketGateway implements OnGatewayConnection,
 	}
 
 	@SubscribeMessage('respondToInvite')
-	respondToInvite(@ConnectedSocket() client: Socket)
+	async respondToInvite(@ConnectedSocket() client: Socket)
 	{
 		const index: number = this.clients.findIndex(connection => connection.client.id == client.id);
 		if (index === -1)
 			throw new WsException('We don\'t know you sir, but that\'s our bad');
 
-		let gameIndex: number = this.games.findIndex(game => {
-			game.getPlayer1Id() == this.clients[index].user.id && game.started()
-			|| game.getPlayer2Id() == this.clients[index].user.id && game.started()
+		let gameIndex: number = this.games.findIndex(async game => {
+			await game.getPlayer1Id() == this.clients[index].user.id && await game.started()
+			|| await game.getPlayer2Id() == this.clients[index].user.id && await game.started()
 		});
 
 		if (gameIndex !== -1)
 			throw new WsException('You are already in a game');
 
-		gameIndex = this.games.findIndex(game => {
-			game.getPlayer1Id() == this.clients[index].user.id
-			|| game.getPlayer2Id() == this.clients[index].user.id
+		gameIndex = this.games.findIndex(async game => {
+			await game.getPlayer1Id() == this.clients[index].user.id
+			|| await game.getPlayer2Id() == this.clients[index].user.id
 		});
 
 		if (gameIndex === -1)
 			throw new WsException('You have not been invited in a game');
 
 		const game = this.games[gameIndex];
-		game.run();
+		await game.run();
 	}
 }

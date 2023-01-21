@@ -12,33 +12,31 @@ export class Score
 		this.winning_score = winning_score;
 	}
 
-	player1()
+	async player1()
 	{
 		if (this.score1 == this.winning_score || this.score2 == this.winning_score)
 			throw new RangeError('A player already won!');
-		console.log('player1');
 		this.score1++;
 	}
 
-	player2()
+	async player2()
 	{
 		if (this.score1 == this.winning_score || this.score2 == this.winning_score)
 			throw new RangeError('A player already won!');
-		console.log('player1');
 		this.score2++;
 	}
 
-	getPlayer1()
+	async getPlayer1()
 	{
 		return this.score1;
 	}
 
-	getPlayer2()
+	async getPlayer2()
 	{
-		return this.score1;
+		return this.score2;
 	}
 
-	winner(): number | null
+	async winner(): Promise<number | null>
 	{
 		if (this.score1 == this.winning_score)
 			return 1;

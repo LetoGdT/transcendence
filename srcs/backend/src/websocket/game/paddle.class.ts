@@ -41,18 +41,20 @@ export class Paddle implements Object2D
 		this.right = this.left + this.width;
 		this.bottom = this.coordinates.y;
 		this.top = this.bottom + this.height;
-
-		if (this.collides(this.coordinates))
-			throw new RangeError('Paddle is not in the window');
 	}
 
-	collides(new_position: Vector2D): boolean
+	async setX(x: number)
 	{
-		return new_position.y + this.height > this.window.height
-			|| new_position.y < 0;
+		this.coordinates.x = x;
 	}
 
-	moveUp(): void
+	async collides(new_position: Vector2D): Promise<boolean>
+	{
+		return !(new_position.y + this.height <= this.window.height
+							&& new_position.y >= 0);
+	}
+
+	async moveUp(): Promise<void>
 	{
 		const current_time = performance.now();
 		const deltaTime = (current_time - this.latest_time) * (this.refresh_rate / 1000);
@@ -60,13 +62,13 @@ export class Paddle implements Object2D
 		{
 			const new_position = this.coordinates;
 			new_position.x += this.speed;
-			if (!this.collides(new_position))
+			if (!(await this.collides(new_position)))
 				this.coordinates.x += this.speed;
 			this.latest_time = current_time;
 		}
 	}
 
-	moveDown(): void
+	async moveDown(): Promise<void>
 	{
 		const current_time = performance.now();
 		const deltaTime = (current_time - this.latest_time) * (this.refresh_rate / 1000);
@@ -74,7 +76,7 @@ export class Paddle implements Object2D
 		{
 			const new_position = this.coordinates;
 			new_position.x -= this.speed;
-			if (!this.collides(new_position))
+			if (!(await this.collides(new_position)))
 				this.coordinates.x -= this.speed;
 			this.latest_time = current_time;
 		}
