@@ -332,7 +332,7 @@ function Chat() {
 			else 
 				uri += 'conversations/';
 			uri += currentConv +
-				'/messages?order=DESC';
+				'/messages?order=ASC';
 			fetch(uri, {
 				method: "GET",
 				credentials: 'include'
