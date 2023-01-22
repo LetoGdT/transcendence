@@ -79,16 +79,19 @@ export class ChatService {
 		client.client.emit('gameFound');
 		opponent.client.emit('gameFound');
 		games.push(game);
-		game.run();
+		await game.run();
+		const gameIndex: number = games.findIndex(async game => {
+			(await game.getPlayer1Id()) == client.user.id
+			&& (await game.getPlayer2Id()) == opponent.user.id
+		});
+		games.splice(gameIndex, 1);
 	}
 
 	printQ(queue: Map<number, Connection[]>)
 	{
 		let users: User[] = [];
 		for (let connections of queue.values())
-		{
 			users = [...users, ...connections.map((connection) => connection.user)];
-		}
 		console.log(users);
 	}
 }

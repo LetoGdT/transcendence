@@ -80,8 +80,7 @@ const PongGameBootstrap = () =>
 	
 	const game = useGame();
 	const canvasRef = useCanvas(ctx => game.render(ctx));
-	
-	// console.log('Asked q');
+
 	React.useEffect(() =>
 	{
 		if (attemptedConnect === false)
@@ -107,8 +106,9 @@ const PongGameBootstrap = () =>
 			setLastUpdate(performance.now());
 			game.setScore(data)
 		});
+		socket.on('start', () => game.setStart());
 		const timer = setInterval(() => {
-			if (performance.now() - lastUpdate > 1000 / 50)
+			if (performance.now() - lastUpdate > 2000 / 50)
 				game.update()
 		}, 20);
 		return () => clearInterval(timer);
@@ -117,12 +117,10 @@ const PongGameBootstrap = () =>
 	const onKeyUp = (e: React.KeyboardEvent) => {
 		e.preventDefault();
 		game.handleKeyUp(e.code);
-		socket.emit('moveUp');
 	};
 	const onKeyDown = (e: React.KeyboardEvent) => {
 		e.preventDefault();
 		game.handleKeyDown(e.code);
-		socket.emit('moveDown');
 	};
 
 	return (

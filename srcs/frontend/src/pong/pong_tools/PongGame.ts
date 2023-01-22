@@ -1,5 +1,6 @@
 import Ball, { BALL_SPEED } from "./Ball";
 import Player, { PLAYER_WIDTH, PLAYER_HEIGHT } from "./Player";
+import { socket } from '../../WebsocketContext';
 
 const PLAYER1_DOWN_KEY = 'KeyS';
 const PLAYER1_UP_KEY = 'KeyW';
@@ -80,18 +81,12 @@ class PongGame
 
 		this.startTimer = 0;
 		this.currentTicks = 0;
-
-		// this.socket = io('http://localhost:1234', { transports: [ 'websocket' ] }); // del ?
-		// this.socket.on('connect', () => {
-			// this.connecting = false;
-		// });
     }
 
 	setBall(data: BallData)
 	{
 		this.ball.x = data.coordinates.x;
 		this.ball.y = data.coordinates.y;
-		console.log(data.direction);
 		this.ball.speedX = data.direction.x * data.speed;
 		this.ball.speedY = data.direction.y * data.speed;
 	}
@@ -113,6 +108,11 @@ class PongGame
 	setConnecting()
 	{
 		this.connecting = false;
+	}
+
+	setStart()
+	{
+		this.start = false;
 	}
 
 	canvasResponsiveWidth()
@@ -564,7 +564,7 @@ class PongGame
             if (this.scorePlayer1 === 5 || this.scorePlayer2 === 5)
             {
                 this.over = true
-                console.log(this.over); // del 26
+                // console.log(this.over); // del 26
                 // gameOver(); // del ?
                 return;
             }
@@ -619,6 +619,7 @@ class PongGame
 
 			if (this.keyStates[PLAYER1_UP_KEY])
 			{
+				socket.emit('moveDown');
 				this.player1.y -= 7;
 				if (this.player1.y < 0)
 					this.player1.y = 0;
@@ -626,6 +627,7 @@ class PongGame
 
 			if (this.keyStates[PLAYER1_DOWN_KEY])
 			{
+				socket.emit('moveUp');
 				this.player1.y += 7;
 				if (this.player1.y >= maxPlayerY)
 					this.player1.y = maxPlayerY;

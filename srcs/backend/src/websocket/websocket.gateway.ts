@@ -121,7 +121,8 @@ export class MySocketGateway implements OnGatewayConnection,
 
 		if ((await game.getPlayer1Socket()).id == client.id)
 			await game.player1Up();
-		else await game.player2Up();
+		else
+			await game.player2Up();
 	}
 
 	@SubscribeMessage('moveDown')
@@ -137,9 +138,11 @@ export class MySocketGateway implements OnGatewayConnection,
 			throw new WsException('You are not in a game');
 
 		const game = this.games[index];
+
 		if ((await game.getPlayer1Socket()).id == client.id)
-			await game.player1Up();
-		else await game.player2Up();
+			await game.player1Down();
+		else
+			await game.player2Down();
 	}
 
 	// Think that non ranked dont join a queue

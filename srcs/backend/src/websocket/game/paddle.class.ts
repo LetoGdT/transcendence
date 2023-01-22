@@ -24,8 +24,8 @@ export class Paddle implements Object2D
 
 	private latest_time: number = performance.now();
 
-	constructor(refresh_rate: number = 50, speed: number = 10,
-		height: number = 10, width: number = 1,
+	constructor(refresh_rate: number = 50, speed: number = 7,
+		height: number = 100, width: number = 13,
 		new_window: Window = {
 			width: 1040,
 			height: 680
@@ -36,7 +36,7 @@ export class Paddle implements Object2D
 		this.height = height;
 		this.coordinates = { x: 10, y: this.window.height / 2 - this.height / 2 };
 		this.width = width;
-
+		this.refresh_rate = refresh_rate;
 		this.left = this.coordinates.x;
 		this.right = this.left + this.width;
 		this.bottom = this.coordinates.y;
@@ -61,9 +61,9 @@ export class Paddle implements Object2D
 		if (deltaTime >= 1)
 		{
 			const new_position = this.coordinates;
-			new_position.x += this.speed;
+			new_position.y += this.speed;
 			if (!(await this.collides(new_position)))
-				this.coordinates.x += this.speed;
+				this.coordinates.y += this.speed;
 			this.latest_time = current_time;
 		}
 	}
@@ -75,9 +75,9 @@ export class Paddle implements Object2D
 		if (deltaTime >= 1)
 		{
 			const new_position = this.coordinates;
-			new_position.x -= this.speed;
+			new_position.y -= this.speed;
 			if (!(await this.collides(new_position)))
-				this.coordinates.x -= this.speed;
+				this.coordinates.y -= this.speed;
 			this.latest_time = current_time;
 		}
 	}

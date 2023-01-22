@@ -123,10 +123,14 @@ export class Game
 
 	async getPlayers(player: number): Promise<{ player1: Vector2D, player2: Vector2D }>
 	{
+		const player1: Vector2D = { x: this.player1.paddle.coordinates.x,
+			y: this.player1.paddle.coordinates.y};
+		const player2: Vector2D = { x: this.player2.paddle.coordinates.x,
+			y: this.player2.paddle.coordinates.y};
 		if (player === 1) 
-			return { player1: this.player1.paddle.coordinates, player2: this.player2.paddle.coordinates };
-		return { player1: await this.mirror(this.player2.paddle.coordinates),
-			player2: await this.mirror(this.player1.paddle.coordinates) };
+			return { player1: player1, player2: player2 };
+		return { player1: await this.mirror(player2),
+			player2: await this.mirror(player1) };
 	}
 
 	async getScore(player: number): Promise<{ player1: number, player2: number }>
@@ -161,15 +165,17 @@ export class Game
 			this.refresh_rate, this.ball_speed);
 
 		await this.player1.paddle.setX(10);
-		await this.player2.paddle.setX(1030);
+		await this.player2.paddle.setX(1030 - 13);
 
+		this.start = true;
+		this.player1.client.emit('start');
+		this.player2.client.emit('start');
 		this.player1.client.emit('ball', await this.getBall(1));
 		this.player1.client.emit('players', await this.getPlayers(1));
 		this.player1.client.emit('score', await this.getScore(1));
 		this.player2.client.emit('ball', await this.getBall(2));
 		this.player2.client.emit('players', await this.getPlayers(2));
 		this.player2.client.emit('score', await this.getScore(2));
-		this.start = true;
 		while (true)
 		{
 			await this.update();
