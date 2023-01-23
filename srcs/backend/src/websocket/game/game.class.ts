@@ -129,8 +129,12 @@ export class Game
 			y: this.player2.paddle.coordinates.y};
 		if (player === 1) 
 			return { player1: player1, player2: player2 };
-		return { player1: await this.mirror(player2),
-			player2: await this.mirror(player1) };
+		const ret2 = await this.mirror(player2);
+		const ret1 = await this.mirror(player1);
+		ret2.x -= this.player2.paddle.width;
+		ret1.x -= this.player1.paddle.width;
+		return { player1: ret2,
+			player2: ret1 };
 	}
 
 	async getScore(player: number): Promise<{ player1: number, player2: number }>
@@ -164,8 +168,8 @@ export class Game
 		this.ball = new Ball(this.player1.paddle, this.player2.paddle, this.score,
 			this.refresh_rate, this.ball_speed);
 
-		await this.player1.paddle.setX(10);
-		await this.player2.paddle.setX(1030 - 13);
+		await this.player1.paddle.setX(0);
+		await this.player2.paddle.setX(1040 - 13);
 
 		this.start = true;
 		this.player1.client.emit('start');
@@ -187,10 +191,11 @@ export class Game
 			this.player2.client.emit('ball', await this.getBall(2));
 			this.player2.client.emit('players', await this.getPlayers(2));
 			this.player2.client.emit('score', await this.getScore(2));
-			await new Promise(r => setTimeout(r, 1000 / (this.refresh_rate * 2)));
+			await new Promise(r => setTimeout(r, 10));
 		}
 
 		this.player1.client.emit('winner', { score: await this.getScore(1) });
 		this.player2.client.emit('winner', { score: await this.getScore(2) });
+		console.log(`Player ${this.winner} has won`);
 	}
 }

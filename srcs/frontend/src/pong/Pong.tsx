@@ -1,5 +1,5 @@
 import { red } from '@mui/material/colors';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PongGame from './pong_tools/PongGame';
 import { socket } from '../WebsocketContext';
 
@@ -66,7 +66,7 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 
 function useGame()
 {
-	const ref = React.useRef<PongGame>();
+	const ref = useRef<PongGame>();
 	if (!ref.current)
 		ref.current = new PongGame(GAME_WIDTH, GAME_HEIGHT);
 	return ref.current;
@@ -77,18 +77,32 @@ const PongGameBootstrap = () =>
 	const [winner, setWinner] = useState(-1);
 	const [lastUpdate, setLastUpdate] = useState(performance.now());
 	const [attemptedConnect, setAttemptedConnect] = useState(false);
+	const [checkRefresh, setCheckRefresh] = useState(false);
+	const [move, setMove] = useState(false);
 	
 	const game = useGame();
 	const canvasRef = useCanvas(ctx => game.render(ctx));
 
-	React.useEffect(() =>
+	useEffect(() =>
 	{
 		if (attemptedConnect === false)
 		{
 			socket.emit('queue', { type: 'Ranked' });
 			setAttemptedConnect(true);
 		}
-		// socket.on('queuing', () => setIsQueuing(true));
+		if (performance.now() - lastUpdate > 2000 / 50)
+		{
+			game.update();
+			setLastUpdate(performance.now());
+		}
+		const sleep = async () => {
+			await new Promise(r => setTimeout(r, 10));
+			setCheckRefresh(!checkRefresh);
+		}
+		sleep();
+	}, [checkRefresh]);
+
+	useEffect(() => {
 		socket.on('ball', (data) => {
 			setLastUpdate(performance.now());
 			game.setBall(data);
@@ -104,22 +118,25 @@ const PongGameBootstrap = () =>
 		socket.on('gameFound', () => game.setConnecting());
 		socket.on('winner', (data) => {
 			setLastUpdate(performance.now());
-			game.setScore(data)
+			game.setScore(data);
+			game.update();
 		});
 		socket.on('start', () => game.setStart());
-		const timer = setInterval(() => {
-			if (performance.now() - lastUpdate > 2000 / 50)
-				game.update()
-		}, 20);
-		return () => clearInterval(timer);
-	}, [game]);
+	}, []);
+
+	useEffect(() => {
+		game.handleMovement();
+		setMove(false);
+	}, [move]);
 
 	const onKeyUp = (e: React.KeyboardEvent) => {
 		e.preventDefault();
+		setMove(true);
 		game.handleKeyUp(e.code);
 	};
 	const onKeyDown = (e: React.KeyboardEvent) => {
 		e.preventDefault();
+		setMove(true);
 		game.handleKeyDown(e.code);
 	};
 

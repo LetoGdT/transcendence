@@ -64,20 +64,22 @@ export class Ball implements Object2D
 
 	async paddleCollides(): Promise<boolean>
 	{
-		if ((this.coordinates.x - this.radius <= this.paddle1.right
-				&& this.coordinates.y - this.radius < this.paddle1.top
-				&& this.coordinates.y + this.radius < this.paddle1.bottom)
-			|| (this.coordinates.x - this.radius >= this.paddle2.right
-				&& this.coordinates.y - this.radius < this.paddle2.top
-				&& this.coordinates.y + this.radius < this.paddle2.bottom))
+		if ((this.coordinates.x - this.radius <= this.paddle1.width
+				&& this.coordinates.y - this.radius <= this.paddle1.top
+				&& this.coordinates.y + this.radius >= this.paddle1.bottom)
+			|| (this.coordinates.x + this.radius >= this.window.width - this.paddle2.width
+				&& this.coordinates.y - this.radius <= this.paddle2.top
+				&& this.coordinates.y + this.radius >= this.paddle2.bottom))
 			return true;
 		return false;
 	}
 
 	async launchBallRandom(): Promise<void>
 	{
-		this.direction.y = -0.5//(Math.random() * 2 - 1) / 2;
-		this.direction.x = -0.5//(Math.random() * 2 - 1) / 2;
+		this.direction.y = (Math.random() * 2 - 1) / 2;
+		this.direction.x = Math.sqrt(1 - (this.direction.y * this.direction.y));
+		if (Math.random() < 0.5)
+			this.direction.x *= -1;
 	}
 
 	async bounce(): Promise<void>
@@ -90,12 +92,15 @@ export class Ball implements Object2D
 	{
 		if (await this.paddleCollides())
 		{
-			this.coordinates.x += 1;
 			this.direction.x *= -1;
-			// this.speed += this.speed * this.acceleration;
+			// let impact = this.coordinates.y - this.paddle1.bottom - this.paddle1.height / 2;
+			// let ratio = 100 / (this.paddle1.height / 2);
+			// this.direction.y = Math.round(impact * ratio);
+			if (this.speed <= 100)
+				this.speed += this.speed * this.acceleration;
 		}
-		else if (this.coordinates.x - this.radius <= 0
-			|| this.coordinates.x + this.radius >= this.window.width)
+		else if (this.coordinates.x - this.radius <= this.paddle1.width
+			|| this.coordinates.x + this.radius >= this.window.width - this.paddle2.width)
 		{
 			try
 			{
@@ -130,13 +135,13 @@ export class Ball implements Object2D
 			this.coordinates.x += this.direction.x * this.speed;
 			this.coordinates.y += this.direction.y * this.speed;
 		}
-		this.latest_time = current_time - deltaTime;
+		this.latest_time = current_time - (deltaTime / ((1000 / this.refresh_rate)));
 	}
 
 	async getCoordinates(): Promise<{ coordinates: Vector2D, speed: number, direction: Vector2D }>
 	{
-		await this.updateCoordinates();
 		const ret = { x: this.coordinates.x, y: this.coordinates.y };
-		return { coordinates: ret, speed: this.speed, direction: this.direction };
+		const ret2 = { x: this.direction.x, y: this.direction.y };
+		return { coordinates: ret, speed: this.speed, direction: ret2 };
 	}
 }

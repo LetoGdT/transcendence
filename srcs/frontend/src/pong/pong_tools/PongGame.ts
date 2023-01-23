@@ -615,39 +615,28 @@ class PongGame
 		} 
 		else if (!this.over)
 		{
-			const maxPlayerY = this.height - PLAYER_HEIGHT;
-
-			if (this.keyStates[PLAYER1_UP_KEY])
-			{
-				socket.emit('moveDown');
-				this.player1.y -= 7;
-				if (this.player1.y < 0)
-					this.player1.y = 0;
-			}
-
-			if (this.keyStates[PLAYER1_DOWN_KEY])
-			{
-				socket.emit('moveUp');
-				this.player1.y += 7;
-				if (this.player1.y >= maxPlayerY)
-					this.player1.y = maxPlayerY;
-			}
-
-			if (this.keyStates[PLAYER2_DOWN_KEY])
-			{
-				this.player2.y += 7;
-				if (this.player2.y >= maxPlayerY)
-					this.player2.y = maxPlayerY;
-			}
-
-			if (this.keyStates[PLAYER2_UP_KEY])
-			{
-				this.player2.y -= 7;
-				if (this.player2.y < 0)
-					this.player2.y = 0;
-			}
-
+			this.handleMovement();
 			this.updatePhysics();
+		}
+	}
+
+	handleMovement()
+	{
+		const maxPlayerY = this.height - PLAYER_HEIGHT;
+		if (this.keyStates[PLAYER1_UP_KEY])
+		{
+			socket.emit('moveDown');
+			this.player1.y -= 14;
+			if (this.player1.y < 0)
+				this.player1.y = 0;
+		}
+
+		if (this.keyStates[PLAYER1_DOWN_KEY])
+		{
+			socket.emit('moveUp');
+			this.player1.y += 14;
+			if (this.player1.y >= maxPlayerY)
+				this.player1.y = maxPlayerY;
 		}
 	}
 
