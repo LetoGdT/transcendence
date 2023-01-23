@@ -48,11 +48,11 @@ const ChannelButton = styled(Button)({
 	boxShadow: 'none',
 	textTransform: 'none',
 	fontSize: 16,
-	padding: '6px 12px',
+	padding: '0px 12px',
 	border: '1px solid',
 	lineHeight: 1.5,
-	backgroundColor: '#646464',
-	borderColor: '#646464',
+	backgroundColor: '#000000',
+	borderColor: '#000000',
 	fontFamily: [
 		'-apple-system',
 		'BlinkMacSystemFont',
@@ -66,14 +66,52 @@ const ChannelButton = styled(Button)({
 		'"Segoe UI Symbol"',
 	].join(','),
 	'&:hover': {
-		backgroundColor: '#3b9b3b',
-		borderColor: '#646464',
+		backgroundColor: '#007dd6',
+		borderColor: '#000000',
 		boxShadow: 'none',
 	},
 	'&:active': {
 		boxShadow: 'none',
-		backgroundColor: '#4a7a4a',
-		borderColor: '#646464',
+		backgroundColor: '#000000',
+		borderColor: '#000000',
+	},
+	'&:focus': {
+		xShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
+	},
+});
+
+const ChannelSelectedButton = styled(Button)({
+	boxShadow: 'none',
+	textTransform: 'none',
+	fontSize: 16,
+	fontWeight: 'bold',
+	padding: '0px 12px',
+	border: '1px solid',
+	lineHeight: 1.5,
+	backgroundColor: '#000000',
+	borderColor: '#000000',
+	color: '#4a7a4a',
+	fontFamily: [
+		'-appel-system',
+		'BlinkMacSystemFont',
+		'"Segoe UI"',
+		'Roboto',
+		'"Helvetica Neue"',
+		'Arial',
+		'snans-serif',
+		'"Apple Color Emoji"',
+		'"Segoe UI Emoji"',
+		'"Segoe UI Symbol"',
+	].join(','),
+	'&:hover': {
+		backgroundColor: '#007dd6',
+		borderColor: '#000000',
+		boxShadow: 'none',
+	},
+	'&:active': {
+		boxShadow: 'none',
+		backgroundColor: '#000000',
+		borderColor: '#000000',
 	},
 	'&:focus': {
 		xShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
@@ -84,11 +122,13 @@ const ChannelButtonNewMessage = styled(Button)({
 	boxShadow: 'none',
 	textTransform: 'none',
 	fontSize: 16,
-	padding: '6px 12px',
+	fontWeight: 'bold',
+	padding: '0px 12px',
 	border: '1px solid',
 	lineHeight: 1.5,
-	backgroundColor: '#646464',
-	borderColor: '#646464',
+	backgroundColor: '#000000',
+	borderColor: '#000000',
+	color: '#ffd700',
 	fontFamily: [
 		'-apple-system',
 		'BlinkMacSystemFont',
@@ -102,14 +142,14 @@ const ChannelButtonNewMessage = styled(Button)({
 		'"Segoe UI Symbol"',
 	].join(','),
 	'&:hover': {
-		backgroundColor: '#3b9b3b',
-		borderColor: '#646464',
+		backgroundColor: '#007dd6',
+		borderColor: '#000000',
 		boxShadow: 'none',
 	},
 	'&:active': {
 		boxShadow: 'none',
-		backgroundColor: '#4a7a4a',
-		borderColor: '#646464',
+		backgroundColor: '#000000',
+		borderColor: '#000000',
 	},
 	'&:focus': {
 		xShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
@@ -162,8 +202,17 @@ function DisplayMessageHistory(props: any) {
 
 function DisplayChannel(props: any){
 	const conv = props?.conv;
+	const currentConv = props?.currentConv;
 
-	if (conv.new_message === true){
+	if (currentConv === conv?.id)
+		return (
+			<div>
+				<ChannelSelectedButton variant="contained" disableRipple onClick={props?.handleChangeConv} value={conv.id}>
+					{conv.name}
+				</ChannelSelectedButton>
+			</div>
+		);
+	else if (conv.new_message === true){
 		return(
 			<div>
 				<ChannelButtonNewMessage variant="contained" disableRipple onClick={props?.handleChangeConv} value={conv.id}>
@@ -187,7 +236,7 @@ function ChatNavigate(props: any) {
 		<div className='Chat-navigate'>
 			{props?.ConvList?.map((conv: Conversation) => {
 				return (
-					<DisplayChannel conv={conv} key={conv.id} handleChangeConv={props?.handleChangeConv}/>
+					<DisplayChannel conv={conv} currentConv={props?.currentConv} key={conv.id} handleChangeConv={props?.handleChangeConv}/>
 				);
 			})}
 		</div>
@@ -367,7 +416,7 @@ function Chat() {
 			<React.Fragment>
 				<h1>Chat</h1>
 				<div className='Chat-container'>
-					<ChatNavigate ConvList={convList} handleChangeConv={handleChangeConv}/>
+					<ChatNavigate ConvList={convList} currentConv={currentConv} handleChangeConv={handleChangeConv}/>
 					<div>
 						<DisplayMessageHistory messages={messages} me={currentUser}/>
 						<div className='Chat-TextField-send-button'>
