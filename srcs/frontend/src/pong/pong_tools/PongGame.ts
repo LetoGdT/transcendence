@@ -626,7 +626,7 @@ class PongGame
 		if (this.keyStates[PLAYER1_UP_KEY])
 		{
 			socket.emit('moveDown');
-			this.player1.y -= 14;
+			this.player1.y -= 7;
 			if (this.player1.y < 0)
 				this.player1.y = 0;
 		}
@@ -634,7 +634,7 @@ class PongGame
 		if (this.keyStates[PLAYER1_DOWN_KEY])
 		{
 			socket.emit('moveUp');
-			this.player1.y += 14;
+			this.player1.y += 7;
 			if (this.player1.y >= maxPlayerY)
 				this.player1.y = maxPlayerY;
 		}

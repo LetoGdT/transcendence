@@ -1,5 +1,6 @@
 import './App.css';
 import './SetPrivateGame.css';
+import { socket } from './WebsocketContext';
 
 import React from 'react';
 import { useParams } from 'react-router-dom';
@@ -129,8 +130,12 @@ export function SetPrivateGame(){
 	const [newSpeed, setNewSpeed] = React.useState(10);
 
 	const handleClickSetParams = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		//Tim, newPts contient le resultat du curseur vert
-		//newSpeed contient le resultat du curseur bleu
+		socket.emit('queue', {
+			type: 'Quick play',
+			ball_speed: newSpeed,
+			winning_score: newPts,
+			opponent_id: uid
+		})
 	};
 
 	const handleNewPts = (value: any) => {
