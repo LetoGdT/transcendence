@@ -1,0 +1,17 @@
+.Set-Private-Game-container{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.Set-Private-Game-Slider{
+	width: 400px;
+	margin: 10px;
+}
+
+.Set-Private-Game-Button{
+	display: flex;
+	justify-content: center;
+	padding-bottom: 10px;
+}

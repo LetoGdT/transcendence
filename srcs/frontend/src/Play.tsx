@@ -3,7 +3,9 @@ import './App.css';
 import React from "react";
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
+import { Link } from 'react-router-dom'
 import { PleaseConnect } from "./adaptable-zone";
+
 
 const NormalModeButton = styled(Button)({
 	boxShadow: 'none',
@@ -80,7 +82,9 @@ function Play(){
 			<h1>Play</h1>
 			<div className='Play-container'>
 				<div className='Play-button'>
-					<NormalModeButton variant="contained" disableRipple>PLAY<br></br>Classic Mode</NormalModeButton>
+					<Link to="/pong">
+						<NormalModeButton variant="contained" disableRipple>PLAY<br></br>Classic Mode</NormalModeButton>
+					</Link>
 				</div>
 				<div className='Play-button'>
 					<UnicornModeButton variant="contained" disableRipple>PLAY<br></br>Unicorn Mode</UnicornModeButton>

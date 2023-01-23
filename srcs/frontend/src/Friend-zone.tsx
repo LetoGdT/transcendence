@@ -14,7 +14,7 @@ type resultProps = {
 }
 
 export function Friends(){
-	const [data, setResult] = useState<resultProps>();
+	const [data, setResult] = useState<resultProps[]>([]);
 
 	useEffect(() => {
 		const call = async () => {
@@ -28,7 +28,7 @@ export function Friends(){
 		<React.Fragment>
 			<h1>Friends</h1>
 			<div className='Friend-container'>
-				{data?.data.map((user: any) => {
+				{data.length > 0 && data?.map((user: any) => {
 					var url: string = "/otherprofile";
 					url = url.concat("/");
 					url = url.concat(user.id);
