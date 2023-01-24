@@ -435,7 +435,9 @@ function Chat() {
 	}
 
 	const handleSendMessage = async () => {
-		await fetch(`http://localhost:9999/api/conversations/${currentUser.id}/messages`, {
+		if (newMessage.length === 0)
+			return ;
+		await fetch(`http://localhost:9999/api/${isChannel?'channels':'conversations'}/${currentUser.id}/messages`, {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -443,6 +445,10 @@ function Chat() {
 			method: 'POST',
 			credentials: 'include',
 			body: JSON.stringify({content: newMessage})
+		})
+		.then(response => {
+			if (!response.ok)
+			return ;
 		});
 		//setNewMessage(""); // Sert à effacer le message une fois qu'on a appuyé sur le bouton send
 		socket.emit("newMessage", {convId: currentConv, isChannel: isChannel});
