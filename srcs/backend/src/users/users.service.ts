@@ -406,11 +406,13 @@ export class UsersService
 		}
 		catch (err) {}
 		if (fs.existsSync(oldPath))
+		{
 			fs.unlink(oldPath, (err) => {
 				if (err)
 					throw new HttpException('There was an error deleting the previous file',
 						HttpStatus.INTERNAL_SERVER_ERROR)
 			});
+		}
 		user.image_url = 'http://localhost:9999/uploads/' + filename;
 		this.userRepository.save(user);
 	}

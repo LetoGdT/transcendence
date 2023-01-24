@@ -2,16 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { Socket } from 'socket.io';
 import { User } from '../typeorm/user.entity';
+import { MatchesService } from '../matches/matches.service';
 import { PageDto } from "../dto/page.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
 import { MessageQueryFilterDto } from '../dto/query-filters.dto';
 import { UserSelectDto } from '../dto/messages.dto';
+import { CreateMatchDto } from '../dto/matches.dto';
 import { Connection } from '../interfaces/connection.interface';
 import { Game } from './game/game.class';
 
 @Injectable()
 export class ChatService {
 	private readonly http = new HttpService();
+
+	constructor(private readonly matchesService: MatchesService) {}
 
 	async getTailMessages(othersId: number, cookie: string) {
 		const headersRequest = {
@@ -85,6 +89,19 @@ export class ChatService {
 			&& (await game.getPlayer2Id()) == opponent.user.id
 		});
 		games.splice(gameIndex, 1);
+		const score: { player1: number, player2: number } = await game.getScore(1);
+		const winner: User = score.player1 === 5 ? client.user : opponent.user;
+		const createMatchDto: CreateMatchDto = {
+			user1: client.user,
+			user2: opponent.user,
+			score_user1: score.player1,
+			score_user2: score.player2,
+			winner: winner,
+			played_at: new Date(),
+			game_type: 'Ranked',
+		};
+		const match = await this.matchesService.createMatch(createMatchDto);
+		this.matchesService.calculateRank(match.id);
 	}
 
 	printQ(queue: Map<number, Connection[]>)

@@ -13,7 +13,9 @@ export class CreateMatchDto
 
 	winner: User;
 
+	@IsDate()
 	played_at: Date;
 
+	@IsIn(['Quick play', 'Ranked'])
 	game_type: 'Quick play' | 'Ranked';
 }

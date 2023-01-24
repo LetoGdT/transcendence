@@ -16,7 +16,7 @@ export class Game
 {
 	private ball: Ball;
 	private ball_speed: number = 10;
-	private score: Score = new Score();
+	score: Score = new Score();
 	private player1: Player;
 	private player2: Player;
 	private winner: number | null = null ;
@@ -24,7 +24,6 @@ export class Game
 	readonly type: 'Ranked' | 'Quick play';
 	private readonly refresh_rate: number;
 	private start: boolean = false;
-	// private games: 
 
 	constructor(refresh_rate: number, type: 'Ranked' | 'Quick play')
 	{
@@ -37,6 +36,23 @@ export class Game
 		return this.player1?.client;
 	}
 
+	async getPlayer2Socket()
+	{
+		return this.player2?.client;
+	}
+
+	async setPlayer1Socket(client: Socket)
+	{
+		if (this.player1 != null)
+			this.player1.client = client;
+	}
+
+	async setPlayer2Socket(client: Socket)
+	{
+		if (this.player2 != null)
+			this.player2.client = client;
+	}
+
 	async getPlayer1Id()
 	{
 		return this.player1?.user?.id;
@@ -47,9 +63,14 @@ export class Game
 		return this.player2?.user?.id;
 	}
 
-	async getPlayer2Socket()
+	async getUser1()
 	{
-		return this.player2?.client;
+		return this.player1?.user;
+	}
+
+	async getUser2()
+	{
+		return this.player2?.user;
 	}
 
 	async setWinningScore(winning_score: number): Promise<number>
@@ -196,6 +217,5 @@ export class Game
 
 		this.player1.client.emit('winner', { score: await this.getScore(1) });
 		this.player2.client.emit('winner', { score: await this.getScore(2) });
-		console.log(`Player ${this.winner} has won`);
 	}
 }

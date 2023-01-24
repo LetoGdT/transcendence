@@ -15,8 +15,10 @@ import { AuthService } from '../auth/auth.service';
 import { User } from '../typeorm/user.entity';
 import { ChatService } from './chat.service';
 import { UsersService } from '../users/users.service';
+import { MatchesService } from '../matches/matches.service';
 import { Connection } from '../interfaces/connection.interface';
 import { Game } from './game/game.class';
+import { CreateMatchDto } from '../dto/matches.dto';
 
 @WebSocketGateway(9998, { cors: true })
 export class MySocketGateway implements OnGatewayConnection, 
@@ -24,6 +26,7 @@ export class MySocketGateway implements OnGatewayConnection,
 	constructor(private readonly auth: AuthService,
 				private readonly chat: ChatService,
 				private readonly usersService: UsersService,
+				private readonly matchesService: MatchesService,
 			   	private clients: Connection[]) {}
 
 	@WebSocketServer()
@@ -54,7 +57,6 @@ export class MySocketGateway implements OnGatewayConnection,
 
 		this.clients.push({user, client});
 		await this.usersService.changeUserStatus(user.id, 'online');
-		console.log(user.username + " has connected to the websocket");
 	}
 
 	async handleDisconnect(client: Socket) {
@@ -168,7 +170,14 @@ export class MySocketGateway implements OnGatewayConnection,
 		});
 
 		if (gameIndex !== -1)
-			throw new WsException('You are already in a game');
+		{
+			const game = this.games[gameIndex];
+			if (await game.getPlayer1Id() == this.clients[index].user.id)
+				game.setPlayer1Socket(client);
+			else
+				game.setPlayer2Socket(client);
+			client.emit('gameFound');
+		}
 
 		if (body.type == 'Ranked')
 		{
@@ -177,10 +186,12 @@ export class MySocketGateway implements OnGatewayConnection,
 			for (let connections of this.queue.values())
 			{
 				for (let connection of connections)
+				{
 					if (connection.user.id == this.clients[index].user.id)
 					{
 						throw new WsException('You are already in queue');
 					}
+				}
 			}
 
 			const opponent: Connection | null = this.chat.searchOpponent(this.queue, client_exp,
@@ -244,6 +255,23 @@ export class MySocketGateway implements OnGatewayConnection,
 			throw new WsException('You have not been invited in a game');
 
 		const game = this.games[gameIndex];
+		game.addPlayer({ user: this.clients[index].user, client: client });
+		const clientUser: User = await game.getUser1();
+		const opponentUser: User = await game.getUser2();
 		await game.run();
+		this.games.splice(gameIndex, 1);
+		const score: { player1: number, player2: number } = await game.getScore(1);
+		const winner: User = score.player1 === game.score.winning_score ? clientUser : opponentUser;
+		const createMatchDto: CreateMatchDto = {
+			user1: clientUser,
+			user2: opponentUser,
+			score_user1: score.player1,
+			score_user2: score.player2,
+			winner: winner,
+			played_at: new Date(),
+			game_type: 'Quick play',
+		};
+		const match = await this.matchesService.createMatch(createMatchDto);
+		this.matchesService.calculateRank(match.id);
 	}
 }
