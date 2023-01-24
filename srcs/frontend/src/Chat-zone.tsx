@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
 
 import { PleaseConnect } from './adaptable-zone';
+import { socket } from './WebsocketContext';
 
 const SendButton = styled(Button)({
 	boxShadow: 'none',
@@ -289,6 +290,36 @@ function Chat() {
 	}, [convList])
 
 	useEffect(() => {
+		socket.on('newMessage', (data) => {
+			const convId: number = data?.convId;
+			const latest_sent: Date = data?.latest_sent;
+			let res: Conversation[] = convList;
+
+			for (var conv of res) {
+				if (conv.id === convId) {
+					if (conv.id !== currentConv)
+						conv.new_message = true;
+					conv.date_of_last_message = latest_sent;
+					res.sort((a, b) => a.date_of_last_message.getTime() - b.date_of_last_message.getTime());
+					setConvList(res);
+					continue ;
+				}
+			}
+			if (convId === currentConv) {
+				updateMessages();
+			}
+		});
+		socket.on('newConvChan', () => {
+			
+		});
+		
+		return () => {
+			socket.off('newMessage');
+			socket.off('newConvChan');
+		}
+	}, [convList, currentConv]);
+
+	useEffect(() => {
 		updateMessages();
 	}, [currentConv])
 
@@ -305,7 +336,7 @@ function Chat() {
 		.then(data => res = res.concat(data.data.map((elem: any) => {
 			let name: string;
 			if (currentUser.id === -1)
-				name = "not leaded";
+				name = "not loaded";
 			else if (currentUser.id === elem.user1.id)
 				name = elem.user2.username;
 			else
@@ -388,10 +419,13 @@ function Chat() {
 
 	const handleChangeConv= async (event: any) => {
 		const id = event.target.value;
-		for (var elem of convList)
+		let convs = convList;
+		for (var elem of convs)
 			if (elem.id === id) {
 				setCurrentConv(id);
 				setIsChannel(elem.is_channel);
+				elem.new_message = false;
+				setConvList(convs);
 				continue ;
 			}
 	}
@@ -410,6 +444,8 @@ function Chat() {
 			credentials: 'include',
 			body: JSON.stringify({content: newMessage})
 		});
+		//setNewMessage(""); // Sert à effacer le message une fois qu'on a appuyé sur le bouton send
+		socket.emit("newMessage", {convId: currentConv, isChannel: isChannel});
 	}
 
 	return (

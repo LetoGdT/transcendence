@@ -9,34 +9,30 @@ import { UserSelectDto } from '../dto/messages.dto';
 
 @Injectable()
 export class ChatService {
-	private readonly http = new HttpService();
+	async onNewMessage(chanOrConv: number, isChannel: boolean, token: string) {
+		let res: {users: number[], latest_sent: Date} = {users: [], latest_sent: new Date()};
 
-	async getTailMessages(othersId: number, cookie: string) {
-		const headersRequest = {
-			access_token: cookie,
-			withCredentials: 'true',
-		};
-		return this.http.get(
-			/*** DEPRECATED ! ***/
-			"localhost:9999/privmsg/" +
-				"?Order=DESC",
-			{
-				headers: headersRequest,
-			},
-		);
-
-		/**
-		 * New way of doing: Get latest conversations at 'http://localhost:9999/conversations',
-		 * save the id, then get the messages
-		 * at 'http://localhost:9999/conversations/<conversation_id>/messages', where conversation_id
-		 * is the id saved earlier.
-		 **/
-	}
-
-	async onNewMessage() {
-		/**
-		 * Create a message at POST 'http://localhost:9999/conversations/<conversation_id>/messages'
-		 * with body: { content : 'The message's content' }
-		 **/
+		await fetch(`http://localhost:9999/api/${isChannel?'channels':'conversations'}/?id=${chanOrConv}`, {
+			method: "GET",
+			credentials: 'include',
+			headers: {
+				'Cookie': `access_token=${token}`,
+			}
+		})
+		.then(response=>response.json())
+		.then(data => data.data[0])
+		.then((elem) => {
+				res.latest_sent = elem.latest_sent;
+				if (!isChannel) {
+					res.users = res.users.concat(elem.user1.id);
+					res.users = res.users.concat(elem.user2.id);
+				}
+				else {
+					elem.users.forEach((user: any) => {
+						res.users = res.users.concat(user.id);
+					});
+				}
+		});
+		return res;
 	}
 }
