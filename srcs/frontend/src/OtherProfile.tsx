@@ -17,6 +17,7 @@ type resultProps = {
 	image_url: string;
 	status: string;
 	exp: number;
+	id: number;
 };
 
 type friendProps = {
@@ -199,7 +200,7 @@ const UnblockButton = styled(Button)({
 	},
 });
 
-const DuelButton = styled(Button)({
+const AskButton = styled(Button)({
 	boxShadow: 'none',
 	textTransform: 'none',
 	fontSize: 16,
@@ -520,6 +521,22 @@ export function OtherProfile(){
 		["Defeats", stats?.losses],
 	];
 
+	const handleClickChat = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		const response = await fetch(`http://localhost:9999/api/conversation/`+{uid}, {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			credentials: 'include'
+		});
+	};
+
+	var url_aksgame: string = "/setprivategame/";
+	if (uid !== undefined){
+		url_aksgame = url_aksgame.concat(uid.toString());
+	}
+
 	if (!is404) {
 		return(
 			<React.Fragment>
@@ -529,7 +546,8 @@ export function OtherProfile(){
 						<div className='Profile-Alias-div'>{data?.username}</div>
 						<div className='Profile-Alias-div'>{AddOrRemoveButton(uid)}</div>
 						<div className='Profile-Alias-div'>{BlockOrUnblockButton(uid)}</div>
-						<div className='Profile-Alias-div'><DuelButton variant="contained" disableRipple>Ask for a game</DuelButton></div>
+						<div className='Profile-Alias-div'><Link to={url_aksgame}><AskButton variant="contained" disableRipple>Ask for a game</AskButton></Link></div>
+						<div className='Profile-Alias-div'><Link to="/chat"><AskButton variant="contained" disableRipple onClick={handleClickChat}>Chat in private</AskButton></Link></div>
 						{/*button pour spec ?*/}
 					</div>
 					<div className='Profile-container-row-lvl1'>

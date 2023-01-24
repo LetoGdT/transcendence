@@ -10,8 +10,11 @@ export function Home(){
 	return(
 		<div>
 			<h1>Home</h1>
-			<p>Ici on peut mettre ce qu'on veut.
-				Je verrai bien un resumé de ce que propose ce site, avec le nombre de users enregistrés, le nombre de users connecté en ce moment et le nombre de users en jeu (inclu en attente de match).
+			<p>Bienvenue sur notre projet ft_transcendence.
+				<br></br>
+				Ce projet a été réalisé par <a href='https://profile.intra.42.fr/users/tlafay'>tlafay</a>, <a href='https://profile.intra.42.fr/users/lgaudet-'>lgaudet-</a>, <a href='https://profile.intra.42.fr/users/sylducam'>sylducam</a> et <a href='https://profile.intra.42.fr/users/lburnet'>lburnet</a>
+				<br></br>
+				HF pendant cette correction.
 			</p>
 		</div>
 	);

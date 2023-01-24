@@ -4,7 +4,7 @@ import {
 	UnauthorizedException, ClassSerializerInterceptor,
 	UseInterceptors, Query, Req, UseFilters, Body, UploadedFile, Res,
 	StreamableFile, Header, Response, ParseFilePipe, FileTypeValidator,
-	SerializeOptions
+	SerializeOptions, HttpStatus, HttpException
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
@@ -246,6 +246,15 @@ export class UsersController
 			],
 	})) file: Express.Multer.File, @Req() req: RequestWithUser)
 	{
+		if (file.mimetype.split('/')[0] !== 'image')
+		{
+			fs.unlink(file.path, (err) => {
+				if (err)
+					throw new HttpException('There was an error deleting the file',
+						HttpStatus.INTERNAL_SERVER_ERROR)
+			});
+		}
+
 		this.usersService.deleteOldPhoto(req.user, file.filename);
 		return {
 			filename: file.filename,

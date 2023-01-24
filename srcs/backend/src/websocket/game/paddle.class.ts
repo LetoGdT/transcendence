@@ -19,13 +19,13 @@ export class Paddle implements Object2D
 
 	readonly left: number;
 	readonly right: number;
-	readonly top: number;
-	readonly bottom: number;
+	top: number;
+	bottom: number;
 
 	private latest_time: number = performance.now();
 
-	constructor(refresh_rate: number = 50, speed: number = 10,
-		height: number = 10, width: number = 1,
+	constructor(refresh_rate: number = 50, speed: number = 14,
+		height: number = 100, width: number = 13,
 		new_window: Window = {
 			width: 1040,
 			height: 680
@@ -34,48 +34,54 @@ export class Paddle implements Object2D
 		this.window = new_window;
 		this.speed = speed;
 		this.height = height;
-		this.coordinates = { x: 10, y: this.window.height / 2 - this.height / 2 };
 		this.width = width;
-
+		this.coordinates = { x: 10, y: this.window.height / 2 - this.height / 2 };
+		this.refresh_rate = refresh_rate;
 		this.left = this.coordinates.x;
 		this.right = this.left + this.width;
 		this.bottom = this.coordinates.y;
 		this.top = this.bottom + this.height;
-
-		if (this.collides(this.coordinates))
-			throw new RangeError('Paddle is not in the window');
 	}
 
-	collides(new_position: Vector2D): boolean
+	async setX(x: number)
 	{
-		return new_position.y + this.height > this.window.height
-			|| new_position.y < 0;
+		this.coordinates.x = x;
 	}
 
-	moveUp(): void
+	async collides(new_position: Vector2D): Promise<boolean>
+	{
+		return !(new_position.y + this.height <= this.window.height
+							&& new_position.y >= 0);
+	}
+
+	async moveUp(): Promise<void>
 	{
 		const current_time = performance.now();
-		const deltaTime = (current_time - this.latest_time) * (this.refresh_rate / 1000);
+		const deltaTime = (current_time - this.latest_time) * (1000 / this.refresh_rate);
 		if (deltaTime >= 1)
 		{
 			const new_position = this.coordinates;
-			new_position.x += this.speed;
-			if (!this.collides(new_position))
-				this.coordinates.x += this.speed;
+			new_position.y += this.speed;
+			if (!(await this.collides(new_position)))
+				this.coordinates.y += this.speed;
+			this.bottom = this.coordinates.y;
+			this.top = this.bottom + this.height;
 			this.latest_time = current_time;
 		}
 	}
 
-	moveDown(): void
+	async moveDown(): Promise<void>
 	{
 		const current_time = performance.now();
-		const deltaTime = (current_time - this.latest_time) * (this.refresh_rate / 1000);
+		const deltaTime = (current_time - this.latest_time) * (1000 / this.refresh_rate);
 		if (deltaTime >= 1)
 		{
 			const new_position = this.coordinates;
-			new_position.x -= this.speed;
-			if (!this.collides(new_position))
-				this.coordinates.x -= this.speed;
+			new_position.y -= this.speed;
+			if (!(await this.collides(new_position)))
+				this.coordinates.y -= this.speed;
+			this.bottom = this.coordinates.y;
+			this.top = this.bottom + this.height;
 			this.latest_time = current_time;
 		}
 	}

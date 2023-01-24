@@ -2,16 +2,20 @@ import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { Socket } from 'socket.io';
 import { User } from '../typeorm/user.entity';
+import { MatchesService } from '../matches/matches.service';
 import { PageDto } from "../dto/page.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
 import { MessageQueryFilterDto } from '../dto/query-filters.dto';
 import { UserSelectDto } from '../dto/messages.dto';
+import { CreateMatchDto } from '../dto/matches.dto';
 import { Connection } from '../interfaces/connection.interface';
 import { Game } from './game/game.class';
 
 @Injectable()
 export class ChatService {
 	private readonly http = new HttpService();
+
+	constructor(private readonly matchesService: MatchesService) {}
 
 	async getTailMessages(othersId: number, cookie: string) {
 		const headersRequest = {
@@ -42,18 +46,29 @@ export class ChatService {
 		 **/
 	}
 
-	searchOpponent(queue: Map<number, Connection[]>, client_exp: number): Connection | null
+	searchOpponent(queue: Map<number, Connection[]>, client_exp: number, user_id: number): Connection | null
 	{
 		let index = -1;
-		for (let [exp, connection] of queue)
+		for (let [exp, connections] of queue)
 		{
-			if (connection.length > 0 && Math.abs(client_exp - exp) < Math.abs(client_exp - index))
+			// if (exp == client_exp && connections.length === 1)
+			// {
+			// 	console.log('Breaks');
+			// 	continue;
+			// }
+			if (connections.length > 0 && Math.abs(client_exp - exp) < Math.abs(client_exp - index))
 				index = exp;
 		}
 
 		if (index != -1)
 		{
-			const ret = queue.get(index)[0];
+			let ret = queue.get(index)[0];
+			if (ret.user.id == user_id)
+			{
+				ret = queue.get(index)[1];
+				queue.get(index).splice(1);
+				return ret;
+			}
 			queue.get(index).splice(0);
 			return ret;
 		}
@@ -68,6 +83,32 @@ export class ChatService {
 		client.client.emit('gameFound');
 		opponent.client.emit('gameFound');
 		games.push(game);
-		game.run();
+		await game.run();
+		const gameIndex: number = games.findIndex(async game => {
+			(await game.getPlayer1Id()) == client.user.id
+			&& (await game.getPlayer2Id()) == opponent.user.id
+		});
+		games.splice(gameIndex, 1);
+		const score: { player1: number, player2: number } = await game.getScore(1);
+		const winner: User = score.player1 === 5 ? client.user : opponent.user;
+		const createMatchDto: CreateMatchDto = {
+			user1: client.user,
+			user2: opponent.user,
+			score_user1: score.player1,
+			score_user2: score.player2,
+			winner: winner,
+			played_at: new Date(),
+			game_type: 'Ranked',
+		};
+		const match = await this.matchesService.createMatch(createMatchDto);
+		this.matchesService.calculateRank(match.id);
+	}
+
+	printQ(queue: Map<number, Connection[]>)
+	{
+		let users: User[] = [];
+		for (let connections of queue.values())
+			users = [...users, ...connections.map((connection) => connection.user)];
+		console.log(users);
 	}
 }

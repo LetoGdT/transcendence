@@ -8,49 +8,19 @@
 	z-index: 2;
 }
 
-/* .globalDivPong {
-	position: 'fixed';
-	top:'2000px';
-	bottom:0;
-	left:0;
-	right:0;
-} */
-
-/* .divPong {
-	aspect-ratio: 16 / 9;
-	max-height:'100%';
-	max-width:'100%';
-	margin-left:'auto';
-	margin-right:'auto';
-} */
-
-#responsive-canvas {
-	width: 100%;
-	height: 100%;
-}
-
-/* @media (max-width: 200px) { /* TODO use this to change the behaviour of the div when under a certain value (here, 800px)
-	.globalDivPong {
-		position: 'fixed';
-		top:'400px';
-		bottom:0;
-		left:0;
-		right:0;
-	}
-	.divPong { /* TODO change this div too ?
-		aspect-ratio: 16 / 9;
-		max-height:'100%';
-		max-width:'100%';
-		margin-left:'auto';
-		margin-right:'auto';
-	}
-} */
-
 .Adaptable{
-	/* background-color:#000000; del, commented this line so the canvas doesn't mix with the black background */
-	color: antiquewhite;
+	background-color:#000000;
+	color: #faebd7;
 	height: 100%;
 	margin: 5px;
+}
+
+.Notif{
+	background-color: #007dd6;
+	color: antiquewhite;
+	border-radius: 10px;
+	padding: 10px;
+	text-align: center;
 }
 
 a:link {

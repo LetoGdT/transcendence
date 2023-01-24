@@ -1,5 +1,7 @@
-import React from 'react';
+import { red } from '@mui/material/colors';
+import React, { useState, useEffect, useRef } from 'react';
 import PongGame from './pong_tools/PongGame';
+import { socket } from '../WebsocketContext';
 
 const GAME_WIDTH = 1040;
 const GAME_HEIGHT = 680;
@@ -64,7 +66,7 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 
 function useGame()
 {
-	const ref = React.useRef<PongGame>();
+	const ref = useRef<PongGame>();
 	if (!ref.current)
 		ref.current = new PongGame(GAME_WIDTH, GAME_HEIGHT);
 	return ref.current;
@@ -72,30 +74,69 @@ function useGame()
 
 const PongGameBootstrap = () =>
 {
-	const game = useGame();
-	const canvasRef = useCanvas(ctx => game.render(ctx))
+	const [winner, setWinner] = useState(-1);
+	const [lastUpdate, setLastUpdate] = useState(performance.now());
+	const [attemptedConnect, setAttemptedConnect] = useState(false);
+	const [checkRefresh, setCheckRefresh] = useState(false);
+	const [move, setMove] = useState(false);
 	
-	React.useEffect(() =>
+	const game = useGame();
+	const canvasRef = useCanvas(ctx => game.render(ctx));
+
+	useEffect(() =>
 	{
-		const timer = setInterval(() => game.update(), 20); // del old version
-		// const timer = setInterval(() =>  // TODO new version in progress (see with Tim how to create deltaTime in this front version)
-			// if (this.deltaTime > 1)		// this is supposed to be called only when new information is received from the back
-			// {							// meaning that update is called only if the front
-			// 	game.update(), 20);			// version has to run on itself (predict the position of
-			// }							// the ball, the players and the score). Else, update is
-											// simply not called and the ball, players and score are
-											// "updated" by the back. So you need another function,
-											// for when it doesn't go inside front update, that will
-											// update all the variables directly.
-			return () => clearInterval(timer);
-	}, [game]);
+		if (attemptedConnect === false)
+		{
+			socket.emit('queue', { type: 'Ranked' });
+			setAttemptedConnect(true);
+		}
+		if (performance.now() - lastUpdate > 2000 / 50)
+		{
+			game.update();
+			setLastUpdate(performance.now());
+		}
+		const sleep = async () => {
+			await new Promise(r => setTimeout(r, 10));
+			setCheckRefresh(!checkRefresh);
+		}
+		sleep();
+	}, [checkRefresh]);
+
+	useEffect(() => {
+		socket.on('ball', (data) => {
+			setLastUpdate(performance.now());
+			game.setBall(data);
+		});
+		socket.on('players', (data) => {
+			setLastUpdate(performance.now());
+			game.setPlayers(data);
+		});
+		socket.on('score', (data) => {
+			setLastUpdate(performance.now());
+			game.setScore(data);
+		});
+		socket.on('gameFound', () => game.setConnecting());
+		socket.on('winner', (data) => {
+			setLastUpdate(performance.now());
+			game.setScore(data);
+			game.update();
+		});
+		socket.on('start', () => game.setStart());
+	}, []);
+
+	useEffect(() => {
+		game.handleMovement();
+		setMove(false);
+	}, [move]);
 
 	const onKeyUp = (e: React.KeyboardEvent) => {
 		e.preventDefault();
+		setMove(true);
 		game.handleKeyUp(e.code);
 	};
 	const onKeyDown = (e: React.KeyboardEvent) => {
 		e.preventDefault();
+		setMove(true);
 		game.handleKeyDown(e.code);
 	};
 

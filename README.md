@@ -13,6 +13,7 @@
 		<li>Afficher differents trucs en fonction de choses diverses : https://reactjs.org/docs/conditional-rendering.html</li>
 		<li>HandleClick avec plusieurs arguments : https://reactjs.org/docs/handling-events.html</li>
 		<li> https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find</li>
+		<li>Pop-up : https://react-hot-toast.com/</li>
 	</ul>
 	<ul>pour le chat
 		<li>à regarder pour l'auth des sockets https://wanago.io/2021/01/25/api-nestjs-chat-websockets/</li>

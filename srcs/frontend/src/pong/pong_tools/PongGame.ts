@@ -59,7 +59,7 @@ class PongGame
     private keyStates: any;
     private movePlayer: boolean = false;
 	private timer: number; // del ?
-	// private connecting: boolean = true;
+	private connecting: boolean = true;
 	// private socket: Socket;
 
 	private startTimer: number;
@@ -81,11 +81,6 @@ class PongGame
 
 		this.startTimer = 0;
 		this.currentTicks = 0;
-
-		// this.socket = io('http://localhost:1234', { transports: [ 'websocket' ] }); // del ?
-		// this.socket.on('connect', () => {
-			// this.connecting = false;
-		// });
     }
 
 	setBall(data: BallData)
@@ -108,6 +103,16 @@ class PongGame
 	{
 		this.scorePlayer1 = data.player1;
 		this.scorePlayer2 = data.player2;
+	}
+
+	setConnecting()
+	{
+		this.connecting = false;
+	}
+
+	setStart()
+	{
+		this.start = false;
 	}
 
 	canvasResponsiveWidth()
@@ -167,11 +172,11 @@ class PongGame
 		ctx.fillStyle = 'black';
 		ctx.fillRect(0, 0, this.width, this.height);
 
-		// if (this.connecting)
-		// {
-			// this.drawStatusScreen(ctx, 'Connecting...');
-			// return ;
-		// }
+		if (this.connecting)
+		{
+			this.drawStatusScreen(ctx, 'Connecting...');
+			return ;
+		}
 		
 		this.drawNet(ctx)
 		this.player1.draw(ctx);
@@ -559,7 +564,7 @@ class PongGame
             if (this.scorePlayer1 === 5 || this.scorePlayer2 === 5)
             {
                 this.over = true
-                console.log(this.over); // del 26
+                // console.log(this.over); // del 26
                 // gameOver(); // del ?
                 return;
             }
@@ -610,37 +615,28 @@ class PongGame
 		} 
 		else if (!this.over)
 		{
-			const maxPlayerY = this.height - PLAYER_HEIGHT;
-
-			if (this.keyStates[PLAYER1_UP_KEY])
-			{
-				this.player1.y -= 7;
-				if (this.player1.y < 0)
-					this.player1.y = 0;
-			}
-
-			if (this.keyStates[PLAYER1_DOWN_KEY])
-			{
-				this.player1.y += 7;
-				if (this.player1.y >= maxPlayerY)
-					this.player1.y = maxPlayerY;
-			}
-
-			if (this.keyStates[PLAYER2_DOWN_KEY])
-			{
-				this.player2.y += 7;
-				if (this.player2.y >= maxPlayerY)
-					this.player2.y = maxPlayerY;
-			}
-
-			if (this.keyStates[PLAYER2_UP_KEY])
-			{
-				this.player2.y -= 7;
-				if (this.player2.y < 0)
-					this.player2.y = 0;
-			}
-
+			this.handleMovement();
 			this.updatePhysics();
+		}
+	}
+
+	handleMovement()
+	{
+		const maxPlayerY = this.height - PLAYER_HEIGHT;
+		if (this.keyStates[PLAYER1_UP_KEY])
+		{
+			socket.emit('moveDown');
+			this.player1.y -= 7;
+			if (this.player1.y < 0)
+				this.player1.y = 0;
+		}
+
+		if (this.keyStates[PLAYER1_DOWN_KEY])
+		{
+			socket.emit('moveUp');
+			this.player1.y += 7;
+			if (this.player1.y >= maxPlayerY)
+				this.player1.y = maxPlayerY;
 		}
 	}
 
