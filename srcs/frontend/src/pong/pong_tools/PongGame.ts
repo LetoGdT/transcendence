@@ -61,6 +61,7 @@ class PongGame
 	private timer: number; // del ?
 	private connecting: boolean = true;
 	// private socket: Socket;
+	private errorMessage: string = '';
 
 	private startTimer: number;
 	private currentTicks: number;
@@ -82,6 +83,10 @@ class PongGame
 		this.startTimer = 0;
 		this.currentTicks = 0;
     }
+
+	setErrorMessage(errorMessage: string) {
+		this.errorMessage = errorMessage;
+	}
 
 	setBall(data: BallData)
 	{
@@ -113,26 +118,6 @@ class PongGame
 	setStart()
 	{
 		this.start = false;
-	}
-
-	canvasResponsiveWidth()
-	{
-		return this.width;
-	}
-
-	canvasResponsiveHeight()
-	{
-		return this.height;
-	}
-
-	responsivePlayerWidth()
-	{
-		return PLAYER_WIDTH;
-	}
-
-	responsivePlayerHeight()
-	{
-		return PLAYER_HEIGHT;
 	}
 
 	drawStatusScreen(ctx: CanvasRenderingContext2D, label: string) {
@@ -172,7 +157,16 @@ class PongGame
 		ctx.fillStyle = 'black';
 		ctx.fillRect(0, 0, this.width, this.height);
 
-		if (this.connecting)
+		if (this.errorMessage !== '')
+		{
+			ctx.fillStyle = 'white';
+			ctx.textAlign = 'center';
+			ctx.textBaseline = 'middle';
+			ctx.font = '18px sans-serif';
+			ctx.fillText(this.errorMessage, this.width / 2, this.height / 2, Math.min(this.width, 200));
+			return ;
+		}
+		else if (this.connecting)
 		{
 			this.drawStatusScreen(ctx, 'Connecting...');
 			return ;
@@ -599,9 +593,6 @@ class PongGame
 	// Function called every 20ms (50 Hz / 50 times per second)
 	update()
 	{
-		this.width = this.canvasResponsiveWidth(); // TODO doest it work fine ?
-		this.height = this.canvasResponsiveHeight(); // TODO doest it work fine ?
-
 		this.currentTicks++;
 		
 		if (this.start)

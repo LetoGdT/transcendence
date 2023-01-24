@@ -121,6 +121,9 @@ const PongGameBootstrap = () =>
 			game.setScore(data);
 			game.update();
 		});
+		socket.on('exception', e => {
+			game.setErrorMessage(`Error: ${e.message}`);
+		});
 		socket.on('start', () => game.setStart());
 	}, []);
 
