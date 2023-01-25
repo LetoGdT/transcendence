@@ -451,9 +451,7 @@ function Chat() {
 			if (!response.ok)
 			return ;
 		});
-		//setNewMessage(""); // Sert à effacer le message une fois qu'on a appuyé sur le bouton send
-		socket.emit("newMessage", {convId: currentConv, isChannel: isChannel});
-		setNewMessage("");
+		setNewMessage(""); // Sert à effacer le message une fois qu'uon a appuyé sur le bouton send
 	}
 
 	return (
@@ -475,7 +473,7 @@ function Chat() {
 									onChange={handleInputMessage}
 								/> 
 							</div>
-							<div className='Chat-send-button'>""
+							<div className='Chat-send-button'>
 								<SendButton variant="contained" disableRipple
 								onClick={handleSendMessage}
 								>Send</SendButton>
