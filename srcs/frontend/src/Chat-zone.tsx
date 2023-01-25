@@ -280,6 +280,7 @@ function Chat() {
 
 	useEffect(() => {
 		updateConvList();
+		socket.on("newConv", updateConvList);
 	}, [currentUser]);
 
 	useEffect(() => {

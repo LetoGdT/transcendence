@@ -80,6 +80,17 @@ export class MySocketGateway implements OnGatewayConnection,
 		}
 	}
 
+
+	@SubscribeMessage('newConv')
+	async onNewConv(@MessageBody() body: any) {
+		for (var connection of this.clients) {
+			if (connection.user.uid === body?.uid) {
+				connection.client.emit("newConv");
+				continue ;
+			}
+		}
+	}
+
 	@SubscribeMessage('moveUp')
 	moveUp(@MessageBody() body: any,
 		@ConnectedSocket() client: Socket,)

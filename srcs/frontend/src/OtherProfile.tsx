@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 import { NotFound } from './adaptable-zone';
 import { FromEXPtoLvl, getAllPaginated, ToNextLevel } from './tools';
 import { OneAchievement } from './Profile-zone';
+import { socket } from './WebsocketContext';
 
 type resultProps = {
 	email: string;
@@ -530,6 +531,7 @@ export function OtherProfile(){
 			method: 'POST',
 			credentials: 'include'
 		});
+		socket.emit("newConv", {uid: uid});
 	};
 
 	var url_aksgame: string = "/setprivategame/";
