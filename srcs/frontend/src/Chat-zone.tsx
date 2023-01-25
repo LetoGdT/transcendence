@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 
 import { PleaseConnect } from './adaptable-zone';
 import { socket } from './WebsocketContext';
+import { getAllPaginated} from './tools';
 
 const SendButton = styled(Button)({
 	boxShadow: 'none',
@@ -392,19 +393,16 @@ function Chat() {
 	async function updateMessages() {
 		// Fetch messages according to the selected conversation or channel
 		if (currentConv !== -1) {
-			let uri: string = 'http://localhost:9999/api/';
+			let url: string = '';
 			if (isChannel)
-				uri += 'channels/';
+				url += 'channels/';
 			else 
-				uri += 'conversations/';
-			uri += currentConv +
-				'/messages?order=ASC';
-			fetch(uri, {
-				method: "GET",
-				credentials: 'include'
-			})
-			.then(response=>response.json())
-			.then(data => setMessages(data?.data.map((elem: any) => {
+				url += 'conversations/';
+			url += currentConv +
+				'/messages';
+			getAllPaginated(url)
+			.then(data => setMessages(data.map((elem: any) => {
+				console.log(data);
 				return ({
 					id: elem.id,
 					content: elem.content,
@@ -451,7 +449,7 @@ function Chat() {
 			if (!response.ok)
 			return ;
 		});
-		setNewMessage(""); // Sert à effacer le message une fois qu'uon a appuyé sur le bouton send
+		setNewMessage(""); // Sert à effacer le message une fois qu'on a appuyé sur le bouton send
 	}
 
 	return (
