@@ -453,6 +453,7 @@ function Chat() {
 		});
 		//setNewMessage(""); // Sert à effacer le message une fois qu'on a appuyé sur le bouton send
 		socket.emit("newMessage", {convId: currentConv, isChannel: isChannel});
+		setNewMessage("");
 	}
 
 	return (
@@ -468,12 +469,13 @@ function Chat() {
 									maxRows={4}
 									aria-label="maximum height"
 									placeholder="Message"
+									value={newMessage}
 									
 									style={{ width: "100%", borderRadius: "10px"}}
 									onChange={handleInputMessage}
 								/> 
 							</div>
-							<div className='Chat-send-button'>
+							<div className='Chat-send-button'>""
 								<SendButton variant="contained" disableRipple
 								onClick={handleSendMessage}
 								>Send</SendButton>
