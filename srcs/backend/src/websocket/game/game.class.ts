@@ -31,49 +31,49 @@ export class Game
 		this.type = type;
 	}
 
-	async getPlayer1Socket()
+	getPlayer1Socket()
 	{
 		return this.player1?.client;
 	}
 
-	async getPlayer2Socket()
+	getPlayer2Socket()
 	{
 		return this.player2?.client;
 	}
 
-	async setPlayer1Socket(client: Socket)
+	setPlayer1Socket(client: Socket)
 	{
 		if (this.player1 != null)
 			this.player1.client = client;
 	}
 
-	async setPlayer2Socket(client: Socket)
+	setPlayer2Socket(client: Socket)
 	{
 		if (this.player2 != null)
 			this.player2.client = client;
 	}
 
-	async getPlayer1Id()
+	getPlayer1Id()
 	{
 		return this.player1?.user?.id;
 	}
 
-	async getPlayer2Id()
+	getPlayer2Id()
 	{
 		return this.player2?.user?.id;
 	}
 
-	async getUser1()
+	getUser1()
 	{
 		return this.player1?.user;
 	}
 
-	async getUser2()
+	getUser2()
 	{
 		return this.player2?.user;
 	}
 
-	async setWinningScore(winning_score: number): Promise<number>
+	setWinningScore(winning_score: number): number
 	{
 		try
 		{
@@ -88,18 +88,18 @@ export class Game
 		}
 	}
 
-	async setPaddleProperties(speed: number, height: number, width: number)
+	setPaddleProperties(speed: number, height: number, width: number)
 	{
 		this.referencePaddle = new Paddle(this.refresh_rate, speed, height, width);
 	}
 
-	async setBallSpeed(speed: number)
+	setBallSpeed(speed: number)
 	{
 		if (speed != null)
 			this.ball_speed = speed;
 	}
 
-	async addPlayer(player: Player): Promise<void>
+	addPlayer(player: Player)
 	{
 		if (this.player1 == null)
 			this.player1 = { ...player, paddle: new Paddle() };
@@ -111,38 +111,38 @@ export class Game
 			throw new Error("Both players are already set.");
 	}
 
-	async player1Up(): Promise<void>
+	player1Up()
 	{
-		await this.player1.paddle.moveUp();
+		this.player1.paddle.moveUp();
 	}
 
-	async player2Up(): Promise<void>
+	player2Up()
 	{
-		await this.player2.paddle.moveUp();
+		this.player2.paddle.moveUp();
 	}
 
-	async player1Down(): Promise<void>
+	player1Down()
 	{
-		await this.player1.paddle.moveDown();
+		this.player1.paddle.moveDown();
 	}
 
-	async player2Down(): Promise<void>
+	player2Down()
 	{
-		await this.player2.paddle.moveDown();
+		this.player2.paddle.moveDown();
 	}
 
-	async getBall(player: number): Promise<{ coordinates: Vector2D, speed: number, direction: Vector2D }>
+	getBall(player: number): { coordinates: Vector2D, speed: number, direction: Vector2D }
 	{
-		const ball = await this.ball.getCoordinates();
+		const ball = this.ball.getCoordinates();
 		if (player === 2)
 		{
-			ball.coordinates = await this.mirror(ball.coordinates);
+			ball.coordinates = this.mirror(ball.coordinates);
 			ball.direction.x *= -1;
 		}
 		return ball;
 	}
 
-	async getPlayers(player: number): Promise<{ player1: Vector2D, player2: Vector2D }>
+	getPlayers(player: number): { player1: Vector2D, player2: Vector2D }
 	{
 		const player1: Vector2D = { x: this.player1.paddle.coordinates.x,
 			y: this.player1.paddle.coordinates.y};
@@ -150,72 +150,76 @@ export class Game
 			y: this.player2.paddle.coordinates.y};
 		if (player === 1) 
 			return { player1: player1, player2: player2 };
-		const ret2 = await this.mirror(player2);
-		const ret1 = await this.mirror(player1);
+		const ret2 = this.mirror(player2);
+		const ret1 = this.mirror(player1);
 		ret2.x -= this.player2.paddle.width;
 		ret1.x -= this.player1.paddle.width;
 		return { player1: ret2,
 			player2: ret1 };
 	}
 
-	async getScore(player: number): Promise<{ player1: number, player2: number }>
+	getScore(player: number): { player1: number, player2: number }
 	{
 		if (player === 1)
-			return { player1: await this.score.getPlayer1(), player2: await this.score.getPlayer2() };
-		return { player1: await this.score.getPlayer2(), player2: await this.score.getPlayer1() };
+			return { player1: this.score.getPlayer1(), player2: this.score.getPlayer2() };
+		return { player1: this.score.getPlayer2(), player2: this.score.getPlayer1() };
 	}
 
-	async started(): Promise<boolean>
+	started()
 	{
 		return this.start;
 	}
 
-	async update()
+	update()
 	{
-		await this.ball.updateCoordinates();
-		this.winner = await this.score.winner();
+		this.ball.updateCoordinates();
+		this.winner = this.score.winner();
 	}
 
-	async mirror(coordinates: Vector2D)
+	mirror(coordinates: Vector2D)
 	{
 		coordinates.x = (coordinates.x - 520) * -1 + 520;
 		return coordinates;
 	}
 
-	async run()
+	run()
 	{
 		if (!this.player1 || !this.player2)
 			throw new Error("You need 2 players to start a game");
 		this.ball = new Ball(this.player1.paddle, this.player2.paddle, this.score,
 			this.refresh_rate, this.ball_speed);
 
-		await this.player1.paddle.setX(0);
-		await this.player2.paddle.setX(1040 - 13);
+		this.player1.paddle.setX(0);
+		this.player2.paddle.setX(1040 - 13);
 
 		this.start = true;
 		this.player1.client.emit('start');
 		this.player2.client.emit('start');
-		this.player1.client.emit('ball', await this.getBall(1));
-		this.player1.client.emit('players', await this.getPlayers(1));
-		this.player1.client.emit('score', await this.getScore(1));
-		this.player2.client.emit('ball', await this.getBall(2));
-		this.player2.client.emit('players', await this.getPlayers(2));
-		this.player2.client.emit('score', await this.getScore(2));
-		while (true)
-		{
-			await this.update();
-			if (this.winner !== null)
-				break;
-			this.player1.client.emit('ball', await this.getBall(1));
-			this.player1.client.emit('players', await this.getPlayers(1));
-			this.player1.client.emit('score', await this.getScore(1));
-			this.player2.client.emit('ball', await this.getBall(2));
-			this.player2.client.emit('players', await this.getPlayers(2));
-			this.player2.client.emit('score', await this.getScore(2));
-			await new Promise(r => setTimeout(r, 10));
-		}
+		this.player1.client.emit('ball', this.getBall(1));
+		this.player1.client.emit('players', this.getPlayers(1));
+		this.player1.client.emit('score', this.getScore(1));
+		this.player2.client.emit('ball', this.getBall(2));
+		this.player2.client.emit('players', this.getPlayers(2));
+		this.player2.client.emit('score', this.getScore(2));
 
-		this.player1.client.emit('winner', { score: await this.getScore(1) });
-		this.player2.client.emit('winner', { score: await this.getScore(2) });
+		const st = () => setTimeout(function() {
+			this.update();
+			if (this.winner !== null)
+			{
+				this.player1.client.emit('winner', { score: this.getScore(1) });
+				this.player2.client.emit('winner', { score: this.getScore(2) });
+				return ;
+			}
+			this.player1.client.emit('ball', this.getBall(1));
+			this.player1.client.emit('players', this.getPlayers(1));
+			this.player1.client.emit('score', this.getScore(1));
+			this.player2.client.emit('ball', this.getBall(2));
+			this.player2.client.emit('players', this.getPlayers(2));
+			this.player2.client.emit('score', this.getScore(2));
+
+			st();
+		}, 10);
+
+		st();
 	}
 }

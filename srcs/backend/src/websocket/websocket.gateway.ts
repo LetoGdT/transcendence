@@ -20,6 +20,34 @@ import { Connection } from '../interfaces/connection.interface';
 import { Game } from './game/game.class';
 import { CreateMatchDto } from '../dto/matches.dto';
 
+class GameManager {
+
+	public activeGames: Game[];
+
+	constructor() {
+		this.activeGames = [];
+	}
+
+	findGameByUser(user: User): Game | null {
+		for (const game of this.activeGames) {
+			if (game.getPlayer1Id() === user.id)
+				return game;
+			if (game.getPlayer2Id() === user.id)
+				return game;
+		}
+		return null;
+	}
+
+	createGame(player1: Connection, player2: Connection) {
+		player1.client.emit('gameFound');
+
+		const game = new Game(50, 'Ranked');
+		game.addPlayer(player1);
+
+		this.activeGames.push(game);
+	}
+}
+
 @WebSocketGateway(9998, { cors: true })
 export class MySocketGateway implements OnGatewayConnection, 
 										OnGatewayDisconnect {
@@ -32,8 +60,17 @@ export class MySocketGateway implements OnGatewayConnection,
 	@WebSocketServer()
 	server: Server;
 
+	gameManager: GameManager = new GameManager();
+
+	// TODO del
 	queue = new Map<number, Connection[]>();
+
 	games: Game[] = [];
+
+	/**
+	 * The list of players currently waiting for an opponent.
+	 */
+	playerPool: Array<Connection> = [];
 
 	async handleConnection(client: Socket) {
 		// Vérification du token de l’utilisateur
@@ -60,7 +97,23 @@ export class MySocketGateway implements OnGatewayConnection,
 	}
 
 	async handleDisconnect(client: Socket) {
-		let index = this.clients.findIndex(element => element.client == client);
+		const idx = this.clients.findIndex(e => e.client.id === client.id);
+
+		if (idx >= 0) {
+			const conn = this.clients[idx];
+			console.log(conn.user.username + " has disconnected from the websocket.");
+
+			const poolIdx = this.playerPool.findIndex(e => e.client.id === client.id);
+			if (poolIdx >= 0) {
+				this.playerPool.splice(poolIdx, 1);
+				console.log('Removed from queue');
+			}
+
+			await this.usersService.changeUserStatus(conn.user.id, 'offline');
+			this.clients.splice(idx, 1);
+		}
+
+		/*let index = this.clients.findIndex(element => element.client == client);
 		if (index != -1) {
 			console.log(this.clients[index].user.username + " has disconnected from the websocket.");
 			const connections = this.queue.get(this.clients[index].user.exp);
@@ -74,7 +127,7 @@ export class MySocketGateway implements OnGatewayConnection,
 			}
 			await this.usersService.changeUserStatus(this.clients[index].user.id, 'offline');
 			this.clients.splice(index, 1);
-		}
+		}*/
 	}
 
 	@SubscribeMessage('newMessage')
@@ -158,15 +211,44 @@ export class MySocketGateway implements OnGatewayConnection,
 		@ConnectedSocket() client: Socket,)
 	{
 		// this.chat.printQ(this.queue);
-		const index: number = this.clients.findIndex(connection => connection.client.id == client.id);
+		const index = this.clients.findIndex(connection => connection.client.id == client.id);
 		if (index === -1)
 			throw new WsException('We don\'t know you sir, but that\'s our bad');
 
-		const gameIndex: number = this.games.findIndex(async game => {
-			await game.getPlayer1Id() == body.opponent_id && await game.started()
-			|| await game.getPlayer1Id() == this.clients[index].user.id && await game.started()
-			|| await game.getPlayer2Id() == body.opponent_id && await game.started()
-			|| await game.getPlayer2Id() == this.clients[index].user.id && await game.started()
+		const conn = this.clients[index];
+		const user = conn.user;
+		
+		console.log(`${conn.user.username} is queuing in queue=${body.type}`);
+
+		/* TODO Check if the player is already in a game (reconnecting) */
+		if (this.gameManager.findGameByUser(user) !== null) {
+			console.log(`User: ${user.username} is reconnecting (has an active game)`);
+			return ;
+		}
+
+		const poolIndex = this.playerPool.findIndex(c => c.client.id === client.id);
+		if (poolIndex >= 0) {
+			console.log('Already queued');
+		} else {			
+			this.playerPool.push(conn);
+
+			this.gameManager.createGame(this.playerPool.pop(), null as Connection);
+
+			// Create the game is nbr of pooled players is >= 2
+			while (this.playerPool.length >= 2) {
+				const player1 = this.playerPool.pop();
+				const player2 = this.playerPool.pop();
+
+				console.log('Creating a new game with p1=' + player1.user.username + " and p2=" + player2.user.username);
+			}
+		}
+
+		/*
+		const gameIndex: number = this.games.findIndex(game => {
+			game.getPlayer1Id() == body.opponent_id && game.started()
+			|| game.getPlayer1Id() == this.clients[index].user.id && game.started()
+			|| game.getPlayer2Id() == body.opponent_id && game.started()
+			|| game.getPlayer2Id() == this.clients[index].user.id && game.started()
 		});
 
 		if (gameIndex !== -1)
@@ -228,7 +310,7 @@ export class MySocketGateway implements OnGatewayConnection,
 				client: this.clients[opponentIndex].client });
 			this.games.push(game);
 			client.emit('waitingForOpponent');
-		}
+		}*/
 	}
 
 	@SubscribeMessage('respondToInvite')

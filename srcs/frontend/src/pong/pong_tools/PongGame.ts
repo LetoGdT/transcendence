@@ -48,20 +48,24 @@ class PongGame
 {
 	public width: number;
 	public height: number;
+
 	private player1: Player;
     private player2: Player;
+    private ball: Ball;
+	
 	private scorePlayer1: number; // TODO only get it from the back. private or public ? 
 	private scorePlayer2: number; // TODO only get it from the back. private or public ?
 	private scoreToWin: number;
-    private start: boolean = true; // Meaning start screen
+    
+	private start: boolean = true; // Meaning start screen
     private over: boolean = false; // Meaning game over
-    private ball: Ball;
     private keyStates: any;
     private movePlayer: boolean = false;
 	private timer: number; // del ?
 	private connecting: boolean = true;
 	// private socket: Socket;
 	private errorMessage: string = '';
+	private statusMessage: string = 'Connecting...';
 
 	private startTimer: number;
 	private currentTicks: number;
@@ -119,6 +123,10 @@ class PongGame
 	{
 		this.start = false;
 	}
+	
+	setStatusMessage(statusMessage: string) {
+		this.statusMessage = statusMessage;
+	}
 
 	drawStatusScreen(ctx: CanvasRenderingContext2D, label: string) {
 		const r = this.currentTicks * 10 / TICKRATE;
@@ -168,7 +176,7 @@ class PongGame
 		}
 		else if (this.connecting)
 		{
-			this.drawStatusScreen(ctx, 'Connecting...');
+			this.drawStatusScreen(ctx, this.statusMessage);
 			return ;
 		}
 		

@@ -3,8 +3,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import PongGame from './pong_tools/PongGame';
 import { socket } from '../WebsocketContext';
 
+// import { io } from 'socket.io-client';
+// export const socket = io('http://localhost:1234', { transports: ['websocket'] });
+
 const GAME_WIDTH = 1040;
 const GAME_HEIGHT = 680;
+
+const pongInstance = new PongGame(GAME_WIDTH, GAME_HEIGHT);
 
 const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 {
@@ -22,20 +27,16 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 	React.useEffect(() => {
 		window.addEventListener('resize', resizeHandler);
 
-		return () => {
-			window.removeEventListener('resize', resizeHandler);
-		};
+		return () => window.removeEventListener('resize', resizeHandler);
 	}, []);
 
 	React.useEffect(() =>
 	{
 		const canvas = canvasRef.current;
+		const ctx = canvas?.getContext('2d');
 		let animFrameId: number;
 		
-		if (null === canvas)
-			return ;
-		const ctx = canvas.getContext('2d');
-		if (null === ctx)
+		if (!canvas || !ctx)
 			return ;
 		
 		// Force a size update to keep it in sync
@@ -43,12 +44,10 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 
 		function render()
 		{
-			const c = ctx as CanvasRenderingContext2D;
-
-			c.setTransform(
-				c.canvas.width / GAME_WIDTH, 0,
-				0, c.canvas.height / GAME_HEIGHT,0, 0);
-			draw(c);
+			ctx!.setTransform(
+				ctx!.canvas.width / GAME_WIDTH, 0,
+				0, ctx!.canvas.height / GAME_HEIGHT, 0, 0);
+			draw(ctx!);
 
 			animFrameId = window.requestAnimationFrame(render);
 		}
@@ -64,14 +63,6 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 	return canvasRef;
 };
 
-function useGame()
-{
-	const ref = useRef<PongGame>();
-	if (!ref.current)
-		ref.current = new PongGame(GAME_WIDTH, GAME_HEIGHT);
-	return ref.current;
-}
-
 const PongGameBootstrap = () =>
 {
 	const [winner, setWinner] = useState(-1);
@@ -80,7 +71,7 @@ const PongGameBootstrap = () =>
 	const [checkRefresh, setCheckRefresh] = useState(false);
 	const [move, setMove] = useState(false);
 	
-	const game = useGame();
+	const game = pongInstance;
 	const canvasRef = useCanvas(ctx => game.render(ctx));
 
 	useEffect(() =>
@@ -88,6 +79,7 @@ const PongGameBootstrap = () =>
 		if (attemptedConnect === false)
 		{
 			socket.emit('queue', { type: 'Ranked' });
+			game.setStatusMessage('Searching for an opponent...');
 			setAttemptedConnect(true);
 		}
 		if (performance.now() - lastUpdate > 2000 / 50)

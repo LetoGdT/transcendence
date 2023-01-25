@@ -56,13 +56,13 @@ export class Ball implements Object2D
 		this.launchBallRandom();
 	}
 
-	async collides(): Promise<boolean>
+	collides(): boolean
 	{
 		return this.coordinates.y + this.radius > this.window.height
 			|| this.coordinates.y - this.radius < 0;
 	}
 
-	async paddleCollides(): Promise<boolean>
+	paddleCollides(): boolean
 	{
 		if ((this.coordinates.x - this.radius <= this.paddle1.width
 				&& this.coordinates.y - this.radius <= this.paddle1.top
@@ -74,7 +74,7 @@ export class Ball implements Object2D
 		return false;
 	}
 
-	async launchBallRandom(): Promise<void>
+	launchBallRandom()
 	{
 		this.direction.y = (Math.random() * 2 - 1) / 2;
 		this.direction.x = Math.sqrt(1 - (this.direction.y * this.direction.y));
@@ -82,15 +82,15 @@ export class Ball implements Object2D
 			this.direction.x *= -1;
 	}
 
-	async bounce(): Promise<void>
+	bounce()
 	{
-		if (await this.collides())
+		if (this.collides())
 			this.direction.y *= -1;
 	}
 
-	async paddleBounce(): Promise<void>
+	paddleBounce()
 	{
-		if (await this.paddleCollides())
+		if (this.paddleCollides())
 		{
 			this.direction.x *= -1;
 			// let impact = this.coordinates.y - this.paddle1.bottom - this.paddle1.height / 2;
@@ -104,41 +104,41 @@ export class Ball implements Object2D
 		{
 			try
 			{
-				this.direction.x < 0 ? await this.score.player1() : await this.score.player2();
+				this.direction.x < 0 ? this.score.player1() : this.score.player2();
 			}
 			catch (err)
 			{
 				this.direction.x = 0;
 				this.direction.y = 0;
 			}
-			await this.reset();
+			this.reset();
 		}
 	}
 
-	async reset()
+	reset()
 	{
-		await this.launchBallRandom();
+		this.launchBallRandom();
 		this.coordinates.x = this.window.width / 2;
 		this.coordinates.y = this.window.height / 2;
 		this.speed = this.initial_speed;
 	}
 
 	// Je ne prend  pas en compte le délai que prend le for à s'exécuter, on verra si ça joue
-	async updateCoordinates(): Promise<void>
+	updateCoordinates()
 	{
 		const current_time = performance.now();
 		let deltaTime = (current_time - this.latest_time) * (this.refresh_rate / 1000);
 		for (; deltaTime >= 0; deltaTime--)
 		{
-			await this.bounce();
-			await this.paddleBounce();
+			this.bounce();
+			this.paddleBounce();
 			this.coordinates.x += this.direction.x * this.speed;
 			this.coordinates.y += this.direction.y * this.speed;
 		}
 		this.latest_time = current_time - (deltaTime / ((1000 / this.refresh_rate)));
 	}
 
-	async getCoordinates(): Promise<{ coordinates: Vector2D, speed: number, direction: Vector2D }>
+	getCoordinates(): { coordinates: Vector2D, speed: number, direction: Vector2D }
 	{
 		const ret = { x: this.coordinates.x, y: this.coordinates.y };
 		const ret2 = { x: this.direction.x, y: this.direction.y };

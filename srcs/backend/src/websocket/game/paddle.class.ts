@@ -43,18 +43,18 @@ export class Paddle implements Object2D
 		this.top = this.bottom + this.height;
 	}
 
-	async setX(x: number)
+	setX(x: number)
 	{
 		this.coordinates.x = x;
 	}
 
-	async collides(new_position: Vector2D): Promise<boolean>
+	collides(new_position: Vector2D): boolean
 	{
 		return !(new_position.y + this.height <= this.window.height
 							&& new_position.y >= 0);
 	}
 
-	async moveUp(): Promise<void>
+	moveUp()
 	{
 		const current_time = performance.now();
 		const deltaTime = (current_time - this.latest_time) * (1000 / this.refresh_rate);
@@ -62,7 +62,7 @@ export class Paddle implements Object2D
 		{
 			const new_position = this.coordinates;
 			new_position.y += this.speed;
-			if (!(await this.collides(new_position)))
+			if (!this.collides(new_position))
 				this.coordinates.y += this.speed;
 			this.bottom = this.coordinates.y;
 			this.top = this.bottom + this.height;
@@ -70,7 +70,7 @@ export class Paddle implements Object2D
 		}
 	}
 
-	async moveDown(): Promise<void>
+	moveDown()
 	{
 		const current_time = performance.now();
 		const deltaTime = (current_time - this.latest_time) * (1000 / this.refresh_rate);
@@ -78,7 +78,7 @@ export class Paddle implements Object2D
 		{
 			const new_position = this.coordinates;
 			new_position.y -= this.speed;
-			if (!(await this.collides(new_position)))
+			if (!this.collides(new_position))
 				this.coordinates.y -= this.speed;
 			this.bottom = this.coordinates.y;
 			this.top = this.bottom + this.height;
