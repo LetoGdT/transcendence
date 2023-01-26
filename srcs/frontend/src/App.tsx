@@ -21,44 +21,8 @@ import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import { socket, websocketContext } from './WebsocketContext';
 // import { useState, useEffect } from 'react';
 import toast, {Toaster} from 'react-hot-toast';
-import { newMessage, setUpNewMessageNotificationsFn } from './Notifications';
+import { setUpNewMessageNotificationsFn, setUpNewGameNotificationFn } from './Notifications';
 import { SetPrivateGame } from './SetPrivateGame';
-
-const newGame = () => {
-	toast.custom(
-		<div className='Notif'>
-			You've got a new invitation for a game.<br></br>
-			Please go to your profile to accept or reject.
-		</div>,
-		{
-			duration: 5000,
-			position: 'top-center',
-		
-			// Styling
-			// style: {
-			// 	borderRadius: '10px',
-			// 	background: '#007dd6',
-			// 	color: '#fff',
-			// },
-			// className: '',
-		
-			// Custom Icon
-			// icon: '👏',
-		
-			// Change colors of success/error/loading icon
-			// iconTheme: {
-			//   primary: '#000',
-			//   secondary: '#fff',
-			// },
-		
-			// Aria
-			ariaProps: {
-			role: 'status',
-			'aria-live': 'polite',
-			},
-		}
-	);
-};
 
 function App() {
 	const router = 
@@ -117,6 +81,7 @@ function App() {
 		api();
 
 		setUpNewMessageNotificationsFn();
+		setUpNewGameNotificationFn();
 	}, []);
 	
 	const isLoggedIn = me;
