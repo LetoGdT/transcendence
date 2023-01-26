@@ -60,19 +60,22 @@ export class MySocketGateway implements OnGatewayConnection,
 	}
 
 	async handleDisconnect(client: Socket) {
-		let index = this.clients.findIndex(element => element.client == client);
+		const index = this.clients.findIndex(element => element.client.id == client.id);
+
 		if (index != -1) {
-			console.log(this.clients[index].user.username + " has disconnected from the websocket.");
-			const connections = this.queue.get(this.clients[index].user.exp);
-			if (connections != null)
+			const user = this.clients[index].user;
+			const connections = this.queue.get(user.exp);
+
+			console.log(user.username + " has disconnected from the websocket.");
+			
+			if (connections)
 			{
-				const conn_id = connections.findIndex(conn => {
-					conn.user.id == this.clients[index].user.id;
-				});
-				if (conn_id != -1)
-					this.queue.get(this.clients[index].user.exp).splice(conn_id, 1);
+				const conn_idx = connections.findIndex(conn => conn.user.id === user.id);
+				if (conn_idx != -1)
+					connections.splice(conn_idx, 1);
 			}
-			await this.usersService.changeUserStatus(this.clients[index].user.id, 'offline');
+
+			await this.usersService.changeUserStatus(user.id, 'offline');
 			this.clients.splice(index, 1);
 		}
 	}

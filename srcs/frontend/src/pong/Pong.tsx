@@ -6,6 +6,8 @@ import { socket } from '../WebsocketContext';
 const GAME_WIDTH = 1040;
 const GAME_HEIGHT = 680;
 
+const gameInstance = new PongGame(GAME_WIDTH, GAME_HEIGHT);
+
 const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 {
 	const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -64,31 +66,22 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 	return canvasRef;
 };
 
-function useGame()
-{
-	const ref = useRef<PongGame>();
-	if (!ref.current)
-		ref.current = new PongGame(GAME_WIDTH, GAME_HEIGHT);
-	return ref.current;
-}
-
 const PongGameBootstrap = () =>
 {
 	const [winner, setWinner] = useState(-1);
 	const [lastUpdate, setLastUpdate] = useState(performance.now());
-	const [attemptedConnect, setAttemptedConnect] = useState(false);
 	const [checkRefresh, setCheckRefresh] = useState(false);
 	const [move, setMove] = useState(false);
 	
-	const game = useGame();
+	const game = gameInstance;
 	const canvasRef = useCanvas(ctx => game.render(ctx));
 
 	useEffect(() =>
 	{
-		if (attemptedConnect === false)
+		if (game.attemptedConnect === false)
 		{
 			socket.emit('queue', { type: 'Ranked' });
-			setAttemptedConnect(true);
+			game.attemptedConnect = true;
 		}
 		if (performance.now() - lastUpdate > 2000 / 50)
 		{
@@ -121,6 +114,7 @@ const PongGameBootstrap = () =>
 			game.setScore(data);
 			game.update();
 		});
+		socket.on('queuing', () => game.statusMessage = 'Searching for an opponent...');
 		socket.on('exception', e => {
 			game.setErrorMessage(`Error: ${e.message}`);
 		});

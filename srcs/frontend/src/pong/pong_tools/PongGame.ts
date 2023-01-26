@@ -66,6 +66,9 @@ class PongGame
 	private startTimer: number;
 	private currentTicks: number;
 
+	public attemptedConnect: boolean = false;
+	public statusMessage: string = "Connecting...";
+
 	constructor(width: number, height: number)
     {
 		this.width = width;
@@ -168,7 +171,7 @@ class PongGame
 		}
 		else if (this.connecting)
 		{
-			this.drawStatusScreen(ctx, 'Connecting...');
+			this.drawStatusScreen(ctx, this.statusMessage);
 			return ;
 		}
 		
