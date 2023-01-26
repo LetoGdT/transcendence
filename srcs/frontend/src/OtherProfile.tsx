@@ -523,15 +523,16 @@ export function OtherProfile(){
 	];
 
 	const handleClickChat = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch(`http://localhost:9999/api/conversation/`+{uid}, {
+		const response = await fetch(`http://localhost:9999/api/conversations/`, {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
 			},
 			method: 'POST',
-			credentials: 'include'
+			credentials: 'include',
+			body: JSON.stringify({ recipient_id: uid })
 		});
-		socket.emit("newConv", {uid: uid});
+		socket.emit("newConv", {id: uid});
 	};
 
 	var url_aksgame: string = "/setprivategame/";

@@ -64,7 +64,7 @@ export class ConversationsController
 	* Create a conversation.
 	* 
 	* Args:
-	* 	:id (Number): The recipient's id.
+	* 	:recipient_id (Number): The recipient's id.
 	* 
 	* Return: The created conversation.
 	* 

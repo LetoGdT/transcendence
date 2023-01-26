@@ -84,7 +84,7 @@ export class MySocketGateway implements OnGatewayConnection,
 	@SubscribeMessage('newConv')
 	async onNewConv(@MessageBody() body: any) {
 		for (var connection of this.clients) {
-			if (connection.user.uid === body?.uid) {
+			if (connection.user.id === body?.id) {
 				connection.client.emit("newConv");
 				continue ;
 			}
