@@ -21,23 +21,24 @@ export const newMessage = () => {
 };
 
 export const setUpNewMessageNotificationsFn = () => {
+	disableNewMessageNotificationsFn();
 	socket.on("newMessage", () => {
 		newMessage();
 
 		return () => {
-			socket.off("newMessage", newMessage);
+			socket.off("newMessage");
 		}
 	});
 	socket.on("newConv", () => {
 		newMessage();
 
 		return () => {
-			socket.off("newConv", newMessage);
+			socket.off("newConv");
 		}
 	});
 }
 
 export const disableNewMessageNotificationsFn = () => {
-	socket.off("newMessage", newMessage);
-	socket.off("newConv", newMessage);
+	socket.off("newMessage");
+	socket.off("newConv");
 }
