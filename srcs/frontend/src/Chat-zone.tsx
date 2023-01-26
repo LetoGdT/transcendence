@@ -401,7 +401,7 @@ function Chat() {
 				url += 'conversations/';
 			url += currentConv +
 				'/messages';
-			getAllPaginated(url)
+			getAllPaginated(url, {params: new URLSearchParams({order: "DESC"})})
 			.then(data => setMessages(data.map((elem: any) => {
 				return ({
 					id: elem.id,
