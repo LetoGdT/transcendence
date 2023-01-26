@@ -68,10 +68,10 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 
 const PongGameBootstrap = () =>
 {
-	const [winner, setWinner] = useState(-1);
+	// const [winner, setWinner] = useState(-1);
 	const [lastUpdate, setLastUpdate] = useState(performance.now());
 	const [checkRefresh, setCheckRefresh] = useState(false);
-	const [move, setMove] = useState(false);
+	// const [move, setMove] = useState(false);
 	
 	const game = gameInstance;
 	const canvasRef = useCanvas(ctx => game.render(ctx));
@@ -85,7 +85,7 @@ const PongGameBootstrap = () =>
 		}
 		if (performance.now() - lastUpdate > 2000 / 50)
 		{
-			game.update();
+			// game.update();
 			setLastUpdate(performance.now());
 		}
 		const sleep = async () => {
@@ -102,7 +102,7 @@ const PongGameBootstrap = () =>
 		});
 		socket.on('players', (data) => {
 			setLastUpdate(performance.now());
-			game.setPlayers(data);
+			// game.setPlayers(data);
 		});
 		socket.on('score', (data) => {
 			setLastUpdate(performance.now());
@@ -112,28 +112,35 @@ const PongGameBootstrap = () =>
 		socket.on('winner', (data) => {
 			setLastUpdate(performance.now());
 			game.setScore(data);
-			game.update();
+			// game.update();
 		});
 		socket.on('queuing', () => game.statusMessage = 'Searching for an opponent...');
 		socket.on('exception', e => {
 			game.setErrorMessage(`Error: ${e.message}`);
 		});
 		socket.on('start', () => game.setStart());
+
+		socket.on('state', state => game.netUpdateState(state));
 	}, []);
 
 	useEffect(() => {
-		game.handleMovement();
-		setMove(false);
-	}, [move]);
+		const timer = setInterval(() => game.update(), 20);
+		return () => clearInterval(timer);
+	}, []);
+
+	// useEffect(() => {
+	// 	game.handleMovement();
+	// 	setMove(false);
+	// }, [move]);
 
 	const onKeyUp = (e: React.KeyboardEvent) => {
 		e.preventDefault();
-		setMove(true);
+		// setMove(true);
 		game.handleKeyUp(e.code);
 	};
 	const onKeyDown = (e: React.KeyboardEvent) => {
 		e.preventDefault();
-		setMove(true);
+		// setMove(true);
 		game.handleKeyDown(e.code);
 	};
 
