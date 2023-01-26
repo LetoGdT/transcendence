@@ -30,9 +30,9 @@ services:
         container_name: postgres
         image: postgres
         environment:
-            POSTGRES_USER: ${POSTGRES_USER:-postgres}
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
-            POSTGRES_DB: 'ft_transcendence'
+            POSTGRES_USER: ${DB_USERNAME}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_NAME}
             PGDATA: /data/postgres
         volumes:
             # TODO next line was modified in order for me to be able to work on my mac. Keep the one from Timothee elsewhere
@@ -45,8 +45,8 @@ services:
         container_name: pgadmin
         image: dpage/pgadmin4
         environment:
-            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
             PGADMIN_CONFIG_SERVER_MODE: 'False'
         volumes:
             # TODO next line was modified in order for me to be able to work on my mac. Keep the one from Timothee elsewhere

@@ -62,7 +62,6 @@ export class MySocketGateway implements OnGatewayConnection,
 	async handleDisconnect(client: Socket) {
 		let index = this.clients.findIndex(element => element.client == client);
 		if (index != -1) {
-			console.log(this.clients[index].user.username + " has disconnected from the websocket.");
 			const connections = this.queue.get(this.clients[index].user.exp);
 			if (connections != null)
 			{
