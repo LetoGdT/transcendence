@@ -436,7 +436,7 @@ function Chat() {
 	const handleSendMessage = async () => {
 		if (newMessage.length === 0)
 			return ;
-		await fetch(`http://localhost:9999/api/${isChannel?'channels':'conversations'}/${currentUser.id}/messages`, {
+		await fetch(`http://localhost:9999/api/${isChannel?'channels':'conversations'}/${currentConv}/messages`, {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
