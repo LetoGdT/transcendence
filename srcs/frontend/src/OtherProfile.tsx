@@ -387,7 +387,7 @@ function OneMatch(match:any){
 		};
 	
 		api();
-	});
+	}, []);
 	
 	var url: string = "/otherprofile";
 	url = url.concat("/");
@@ -506,7 +506,7 @@ export function OtherProfile(){
 		};
 	
 		api();
-	});
+	}, []);
 
 	const options = {
 		title: "Your matches' results",
