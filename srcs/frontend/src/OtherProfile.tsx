@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 import { NotFound } from './adaptable-zone';
 import { FromEXPtoLvl, getAllPaginated, ToNextLevel } from './tools';
 import { OneAchievement } from './Profile-zone';
+import { socket } from './WebsocketContext';
 
 type resultProps = {
 	email: string;
@@ -522,14 +523,25 @@ export function OtherProfile(){
 	];
 
 	const handleClickChat = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch(`http://localhost:9999/api/conversation/`+{uid}, {
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'POST',
-			credentials: 'include'
-		});
+		let convExists: boolean = false;
+		await fetch(`http://localhost:9999/api/conversations?interlocutor_id=uid`, {
+			method: "GET",
+			credentials: 'include', 
+		})
+		.then(response=>response.json())
+		.then(data => convExists = data.data.length !== 0);
+		if (!convExists) {
+			const response = await fetch(`http://localhost:9999/api/conversations/`, {
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				method: 'POST',
+				credentials: 'include',
+				body: JSON.stringify({ recipient_id: uid })
+			});
+			socket.emit("newConv", {id: uid});
+		}
 	};
 
 	var url_aksgame: string = "/setprivategame/";
