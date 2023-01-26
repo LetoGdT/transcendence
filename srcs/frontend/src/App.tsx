@@ -17,10 +17,11 @@ import { SignUp } from './adaptable-zone';
 import { AuthWith2FA } from './authWith2fa';
 import { Activate2FA } from './activate2fa';
 // import { Pong } from './pong/Pong';
-import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
-import { socket, websocketContext } from './WebsocketContext'
+import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import { socket, websocketContext } from './WebsocketContext';
 // import { useState, useEffect } from 'react';
 import toast, {Toaster} from 'react-hot-toast';
+import { newMessage, setUpNewMessageNotificationsFn } from './Notifications';
 import { SetPrivateGame } from './SetPrivateGame';
 
 const newGame = () => {
@@ -59,24 +60,6 @@ const newGame = () => {
 	);
 };
 
-const newMessage = () => {
-	toast.custom(
-		<div className='Notif'>
-			You've got a new message in chat.
-		</div>,
-		{
-			duration: 5000,
-			position: 'top-center',
-
-			// Aria
-			ariaProps: {
-			role: 'status',
-			'aria-live': 'polite',
-			},
-		}
-	);
-};
-
 function App() {
 	const router = 
 		<Router>
@@ -87,8 +70,6 @@ function App() {
 				<OurMenu/>
 			</div>
 			<div>
-				<button onClick={newGame}>Make me a toast</button>
-				<button onClick={newMessage}>Make me a toast</button>
 				<Toaster />
 			</div>
 			<div className='Adaptable'>
@@ -134,6 +115,8 @@ function App() {
 		};
 	
 		api();
+
+		setUpNewMessageNotificationsFn();
 	}, []);
 	
 	const isLoggedIn = me;

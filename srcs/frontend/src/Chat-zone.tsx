@@ -8,7 +8,8 @@ import { Link } from 'react-router-dom';
 
 import { PleaseConnect } from './adaptable-zone';
 import { socket } from './WebsocketContext';
-import { getAllPaginated} from './tools';
+import { getAllPaginated } from './tools';
+import { disableNewMessageNotificationsFn, setUpNewMessageNotificationsFn } from './Notifications'
 
 const SendButton = styled(Button)({
 	boxShadow: 'none',
@@ -276,7 +277,10 @@ function Chat() {
 	const [newMessage, setNewMessage] = React.useState("");
 		
 	useEffect(() => {
+		disableNewMessageNotificationsFn();
 		updateUsersMe();
+
+		return setUpNewMessageNotificationsFn;
 	}, []);
 
 	useEffect(() => {
@@ -310,9 +314,6 @@ function Chat() {
 			if (convId === currentConv) {
 				updateMessages();
 			}
-		});
-		socket.on('newConvChan', () => {
-			
 		});
 		
 		return () => {
@@ -402,7 +403,6 @@ function Chat() {
 				'/messages';
 			getAllPaginated(url)
 			.then(data => setMessages(data.map((elem: any) => {
-				console.log(data);
 				return ({
 					id: elem.id,
 					content: elem.content,
@@ -449,6 +449,7 @@ function Chat() {
 			if (!response.ok)
 			return ;
 		});
+		socket.emit("newMessage", {convId: currentConv, isChannel: isChannel});
 		setNewMessage(""); // Sert à effacer le message une fois qu'on a appuyé sur le bouton send
 	}
 
