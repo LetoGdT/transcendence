@@ -78,33 +78,28 @@ export class MySocketGateway implements OnGatewayConnection,
 	}
 
 	@SubscribeMessage('newMessage')
-	onNewMessage(client: Socket, @MessageBody() body: any) {
-		// il faut envoyer le message à la bonne personne et le mettre dans la bdd
+	async onNewMessage(@ConnectedSocket() client: Socket, @MessageBody() body: any) {
+		let {users, latest_sent} = await this.chat.onNewMessage(body.chanOrConv, body.isChannel, parse(client.handshake.headers.cookie).access_token);
+		let convId: number = body.convId;
+		for (var user of users) {
+			for (var connection of this.clients) {
+				if (user == connection.user.id) {
+					connection.client.emit("newMessage", {convId, latest_sent});
+					continue ;
+				}
+			}
+		}
 	}
 
-	@SubscribeMessage('getMoreMessages')
-	getMoreMessages(client: Socket, @MessageBody() othersId: {id: number}) {
-	}
 
-	@SubscribeMessage('getTailMessages')
-	getTailMessages(client: Socket, @MessageBody() id: number) {
-		let cookie = client.request.headers.cookie;
-		return this.chat.getTailMessages(id, cookie);
-	}
-
-	@SubscribeMessage('deleteMessages')
-	deleteMessages(client: Socket, @MessageBody() messageId: {id: number}) {
-	}
-
-	@SubscribeMessage('modifyMessages')
-	modifyMessages(client: Socket, @MessageBody() messageId: {id: number}) {
-	}
-
-	@SubscribeMessage('getConversations')
-	getConversations(client: Socket) {
-	}
-
-	sendMessage(recipient: Socket) {
+	@SubscribeMessage('newConv')
+	async onNewConv(@MessageBody() body: any) {
+		for (var connection of this.clients) {
+			if (connection.user.uid === body?.uid) {
+				connection.client.emit("newConv");
+				continue ;
+			}
+		}
 	}
 
 	@SubscribeMessage('moveUp')

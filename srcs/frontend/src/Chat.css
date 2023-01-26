@@ -20,11 +20,6 @@
 	border-color: '#646464';
 }
 
-.Chat-navigate-new-msg{
-	color: '#ffd700';
-	font-weight: 'bold';
-}
-
 .Chat-history-container{
 	display: flex;
 	flex-direction: column;
