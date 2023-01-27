@@ -335,6 +335,134 @@ function ChatNavigate(props: any) {
 	);
 }
 
+function DisplayChannelAvailable(props: any){
+	const channel = props?.channel;
+	const currentUser = props?.currentUser;
+	const [password, setPassword] = React.useState("");
+
+	const handleJoin = async (event: any) => {
+		await fetch(`http://localhost:9999/api/channels/${event.target.value}/users`, {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			credentials: 'include',
+			body: JSON.stringify({password: password})
+		})
+		.then(response => {
+			if (!response.ok)
+				return ;
+		});
+	}
+
+	const handleLeave = async (event: any) => {
+		await fetch(`http://localhost:9999/api/channels/${event.target.channel_id}/${currentUser.id}`, {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'DELETE',
+			credentials: 'include',
+			body: JSON.stringify({password: password})
+		})
+		.then(response => {
+			if (!response.ok)
+				return ;
+		});
+	}
+
+	const handleInputPassword = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+		setPassword(e.target.value);
+	};
+
+	// const res1 = friend?.data.find(({ id }) => id === uid);
+	const isIn = channel.users.find(({ id }: any) => id === currentUser.id);
+	const isBan = channel.banlist.find(({ id }: any) => id === currentUser.id);
+
+	if (typeof isBan === "undefined"){
+		if (typeof isIn === "undefined" && channel.status === 'public'){
+			return(
+				<div className='Channels-available-div'>
+					<div>
+						{channel.name}
+					</div>
+					<div>
+						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin} value={channel.id}>Join</CreateChannelButton>
+					</div>
+				</div>
+			);
+		} else if (typeof isIn === "undefined" && channel.status === 'protected'){
+			return(
+				<div className='Channels-available-div'>
+					<div>
+						{channel.name}
+					</div>
+					<div>
+						<Box
+							component="form"
+							noValidate
+							sx={{
+								display: 'grid',
+								gap: 2,
+							}}
+						>
+							<PassawordTextField
+								label="Password"
+								InputLabelProps={{
+								sx:{
+									color:"white",
+								}
+								}}
+								variant="outlined"
+								sx={{ input: { color: 'grey' } }}
+								id="validation-outlined-input"
+								onChange={handleInputPassword}
+							/>
+						</Box>
+					</div>
+					<div>
+						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>Join</CreateChannelButton>
+					</div>
+				</div>
+			);
+		} else {
+			return(
+				<div className='Channels-available-div'>
+					<div>
+						{channel.name}
+					</div>
+					<div>
+						<LeaveButton variant="contained" disableRipple onClick={handleLeave} value={channel.id}>Leave</LeaveButton>
+					</div>
+				</div>
+			);
+		}
+	} else {
+		return (<React.Fragment></React.Fragment>);
+	}
+}
+
+function ChannelList(props: any) {
+	return (
+		<div className='Channels-available'>
+			{
+				//recup la liste des channels qui va s'appeler channelsAvailable
+				props?.channelsAvailable?.map((channel:any) => {
+					return(
+						<DisplayChannelAvailable channel={channel} currentUser={props?.currentUser}/>
+					);	
+				})
+			}
+			<div className='Channels-available-div2'>
+				<Link to="/setchannel">
+					<CreateChannelButton variant="contained" disableRipple>Create a channel</CreateChannelButton>
+				</Link>
+			</div>
+		</div>
+	);
+}
+
 type User = {
 	id: number;
 	username: string;
@@ -355,98 +483,30 @@ type Conversation = {
 	new_message: boolean;
 }
 
-function DisplayChannelAvailable(channel:any){
-	const {name, users[], status, banlist[]} = channel.channel;
-	const [me, setMe] = useState<meProps>();
-	const [password, setPassword] = React.useState("");
+type ChannelUser = {
+	id: number;
+	user: User;
+	role: 'None' | 'Admin' | 'Owner';
+	is_muted: Boolean;
+	channel: Channel;
+}
 
-	useEffect(() => {
-		const apica = async () => {
-			const me = await fetch("http://localhost:9999/api/users/me", {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonMe = await me.json();
-			setMe(jsonMe);
-		};
+type ChannelBan = {
+	id: number;
+	user: User;
+	unban_date: Date;
+	channel: Channel;
+}
 
-		apica();
-	}, []);
-
-	//handleJoin à faire
-
-	//handleLeave à faire
-
-	const handleInputPassword = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		setPassword(e.target.value);
-	};
-
-	// const res1 = friend?.data.find(({ id }) => id === uid);
-	const isIn = users.find(({ id }) => id === me?.id);
-	const isBan = banlist.find(({ id }) => id === me?.id);
-
-	if (typeof isBan === "undefined"){
-		if (typeof isIn === "undefined" && status === 'public'){
-			return(
-				<div className='Channels-available-div'>
-					<div>
-						{name}
-					</div>
-					<div>
-						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>Join</CreateChannelButton>
-					</div>
-				</div>
-			);
-		} else if (typeof isIn === "undefined" && status === 'protected'){
-			return(
-				<div className='Channels-available-div'>
-					<div>
-						{name}
-					</div>
-					<div>
-						<Box
-							component="form"
-							noValidate
-							sx={{
-								display: 'grid',
-								gap: 2,
-							}}
-						>
-							<PassawordTextField
-								label="Password"
-								InputLabelProps={{
-								sx:{
-									color:"white",
-								}
-								}}
-								variant="outlined"
-								defaultValue="*.jpg or *.png"
-								sx={{ input: { color: 'grey' } }}
-								id="validation-outlined-input"
-								onChange={handleInputPassword}
-							/>
-						</Box>
-					</div>
-					<div>
-						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>Join</CreateChannelButton>
-					</div>
-				</div>
-			);
-		} else {
-			return(
-				<div className='Channels-available-div'>
-					<div>
-						{name}
-					</div>
-					<div>
-						<LeaveButton variant="contained" disableRipple onClick={handleLeave}>Leave</LeaveButton>
-					</div>
-				</div>
-			);
-		}
-	} else {
-		return (<React.Fragment></React.Fragment>);
-	}
+type Channel = {
+	id: number;
+	name: string;
+	users: ChannelUser[];
+	messages: Message[];
+	status: string;
+	latest_sent: Date;
+	ban_list: ChannelBan[];
+	password: string;
 }
 
 function Chat() {
@@ -458,10 +518,12 @@ function Chat() {
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [convList, setConvList] = useState<Conversation[]>([]);
 	const [newMessage, setNewMessage] = React.useState("");
+	const [channelsAvailable, setChannelsAvailable] = React.useState<Channel[]>([]);
 		
 	useEffect(() => {
 		disableNewMessageNotificationsFn();
 		updateUsersMe();
+		updateChannelsAvailable();
 
 		return setUpNewMessageNotificationsFn;
 	}, []);
@@ -600,6 +662,13 @@ function Chat() {
 		}
 	}
 
+	async function updateChannelsAvailable() {
+			const url = 'channels';
+
+			getAllPaginated(url, {params: new URLSearchParams({order: "DESC"})})
+			.then(data => setChannelsAvailable(data));
+	}
+
 	const handleChangeConv= async (event: any) => {
 		const id = event.target.value;
 		let convs = [...convList];
@@ -663,21 +732,7 @@ function Chat() {
 							</div>
 						</div>
 					</div>
-					<div className='Channels-available'>
-						{
-							//recup la liste des channels qui va s'appeler channelsAvailable
-							channelsAvailable.length && channelsAvailable?.map((channel:any) => {
-								return(
-									<DisplayChannelAvailable channel={channel} />
-								);	
-							})
-						}
-						<div className='Channels-available-div2'>
-							<Link to="/setchannel">
-								<CreateChannelButton variant="contained" disableRipple>Create a channel</CreateChannelButton>
-							</Link>
-						</div>
-					</div>
+					<ChannelList channelsAvailable={channelsAvailable} currentUser={currentUser} />
 				</div>
 			</React.Fragment>
 	)
