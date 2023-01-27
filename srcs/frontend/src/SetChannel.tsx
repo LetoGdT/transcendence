@@ -77,6 +77,7 @@ export function SetChannel(){
 			<h1>Set Channel's parameters</h1>
 			<div className='Set-Channel-container'>
 				<div className='Set-Channel-container-div'>
+					<div>Name: </div>
 					<div>
 						<Box
 							component="form"
@@ -94,13 +95,14 @@ export function SetChannel(){
 								}
 								}}
 								variant="outlined"
-								defaultValue="*.jpg or *.png"
+								defaultValue=""
 								sx={{ input: { color: 'grey' } }}
 								id="validation-outlined-input"
 								onChange={handleInputName}
 								/>
 						</Box>
 					</div>
+					<div>Password (optional): </div>
 					<div>
 						<Box
 							component="form"
@@ -118,7 +120,7 @@ export function SetChannel(){
 								}
 								}}
 								variant="outlined"
-								defaultValue="*.jpg or *.png"
+								defaultValue=""
 								sx={{ input: { color: 'grey' } }}
 								id="validation-outlined-input"
 								onChange={handleInputPsw}
