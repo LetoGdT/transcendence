@@ -174,7 +174,7 @@ export class ChannelsService
 
 		channel.status = patchChannelDto.status;
 
-		if (channel.status == 'protected')
+		if (channel.status == 'protected' && channelUser.role === 'Owner')
 		{
 			if (patchChannelDto.password == null)
 				throw new BadRequestException('A password is expected for protected channels');
