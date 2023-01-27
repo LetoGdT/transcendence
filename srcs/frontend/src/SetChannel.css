@@ -1,0 +1,10 @@
+.SetChannel-container{
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+}
+
+.SetChannel-container-div{
+    display: flex;
+    flex-direction: row;
+}

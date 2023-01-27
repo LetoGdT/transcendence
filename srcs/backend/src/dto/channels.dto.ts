@@ -7,6 +7,12 @@ export class PostChannelDto
 	@MaxLength(20)
 	@Matches('^[ A-Za-z0-9_\\-!?\']*$')
 	name: string;
+
+	@IsOptional()
+	@IsAscii()
+	@MinLength(8)
+	@MaxLength(40)
+	password?: string;
 }
 
 export class PatchChannelDto
