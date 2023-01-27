@@ -87,7 +87,23 @@ export class UsersService
 			user.username = updateUserDto.username;
 
 		if (updateUserDto.image_url != null)
+		{
+			let oldPath;
+			try
+			{
+				oldPath = './src/static' + (new URL(user.image_url)).pathname;
+			}
+			catch (err) { return; }
+			if (fs.existsSync(oldPath))
+			{
+				fs.unlink(oldPath, (err) => {
+					if (err)
+						throw new HttpException('There was an error deleting the previous file',
+							HttpStatus.INTERNAL_SERVER_ERROR)
+				});
+			}
 			user.image_url = updateUserDto.image_url;
+		}
 		return this.userRepository.save(user);
 	}
 
@@ -404,7 +420,7 @@ export class UsersService
 		{
 			oldPath = './src/static' + (new URL(user.image_url)).pathname;
 		}
-		catch (err) {}
+		catch (err) { return; }
 		if (fs.existsSync(oldPath))
 		{
 			fs.unlink(oldPath, (err) => {

@@ -10,7 +10,6 @@ import { useState, useEffect } from "react";
 import { NotFound } from './adaptable-zone';
 import { FromEXPtoLvl, getAllPaginated, ToNextLevel } from './tools';
 import { OneAchievement } from './Profile-zone';
-import { socket } from './WebsocketContext';
 
 type resultProps = {
 	email: string;
@@ -388,7 +387,7 @@ function OneMatch(match:any){
 		};
 	
 		api();
-	});
+	}, []);
 	
 	var url: string = "/otherprofile";
 	url = url.concat("/");
@@ -507,7 +506,7 @@ export function OtherProfile(){
 		};
 	
 		api();
-	});
+	}, []);
 
 	const options = {
 		title: "Your matches' results",
@@ -531,7 +530,6 @@ export function OtherProfile(){
 			method: 'POST',
 			credentials: 'include'
 		});
-		socket.emit("newConv", {uid: uid});
 	};
 
 	var url_aksgame: string = "/setprivategame/";

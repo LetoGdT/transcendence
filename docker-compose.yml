@@ -5,6 +5,7 @@ services:
         container_name: nestjs
         ports:
             - "9999:9999"
+            - "9998:9998"
         build: ./srcs/backend/
         restart: unless-stopped
         volumes:
@@ -29,12 +30,13 @@ services:
         container_name: postgres
         image: postgres
         environment:
-            POSTGRES_USER: ${POSTGRES_USER:-postgres}
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
-            POSTGRES_DB: 'ft_transcendence'
+            POSTGRES_USER: ${DB_USERNAME}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_NAME}
             PGDATA: /data/postgres
         volumes:
-            - postgres:/data/postgres
+            # TODO next line was modified in order for me to be able to work on my mac. Keep the one from Timothee elsewhere
+            - ./srcs/db/postgres:/data/postgres
         networks:
             - ft_transcendence
         restart: unless-stopped
@@ -43,31 +45,17 @@ services:
         container_name: pgadmin
         image: dpage/pgadmin4
         environment:
-            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
             PGADMIN_CONFIG_SERVER_MODE: 'False'
         volumes:
-            - pgadmin:/var/lib/pgadmin
-
+            # TODO next line was modified in order for me to be able to work on my mac. Keep the one from Timothee elsewhere
+            - ./srcs/db/pgadmin:/var/lib/pgadmin
         ports:
             - "${PGADMIN_PORT:-5050}:80"
         networks:
             - ft_transcendence
         restart: unless-stopped
-
-volumes:
-    postgres:
-        driver: local
-        driver_opts:
-            type: none
-            device: ./srcs/db/postgres
-            o: bind
-    pgadmin:
-        driver: local
-        driver_opts:
-            type: none
-            device: ./srcs/db/pgadmin
-            o: bind
 
 networks:
     ft_transcendence:
