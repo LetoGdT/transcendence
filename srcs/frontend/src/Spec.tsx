@@ -2,7 +2,7 @@ import './App.css';
 import './Spec.css'
 import React, { useEffect, useState } from 'react';
 import { PleaseConnect } from './adaptable-zone';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { faEye } from '@fortawesome/free-solid-svg-icons/faEye';
 import { IconButton } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,22 +18,19 @@ type gameProps = {
 }
 
 type matchInfo = {
+	game_id: number;
 	player1_id: number;
 	player2_id: number;
 	player1_username: string;
 	player2_username: string;
 }
 
-function DisplayMatch({ match: { player1_id, player2_id, player1_username, player2_username } }: { match: matchInfo }) {
+function DisplayMatch({ match: { game_id, player1_id, player2_id, player1_username, player2_username } }: { match: matchInfo }) {
+	const navigate = useNavigate();
 	const url1 = `/otherprofile/${player1_id}`;
 	const url2 = `/otherprofile/${player2_id}`;
 
-	const handleClickSee = async (event:any) => {
-		socket.emit('spectate', {
-			player1_id,
-			player2_id,
-		});
-	};
+	const handleClickSee = (event: any) => navigate(`/spectate/${game_id}`);
 
 	return(
 		<div className='Spec-container-div'>
@@ -52,15 +49,13 @@ function DisplayMatch({ match: { player1_id, player2_id, player1_username, playe
 			</div>
 			<div className='empty'></div>
 			<div className='Spec-container-watch-button'>
-				<Link to="/play">
-					<IconButton
-						sx={{fontSize:"2rem"}}
-						size="large"
-						onClick={handleClickSee}
-					>
-						<FontAwesomeIcon icon={faEye} />
-					</IconButton>
-				</Link>
+				<IconButton
+					sx={{fontSize:"2rem"}}
+					size="large"
+					onClick={handleClickSee}
+				>
+					<FontAwesomeIcon icon={faEye} />
+				</IconButton>
 			</div>
 		</div>
 	);
