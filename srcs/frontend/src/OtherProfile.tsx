@@ -10,7 +10,6 @@ import { useState, useEffect } from "react";
 import { NotFound } from './adaptable-zone';
 import { FromEXPtoLvl, getAllPaginated, ToNextLevel } from './tools';
 import { OneAchievement } from './Profile-zone';
-import { socket } from './WebsocketContext';
 
 type resultProps = {
 	email: string;

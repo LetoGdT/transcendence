@@ -4,12 +4,101 @@ import React, { useState, useEffect } from 'react';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 import { Link } from 'react-router-dom';
 
 import { PleaseConnect } from './adaptable-zone';
 import { socket } from './WebsocketContext';
 import { getAllPaginated } from './tools';
 import { disableNewMessageNotificationsFn, setUpNewMessageNotificationsFn } from './Notifications'
+
+const PassawordTextField = styled(TextField)({
+	'& input:valid + fieldset': {
+		borderColor: 'white',
+		borderWidth: 2,
+	},
+	'& input:invalid + fieldset': {
+		borderColor: 'red',
+		borderWidth: 2,
+	},
+	'& input:valid:focus + fieldset': {
+		borderLeftWidth: 6,
+		padding: '4px !important', // override inline-style
+	},
+});
+
+const CreateChannelButton = styled(Button)({
+	boxShadow: 'none',
+	textTransform: 'none',
+	fontSize: 16,
+	padding: '6px 12px',
+	border: '1px solid',
+	lineHeight: 1.5,
+	backgroundColor: '#646464',
+	borderColor: '#646464',
+	fontFamily: [
+		'-apple-system',
+		'BlinkMacSystemFont',
+		'"Segoe UI"',
+		'Roboto',
+		'"Helvetica Neue"',
+		'Arial',
+		'sans-serif',
+		'"Apple Color Emoji"',
+		'"Segoe UI Emoji"',
+		'"Segoe UI Symbol"',
+	].join(','),
+	'&:hover': {
+		backgroundColor: '#3b9b3b',
+		borderColor: '#646464',
+		boxShadow: 'none',
+	},
+	'&:active': {
+		boxShadow: 'none',
+		backgroundColor: '#4a7a4a',
+		borderColor: '#646464',
+	},
+	'&:focus': {
+		xShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
+	},
+});
+
+const LeaveButton = styled(Button)({
+	boxShadow: 'none',
+	textTransform: 'none',
+	fontSize: 16,
+	padding: '6px 12px',
+	border: '1px solid',
+	lineHeight: 1.5,
+	backgroundColor: '#646464',
+	borderColor: '#646464',
+	fontFamily: [
+		'-apple-system',
+		'BlinkMacSystemFont',
+		'"Segoe UI"',
+		'Roboto',
+		'"Helvetica Neue"',
+		'Arial',
+		'sans-serif',
+		'"Apple Color Emoji"',
+		'"Segoe UI Emoji"',
+		'"Segoe UI Symbol"',
+	].join(','),
+	'&:hover': {
+		backgroundColor: '#bb1d03',
+		borderColor: '#646464',
+		boxShadow: 'none',
+	},
+	'&:active': {
+		boxShadow: 'none',
+		backgroundColor: '#891d03',
+		borderColor: '#646464',
+	},
+	'&:focus': {
+		boxShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
+	},  
+});
 
 const SendButton = styled(Button)({
 	boxShadow: 'none',
@@ -51,11 +140,11 @@ const ChannelButton = styled(Button)({
 	boxShadow: 'none',
 	textTransform: 'none',
 	fontSize: 16,
-	padding: '0px 12px',
+	padding: '6px 12px',
 	border: '1px solid',
 	lineHeight: 1.5,
-	backgroundColor: '#000000',
-	borderColor: '#000000',
+	backgroundColor: '#646464',
+	borderColor: '#646464',
 	fontFamily: [
 		'-apple-system',
 		'BlinkMacSystemFont',
@@ -69,52 +158,14 @@ const ChannelButton = styled(Button)({
 		'"Segoe UI Symbol"',
 	].join(','),
 	'&:hover': {
-		backgroundColor: '#007dd6',
-		borderColor: '#000000',
+		backgroundColor: '#3b9b3b',
+		borderColor: '#646464',
 		boxShadow: 'none',
 	},
 	'&:active': {
 		boxShadow: 'none',
-		backgroundColor: '#000000',
-		borderColor: '#000000',
-	},
-	'&:focus': {
-		xShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
-	},
-});
-
-const ChannelSelectedButton = styled(Button)({
-	boxShadow: 'none',
-	textTransform: 'none',
-	fontSize: 16,
-	fontWeight: 'bold',
-	padding: '0px 12px',
-	border: '1px solid',
-	lineHeight: 1.5,
-	backgroundColor: '#000000',
-	borderColor: '#000000',
-	color: '#4a7a4a',
-	fontFamily: [
-		'-appel-system',
-		'BlinkMacSystemFont',
-		'"Segoe UI"',
-		'Roboto',
-		'"Helvetica Neue"',
-		'Arial',
-		'snans-serif',
-		'"Apple Color Emoji"',
-		'"Segoe UI Emoji"',
-		'"Segoe UI Symbol"',
-	].join(','),
-	'&:hover': {
-		backgroundColor: '#007dd6',
-		borderColor: '#000000',
-		boxShadow: 'none',
-	},
-	'&:active': {
-		boxShadow: 'none',
-		backgroundColor: '#000000',
-		borderColor: '#000000',
+		backgroundColor: '#4a7a4a',
+		borderColor: '#646464',
 	},
 	'&:focus': {
 		xShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
@@ -125,13 +176,11 @@ const ChannelButtonNewMessage = styled(Button)({
 	boxShadow: 'none',
 	textTransform: 'none',
 	fontSize: 16,
-	fontWeight: 'bold',
-	padding: '0px 12px',
+	padding: '6px 12px',
 	border: '1px solid',
 	lineHeight: 1.5,
-	backgroundColor: '#000000',
-	borderColor: '#000000',
-	color: '#ffd700',
+	backgroundColor: '#646464',
+	borderColor: '#646464',
 	fontFamily: [
 		'-apple-system',
 		'BlinkMacSystemFont',
@@ -145,14 +194,14 @@ const ChannelButtonNewMessage = styled(Button)({
 		'"Segoe UI Symbol"',
 	].join(','),
 	'&:hover': {
-		backgroundColor: '#007dd6',
-		borderColor: '#000000',
+		backgroundColor: '#3b9b3b',
+		borderColor: '#646464',
 		boxShadow: 'none',
 	},
 	'&:active': {
 		boxShadow: 'none',
-		backgroundColor: '#000000',
-		borderColor: '#000000',
+		backgroundColor: '#4a7a4a',
+		borderColor: '#646464',
 	},
 	'&:focus': {
 		xShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
@@ -205,17 +254,8 @@ function DisplayMessageHistory(props: any) {
 
 function DisplayChannel(props: any){
 	const conv = props?.conv;
-	const currentConv = props?.currentConv;
 
-	if (currentConv === conv?.id)
-		return (
-			<div>
-				<ChannelSelectedButton variant="contained" disableRipple onClick={props?.handleChangeConv} value={conv.id}>
-					{conv.name}
-				</ChannelSelectedButton>
-			</div>
-		);
-	else if (conv.new_message === true){
+	if (conv.new_message === true){
 		return(
 			<div>
 				<ChannelButtonNewMessage variant="contained" disableRipple onClick={props?.handleChangeConv} value={conv.id}>
@@ -239,7 +279,7 @@ function ChatNavigate(props: any) {
 		<div className='Chat-navigate'>
 			{props?.ConvList?.map((conv: Conversation) => {
 				return (
-					<DisplayChannel conv={conv} currentConv={props?.currentConv} key={conv.id} handleChangeConv={props?.handleChangeConv}/>
+					<DisplayChannel conv={conv} key={conv.id} handleChangeConv={props?.handleChangeConv}/>
 				);
 			})}
 		</div>
@@ -266,6 +306,103 @@ type Conversation = {
 	new_message: boolean;
 }
 
+function DisplayChannelAvailable(channel:any){
+	const {name, users[], status, banlist[]} = channel.channel;
+	const [me, setMe] = useState<meProps>();
+	const [password, setPassword] = React.useState("");
+
+	useEffect(() => {
+		const apica = async () => {
+			const me = await fetch("http://localhost:9999/api/users/me", {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonMe = await me.json();
+			setMe(jsonMe);
+		};
+
+		apica();
+	}, []);
+
+	//handleJoin à faire
+
+	//handleLeave à faire
+
+	const handleInputPassword = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+		setPassword(e.target.value);
+	};
+
+	// const res1 = friend?.data.find(({ id }) => id === uid);
+	const isIn = users.find(({ id }) => id === me?.id);
+	const isBan = banlist.find(({ id }) => id === me?.id);
+
+	if (typeof isBan === "undefined"){
+		if (typeof isIn === "undefined" && status === 'public'){
+			return(
+				<div className='Channels-available-div'>
+					<div>
+						{name}
+					</div>
+					<div>
+						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>Join</CreateChannelButton>
+					</div>
+				</div>
+			);
+		} else if (typeof isIn === "undefined" && status === 'protected'){
+			return(
+				<div className='Channels-available-div'>
+					<div>
+						{name}
+					</div>
+					<div>
+						<Box
+							component="form"
+							noValidate
+							sx={{
+								display: 'grid',
+								gap: 2,
+							}}
+						>
+							<PassawordTextField
+								label="Password"
+								InputLabelProps={{
+								sx:{
+									color:"white",
+								}
+								}}
+								variant="outlined"
+								defaultValue="*.jpg or *.png"
+								sx={{ input: { color: 'grey' } }}
+								id="validation-outlined-input"
+								onChange={handleInputPassword}
+							/>
+						</Box>
+					</div>
+					<div>
+						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>Join</CreateChannelButton>
+					</div>
+				</div>
+			);
+		} else {
+			return(
+				<div className='Channels-available-div'>
+					<div>
+						{name}
+					</div>
+					<div>
+						<LeaveButton variant="contained" disableRipple onClick={handleLeave}>Leave</LeaveButton>
+					</div>
+				</div>
+			);
+		}
+	} else {
+		return (<React.Fragment></React.Fragment>);
+	}
+
+	
+
+}
+
 function Chat() {
 	const [currentConv, setCurrentConv] = useState<number>(-1);
 	const [isChannel, setIsChannel] = useState<boolean>(false);
@@ -285,7 +422,6 @@ function Chat() {
 
 	useEffect(() => {
 		updateConvList();
-		socket.on("newConv", updateConvList);
 	}, [currentUser]);
 
 	useEffect(() => {
@@ -340,7 +476,7 @@ function Chat() {
 		.then(data => res = res.concat(data.data.map((elem: any) => {
 			let name: string;
 			if (currentUser.id === -1)
-				name = "not loaded";
+				name = "not leaded";
 			else if (currentUser.id === elem.user1.id)
 				name = elem.user2.username;
 			else
@@ -424,8 +560,6 @@ function Chat() {
 			if (elem.id === id) {
 				setCurrentConv(id);
 				setIsChannel(elem.is_channel);
-				elem.new_message = false;
-				setConvList(convs);
 				continue ;
 			}
 	}
@@ -445,10 +579,6 @@ function Chat() {
 			method: 'POST',
 			credentials: 'include',
 			body: JSON.stringify({content: newMessage})
-		})
-		.then(response => {
-			if (!response.ok)
-			return ;
 		});
 		socket.emit("newMessage", {convId: currentConv, isChannel: isChannel});
 		setNewMessage(""); // Sert à effacer le message une fois qu'on a appuyé sur le bouton send
@@ -458,7 +588,7 @@ function Chat() {
 			<React.Fragment>
 				<h1>Chat</h1>
 				<div className='Chat-container'>
-					<ChatNavigate ConvList={convList} currentConv={currentConv} handleChangeConv={handleChangeConv}/>
+					<ChatNavigate ConvList={convList} handleChangeConv={handleChangeConv}/>
 					<div>
 						<DisplayMessageHistory messages={messages} me={currentUser}/>
 						<div className='Chat-TextField-send-button'>
@@ -467,7 +597,6 @@ function Chat() {
 									maxRows={4}
 									aria-label="maximum height"
 									placeholder="Message"
-									value={newMessage}
 									
 									style={{ width: "100%", borderRadius: "10px"}}
 									onChange={handleInputMessage}
@@ -478,6 +607,21 @@ function Chat() {
 								onClick={handleSendMessage}
 								>Send</SendButton>
 							</div>
+						</div>
+					</div>
+					<div className='Channels-available'>
+						{
+							//recup la liste des channels qui va s'appeler channelsAvailable
+							channelsAvailable.length && channelsAvailable?.map((channel:any) => {
+								return(
+									<DisplayChannelAvailable channel={channel} />
+								);	
+							})
+						}
+						<div className='Channels-available-div2'>
+							<Link to="/setchannel">
+								<CreateChannelButton variant="contained" disableRipple>Create a channel</CreateChannelButton>
+							</Link>
 						</div>
 					</div>
 				</div>
