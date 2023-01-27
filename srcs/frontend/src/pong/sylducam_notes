@@ -1,6 +1,7 @@
 TODO :
 build without -d and check the warnings
 virer le joueur 2
+connecter les games aux boutons classic et unicorn mode (qui aura un autre nom)
 responsive : la div du menu passe sur le jeu quand on reduit la fenetre enormement (j'ai test de
 mettre ca dans App.css mais plus rien ne fonctionnait)
 changes from main to incorporate on my branch :

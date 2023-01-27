@@ -6,6 +6,8 @@ import { socket } from '../WebsocketContext';
 const GAME_WIDTH = 1040;
 const GAME_HEIGHT = 680;
 
+const gameInstance = new PongGame(GAME_WIDTH, GAME_HEIGHT);
+
 const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 {
 	const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -64,84 +66,62 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 	return canvasRef;
 };
 
-function useGame()
-{
-	const ref = useRef<PongGame>();
-	if (!ref.current)
-		ref.current = new PongGame(GAME_WIDTH, GAME_HEIGHT);
-	return ref.current;
-}
-
 const PongGameBootstrap = () =>
 {
-	const [winner, setWinner] = useState(-1);
-	const [lastUpdate, setLastUpdate] = useState(performance.now());
-	const [attemptedConnect, setAttemptedConnect] = useState(false);
-	const [checkRefresh, setCheckRefresh] = useState(false);
-	const [move, setMove] = useState(false);
+	// const [winner, setWinner] = useState(-1);
+	// const [lastUpdate, setLastUpdate] = useState(performance.now());
+	// const [checkRefresh, setCheckRefresh] = useState(false);
+	// const [move, setMove] = useState(false);
 	
-	const game = useGame();
+	const game = gameInstance;
 	const canvasRef = useCanvas(ctx => game.render(ctx));
 
 	useEffect(() =>
 	{
-		if (attemptedConnect === false)
+		if (game.attemptedConnect === false)
 		{
 			socket.emit('queue', { type: 'Ranked' });
-			setAttemptedConnect(true);
+			game.attemptedConnect = true;
 		}
-		if (performance.now() - lastUpdate > 2000 / 50)
-		{
-			game.update();
-			setLastUpdate(performance.now());
-		}
-		const sleep = async () => {
-			await new Promise(r => setTimeout(r, 10));
-			setCheckRefresh(!checkRefresh);
-		}
-		sleep();
-	}, [checkRefresh]);
-
-	useEffect(() => {
-		socket.on('ball', (data) => {
-			setLastUpdate(performance.now());
-			game.setBall(data);
-		});
-		socket.on('players', (data) => {
-			setLastUpdate(performance.now());
-			game.setPlayers(data);
-		});
-		socket.on('score', (data) => {
-			setLastUpdate(performance.now());
-			game.setScore(data);
-		});
-		socket.on('gameFound', () => game.setConnecting());
-		socket.on('winner', (data) => {
-			setLastUpdate(performance.now());
-			game.setScore(data);
-			game.update();
-		});
-		socket.on('start', () => game.setStart());
 	}, []);
 
 	useEffect(() => {
-		game.handleMovement();
-		setMove(false);
-	}, [move]);
+		socket.on('score', ({ score1, score2 }) => {
+			game.setScore(score1, score2);
+		});
+		socket.on('win', ({ didWin }) => game.setOver(didWin));
+		socket.on('gameFound', () => game.setConnecting());
+		socket.on('queuing', () => game.statusMessage = 'Searching for an opponent...');
+		socket.on('exception', e => {
+			game.setErrorMessage(`Error: ${e.message}`);
+		});
+		socket.on('start', () => game.setStart());
+		socket.on('state', state => game.netUpdateState(state));
+	}, []);
+
+	useEffect(() => {
+		const timer = setInterval(() => game.update(), 20);
+		return () => clearInterval(timer);
+	}, []);
+
+	// useEffect(() => {
+	// 	game.handleMovement();
+	// 	setMove(false);
+	// }, [move]);
 
 	const onKeyUp = (e: React.KeyboardEvent) => {
 		e.preventDefault();
-		setMove(true);
+		// setMove(true);
 		game.handleKeyUp(e.code);
 	};
 	const onKeyDown = (e: React.KeyboardEvent) => {
 		e.preventDefault();
-		setMove(true);
+		// setMove(true);
 		game.handleKeyDown(e.code);
 	};
 
 	return (
-		<div style={{position: 'fixed', top:'200px', bottom:0, left:0, right:0}}>
+		<div style={{position: 'fixed', top:'350px', bottom:'25px', left:0, right:0}}>
 
 			<div style={{aspectRatio: 16 / 9 , maxHeight:'100%', maxWidth:'100%', marginLeft:'auto', marginRight:'auto'}}>
 				<canvas
@@ -160,7 +140,6 @@ const PongGameBootstrap = () =>
 const Pong = () =>
 (
 	<>
-		<h1>PONG</h1>
 		<div>
 			<PongGameBootstrap/>
 		</div>

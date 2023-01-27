@@ -73,31 +73,31 @@ export class ChatService {
 
 	async startGame(client: Connection, opponent: Connection, games: Game[])
 	{
-		const game = new Game(50, 'Ranked');
-		game.addPlayer({ user: client.user, client: client.client });
-		game.addPlayer({ user: opponent.user, client: opponent.client });
-		client.client.emit('gameFound');
-		opponent.client.emit('gameFound');
-		games.push(game);
-		await game.run();
-		const gameIndex: number = games.findIndex(async game => {
-			(await game.getPlayer1Id()) == client.user.id
-			&& (await game.getPlayer2Id()) == opponent.user.id
-		});
-		games.splice(gameIndex, 1);
-		const score: { player1: number, player2: number } = await game.getScore(1);
-		const winner: User = score.player1 === 5 ? client.user : opponent.user;
-		const createMatchDto: CreateMatchDto = {
-			user1: client.user,
-			user2: opponent.user,
-			score_user1: score.player1,
-			score_user2: score.player2,
-			winner: winner,
-			played_at: new Date(),
-			game_type: 'Ranked',
-		};
-		const match = await this.matchesService.createMatch(createMatchDto);
-		this.matchesService.calculateRank(match.id);
+		// const game = new Game(50, 'Ranked');
+		// game.addPlayer({ user: client.user, client: client.client });
+		// game.addPlayer({ user: opponent.user, client: opponent.client });
+		// client.client.emit('gameFound');
+		// opponent.client.emit('gameFound');
+		// games.push(game);
+		// await game.run();
+		// const gameIndex: number = games.findIndex(async game => {
+		// 	(await game.getPlayer1Id()) == client.user.id
+		// 	&& (await game.getPlayer2Id()) == opponent.user.id
+		// });
+		// games.splice(gameIndex, 1);
+		// const score: { player1: number, player2: number } = await game.getScore(1);
+		// const winner: User = score.player1 === 5 ? client.user : opponent.user;
+		// const createMatchDto: CreateMatchDto = {
+		// 	user1: client.user,
+		// 	user2: opponent.user,
+		// 	score_user1: score.player1,
+		// 	score_user2: score.player2,
+		// 	winner: winner,
+		// 	played_at: new Date(),
+		// 	game_type: 'Ranked',
+		// };
+		// const match = await this.matchesService.createMatch(createMatchDto);
+		// this.matchesService.calculateRank(match.id);
 	}
 
 	printQ(queue: Map<number, Connection[]>)

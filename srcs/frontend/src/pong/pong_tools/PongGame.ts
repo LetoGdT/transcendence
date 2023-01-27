@@ -4,8 +4,6 @@ import { socket } from '../../WebsocketContext';
 
 const PLAYER1_DOWN_KEY = 'KeyS';
 const PLAYER1_UP_KEY = 'KeyW';
-const PLAYER2_DOWN_KEY = 'ArrowDown';
-const PLAYER2_UP_KEY = 'ArrowUp';
 // const TIMER = 4500 // del not used anymore ?
 // const SECOND = 1500 // del not used anymore ?
 
@@ -44,6 +42,16 @@ interface Score
 	player2: number,
 }
 
+interface NetworkedGameState {
+	p1_y: number;
+	p2_y: number;
+	ball_x: number;
+	ball_y: number;
+	ball_dx: number;
+	ball_dy: number;
+	authoritative: boolean;
+}
+
 class PongGame
 {
 	public width: number;
@@ -57,13 +65,20 @@ class PongGame
     private over: boolean = false; // Meaning game over
     private ball: Ball;
     private keyStates: any;
-    private movePlayer: boolean = false;
 	private timer: number; // del ?
 	private connecting: boolean = true;
 	// private socket: Socket;
+	private errorMessage: string = '';
 
 	private startTimer: number;
 	private currentTicks: number;
+
+	private didWin: boolean = false;
+
+	public attemptedConnect: boolean = false;
+	public statusMessage: string = "Connecting...";
+
+	private countdownStart: number = 0;
 
 	constructor(width: number, height: number)
     {
@@ -73,7 +88,7 @@ class PongGame
         this.player2 = new Player(width - PLAYER_WIDTH, (height - PLAYER_HEIGHT) / 2);
 		this.scorePlayer1 = 0;
 		this.scorePlayer2 = 0;
-		this.scoreToWin = 5; // TODO get it from slider in the front when game launched (customization option)
+		this.scoreToWin = 50; // TODO get it from slider in the front when game launched (customization option)
 
         this.ball = new Ball(width / 2, height / 2);
         this.keyStates = [];
@@ -83,56 +98,19 @@ class PongGame
 		this.currentTicks = 0;
     }
 
-	setBall(data: BallData)
-	{
-		this.ball.x = data.coordinates.x;
-		this.ball.y = data.coordinates.y;
-		this.ball.speedX = data.direction.x * data.speed;
-		this.ball.speedY = data.direction.y * data.speed;
-	}
-
-	setPlayers(data: Players)
-	{
-		this.player1.x = data.player1.x;
-		this.player1.y = data.player1.y;
-		this.player2.x = data.player2.x;
-		this.player2.y = data.player2.y;
-	}
-
-	setScore(data: Score)
-	{
-		this.scorePlayer1 = data.player1;
-		this.scorePlayer2 = data.player2;
+	setErrorMessage(errorMessage: string) {
+		this.errorMessage = errorMessage;
 	}
 
 	setConnecting()
 	{
 		this.connecting = false;
+		this.countdownStart = Date.now();
 	}
 
 	setStart()
 	{
 		this.start = false;
-	}
-
-	canvasResponsiveWidth()
-	{
-		return this.width;
-	}
-
-	canvasResponsiveHeight()
-	{
-		return this.height;
-	}
-
-	responsivePlayerWidth()
-	{
-		return PLAYER_WIDTH;
-	}
-
-	responsivePlayerHeight()
-	{
-		return PLAYER_HEIGHT;
 	}
 
 	drawStatusScreen(ctx: CanvasRenderingContext2D, label: string) {
@@ -172,9 +150,18 @@ class PongGame
 		ctx.fillStyle = 'black';
 		ctx.fillRect(0, 0, this.width, this.height);
 
-		if (this.connecting)
+		if (this.errorMessage !== '')
 		{
-			this.drawStatusScreen(ctx, 'Connecting...');
+			ctx.fillStyle = 'white';
+			ctx.textAlign = 'center';
+			ctx.textBaseline = 'middle';
+			ctx.font = '18px sans-serif';
+			ctx.fillText(this.errorMessage, this.width / 2, this.height / 2, Math.min(this.width, 200));
+			return ;
+		}
+		else if (this.connecting)
+		{
+			this.drawStatusScreen(ctx, this.statusMessage);
 			return ;
 		}
 		
@@ -184,7 +171,7 @@ class PongGame
 
 		if (this.start)
 		{
-			const timeSinceStart = this.startTimer / TICKRATE / 1.5;
+			const timeSinceStart = (Date.now() - this.countdownStart) / 1000//;this.startTimer / TICKRATE;
 
 			this.drawScore(ctx);
 
@@ -225,7 +212,7 @@ class PongGame
 				this.ball.x = this.width / 2; // TODO ball update (websocket)
 				this.ball.y = this.height / 2; // TODO ball update (websocket)
 				this.drawScore(ctx);
-				if (this.scorePlayer1 === this.scoreToWin)
+				if (this.didWin)
 				{
 					// Draw 'VICTORY'
 					ctx.strokeStyle = 'white';
@@ -285,7 +272,7 @@ class PongGame
 					ctx.lineTo(830, 415);
 					ctx.stroke();
 				}
-				else if (this.scorePlayer2 === 5)
+				else
 				{
 					// Draw 'DEFEAT'
 					ctx.strokeStyle = 'white';
@@ -540,6 +527,11 @@ class PongGame
         this.ball.x += this.ball.speedX; // TODO ball update (websocket)
         this.ball.y += this.ball.speedY; // TODO ball update (websocket)
     }
+	
+	setOver(didWin: boolean) {
+		this.over = true;
+		this.didWin = didWin;
+	}
  
     collide(opponent: Player)
     {
@@ -561,7 +553,7 @@ class PongGame
             // console.log(this.scorePlayer2); // del
 
             // console.log(this.over); // del	
-            if (this.scorePlayer1 === 5 || this.scorePlayer2 === 5)
+            if (this.scorePlayer1 === this.scoreToWin || this.scorePlayer2 === this.scoreToWin)
             {
                 this.over = true
                 // console.log(this.over); // del 26
@@ -571,8 +563,8 @@ class PongGame
             // Set ball and players to the center
             this.ball.x = this.width / 2; // TODO ball update (websocket)
             this.ball.y = this.height / 2; // TODO ball update (websocket)
-            this.player1.y = this.height / 2 - PLAYER_HEIGHT / 2;
-            this.player2.y = this.height / 2 - PLAYER_HEIGHT / 2;
+            // this.player1.y = this.height / 2 - PLAYER_HEIGHT / 2; // websock
+            // this.player2.y = this.height / 2 - PLAYER_HEIGHT / 2; // websock
 
             // Reset speed
             this.ball.speedX = BALL_SPEED; // TODO ball update (websocket)
@@ -599,33 +591,40 @@ class PongGame
 	// Function called every 20ms (50 Hz / 50 times per second)
 	update()
 	{
-		this.width = this.canvasResponsiveWidth(); // TODO doest it work fine ?
-		this.height = this.canvasResponsiveHeight(); // TODO doest it work fine ?
-
 		this.currentTicks++;
 		
-		if (this.start)
-		{
-			this.startTimer++;
-
-			if (this.startTimer >= (TICKRATE * 1.5 * 3))
-			{
-				this.start = false;
-			}
-		} 
-		else if (!this.over)
+		if (!this.over && !this.start)
 		{
 			this.handleMovement();
-			this.updatePhysics();
+			// this.updatePhysics();
+
+			socket.emit('move', { y: this.player1.y });
 		}
+	}
+
+	setScore(score1: number, score2: number) {
+		this.scorePlayer1 = score1;
+		this.scorePlayer2 = score2;
+	}
+
+	netUpdateState(state: NetworkedGameState) {
+		// this.player2.y = y;
+		if (state.authoritative) {
+			this.player1.y = state.p1_y;
+		}
+
+		this.player2.y = state.p2_y;
+		this.ball.x = state.ball_x;
+		this.ball.y = state.ball_y;
 	}
 
 	handleMovement()
 	{
 		const maxPlayerY = this.height - PLAYER_HEIGHT;
+
 		if (this.keyStates[PLAYER1_UP_KEY])
 		{
-			socket.emit('moveDown');
+			// socket.emit('moveDown');
 			this.player1.y -= 7;
 			if (this.player1.y < 0)
 				this.player1.y = 0;
@@ -633,7 +632,7 @@ class PongGame
 
 		if (this.keyStates[PLAYER1_DOWN_KEY])
 		{
-			socket.emit('moveUp');
+			// socket.emit('moveUp');
 			this.player1.y += 7;
 			if (this.player1.y >= maxPlayerY)
 				this.player1.y = maxPlayerY;
@@ -643,19 +642,11 @@ class PongGame
     handleKeyUp(code: string)
 	{
         delete this.keyStates[code];
-        if (code === 'KeyW')
-		{
-            this.movePlayer = false;
-        }
     }
 
     handleKeyDown(code: string)
     {
         this.keyStates[code] = true;
-        if (code === 'KeyS')
-		{
-            this.movePlayer = true;
-        }
     }
 }
 
