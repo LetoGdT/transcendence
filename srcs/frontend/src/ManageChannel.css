@@ -1,0 +1,4 @@
+.Manage-Channel-container{
+    display: flex;
+    flex-direction: column;
+}

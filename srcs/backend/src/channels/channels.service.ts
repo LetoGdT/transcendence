@@ -133,8 +133,14 @@ export class ChannelsService
 		const newChannel = await this.channelRepository.create({
 			name: postChannelDto.name,
 			users: [owner],
-			status: 'private',
+			status: 'public',
 		});
+
+		if (postChannelDto.password != null)
+		{
+			newChannel.password = await bcrypt.hash(postChannelDto.password, 10);
+			newChannel.status = 'protected';
+		}
 		return this.channelRepository.save(newChannel);
 	}
 
@@ -174,7 +180,7 @@ export class ChannelsService
 
 		channel.status = patchChannelDto.status;
 
-		if (channel.status == 'protected')
+		if (channel.status == 'protected' && channelUser.role === 'Owner')
 		{
 			if (patchChannelDto.password == null)
 				throw new BadRequestException('A password is expected for protected channels');

@@ -4,12 +4,101 @@ import React, { useState, useEffect } from 'react';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 import { Link } from 'react-router-dom';
 
 import { PleaseConnect } from './adaptable-zone';
 import { socket } from './WebsocketContext';
 import { getAllPaginated } from './tools';
 import { disableNewMessageNotificationsFn, setUpNewMessageNotificationsFn } from './Notifications'
+
+const PassawordTextField = styled(TextField)({
+	'& input:valid + fieldset': {
+		borderColor: 'white',
+		borderWidth: 2,
+	},
+	'& input:invalid + fieldset': {
+		borderColor: 'red',
+		borderWidth: 2,
+	},
+	'& input:valid:focus + fieldset': {
+		borderLeftWidth: 6,
+		padding: '4px !important', // override inline-style
+	},
+});
+
+const CreateChannelButton = styled(Button)({
+	boxShadow: 'none',
+	textTransform: 'none',
+	fontSize: 16,
+	padding: '6px 12px',
+	border: '1px solid',
+	lineHeight: 1.5,
+	backgroundColor: '#646464',
+	borderColor: '#646464',
+	fontFamily: [
+		'-apple-system',
+		'BlinkMacSystemFont',
+		'"Segoe UI"',
+		'Roboto',
+		'"Helvetica Neue"',
+		'Arial',
+		'sans-serif',
+		'"Apple Color Emoji"',
+		'"Segoe UI Emoji"',
+		'"Segoe UI Symbol"',
+	].join(','),
+	'&:hover': {
+		backgroundColor: '#3b9b3b',
+		borderColor: '#646464',
+		boxShadow: 'none',
+	},
+	'&:active': {
+		boxShadow: 'none',
+		backgroundColor: '#4a7a4a',
+		borderColor: '#646464',
+	},
+	'&:focus': {
+		xShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
+	},
+});
+
+const LeaveButton = styled(Button)({
+	boxShadow: 'none',
+	textTransform: 'none',
+	fontSize: 16,
+	padding: '6px 12px',
+	border: '1px solid',
+	lineHeight: 1.5,
+	backgroundColor: '#646464',
+	borderColor: '#646464',
+	fontFamily: [
+		'-apple-system',
+		'BlinkMacSystemFont',
+		'"Segoe UI"',
+		'Roboto',
+		'"Helvetica Neue"',
+		'Arial',
+		'sans-serif',
+		'"Apple Color Emoji"',
+		'"Segoe UI Emoji"',
+		'"Segoe UI Symbol"',
+	].join(','),
+	'&:hover': {
+		backgroundColor: '#bb1d03',
+		borderColor: '#646464',
+		boxShadow: 'none',
+	},
+	'&:active': {
+		boxShadow: 'none',
+		backgroundColor: '#891d03',
+		borderColor: '#646464',
+	},
+	'&:focus': {
+		boxShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
+	},  
+});
 
 const SendButton = styled(Button)({
 	boxShadow: 'none',
@@ -266,6 +355,100 @@ type Conversation = {
 	new_message: boolean;
 }
 
+function DisplayChannelAvailable(channel:any){
+	const {name, users[], status, banlist[]} = channel.channel;
+	const [me, setMe] = useState<meProps>();
+	const [password, setPassword] = React.useState("");
+
+	useEffect(() => {
+		const apica = async () => {
+			const me = await fetch("http://localhost:9999/api/users/me", {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonMe = await me.json();
+			setMe(jsonMe);
+		};
+
+		apica();
+	}, []);
+
+	//handleJoin à faire
+
+	//handleLeave à faire
+
+	const handleInputPassword = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+		setPassword(e.target.value);
+	};
+
+	// const res1 = friend?.data.find(({ id }) => id === uid);
+	const isIn = users.find(({ id }) => id === me?.id);
+	const isBan = banlist.find(({ id }) => id === me?.id);
+
+	if (typeof isBan === "undefined"){
+		if (typeof isIn === "undefined" && status === 'public'){
+			return(
+				<div className='Channels-available-div'>
+					<div>
+						{name}
+					</div>
+					<div>
+						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>Join</CreateChannelButton>
+					</div>
+				</div>
+			);
+		} else if (typeof isIn === "undefined" && status === 'protected'){
+			return(
+				<div className='Channels-available-div'>
+					<div>
+						{name}
+					</div>
+					<div>
+						<Box
+							component="form"
+							noValidate
+							sx={{
+								display: 'grid',
+								gap: 2,
+							}}
+						>
+							<PassawordTextField
+								label="Password"
+								InputLabelProps={{
+								sx:{
+									color:"white",
+								}
+								}}
+								variant="outlined"
+								defaultValue="*.jpg or *.png"
+								sx={{ input: { color: 'grey' } }}
+								id="validation-outlined-input"
+								onChange={handleInputPassword}
+							/>
+						</Box>
+					</div>
+					<div>
+						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>Join</CreateChannelButton>
+					</div>
+				</div>
+			);
+		} else {
+			return(
+				<div className='Channels-available-div'>
+					<div>
+						{name}
+					</div>
+					<div>
+						<LeaveButton variant="contained" disableRipple onClick={handleLeave}>Leave</LeaveButton>
+					</div>
+				</div>
+			);
+		}
+	} else {
+		return (<React.Fragment></React.Fragment>);
+	}
+}
+
 function Chat() {
 	const [currentConv, setCurrentConv] = useState<number>(-1);
 	const [isChannel, setIsChannel] = useState<boolean>(false);
@@ -478,6 +661,21 @@ function Chat() {
 								onClick={handleSendMessage}
 								>Send</SendButton>
 							</div>
+						</div>
+					</div>
+					<div className='Channels-available'>
+						{
+							//recup la liste des channels qui va s'appeler channelsAvailable
+							channelsAvailable.length && channelsAvailable?.map((channel:any) => {
+								return(
+									<DisplayChannelAvailable channel={channel} />
+								);	
+							})
+						}
+						<div className='Channels-available-div2'>
+							<Link to="/setchannel">
+								<CreateChannelButton variant="contained" disableRipple>Create a channel</CreateChannelButton>
+							</Link>
 						</div>
 					</div>
 				</div>

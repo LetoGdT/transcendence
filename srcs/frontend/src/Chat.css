@@ -20,6 +20,11 @@
 	border-color: '#646464';
 }
 
+.Chat-navigate-new-msg{
+	color: '#ffd700';
+	font-weight: 'bold';
+}
+
 .Chat-history-container{
 	display: flex;
 	flex-direction: column-reverse;
@@ -100,4 +105,23 @@
 
 .p.chat{
 	word-break: break-all;
+}
+
+
+.Channels-available{
+	display: flex;
+	flex-direction: column;
+	align-self: flex-start;
+	margin-right: 3px;
+}
+
+.Channels-available-div{
+	display: flex;
+	flex-direction: row;
+	align-self: flex-start;
+	margin-right: 3px;
+}
+
+.Channels-available-div2{
+
 }
