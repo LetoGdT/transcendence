@@ -376,7 +376,6 @@ function DisplayChannelAvailable(props: any){
 		setPassword(e.target.value);
 	};
 
-	// const res1 = friend?.data.find(({ id }) => id === uid);
 	const isIn = channel.users.find(({ id }: any) => id === currentUser.id);
 	const isBan = channel.banlist.find(({ id }: any) => id === currentUser.id);
 
@@ -447,7 +446,6 @@ function ChannelList(props: any) {
 	return (
 		<div className='Channels-available'>
 			{
-				//recup la liste des channels qui va s'appeler channelsAvailable
 				props?.channelsAvailable?.map((channel:any) => {
 					return(
 						<DisplayChannelAvailable channel={channel} currentUser={props?.currentUser}/>
@@ -732,6 +730,7 @@ function Chat() {
 							</div>
 						</div>
 					</div>
+					<div className='empty'></div>
 					<ChannelList channelsAvailable={channelsAvailable} currentUser={currentUser} />
 				</div>
 			</React.Fragment>
