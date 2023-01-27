@@ -335,6 +335,10 @@ class GameManager {
 		this.games = [];
 	}
 
+	getGames(): Game[] {
+		return this.games;
+	}
+
 	removeFinishedGames() {
 		let i, j;
 		
@@ -367,33 +371,6 @@ class GameManager {
 		this.games.push(game);
 
 		console.log(`New game started (total ${this.games.length})`);
-
-		// const game = new Game(50, 'Ranked');
-
-		// game.addPlayer({ user: client.user, client: client.client });
-		// game.addPlayer({ user: opponent.user, client: opponent.client });
-		// client.client.emit('gameFound');
-		// opponent.client.emit('gameFound');
-		// games.push(game);
-		// await game.run();
-		// const gameIndex: number = games.findIndex(async game => {
-		// 	(await game.getPlayer1Id()) == client.user.id
-		// 	&& (await game.getPlayer2Id()) == opponent.user.id
-		// });
-		// games.splice(gameIndex, 1);
-		// const score: { player1: number, player2: number } = await game.getScore(1);
-		// const winner: User = score.player1 === 5 ? client.user : opponent.user;
-		// const createMatchDto: CreateMatchDto = {
-		// 	user1: client.user,
-		// 	user2: opponent.user,
-		// 	score_user1: score.player1,
-		// 	score_user2: score.player2,
-		// 	winner: winner,
-		// 	played_at: new Date(),
-		// 	game_type: 'Ranked',
-		// };
-		// const match = await this.matchesService.createMatch(createMatchDto);
-		// this.matchesService.calculateRank(match.id);
 	}
 
 	findGameByUser(user: User) {
@@ -488,6 +465,9 @@ export class MySocketGateway implements OnGatewayConnection,
 			gameManager.handleDisconnect(user);
 
 			await this.usersService.changeUserStatus(user.id, 'offline');
+			// TODO spectator mode
+			// for (let game of this.games)
+			// 	game.removeSpectator(this.clients[index]);
 			this.clients.splice(index, 1);
 		}
 	}
@@ -524,6 +504,43 @@ export class MySocketGateway implements OnGatewayConnection,
 				continue ;
 			}
 		}
+	}
+
+	@SubscribeMessage('spectate')
+	async spectate(@ConnectedSocket() client: Socket, @MessageBody() body: {
+			player1_id: number,
+			player2_id: number,
+		})
+	{
+		const index = this.clients.findIndex(connection => connection.client.id == client.id);
+
+		if (index >= 0) {
+			for (const game of gameManager.getGames())
+			{
+				if (game.player1.user.id === body.player1_id &&
+					game.player2.user.id === body.player2_id) {
+
+					// TODO spectator mode
+					// game.addSpectator(this.clients[index]);
+					break;
+				}
+			}
+		}
+	}
+
+	@SubscribeMessage('getGames')
+	async getGames(@ConnectedSocket() client: Socket)
+	{
+		console.log('getGames');
+		const games: { player1_id: number, player2_id: number }[] = [];
+		for (const game of gameManager.getGames()) {
+			games.push({
+				player1_id: game.player1.user.id,
+				player2_id: game.player2.user.id,
+			});
+		}
+		client.emit('returnGames', games);
+		return games;
 	}
 
 	@SubscribeMessage('moveUp')
@@ -581,7 +598,6 @@ export class MySocketGateway implements OnGatewayConnection,
 		gameManager.netPlayerMove(conn.user, body.y);
 	}
 
-	// Think that non ranked dont join a queue
 	@SubscribeMessage('queue')
 	async queueGame(@MessageBody() body: {
 		type: 'Ranked' | 'Quick play',
