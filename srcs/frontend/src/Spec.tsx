@@ -6,18 +6,25 @@ import { Link } from 'react-router-dom';
 import { faEye } from '@fortawesome/free-solid-svg-icons/faEye';
 import { IconButton } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { socket } from './WebsocketContext'
 
 
 type opponentProps = {
 	username: string;
 };
 
+type gameProps = {
+	game: { player1_id: number, player2_id: number };
+}
+
 function DisplayMatch(match:any){
 	const {user1, user2, game_mode} = match.match;
 	const [data1, setResult1] = useState<opponentProps>();
 	const [data2, setResult2] = useState<opponentProps>();
+	const [games, setGames] = useState<gameProps[]>([]);
 
 	useEffect(() => {
+		socket.emit('getGames');
 		const api = async () => {
 			let urltofetch1 : string;
 			urltofetch1 = `http://localhost:9999/api/users/${user1.id}`;
@@ -37,9 +44,15 @@ function DisplayMatch(match:any){
 			const jsonData = await data2.json();
 			setResult2(jsonData);
 		};
-	
 		api();
 	});
+
+	useEffect(() => {
+		socket.on('returnGames', (data) => {
+			console.log(data);
+			setGames(data);
+		});
+	}, []);
 
 	var url1: string = "/otherprofile";
 	url1 = url1.concat("/");

@@ -72,6 +72,8 @@ export class MySocketGateway implements OnGatewayConnection,
 					this.queue.get(this.clients[index].user.exp).splice(conn_id, 1);
 			}
 			await this.usersService.changeUserStatus(this.clients[index].user.id, 'offline');
+			for (let game of this.games)
+				game.removeSpectator(this.clients[index]);
 			this.clients.splice(index, 1);
 		}
 	}
@@ -104,6 +106,38 @@ export class MySocketGateway implements OnGatewayConnection,
 	}
 
 	sendMessage(recipient: Socket) {
+	}
+
+	@SubscribeMessage('spectate')
+	async spectate(@ConnectedSocket() client: Socket, @MessageBody() body: {
+			player1_id: number,
+			player2_id: number,
+		})
+	{
+		for (let game of this.games)
+		{
+			if (await game.getPlayer1Id() == body.player1_id
+				&& await game.getPlayer2Id() == body.player2_id)
+			{
+				const index: number = this.clients.findIndex(connection => connection.client.id == client.id);
+				game.addSpectator(this.clients[index]);
+				break;
+			}
+		}
+	}
+
+	@SubscribeMessage('getGames')
+	async getGames(@ConnectedSocket() client: Socket)
+	{
+		console.log('getGames');
+		const games: { player1_id: number, player2_id: number }[] = [];
+		for (let game of this.games)
+			games.push({
+				player1_id: await game.getPlayer1Id(),
+				player2_id: await game.getPlayer2Id(),
+			});
+		client.emit('returnGames', games);
+		return games;
 	}
 
 	@SubscribeMessage('moveUp')
@@ -146,7 +180,6 @@ export class MySocketGateway implements OnGatewayConnection,
 			await game.player2Down();
 	}
 
-	// Think that non ranked dont join a queue
 	@SubscribeMessage('queue')
 	async queueGame(@MessageBody() body: {
 		type: 'Ranked' | 'Quick play',
