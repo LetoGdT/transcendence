@@ -92,7 +92,9 @@ class Game {
 
 	public updateMatchHistory: UpdateMatchHistory;
 
-	constructor(player1: RemotePlayer, player2: RemotePlayer, updateMatchHistory: UpdateMatchHistory) {
+	readonly id: number;
+
+	constructor(player1: RemotePlayer, player2: RemotePlayer, updateMatchHistory: UpdateMatchHistory, id: number) {
 		this.startTime = Date.now();
 
 		this.player1 = player1;
@@ -103,6 +105,19 @@ class Game {
 		this.gameState = GameState.Created;
 
 		this.updateMatchHistory = updateMatchHistory;
+		this.id = id;
+	}
+
+	setInitialSpeed(speed: number)
+	{
+		if (speed >= 5 && speed <= 20)
+			this.initial_speed = speed;
+	}
+
+	setMaxScore(score: number)
+	{
+		if (score >= 5 && score <= 20)
+			this.maxScore = score;
 	}
 
 	resetBall() {
@@ -330,6 +345,7 @@ class Game {
 
 class GameManager {
 	private games: Game[];
+	private id: number = 0;
 
 	constructor() {
 		this.games = [];
@@ -366,7 +382,9 @@ class GameManager {
 	startGame(player1: Connection, player2: Connection, updateMatchHistory: UpdateMatchHistory) {
 		const p1 = new RemotePlayer(player1.client, player1.user);
 		const p2 = new RemotePlayer(player2.client, player2.user);
-		const game = new Game(p1, p2, updateMatchHistory);
+		const game = new Game(p1, p2, updateMatchHistory, this.id);
+
+		this.id++;
 
 		this.games.push(game);
 
@@ -539,46 +557,6 @@ export class MySocketGateway implements OnGatewayConnection,
 		})));
 	}
 
-	@SubscribeMessage('moveUp')
-	async moveUp(@ConnectedSocket() client: Socket,)
-	{
-		// if (this.games == null)
-		// 	throw new WsException('No game created');
-
-		// const index: number = this.games.findIndex(async game => (await game.getPlayer1Socket()).id == client.id
-		// 	|| (await game.getPlayer2Socket()).id == client.id);
-
-		// if (index === -1)
-		// 	throw new WsException('You are not in a game');
-
-		// const game = this.games[index];
-
-		// if ((await game.getPlayer1Socket()).id == client.id)
-		// 	await game.player1Up();
-		// else
-		// 	await game.player2Up();
-	}
-
-	@SubscribeMessage('moveDown')
-	async moveDown(@ConnectedSocket() client: Socket,)
-	{
-		// if (this.games == null)
-		// 	throw new WsException('No game created');
-
-		// const index: number = this.games.findIndex(async game => (await game.getPlayer1Socket()).id == client.id
-		// 	|| (await game.getPlayer2Socket()).id == client.id);
-
-		// if (index === -1)
-		// 	throw new WsException('You are not in a game');
-
-		// const game = this.games[index];
-
-		// if ((await game.getPlayer1Socket()).id == client.id)
-		// 	await game.player1Down();
-		// else
-		// 	await game.player2Down();
-	}
-
 	@SubscribeMessage('move')
 	playerMove(@MessageBody() body: {
 		y: number,
@@ -603,7 +581,6 @@ export class MySocketGateway implements OnGatewayConnection,
 		},
 		@ConnectedSocket() client: Socket,)
 	{
-		// this.chat.printQ(this.queue);
 		const index: number = this.clients.findIndex(connection => connection.client.id == client.id);
 		if (index === -1)
 			throw new WsException('We don\'t know you sir, but that\'s our bad (failed to queue)');
