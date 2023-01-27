@@ -58,8 +58,8 @@ class PongGame
 	public height: number;
 	private player1: Player;
     private player2: Player;
-	private scorePlayer1: number; // TODO only get it from the back. private or public ? 
-	private scorePlayer2: number; // TODO only get it from the back. private or public ?
+	private scorePlayer1: number;
+	private scorePlayer2: number;
 	private scoreToWin: number;
     private start: boolean = true; // Meaning start screen
     private over: boolean = false; // Meaning game over
@@ -88,7 +88,7 @@ class PongGame
         this.player2 = new Player(width - PLAYER_WIDTH, (height - PLAYER_HEIGHT) / 2);
 		this.scorePlayer1 = 0;
 		this.scorePlayer2 = 0;
-		this.scoreToWin = 50; // TODO get it from slider in the front when game launched (customization option)
+		this.scoreToWin = 50; // TODO get it from slider on the webpage but set it in the back (maxscore) when game launched (customization option)
 
         this.ball = new Ball(width / 2, height / 2);
         this.keyStates = [];
