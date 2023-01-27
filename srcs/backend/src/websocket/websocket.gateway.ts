@@ -139,8 +139,12 @@ class Game {
 
 	tick() {
 		if (this.gameState === GameState.Created) {
-			this.player1.emit('gameFound', { countdown: 3 });
-			this.player2.emit('gameFound', { countdown: 3 });
+			if (null != this.player1.socket) {
+				this.netSendGameFoundPacket(this.player1.socket);
+			}
+			if (null != this.player2.socket) {
+				this.netSendGameFoundPacket(this.player2.socket);
+			}
 			this.gameState = GameState.Countdown;
 		} else if (this.gameState === GameState.Countdown) {
 			if (this.timeSinceStart() >= 4000) {
@@ -321,7 +325,7 @@ class Game {
 		if (idx < 0) {
 			this.spectators.push(socket);
 
-			socket.emit('gameFound', { countdown: 3 });
+			this.netSendGameFoundPacket(socket);
 			if (this.gameState === GameState.Playing) {
 				socket.emit('start');
 				this.sendScoreUpdatePacket();
@@ -361,12 +365,18 @@ class Game {
 			return ;
 		}
 
-		socket.emit('gameFound');
+		this.netSendGameFoundPacket(socket);
 		if (this.gameState === GameState.Playing) {
 			player.emit('state', this.createStateUpdatePacket(playerIndex, true));
 			socket.emit('start');
 			this.sendScoreUpdatePacket();
 		}
+	}
+
+	netSendGameFoundPacket(socket: Socket) {
+		socket.emit('gameFound', {
+			countdown: Math.min(4000, this.timeSinceStart())
+		});
 	}
 }
 

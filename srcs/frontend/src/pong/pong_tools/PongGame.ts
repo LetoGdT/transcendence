@@ -96,6 +96,10 @@ class PongGame
 		this.currentTicks = 0;
     }
 
+	setCountdownStart(countdownStart: number) {
+		this.countdownStart = countdownStart;
+	}
+
 	setErrorMessage(errorMessage: string) {
 		this.errorMessage = errorMessage;
 	}
@@ -355,11 +359,7 @@ class PongGame
 
 	drawScore(ctx: CanvasRenderingContext2D)
 	{
-		ctx.lineWidth = 8;
-		ctx.strokeStyle = 'white';
-		// ctx.lineJoin = 'square';
-		
-		// Draw player 1 score
+		ctx.fillStyle = 'white';
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 		ctx.font = '72px Georgia, serif';
