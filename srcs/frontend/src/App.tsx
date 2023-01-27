@@ -23,6 +23,7 @@ import { socket, websocketContext } from './WebsocketContext';
 import toast, {Toaster} from 'react-hot-toast';
 import { setUpNewMessageNotificationsFn, setUpNewGameNotificationFn } from './Notifications';
 import { SetPrivateGame } from './SetPrivateGame';
+import { SetChannel } from './SetChannel';
 
 function App() {
 	const router = 
@@ -56,6 +57,7 @@ function App() {
 						<Route path='/2fa' element={<AuthWith2FA />} />
 						<Route path='/activate2fa' element={<Activate2FA />} />
 						<Route path='/pong' element={<Pong/>} />
+						<Route path='/setchannel' element={<SetChannel />} />
 						<Route path='*' element={<NotFound/>} />
 					</Routes>
 				</div>

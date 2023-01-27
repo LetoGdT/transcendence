@@ -106,3 +106,22 @@
 .p.chat{
 	word-break: break-all;
 }
+
+
+.Channels-available{
+	display: flex;
+	flex-direction: column;
+	align-self: flex-start;
+	margin-right: 3px;
+}
+
+.Channels-available-div{
+	display: flex;
+	flex-direction: row;
+	align-self: flex-start;
+	margin-right: 3px;
+}
+
+.Channels-available-div2{
+
+}
