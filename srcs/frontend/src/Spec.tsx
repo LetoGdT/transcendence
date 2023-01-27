@@ -100,11 +100,13 @@ function SpecAMatch(){
 		// api();
 	}, []);
 
+	const updateGames = (games: matchInfo[]) => setGames(games);
+
 	useEffect(() => {
-		socket.on('returnGames', (data) => {
-			console.log(data);
-			setGames(data);
-		});
+		socket.on('returnGames', updateGames);
+		return () => {
+			socket.off('returnGames', updateGames);
+		}
 	}, []);
 
 	return(
