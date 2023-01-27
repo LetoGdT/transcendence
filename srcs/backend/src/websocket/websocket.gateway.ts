@@ -334,16 +334,18 @@ class Game {
 	}
 	
 	removeSpectator(socket: Socket) {
+		const idx = this.spectators.findIndex(e => e.id === socket.id);
 
+		if (idx >= 0) {
+			this.spectators.splice(idx, 1);
+		}
 	}
 
 	handleDisconnect(user: User) {
 		if (user.id === this.player1.user.id) {
 			this.player1.socket = null;
-			console.log('Player 1 left');
 		} else if (user.id === this.player2.user.id) {
 			this.player2.socket = null;
-			console.log('Player 2 left');
 		}
 	}
 
@@ -355,12 +357,10 @@ class Game {
 			playerIndex = 1;
 			player = this.player1;
 			this.player1.socket = socket;
-			console.log('Player 1 reconnected');
 		} else if (user.id === this.player2.user.id) {
 			playerIndex = 2;
 			player = this.player2;
 			this.player2.socket = socket;
-			console.log('Player 2 reconnected');
 		} else {
 			return ;
 		}
@@ -424,8 +424,6 @@ class GameManager {
 		this.id++;
 
 		this.games.push(game);
-
-		console.log(`New game started (total ${this.games.length})`);
 	}
 
 	findGameByUser(user: User) {
@@ -440,11 +438,15 @@ class GameManager {
 		}
 	}
 
-	handleDisconnect(user: User) {
+	handleDisconnect({ user, client }: Connection) {
 		const game = this.findGameByUser(user);
 
-		if (undefined !== game) {
+		if (null != game) {
 			game.handleDisconnect(user);
+		}
+
+		for (const game of this.games) {
+			game.removeSpectator(client);
 		}
 	}
 }
@@ -500,7 +502,8 @@ export class MySocketGateway implements OnGatewayConnection,
 		const index = this.clients.findIndex(element => element.client.id == client.id);
 
 		if (index != -1) {
-			const user = this.clients[index].user;
+			const conn = this.clients[index];
+			const { user } = conn;
 			//const connections = this.queue.get(user.exp);
 
 			console.log(user.username + " has disconnected from the websocket.");
@@ -517,7 +520,7 @@ export class MySocketGateway implements OnGatewayConnection,
 				this.matchmakingQueue.splice(queueIdx, 1);
 			}
 
-			gameManager.handleDisconnect(user);
+			gameManager.handleDisconnect(conn);
 
 			await this.usersService.changeUserStatus(user.id, 'offline');
 			// TODO spectator mode
