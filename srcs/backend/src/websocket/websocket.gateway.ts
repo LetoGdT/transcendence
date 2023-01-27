@@ -531,16 +531,12 @@ export class MySocketGateway implements OnGatewayConnection,
 	@SubscribeMessage('getGames')
 	async getGames(@ConnectedSocket() client: Socket)
 	{
-		console.log('getGames');
-		const games: { player1_id: number, player2_id: number }[] = [];
-		for (const game of gameManager.getGames()) {
-			games.push({
-				player1_id: game.player1.user.id,
-				player2_id: game.player2.user.id,
-			});
-		}
-		client.emit('returnGames', games);
-		return games;
+		client.emit('returnGames', gameManager.getGames().map(game => ({
+			player1_id: game.player1.user.id,
+			player2_id: game.player2.user.id,
+			player1_username: game.player1.user.username,
+			player2_username: game.player2.user.username,
+		})));
 	}
 
 	@SubscribeMessage('moveUp')
