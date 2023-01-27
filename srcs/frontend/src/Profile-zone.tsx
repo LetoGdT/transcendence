@@ -237,9 +237,9 @@ export function Profile(){
 												<IconButton color="success" aria-label="accept" onClick={()=>{
 													socket.emit('respondToInvite', { id: uid });
 												}}>
+													<CheckIcon />
+												</IconButton>
 											</Link>
-												<CheckIcon />
-											</IconButton>
 										</div>
 										<div>
 											<IconButton color="error" aria-label="reject" onClick={()=>{
