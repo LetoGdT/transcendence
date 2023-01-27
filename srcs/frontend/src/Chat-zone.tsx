@@ -297,9 +297,10 @@ function Chat() {
 
 	useEffect(() => {
 		socket.on('newMessage', (data) => {
+			console.log(new Date());
 			const convId: number = data?.convId;
-			const latest_sent: Date = data?.latest_sent;
-			let res: Conversation[] = convList;
+			const latest_sent: Date = new Date(data?.latest_sent);
+			let res: Conversation[] = [...convList];
 
 			for (var conv of res) {
 				if (conv.id === convId) {
@@ -347,7 +348,7 @@ function Chat() {
 			return ({
 				id: elem.id,
 				is_channel: false,
-				date_of_last_message: elem.latest_sent,
+				date_of_last_message: new Date(elem.latest_sent),
 				name: name,
 				new_message: false
 			});
@@ -362,7 +363,7 @@ function Chat() {
 			return ({
 				id: elem.id,
 				is_channel: true,
-				date_of_last_message: elem.latest_sent,
+				date_of_last_message: new Date(elem.latest_sent),
 				name: elem.name,
 				new_message: false
 			});
@@ -418,7 +419,7 @@ function Chat() {
 
 	const handleChangeConv= async (event: any) => {
 		const id = event.target.value;
-		let convs = convList;
+		let convs = [...convList];
 		for (var elem of convs)
 			if (elem.id === id) {
 				setCurrentConv(id);
