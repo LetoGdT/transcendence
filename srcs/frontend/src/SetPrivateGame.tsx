@@ -136,6 +136,7 @@ export function SetPrivateGame(){
 			winning_score: newPts,
 			opponent_id: uid
 		})
+		socket.emit('newGame', {id: uid});
 	};
 
 	const handleNewPts = (value: any) => {

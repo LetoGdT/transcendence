@@ -7,6 +7,9 @@ import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
 
 import { PleaseConnect } from './adaptable-zone';
+import { socket } from './WebsocketContext';
+import { getAllPaginated } from './tools';
+import { disableNewMessageNotificationsFn, setUpNewMessageNotificationsFn } from './Notifications'
 
 const SendButton = styled(Button)({
 	boxShadow: 'none',
@@ -225,7 +228,10 @@ function Chat() {
 	const [newMessage, setNewMessage] = React.useState("");
 		
 	useEffect(() => {
+		disableNewMessageNotificationsFn();
 		updateUsersMe();
+
+		return setUpNewMessageNotificationsFn;
 	}, []);
 
 	useEffect(() => {
@@ -238,6 +244,33 @@ function Chat() {
 			setIsChannel(convList[0].is_channel);
 		}
 	}, [convList])
+
+	useEffect(() => {
+		socket.on('newMessage', (data) => {
+			const convId: number = data?.convId;
+			const latest_sent: Date = data?.latest_sent;
+			let res: Conversation[] = convList;
+
+			for (var conv of res) {
+				if (conv.id === convId) {
+					if (conv.id !== currentConv)
+						conv.new_message = true;
+					conv.date_of_last_message = latest_sent;
+					res.sort((a, b) => a.date_of_last_message.getTime() - b.date_of_last_message.getTime());
+					setConvList(res);
+					continue ;
+				}
+			}
+			if (convId === currentConv) {
+				updateMessages();
+			}
+		});
+		
+		return () => {
+			socket.off('newMessage');
+			socket.off('newConvChan');
+		}
+	}, [convList, currentConv]);
 
 	useEffect(() => {
 		updateMessages();
@@ -311,19 +344,15 @@ function Chat() {
 	async function updateMessages() {
 		// Fetch messages according to the selected conversation or channel
 		if (currentConv !== -1) {
-			let uri: string = 'http://localhost:9999/api/';
+			let url: string = '';
 			if (isChannel)
-				uri += 'channels/';
+				url += 'channels/';
 			else 
-				uri += 'conversations/';
-			uri += currentConv +
-				'/messages?order=ASC';
-			fetch(uri, {
-				method: "GET",
-				credentials: 'include'
-			})
-			.then(response=>response.json())
-			.then(data => setMessages(data?.data.map((elem: any) => {
+				url += 'conversations/';
+			url += currentConv +
+				'/messages';
+			getAllPaginated(url, {params: new URLSearchParams({order: "DESC"})})
+			.then(data => setMessages(data.map((elem: any) => {
 				return ({
 					id: elem.id,
 					content: elem.content,
@@ -352,7 +381,9 @@ function Chat() {
 	}
 
 	const handleSendMessage = async () => {
-		await fetch(`http://localhost:9999/api/conversations/${currentUser.id}/messages`, {
+		if (newMessage.length === 0)
+			return ;
+		await fetch(`http://localhost:9999/api/${isChannel?'channels':'conversations'}/${currentConv}/messages`, {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -361,6 +392,8 @@ function Chat() {
 			credentials: 'include',
 			body: JSON.stringify({content: newMessage})
 		});
+		socket.emit("newMessage", {convId: currentConv, isChannel: isChannel});
+		setNewMessage(""); // Sert à effacer le message une fois qu'on a appuyé sur le bouton send
 	}
 
 	return (

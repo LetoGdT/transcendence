@@ -17,65 +17,12 @@ import { SignUp } from './adaptable-zone';
 import { AuthWith2FA } from './authWith2fa';
 import { Activate2FA } from './activate2fa';
 // import { Pong } from './pong/Pong';
-import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
-import { socket, websocketContext } from './WebsocketContext'
+import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import { socket, websocketContext } from './WebsocketContext';
 // import { useState, useEffect } from 'react';
 import toast, {Toaster} from 'react-hot-toast';
+import { setUpNewMessageNotificationsFn, setUpNewGameNotificationFn } from './Notifications';
 import { SetPrivateGame } from './SetPrivateGame';
-
-const newGame = () => {
-	toast.custom(
-		<div className='Notif'>
-			You've got a new invitation for a game.<br></br>
-			Please go to your profile to accept or reject.
-		</div>,
-		{
-			duration: 5000,
-			position: 'top-center',
-		
-			// Styling
-			// style: {
-			// 	borderRadius: '10px',
-			// 	background: '#007dd6',
-			// 	color: '#fff',
-			// },
-			// className: '',
-		
-			// Custom Icon
-			// icon: '👏',
-		
-			// Change colors of success/error/loading icon
-			// iconTheme: {
-			//   primary: '#000',
-			//   secondary: '#fff',
-			// },
-		
-			// Aria
-			ariaProps: {
-			role: 'status',
-			'aria-live': 'polite',
-			},
-		}
-	);
-};
-
-const newMessage = () => {
-	toast.custom(
-		<div className='Notif'>
-			You've got a new message in chat.
-		</div>,
-		{
-			duration: 5000,
-			position: 'top-center',
-
-			// Aria
-			ariaProps: {
-			role: 'status',
-			'aria-live': 'polite',
-			},
-		}
-	);
-};
 
 function App() {
 	const router = 
@@ -87,8 +34,6 @@ function App() {
 				<OurMenu/>
 			</div>
 			<div>
-				<button onClick={newGame}>Make me a toast</button>
-				<button onClick={newMessage}>Make me a toast</button>
 				<Toaster />
 			</div>
 			<div className='Adaptable'>
@@ -134,6 +79,9 @@ function App() {
 		};
 	
 		api();
+
+		setUpNewMessageNotificationsFn();
+		setUpNewGameNotificationFn();
 	}, []);
 	
 	const isLoggedIn = me;

@@ -3,6 +3,7 @@ import { Paddle } from './paddle.class';
 import { Score } from './score.class';
 import { User } from '../../typeorm/user.entity';
 import { Vector2D } from '../../interfaces/object2D.interface';
+import { Connection } from '../../interfaces/connection.interface';
 import { Socket } from 'socket.io';
 
 interface Player
@@ -24,6 +25,7 @@ export class Game
 	readonly type: 'Ranked' | 'Quick play';
 	private readonly refresh_rate: number;
 	private start: boolean = false;
+	private spectators: Connection[] = [];
 
 	constructor(refresh_rate: number, type: 'Ranked' | 'Quick play')
 	{
@@ -51,6 +53,28 @@ export class Game
 	{
 		if (this.player2 != null)
 			this.player2.client = client;
+	}
+
+	async addSpectator(connection: Connection): Promise<boolean>
+	{
+		for (let spectator of this.spectators)
+		{
+			if (spectator.user.id == connection.user.id)
+				return false;
+		}
+
+		this.spectators.push(connection);
+		return true;
+	}
+
+	async removeSpectator(connection: Connection): Promise<void>
+	{
+		const index = this.spectators.findIndex((spectator) => {
+			return spectator.user.id == connection.user.id;
+		})
+
+		if (index !== -1)
+			this.spectators.splice(index, 1);
 	}
 
 	async getPlayer1Id()
@@ -182,6 +206,13 @@ export class Game
 		return coordinates;
 	}
 
+	async sendInfo(client: Socket, pov: number)
+	{
+		client.emit('ball', await this.getBall(pov));
+		client.emit('players', await this.getPlayers(pov));
+		client.emit('score', await this.getScore(pov));
+	}
+
 	async run()
 	{
 		if (!this.player1 || !this.player2)
@@ -193,29 +224,30 @@ export class Game
 		await this.player2.paddle.setX(1040 - 13);
 
 		this.start = true;
+		for (let spectator of this.spectators)
+			spectator.client.emit('start');
 		this.player1.client.emit('start');
 		this.player2.client.emit('start');
-		this.player1.client.emit('ball', await this.getBall(1));
-		this.player1.client.emit('players', await this.getPlayers(1));
-		this.player1.client.emit('score', await this.getScore(1));
-		this.player2.client.emit('ball', await this.getBall(2));
-		this.player2.client.emit('players', await this.getPlayers(2));
-		this.player2.client.emit('score', await this.getScore(2));
+
+		this.sendInfo(this.player1.client, 1);
+		this.sendInfo(this.player1.client, 2);
+		for (let spectator of this.spectators)
+			this.sendInfo(spectator.client, 1);
 		while (true)
 		{
 			await this.update();
 			if (this.winner !== null)
 				break;
-			this.player1.client.emit('ball', await this.getBall(1));
-			this.player1.client.emit('players', await this.getPlayers(1));
-			this.player1.client.emit('score', await this.getScore(1));
-			this.player2.client.emit('ball', await this.getBall(2));
-			this.player2.client.emit('players', await this.getPlayers(2));
-			this.player2.client.emit('score', await this.getScore(2));
+			this.sendInfo(this.player1.client, 1);
+			this.sendInfo(this.player1.client, 2);
+			for (let spectator of this.spectators)
+				this.sendInfo(spectator.client, 1);
 			await new Promise(r => setTimeout(r, 10));
 		}
 
 		this.player1.client.emit('winner', { score: await this.getScore(1) });
 		this.player2.client.emit('winner', { score: await this.getScore(2) });
+		for (let spectator of this.spectators)
+				spectator.client.emit('winner', { score: await this.getScore(1) });
 	}
 }

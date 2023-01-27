@@ -113,7 +113,7 @@ export class MatchesService
 			.leftJoinAndSelect('match.user1', 'user1')
 			.leftJoinAndSelect('match.user2', 'user2')
 			.leftJoinAndSelect('match.winner', 'winner')
-			.where('match.id = :id', { match_id: match_id });
+			.where('match.id = :match_id', { match_id: match_id });
 
 		const match: Match | null = await queryBuilder.getOne();
 
