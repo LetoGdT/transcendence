@@ -17,53 +17,29 @@ type gameProps = {
 	game: { player1_id: number, player2_id: number };
 }
 
-function DisplayMatch(match:any){
-	const {user1, user2} = match.match;
-	const [data1, setResult1] = useState<opponentProps>();
-	const [data2, setResult2] = useState<opponentProps>();
+type matchInfo = {
+	player1_id: number;
+	player2_id: number;
+	player1_username: string;
+	player2_username: string;
+}
 
-	useEffect(() => {
-		const api = async () => {
-			let urltofetch1 : string;
-			urltofetch1 = `http://localhost:9999/api/users/${user1.id}`;
-			const data1 = await fetch(urltofetch1, {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonData1 = await data1.json();
-			setResult1(jsonData1);
-			
-			let urltofetch : string;
-			urltofetch = `http://localhost:9999/api/users/${user2.id}`;
-			const data2 = await fetch(urltofetch, {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonData = await data2.json();
-			setResult2(jsonData);
-		};
-		api();
-	});
-
-	var url1: string = "/otherprofile";
-	url1 = url1.concat("/");
-	url1 = url1.concat(user1.id.toString());
-	var url2: string = "/otherprofile";
-	url2 = url2.concat("/");
-	url2 = url2.concat(user2.id.toString());
+function DisplayMatch({ match: { player1_id, player2_id, player1_username, player2_username } }: { match: matchInfo }) {
+	const url1 = `/otherprofile/${player1_id}`;
+	const url2 = `/otherprofile/${player2_id}`;
 
 	const handleClickSee = async (event:any) => {
 		socket.emit('spectate', {
-			player1_id: user1.id,
-			player2_id: user2.id,
-		})
-	}
+			player1_id,
+			player2_id,
+		});
+	};
 
 	return(
 		<div className='Spec-container-div'>
 			<div className='Spec-container-who'>
 				<Link to={url1}>
-					{data1?.username}
+					{player1_username}
 				</Link>
 			</div>
 			<div className='Spec-container-VS'>
@@ -71,7 +47,7 @@ function DisplayMatch(match:any){
 			</div>
 			<div className='Spec-container-who'>
 				<Link to={url2}>
-					{data2?.username}
+					{player2_username}
 				</Link>
 			</div>
 			<div className='empty'></div>
@@ -94,10 +70,14 @@ function DisplayMatch(match:any){
 function SpecAMatch(){
 	// const [data1, setResult1] = useState<opponentProps>();
 	// const [data2, setResult2] = useState<opponentProps>();
-	const [games, setGames] = useState<gameProps[]>([]);
+	const [games, setGames] = useState<matchInfo[]>([]);
 
 	useEffect(() => {
 		socket.emit('getGames');
+		const refreshTimer = setInterval(() => {
+			socket.emit('getGames');
+		}, 1000);
+		return () => clearInterval(refreshTimer);
 		// const api = async () => {
 		// 	let urltofetch1 : string;
 		// 	urltofetch1 = `http://localhost:9999/api/users/${user1.id}`;
@@ -118,24 +98,24 @@ function SpecAMatch(){
 		// 	setResult2(jsonData);
 		// };
 		// api();
-	});
+	}, []);
+
+	const updateGames = (games: matchInfo[]) => setGames(games);
 
 	useEffect(() => {
-		socket.on('returnGames', (data) => {
-			console.log(data);
-			setGames(data);
-		});
+		socket.on('returnGames', updateGames);
+		return () => {
+			socket.off('returnGames', updateGames);
+		}
 	}, []);
 
 	return(
 		<React.Fragment>
 			<h1>Spec a Match</h1>
 			<div className='Spec-container'>
-				{games.length> 0 && games.map((match:any) => {
-					return(
-						<DisplayMatch match={match} />
-					);
-				})}
+				{games.map((match: matchInfo) => 
+					<DisplayMatch key={`${match.player1_id}-${match.player2_id}`} match={match} />
+				)}
 			</div>
 		</React.Fragment>
 	);
