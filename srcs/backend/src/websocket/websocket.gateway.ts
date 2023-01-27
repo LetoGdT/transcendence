@@ -20,6 +20,10 @@ import { Connection } from '../interfaces/connection.interface';
 // import { Game } from './game/game.class';
 import { CreateMatchDto } from '../dto/matches.dto';
 
+/* Sync with frontend's code */
+const PLAYER_HEIGHT = 100;
+const PLAYER_WIDTH = 13;
+
 class RemotePlayer {
 	socket: Socket | null;
 	user: User;
@@ -58,6 +62,9 @@ interface NetworkedGameState {
 	authoritative: boolean;
 }
 
+const GAME_WIDTH = 1040;
+const GAME_HEIGHT = 680;
+
 class Game {
 	private startTime: number;
 	private player1: RemotePlayer;
@@ -66,6 +73,20 @@ class Game {
 	private maxScore: number;
 
 	private gameState: GameState;
+
+	private ballX: number = 0;
+	private ballY: number = 0;
+
+	private ballDirX: number = 0;
+	private ballDirY: number = 0;
+
+	private ballInitialSpeed: number = 10;
+	private ballAcceleration: number = 0.03;
+	private ballSpeed: number = 0;
+	private ballRadius: number = 5;
+
+	/* Do a short pause after a player scored */
+	private scoredTimer: number = 0;
 
 	constructor(player1: RemotePlayer, player2: RemotePlayer) {
 		this.startTime = Date.now();
@@ -78,6 +99,21 @@ class Game {
 		this.gameState = GameState.Created;
 	}
 
+	resetBall() {
+		/* Pick a random angle between 0 and 90 degrees */
+		const halfPi = Math.PI / 2;
+		const angle = Math.random() * halfPi + Math.PI / 4;
+		this.ballDirX = Math.cos(angle);
+		this.ballDirY = Math.sin(angle);
+
+		if (Math.random() < 0.5)
+			this.ballDirX *= -1;
+
+		this.ballX = GAME_WIDTH / 2;
+		this.ballY = GAME_HEIGHT / 2;
+		this.ballSpeed = this.ballInitialSpeed;
+	}
+
 	tick() {
 		if (this.gameState === GameState.Created) {
 			this.player1.emit('gameFound', { countdown: 3 });
@@ -87,37 +123,125 @@ class Game {
 			if (this.timeSinceStart() >= 4000) {
 				this.gameState = GameState.Playing;
 
+				this.resetBall();
+
 				this.player1.emit('start');
 				this.player2.emit('start');
+				this.sendScoreUpdatePacket();
 			}
 		} else if (this.gameState === GameState.Playing) {
+			if (this.scoredTimer <= 0) {
+				this.updateBallPosition();
+			} else {
+				--this.scoredTimer;
+			}
+
 			this.sendStateUpdatePacket(1, this.player1); /* Send for player 1 */
 			this.sendStateUpdatePacket(2, this.player2); /* Send for player 2 */
 
 			/* End the game if it is taking too long */
-			if (this.getWinningUser() !== null || this.timeSinceStart() >= 60000) {
+			if (this.getWinningUser() !== null) {
 				this.gameState = GameState.Ended;
 			}
 		}
 	}
 
-	sendStateUpdatePacket(playerIndex: number, player: RemotePlayer) {
+	updateBallPosition() {
+		this.ballX = this.ballX + this.ballDirX * this.ballSpeed;
+		this.ballY = this.ballY + this.ballDirY * this.ballSpeed;
+
+		/* Check if the ball bounces on the up wall and down wall */
+		if (this.ballY + this.ballRadius > GAME_HEIGHT || this.ballY - this.ballRadius < 0)
+        {
+            this.ballDirY *= -1;
+        }
+
+		/* Check if the ball collides with the paddles */
+		if (this.paddleCollides())
+		{
+			this.ballDirX *= -1;
+			// let impact = this.coordinates.y - this.paddle1.bottom - this.paddle1.height / 2;
+			// let ratio = 100 / (this.paddle1.height / 2);
+			// this.direction.y = Math.round(impact * ratio);
+
+			if (this.ballSpeed <= 100)
+				this.ballSpeed += this.ballSpeed * this.ballAcceleration;
+		}
+		else {
+			if (this.ballX - this.ballRadius <= PLAYER_WIDTH) {
+				this.playerScored(2);
+			} else if (this.ballX + this.ballRadius >= GAME_WIDTH - PLAYER_WIDTH) {
+				this.playerScored(1);
+			}
+		}
+	}
+
+	playerScored(playerIndex: number) {
+		this.resetBall();
+		
+		if (playerIndex === 1) {
+			this.player1.score++;
+		} else if (playerIndex === 2) {
+			this.player2.score++;
+		}
+
+		this.sendScoreUpdatePacket();
+
+		this.scoredTimer = 75; /* 1.5s * TPS (50) */
+	}
+
+	paddleCollides() {
+		const paddle1Top = this.player1.y;
+		const paddle1Bottom = paddle1Top + PLAYER_HEIGHT;
+
+		const paddle2Top = this.player2.y;
+		const paddle2Bottom = paddle2Top + PLAYER_HEIGHT;
+
+		if ((this.ballX - this.ballRadius <= PLAYER_WIDTH
+			&& this.ballY + this.ballRadius >= paddle1Top
+			&& this.ballY - this.ballRadius <= paddle1Bottom)
+		|| (this.ballX + this.ballRadius >= GAME_WIDTH - PLAYER_WIDTH
+			&& this.ballY + this.ballRadius >= paddle2Top
+			&& this.ballY - this.ballRadius <= paddle2Bottom)) {
+		
+			return true;
+		}
+		return false;
+	}
+
+	sendScoreUpdatePacket() {
+		this.player1.emit('score', {
+			score1: this.player1.score,
+			score2: this.player2.score,
+		});
+
+		this.player2.emit('score', {
+			score1: this.player2.score,
+			score2: this.player1.score,
+		});
+	}
+
+	sendStateUpdatePacket(playerIndex: number, player: RemotePlayer, forceUpdate: boolean = false) {
 		const state: NetworkedGameState = {
 			p1_y: 0,
 			p2_y: 0,
-			ball_x: 40,
-			ball_y: 0,
-			ball_dx: 0,
-			ball_dy: 0,
-			authoritative: false,
+			ball_x: 0,
+			ball_y: this.ballY,
+			ball_dx: this.ballDirX,
+			ball_dy: this.ballDirY,
+			authoritative: forceUpdate,
 		};
 
 		if (1 === playerIndex) {
 			state.p1_y = this.player1.y;
 			state.p2_y = this.player2.y;
+			state.ball_x = this.ballX;
 		} else if (2 === playerIndex) {
 			state.p1_y = this.player2.y;
 			state.p2_y = this.player1.y;
+			state.ball_x = GAME_WIDTH - this.ballX - 1;
+		} else {
+			throw new WsException('Hein?');
 		}
 
 		player.emit('state', state);
@@ -152,6 +276,42 @@ class Game {
 
 	hasUser(user: User) {
 		return (user.id === this.player1.user.id || user.id === this.player2.user.id);
+	}
+
+	handleDisconnect(user: User) {
+		if (user.id === this.player1.user.id) {
+			this.player1.socket = null;
+			console.log('Player 1 left');
+		} else if (user.id === this.player2.user.id) {
+			this.player2.socket = null;
+			console.log('Player 2 left');
+		}
+	}
+
+	reconnectUser(user: User, socket: Socket) {
+		let playerIndex: number;
+		let player: RemotePlayer;
+
+		if (user.id === this.player1.user.id) {
+			playerIndex = 1;
+			player = this.player1;
+			this.player1.socket = socket;
+			console.log('Player 1 reconnected');
+		} else if (user.id === this.player2.user.id) {
+			playerIndex = 2;
+			player = this.player2;
+			this.player2.socket = socket;
+			console.log('Player 2 reconnected');
+		} else {
+			return ;
+		}
+
+		socket.emit('gameFound');
+		if (this.gameState === GameState.Playing) {
+			this.sendStateUpdatePacket(playerIndex, player, true);
+			socket.emit('start');
+			this.sendScoreUpdatePacket();
+		}
 	}
 }
 
@@ -240,6 +400,14 @@ class GameManager {
 			throw new WsException('Player has no game');
 		}
 	}
+
+	handleDisconnect(user: User) {
+		const game = this.findGameByUser(user);
+
+		if (undefined !== game) {
+			game.handleDisconnect(user);
+		}
+	}
 }
 
 const gameManager = new GameManager();
@@ -309,6 +477,8 @@ export class MySocketGateway implements OnGatewayConnection,
 			if (queueIdx >= 0) {
 				this.matchmakingQueue.splice(queueIdx, 1);
 			}
+
+			gameManager.handleDisconnect(user);
 
 			await this.usersService.changeUserStatus(user.id, 'offline');
 			this.clients.splice(index, 1);
@@ -413,9 +583,16 @@ export class MySocketGateway implements OnGatewayConnection,
 		// this.chat.printQ(this.queue);
 		const index: number = this.clients.findIndex(connection => connection.client.id == client.id);
 		if (index === -1)
-			throw new WsException('We don\'t know you sir, but that\'s our bad');
+			throw new WsException('We don\'t know you sir, but that\'s our bad (failed to queue)');
 		
 		const remoteConn = this.clients[index];
+
+		const game = gameManager.findGameByUser(remoteConn.user);
+
+		if (undefined !== game) {
+			game.reconnectUser(remoteConn.user, remoteConn.client);
+			return ;
+		}
 
 		/*
 		const gameIndex: number = this.games.findIndex(async game => {

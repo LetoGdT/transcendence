@@ -69,8 +69,8 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 const PongGameBootstrap = () =>
 {
 	// const [winner, setWinner] = useState(-1);
-	const [lastUpdate, setLastUpdate] = useState(performance.now());
-	const [checkRefresh, setCheckRefresh] = useState(false);
+	// const [lastUpdate, setLastUpdate] = useState(performance.now());
+	// const [checkRefresh, setCheckRefresh] = useState(false);
 	// const [move, setMove] = useState(false);
 	
 	const game = gameInstance;
@@ -83,43 +83,18 @@ const PongGameBootstrap = () =>
 			socket.emit('queue', { type: 'Ranked' });
 			game.attemptedConnect = true;
 		}
-		if (performance.now() - lastUpdate > 2000 / 50)
-		{
-			// game.update();
-			setLastUpdate(performance.now());
-		}
-		const sleep = async () => {
-			await new Promise(r => setTimeout(r, 10));
-			setCheckRefresh(!checkRefresh);
-		}
-		sleep();
-	}, [checkRefresh]);
+	}, []);
 
 	useEffect(() => {
-		socket.on('ball', (data) => {
-			setLastUpdate(performance.now());
-			game.setBall(data);
-		});
-		socket.on('players', (data) => {
-			setLastUpdate(performance.now());
-			// game.setPlayers(data);
-		});
-		socket.on('score', (data) => {
-			setLastUpdate(performance.now());
-			game.setScore(data);
+		socket.on('score', ({ score1, score2 }) => {
+			game.setScore(score1, score2);
 		});
 		socket.on('gameFound', () => game.setConnecting());
-		socket.on('winner', (data) => {
-			setLastUpdate(performance.now());
-			game.setScore(data);
-			// game.update();
-		});
 		socket.on('queuing', () => game.statusMessage = 'Searching for an opponent...');
 		socket.on('exception', e => {
 			game.setErrorMessage(`Error: ${e.message}`);
 		});
 		socket.on('start', () => game.setStart());
-
 		socket.on('state', state => game.netUpdateState(state));
 	}, []);
 

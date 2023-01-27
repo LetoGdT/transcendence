@@ -100,28 +100,6 @@ class PongGame
 		this.errorMessage = errorMessage;
 	}
 
-	setBall(data: BallData)
-	{
-		this.ball.x = data.coordinates.x;
-		this.ball.y = data.coordinates.y;
-		this.ball.speedX = data.direction.x * data.speed;
-		this.ball.speedY = data.direction.y * data.speed;
-	}
-
-	setPlayers(data: Players)
-	{
-		this.player1.x = data.player1.x;
-		this.player1.y = data.player1.y;
-		this.player2.x = data.player2.x;
-		this.player2.y = data.player2.y;
-	}
-
-	setScore(data: Score)
-	{
-		this.scorePlayer1 = data.player1;
-		this.scorePlayer2 = data.player2;
-	}
-
 	setConnecting()
 	{
 		this.connecting = false;
@@ -611,10 +589,15 @@ class PongGame
 		if (!this.over && !this.start)
 		{
 			this.handleMovement();
-			this.updatePhysics();
+			// this.updatePhysics();
 
 			socket.emit('move', { y: this.player1.y });
 		}
+	}
+
+	setScore(score1: number, score2: number) {
+		this.scorePlayer1 = score1;
+		this.scorePlayer2 = score2;
 	}
 
 	netUpdateState(state: NetworkedGameState) {
@@ -624,6 +607,8 @@ class PongGame
 		}
 
 		this.player2.y = state.p2_y;
+		this.ball.x = state.ball_x;
+		this.ball.y = state.ball_y;
 	}
 
 	handleMovement()
