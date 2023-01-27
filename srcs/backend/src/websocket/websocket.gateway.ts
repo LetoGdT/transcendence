@@ -65,10 +65,12 @@ interface NetworkedGameState {
 const GAME_WIDTH = 1040;
 const GAME_HEIGHT = 680;
 
+type UpdateMatchHistory = (game: Game) => void;
+
 class Game {
-	private startTime: number;
-	private player1: RemotePlayer;
-	private player2: RemotePlayer;
+	public startTime: number;
+	public player1: RemotePlayer;
+	public player2: RemotePlayer;
 
 	private maxScore: number;
 
@@ -88,7 +90,9 @@ class Game {
 	/* Do a short pause after a player scored */
 	private scoredTimer: number = 0;
 
-	constructor(player1: RemotePlayer, player2: RemotePlayer) {
+	public updateMatchHistory: UpdateMatchHistory;
+
+	constructor(player1: RemotePlayer, player2: RemotePlayer, updateMatchHistory: UpdateMatchHistory) {
 		this.startTime = Date.now();
 
 		this.player1 = player1;
@@ -97,12 +101,14 @@ class Game {
 		this.maxScore = 5;
 
 		this.gameState = GameState.Created;
+
+		this.updateMatchHistory = updateMatchHistory;
 	}
 
 	resetBall() {
 		/* Pick a random angle between 0 and 90 degrees */
-		const halfPi = Math.PI / 2;
-		const angle = Math.random() * halfPi + Math.PI / 4;
+		const quarterPi = Math.PI / 4;
+		const angle = Math.random() * quarterPi - quarterPi;
 		this.ballDirX = Math.cos(angle);
 		this.ballDirY = Math.sin(angle);
 
@@ -329,16 +335,12 @@ class GameManager {
 		this.games = [];
 	}
 
-	updateMatchHistory(game: Game) {
-		console.log('updateMatchHistory() with game = ');
-	}
-
 	removeFinishedGames() {
 		let i, j;
 		
 		for (i = 0, j = 0; i < this.games.length; ++i) {
 			if (this.games[j].hasEnded()) {
-				this.updateMatchHistory(this.games[j]);
+				this.games[j].updateMatchHistory(this.games[j]);
 				this.games.splice(j, 1);
 			} else {
 				++j;
@@ -357,10 +359,10 @@ class GameManager {
 		}
 	}
 
-	startGame(player1: Connection, player2: Connection) {
+	startGame(player1: Connection, player2: Connection, updateMatchHistory: UpdateMatchHistory) {
 		const p1 = new RemotePlayer(player1.client, player1.user);
 		const p2 = new RemotePlayer(player2.client, player2.user);
-		const game = new Game(p1, p2);
+		const game = new Game(p1, p2, updateMatchHistory);
 
 		this.games.push(game);
 
@@ -632,7 +634,19 @@ export class MySocketGateway implements OnGatewayConnection,
 				const p1 = this.matchmakingQueue.pop();
 				const p2 = this.matchmakingQueue.pop();
 
-				gameManager.startGame(p1, p2);
+				gameManager.startGame(p1, p2, async (game: Game) => {
+					const createMatchDto: CreateMatchDto = {
+						user1: game.player1.user,
+						user2: game.player2.user,
+						score_user1: game.player1.score,
+						score_user2: game.player2.score,
+						winner: game.getWinningUser(),
+						played_at: new Date(game.startTime),
+						game_type: 'Ranked',
+					};
+					const match = await this.matchesService.createMatch(createMatchDto);
+					this.matchesService.calculateRank(match.id);
+				});
 			} else {
 				client.emit('queuing');
 			}
