@@ -141,6 +141,13 @@ class Game {
 
 			/* End the game if it is taking too long */
 			if (this.getWinningUser() !== null) {
+				if (this.player1.score === this.maxScore) {
+					this.player1.emit('win', { didWin: true });
+					this.player2.emit('win', { didWin: false });
+				} else if (this.player2.score === this.maxScore) {
+					this.player1.emit('win', { didWin: false });
+					this.player2.emit('win', { didWin: true });
+				}
 				this.gameState = GameState.Ended;
 			}
 		}
@@ -396,8 +403,6 @@ class GameManager {
 
 		if (undefined !== game) {
 			game.netPlayerMove(user, y);
-		} else {
-			throw new WsException('Player has no game');
 		}
 	}
 

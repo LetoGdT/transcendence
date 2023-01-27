@@ -73,6 +73,8 @@ class PongGame
 	private startTimer: number;
 	private currentTicks: number;
 
+	private didWin: boolean = false;
+
 	public attemptedConnect: boolean = false;
 	public statusMessage: string = "Connecting...";
 
@@ -210,7 +212,7 @@ class PongGame
 				this.ball.x = this.width / 2; // TODO ball update (websocket)
 				this.ball.y = this.height / 2; // TODO ball update (websocket)
 				this.drawScore(ctx);
-				if (this.scorePlayer1 === this.scoreToWin)
+				if (this.didWin)
 				{
 					// Draw 'VICTORY'
 					ctx.strokeStyle = 'white';
@@ -270,7 +272,7 @@ class PongGame
 					ctx.lineTo(830, 415);
 					ctx.stroke();
 				}
-				else if (this.scorePlayer2 === 5)
+				else
 				{
 					// Draw 'DEFEAT'
 					ctx.strokeStyle = 'white';
@@ -525,6 +527,11 @@ class PongGame
         this.ball.x += this.ball.speedX; // TODO ball update (websocket)
         this.ball.y += this.ball.speedY; // TODO ball update (websocket)
     }
+	
+	setOver(didWin: boolean) {
+		this.over = true;
+		this.didWin = didWin;
+	}
  
     collide(opponent: Player)
     {

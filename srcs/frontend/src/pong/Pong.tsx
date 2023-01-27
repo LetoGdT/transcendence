@@ -89,6 +89,7 @@ const PongGameBootstrap = () =>
 		socket.on('score', ({ score1, score2 }) => {
 			game.setScore(score1, score2);
 		});
+		socket.on('win', ({ didWin }) => game.setOver(didWin));
 		socket.on('gameFound', () => game.setConnecting());
 		socket.on('queuing', () => game.statusMessage = 'Searching for an opponent...');
 		socket.on('exception', e => {
