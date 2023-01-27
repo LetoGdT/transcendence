@@ -20,6 +20,10 @@ import { Connection } from '../interfaces/connection.interface';
 // import { Game } from './game/game.class';
 import { CreateMatchDto } from '../dto/matches.dto';
 
+/* Sync with frontend's code */
+const PLAYER_HEIGHT = 100;
+const PLAYER_WIDTH = 13;
+
 class RemotePlayer {
 	socket: Socket | null;
 	user: User;
@@ -58,16 +62,37 @@ interface NetworkedGameState {
 	authoritative: boolean;
 }
 
+const GAME_WIDTH = 1040;
+const GAME_HEIGHT = 680;
+
+type UpdateMatchHistory = (game: Game) => void;
+
 class Game {
-	private startTime: number;
-	private player1: RemotePlayer;
-	private player2: RemotePlayer;
+	public startTime: number;
+	public player1: RemotePlayer;
+	public player2: RemotePlayer;
 
 	private maxScore: number;
 
 	private gameState: GameState;
 
-	constructor(player1: RemotePlayer, player2: RemotePlayer) {
+	private ballX: number = 0;
+	private ballY: number = 0;
+
+	private ballDirX: number = 0;
+	private ballDirY: number = 0;
+
+	private ballInitialSpeed: number = 10;
+	private ballAcceleration: number = 0.03;
+	private ballSpeed: number = 0;
+	private ballRadius: number = 5;
+
+	/* Do a short pause after a player scored */
+	private scoredTimer: number = 0;
+
+	public updateMatchHistory: UpdateMatchHistory;
+
+	constructor(player1: RemotePlayer, player2: RemotePlayer, updateMatchHistory: UpdateMatchHistory) {
 		this.startTime = Date.now();
 
 		this.player1 = player1;
@@ -76,6 +101,23 @@ class Game {
 		this.maxScore = 5;
 
 		this.gameState = GameState.Created;
+
+		this.updateMatchHistory = updateMatchHistory;
+	}
+
+	resetBall() {
+		/* Pick a random angle between 0 and 90 degrees */
+		const quarterPi = Math.PI / 4;
+		const angle = Math.random() * quarterPi - quarterPi;
+		this.ballDirX = Math.cos(angle);
+		this.ballDirY = Math.sin(angle);
+
+		if (Math.random() < 0.5)
+			this.ballDirX *= -1;
+
+		this.ballX = GAME_WIDTH / 2;
+		this.ballY = GAME_HEIGHT / 2;
+		this.ballSpeed = this.ballInitialSpeed;
 	}
 
 	tick() {
@@ -87,37 +129,132 @@ class Game {
 			if (this.timeSinceStart() >= 4000) {
 				this.gameState = GameState.Playing;
 
+				this.resetBall();
+
 				this.player1.emit('start');
 				this.player2.emit('start');
+				this.sendScoreUpdatePacket();
 			}
 		} else if (this.gameState === GameState.Playing) {
+			if (this.scoredTimer <= 0) {
+				this.updateBallPosition();
+			} else {
+				--this.scoredTimer;
+			}
+
 			this.sendStateUpdatePacket(1, this.player1); /* Send for player 1 */
 			this.sendStateUpdatePacket(2, this.player2); /* Send for player 2 */
 
 			/* End the game if it is taking too long */
-			if (this.getWinningUser() !== null || this.timeSinceStart() >= 60000) {
+			if (this.getWinningUser() !== null) {
+				if (this.player1.score === this.maxScore) {
+					this.player1.emit('win', { didWin: true });
+					this.player2.emit('win', { didWin: false });
+				} else if (this.player2.score === this.maxScore) {
+					this.player1.emit('win', { didWin: false });
+					this.player2.emit('win', { didWin: true });
+				}
 				this.gameState = GameState.Ended;
 			}
 		}
 	}
 
-	sendStateUpdatePacket(playerIndex: number, player: RemotePlayer) {
+	updateBallPosition() {
+		this.ballX = this.ballX + this.ballDirX * this.ballSpeed;
+		this.ballY = this.ballY + this.ballDirY * this.ballSpeed;
+
+		/* Check if the ball bounces on the up wall and down wall */
+		if (this.ballY + this.ballRadius > GAME_HEIGHT || this.ballY - this.ballRadius < 0)
+        {
+            this.ballDirY *= -1;
+        }
+
+		/* Check if the ball collides with the paddles */
+		if (this.paddleCollides())
+		{
+			this.ballDirX *= -1;
+			// let impact = this.coordinates.y - this.paddle1.bottom - this.paddle1.height / 2;
+			// let ratio = 100 / (this.paddle1.height / 2);
+			// this.direction.y = Math.round(impact * ratio);
+
+			if (this.ballSpeed <= 100)
+				this.ballSpeed += this.ballSpeed * this.ballAcceleration;
+		}
+		else {
+			if (this.ballX - this.ballRadius <= PLAYER_WIDTH) {
+				this.playerScored(2);
+			} else if (this.ballX + this.ballRadius >= GAME_WIDTH - PLAYER_WIDTH) {
+				this.playerScored(1);
+			}
+		}
+	}
+
+	playerScored(playerIndex: number) {
+		this.resetBall();
+		
+		if (playerIndex === 1) {
+			this.player1.score++;
+		} else if (playerIndex === 2) {
+			this.player2.score++;
+		}
+
+		this.sendScoreUpdatePacket();
+
+		this.scoredTimer = 75; /* 1.5s * TPS (50) */
+	}
+
+	paddleCollides() {
+		const paddle1Top = this.player1.y;
+		const paddle1Bottom = paddle1Top + PLAYER_HEIGHT;
+
+		const paddle2Top = this.player2.y;
+		const paddle2Bottom = paddle2Top + PLAYER_HEIGHT;
+
+		if ((this.ballX - this.ballRadius <= PLAYER_WIDTH
+			&& this.ballY + this.ballRadius >= paddle1Top
+			&& this.ballY - this.ballRadius <= paddle1Bottom)
+		|| (this.ballX + this.ballRadius >= GAME_WIDTH - PLAYER_WIDTH
+			&& this.ballY + this.ballRadius >= paddle2Top
+			&& this.ballY - this.ballRadius <= paddle2Bottom)) {
+		
+			return true;
+		}
+		return false;
+	}
+
+	sendScoreUpdatePacket() {
+		this.player1.emit('score', {
+			score1: this.player1.score,
+			score2: this.player2.score,
+		});
+
+		this.player2.emit('score', {
+			score1: this.player2.score,
+			score2: this.player1.score,
+		});
+	}
+
+	sendStateUpdatePacket(playerIndex: number, player: RemotePlayer, forceUpdate: boolean = false) {
 		const state: NetworkedGameState = {
 			p1_y: 0,
 			p2_y: 0,
-			ball_x: 40,
-			ball_y: 0,
-			ball_dx: 0,
-			ball_dy: 0,
-			authoritative: false,
+			ball_x: 0,
+			ball_y: this.ballY,
+			ball_dx: this.ballDirX,
+			ball_dy: this.ballDirY,
+			authoritative: forceUpdate,
 		};
 
 		if (1 === playerIndex) {
 			state.p1_y = this.player1.y;
 			state.p2_y = this.player2.y;
+			state.ball_x = this.ballX;
 		} else if (2 === playerIndex) {
 			state.p1_y = this.player2.y;
 			state.p2_y = this.player1.y;
+			state.ball_x = GAME_WIDTH - this.ballX - 1;
+		} else {
+			throw new WsException('Hein?');
 		}
 
 		player.emit('state', state);
@@ -153,6 +290,42 @@ class Game {
 	hasUser(user: User) {
 		return (user.id === this.player1.user.id || user.id === this.player2.user.id);
 	}
+
+	handleDisconnect(user: User) {
+		if (user.id === this.player1.user.id) {
+			this.player1.socket = null;
+			console.log('Player 1 left');
+		} else if (user.id === this.player2.user.id) {
+			this.player2.socket = null;
+			console.log('Player 2 left');
+		}
+	}
+
+	reconnectUser(user: User, socket: Socket) {
+		let playerIndex: number;
+		let player: RemotePlayer;
+
+		if (user.id === this.player1.user.id) {
+			playerIndex = 1;
+			player = this.player1;
+			this.player1.socket = socket;
+			console.log('Player 1 reconnected');
+		} else if (user.id === this.player2.user.id) {
+			playerIndex = 2;
+			player = this.player2;
+			this.player2.socket = socket;
+			console.log('Player 2 reconnected');
+		} else {
+			return ;
+		}
+
+		socket.emit('gameFound');
+		if (this.gameState === GameState.Playing) {
+			this.sendStateUpdatePacket(playerIndex, player, true);
+			socket.emit('start');
+			this.sendScoreUpdatePacket();
+		}
+	}
 }
 
 class GameManager {
@@ -162,8 +335,8 @@ class GameManager {
 		this.games = [];
 	}
 
-	updateMatchHistory(game: Game) {
-		console.log('updateMatchHistory() with game = ');
+	getGames(): Game[] {
+		return this.games;
 	}
 
 	removeFinishedGames() {
@@ -171,7 +344,7 @@ class GameManager {
 		
 		for (i = 0, j = 0; i < this.games.length; ++i) {
 			if (this.games[j].hasEnded()) {
-				this.updateMatchHistory(this.games[j]);
+				this.games[j].updateMatchHistory(this.games[j]);
 				this.games.splice(j, 1);
 			} else {
 				++j;
@@ -190,41 +363,14 @@ class GameManager {
 		}
 	}
 
-	startGame(player1: Connection, player2: Connection) {
+	startGame(player1: Connection, player2: Connection, updateMatchHistory: UpdateMatchHistory) {
 		const p1 = new RemotePlayer(player1.client, player1.user);
 		const p2 = new RemotePlayer(player2.client, player2.user);
-		const game = new Game(p1, p2);
+		const game = new Game(p1, p2, updateMatchHistory);
 
 		this.games.push(game);
 
 		console.log(`New game started (total ${this.games.length})`);
-
-		// const game = new Game(50, 'Ranked');
-
-		// game.addPlayer({ user: client.user, client: client.client });
-		// game.addPlayer({ user: opponent.user, client: opponent.client });
-		// client.client.emit('gameFound');
-		// opponent.client.emit('gameFound');
-		// games.push(game);
-		// await game.run();
-		// const gameIndex: number = games.findIndex(async game => {
-		// 	(await game.getPlayer1Id()) == client.user.id
-		// 	&& (await game.getPlayer2Id()) == opponent.user.id
-		// });
-		// games.splice(gameIndex, 1);
-		// const score: { player1: number, player2: number } = await game.getScore(1);
-		// const winner: User = score.player1 === 5 ? client.user : opponent.user;
-		// const createMatchDto: CreateMatchDto = {
-		// 	user1: client.user,
-		// 	user2: opponent.user,
-		// 	score_user1: score.player1,
-		// 	score_user2: score.player2,
-		// 	winner: winner,
-		// 	played_at: new Date(),
-		// 	game_type: 'Ranked',
-		// };
-		// const match = await this.matchesService.createMatch(createMatchDto);
-		// this.matchesService.calculateRank(match.id);
 	}
 
 	findGameByUser(user: User) {
@@ -236,8 +382,14 @@ class GameManager {
 
 		if (undefined !== game) {
 			game.netPlayerMove(user, y);
-		} else {
-			throw new WsException('Player has no game');
+		}
+	}
+
+	handleDisconnect(user: User) {
+		const game = this.findGameByUser(user);
+
+		if (undefined !== game) {
+			game.handleDisconnect(user);
 		}
 	}
 }
@@ -309,9 +461,13 @@ export class MySocketGateway implements OnGatewayConnection,
 			if (queueIdx >= 0) {
 				this.matchmakingQueue.splice(queueIdx, 1);
 			}
-			await this.usersService.changeUserStatus(this.clients[index].user.id, 'offline');
-			for (let game of this.games)
-				game.removeSpectator(this.clients[index]);
+
+			gameManager.handleDisconnect(user);
+
+			await this.usersService.changeUserStatus(user.id, 'offline');
+			// TODO spectator mode
+			// for (let game of this.games)
+			// 	game.removeSpectator(this.clients[index]);
 			this.clients.splice(index, 1);
 		}
 	}
@@ -347,18 +503,18 @@ export class MySocketGateway implements OnGatewayConnection,
 			player2_id: number,
 		})
 	{
-		for (let game of gameManager.games)
-		{
-			if ((await game.getPlayer1Id() == body.player1_id
-							&& await game.getPlayer2Id() == body.player2_id
-							&& await game.started())
-					|| (await game.getPlayer2Id() == body.player1_id
-							&& await game.getPlayer1Id() == body.player2_id
-							&& await game.started()))
+		const index = this.clients.findIndex(connection => connection.client.id == client.id);
+
+		if (index >= 0) {
+			for (const game of gameManager.getGames())
 			{
-				const index: number = this.clients.findIndex(connection => connection.client.id == client.id);
-				game.addSpectator(this.clients[index]);
-				break;
+				if (game.player1.user.id === body.player1_id &&
+					game.player2.user.id === body.player2_id) {
+
+					// TODO spectator mode
+					// game.addSpectator(this.clients[index]);
+					break;
+				}
 			}
 		}
 	}
@@ -368,11 +524,12 @@ export class MySocketGateway implements OnGatewayConnection,
 	{
 		console.log('getGames');
 		const games: { player1_id: number, player2_id: number }[] = [];
-		for (let game of this.games)
+		for (const game of gameManager.getGames()) {
 			games.push({
-				player1_id: await game.getPlayer1Id(),
-				player2_id: await game.getPlayer2Id(),
+				player1_id: game.player1.user.id,
+				player2_id: game.player2.user.id,
 			});
+		}
 		client.emit('returnGames', games);
 		return games;
 	}
@@ -444,9 +601,16 @@ export class MySocketGateway implements OnGatewayConnection,
 		// this.chat.printQ(this.queue);
 		const index: number = this.clients.findIndex(connection => connection.client.id == client.id);
 		if (index === -1)
-			throw new WsException('We don\'t know you sir, but that\'s our bad');
+			throw new WsException('We don\'t know you sir, but that\'s our bad (failed to queue)');
 		
 		const remoteConn = this.clients[index];
+
+		const game = gameManager.findGameByUser(remoteConn.user);
+
+		if (undefined !== game) {
+			game.reconnectUser(remoteConn.user, remoteConn.client);
+			return ;
+		}
 
 		/*
 		const gameIndex: number = this.games.findIndex(async game => {
@@ -481,7 +645,19 @@ export class MySocketGateway implements OnGatewayConnection,
 				const p1 = this.matchmakingQueue.pop();
 				const p2 = this.matchmakingQueue.pop();
 
-				gameManager.startGame(p1, p2);
+				gameManager.startGame(p1, p2, async (game: Game) => {
+					const createMatchDto: CreateMatchDto = {
+						user1: game.player1.user,
+						user2: game.player2.user,
+						score_user1: game.player1.score,
+						score_user2: game.player2.score,
+						winner: game.getWinningUser(),
+						played_at: new Date(game.startTime),
+						game_type: 'Ranked',
+					};
+					const match = await this.matchesService.createMatch(createMatchDto);
+					this.matchesService.calculateRank(match.id);
+				});
 			} else {
 				client.emit('queuing');
 			}

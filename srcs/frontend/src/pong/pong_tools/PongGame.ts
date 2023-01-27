@@ -73,6 +73,8 @@ class PongGame
 	private startTimer: number;
 	private currentTicks: number;
 
+	private didWin: boolean = false;
+
 	public attemptedConnect: boolean = false;
 	public statusMessage: string = "Connecting...";
 
@@ -98,28 +100,6 @@ class PongGame
 
 	setErrorMessage(errorMessage: string) {
 		this.errorMessage = errorMessage;
-	}
-
-	setBall(data: BallData)
-	{
-		this.ball.x = data.coordinates.x;
-		this.ball.y = data.coordinates.y;
-		this.ball.speedX = data.direction.x * data.speed;
-		this.ball.speedY = data.direction.y * data.speed;
-	}
-
-	setPlayers(data: Players)
-	{
-		this.player1.x = data.player1.x;
-		this.player1.y = data.player1.y;
-		this.player2.x = data.player2.x;
-		this.player2.y = data.player2.y;
-	}
-
-	setScore(data: Score)
-	{
-		this.scorePlayer1 = data.player1;
-		this.scorePlayer2 = data.player2;
 	}
 
 	setConnecting()
@@ -232,7 +212,7 @@ class PongGame
 				this.ball.x = this.width / 2; // TODO ball update (websocket)
 				this.ball.y = this.height / 2; // TODO ball update (websocket)
 				this.drawScore(ctx);
-				if (this.scorePlayer1 === this.scoreToWin)
+				if (this.didWin)
 				{
 					// Draw 'VICTORY'
 					ctx.strokeStyle = 'white';
@@ -292,7 +272,7 @@ class PongGame
 					ctx.lineTo(830, 415);
 					ctx.stroke();
 				}
-				else if (this.scorePlayer2 === 5)
+				else
 				{
 					// Draw 'DEFEAT'
 					ctx.strokeStyle = 'white';
@@ -547,6 +527,11 @@ class PongGame
         this.ball.x += this.ball.speedX; // TODO ball update (websocket)
         this.ball.y += this.ball.speedY; // TODO ball update (websocket)
     }
+	
+	setOver(didWin: boolean) {
+		this.over = true;
+		this.didWin = didWin;
+	}
  
     collide(opponent: Player)
     {
@@ -611,10 +596,15 @@ class PongGame
 		if (!this.over && !this.start)
 		{
 			this.handleMovement();
-			this.updatePhysics();
+			// this.updatePhysics();
 
 			socket.emit('move', { y: this.player1.y });
 		}
+	}
+
+	setScore(score1: number, score2: number) {
+		this.scorePlayer1 = score1;
+		this.scorePlayer2 = score2;
 	}
 
 	netUpdateState(state: NetworkedGameState) {
@@ -624,6 +614,8 @@ class PongGame
 		}
 
 		this.player2.y = state.p2_y;
+		this.ball.x = state.ball_x;
+		this.ball.y = state.ball_y;
 	}
 
 	handleMovement()
