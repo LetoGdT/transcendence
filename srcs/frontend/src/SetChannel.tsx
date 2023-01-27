@@ -76,60 +76,40 @@ export function SetChannel(){
     return(
 		<React.Fragment>
 			<h1>Set Channel's parameters</h1>
-			<div className='Set-Channel-container'>
-				<div className='Set-Channel-container-div'>
-					<div>Name: </div>
-					<div>
-						<Box
-							component="form"
-							noValidate
-							sx={{
-								display: 'grid',
-								gap: 2,
+			<div className='SetChannel-container'>
+				<div className='SetChannel-container-div'>
+					<div className='SetChannel-TextField'>
+						<SetChannelTextField
+							label="Name"
+							InputLabelProps={{
+							sx:{
+								color:"white",
+							}
 							}}
-						>
-							<SetChannelTextField
-								label="Name"
-								InputLabelProps={{
+							variant="outlined"
+							defaultValue=""
+							sx={{ input: { color: 'grey' } }}
+							id="validation-outlined-input"
+							onChange={handleInputName}
+							/>
+					</div>
+					<div className='SetChannel-TextField'>
+						<SetChannelTextField
+							label="Password (optional)"
+							InputLabelProps={{
 								sx:{
 									color:"white",
-								}
-								}}
-								variant="outlined"
-								defaultValue=""
-								sx={{ input: { color: 'grey' } }}
-								id="validation-outlined-input"
-								onChange={handleInputName}
-								/>
-						</Box>
-					</div>
-					<div>Password (optional): </div>
-					<div>
-						<Box
-							component="form"
-							noValidate
-							sx={{
-								display: 'grid',
-								gap: 2,
+							}
 							}}
-							>
-							<SetChannelTextField
-								label="Password"
-								InputLabelProps={{
-									sx:{
-										color:"white",
-								}
-								}}
-								variant="outlined"
-								defaultValue=""
-								sx={{ input: { color: 'grey' } }}
-								id="validation-outlined-input"
-								onChange={handleInputPsw}
-							/>
-						</Box>
+							variant="outlined"
+							defaultValue=""
+							sx={{ input: { color: 'grey' } }}
+							id="validation-outlined-input"
+							onChange={handleInputPsw}
+						/>
 					</div>
 				</div>
-				<div><SetChannelButton variant="contained" disableRipple onClick={handleClickSetChannel}>Create Channel</SetChannelButton></div>
+				<div className='SetChannel-button'><SetChannelButton variant="contained" disableRipple onClick={handleClickSetChannel}>Create Channel</SetChannelButton></div>
 			</div>
 		</React.Fragment>
     );
