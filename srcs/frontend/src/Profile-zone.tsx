@@ -13,6 +13,7 @@ import {FromEXPtoLvl, ToNextLevel, getAllPaginated} from './tools'
 import GameAchievement from './game_achievement.png';
 import MessageAchievement from './message_achievement.png';
 import FriendAchievement from './friend_achievement.png';
+import { socket } from './WebsocketContext';
 
 type resultProps = {
 	email: string;
@@ -100,8 +101,8 @@ export function Profile(){
 			await getAllPaginated('users/me/friends/invites')
 			.then(data => setInvites(data));
 
-			// await getAllPaginated('?')
-			// .then(data => setGames(data));
+			await getAllPaginated('?')//lien à mettre
+			.then(data => setGames(data));
 			
 			const stats = await fetch("http://localhost:9999/api/users/me/winrate", {
 				method: "GET",
@@ -215,7 +216,7 @@ export function Profile(){
 							);
 						})}
 					</div>
-					{/* <h4>Invitations received for playing a game</h4>
+					<h4>Invitations received for playing a game</h4>
 					<div>
 						{games.length > 0 && games.map((user: any) => {
 							var url: string = "/otherprofile";
@@ -232,32 +233,17 @@ export function Profile(){
 											<div>{user.username}</div>
 										</Link>
 										<div>
-											<IconButton color="success" aria-label="accept" onClick={()=>{
-												const response = fetch('?', {//?
-													headers: {
-														'Accept': 'application/json',
-														'Content-Type': 'application/json'
-													},
-													method: 'POST',
-													credentials: 'include',
-													body: JSON.stringify({ id: uid })
-												});
-											}}>
+											<Link to="play">
+												<IconButton color="success" aria-label="accept" onClick={()=>{
+													socket.emit('respondToInvite', { id: uid });
+												}}>
+											</Link>
 												<CheckIcon />
 											</IconButton>
 										</div>
 										<div>
 											<IconButton color="error" aria-label="reject" onClick={()=>{
-												let urltofetch : string;
-												urltofetch = '?' + uid;//?
-												const response = fetch(urltofetch, {
-													headers: {
-														'Accept': 'application/json',
-														'Content-Type': 'application/json'
-													},
-													method: 'DELETE',
-													credentials: 'include',
-												});
+												socket.emit('respondToInvite', { id: null });
 											}}>
 												<CloseIcon />
 											</IconButton>
@@ -266,7 +252,7 @@ export function Profile(){
 								</React.Fragment>
 							);
 						})}
-					</div> */}
+					</div>
 				</div>
 			</div>
 		</React.Fragment>
