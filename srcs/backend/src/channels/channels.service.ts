@@ -133,8 +133,14 @@ export class ChannelsService
 		const newChannel = await this.channelRepository.create({
 			name: postChannelDto.name,
 			users: [owner],
-			status: 'private',
+			status: 'public',
 		});
+
+		if (postChannelDto.password != null)
+		{
+			newChannel.password = await bcrypt.hash(postChannelDto.password, 10);
+			newChannel.status = 'protected';
+		}
 		return this.channelRepository.save(newChannel);
 	}
 
