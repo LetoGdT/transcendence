@@ -8,5 +8,9 @@ import { styled } from '@mui/material/styles';
 export function ManageChannel(){
     let { cid } = React.useParam();
 
-    return();
+    return(
+        <div>
+            
+        </div>
+    );
 }
