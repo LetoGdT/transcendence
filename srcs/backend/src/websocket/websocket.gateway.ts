@@ -354,8 +354,12 @@ export class MySocketGateway implements OnGatewayConnection,
 	{
 		for (let game of gameManager.games)
 		{
-			if (await game.getPlayer1Id() == body.player1_id
-				&& await game.getPlayer2Id() == body.player2_id)
+			if ((await game.getPlayer1Id() == body.player1_id
+							&& await game.getPlayer2Id() == body.player2_id
+							&& await game.started())
+					|| (await game.getPlayer2Id() == body.player1_id
+							&& await game.getPlayer1Id() == body.player2_id
+							&& await game.started()))
 			{
 				const index: number = this.clients.findIndex(connection => connection.client.id == client.id);
 				game.addSpectator(this.clients[index]);
