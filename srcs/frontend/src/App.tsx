@@ -24,6 +24,7 @@ import toast, {Toaster} from 'react-hot-toast';
 import { setUpNewMessageNotificationsFn, setUpNewGameNotificationFn } from './Notifications';
 import { SetPrivateGame } from './SetPrivateGame';
 import { SetChannel } from './SetChannel';
+import { ManageChannel } from './ManageChannel';
 
 function App() {
 	const router = 
@@ -51,6 +52,9 @@ function App() {
 						</Route>
 						<Route path="/setprivategame">
 							<Route path=':uid' element={<SetPrivateGame />} />
+						</Route>
+						<Route path="/managechannel">
+							<Route path=':cid' element={<ManageChannel />} />
 						</Route>
 						<Route path="/profile" element={<ProfileZone/>} />
 						<Route path="/signup" element={<SignUp/>} />
