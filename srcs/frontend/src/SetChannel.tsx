@@ -73,58 +73,61 @@ export function SetChannel(){
 	};
 
     return(
-		<div className='Set-Channel-container'>
-			<div className='Set-Channel-container-div'>
-				<div>
-					<Box
-						component="form"
-						noValidate
-						sx={{
-							display: 'grid',
-							gap: 2,
-						}}
-					>
-						<SetChannelTextField
-							label="Name"
-							InputLabelProps={{
-							sx:{
-								color:"white",
-							}
+		<React.Fragment>
+			<h1>Set Channel's parameters</h1>
+			<div className='Set-Channel-container'>
+				<div className='Set-Channel-container-div'>
+					<div>
+						<Box
+							component="form"
+							noValidate
+							sx={{
+								display: 'grid',
+								gap: 2,
 							}}
-							variant="outlined"
-							defaultValue="*.jpg or *.png"
-							sx={{ input: { color: 'grey' } }}
-							id="validation-outlined-input"
-							onChange={handleInputName}
-						/>
-					</Box>
-				</div>
-				<div>
-					<Box
-						component="form"
-						noValidate
-						sx={{
-							display: 'grid',
-							gap: 2,
-						}}
-					>
-						<SetChannelTextField
-							label="Password"
-							InputLabelProps={{
-							sx:{
-								color:"white",
-							}
+						>
+							<SetChannelTextField
+								label="Name"
+								InputLabelProps={{
+								sx:{
+									color:"white",
+								}
+								}}
+								variant="outlined"
+								defaultValue="*.jpg or *.png"
+								sx={{ input: { color: 'grey' } }}
+								id="validation-outlined-input"
+								onChange={handleInputName}
+								/>
+						</Box>
+					</div>
+					<div>
+						<Box
+							component="form"
+							noValidate
+							sx={{
+								display: 'grid',
+								gap: 2,
 							}}
-							variant="outlined"
-							defaultValue="*.jpg or *.png"
-							sx={{ input: { color: 'grey' } }}
-							id="validation-outlined-input"
-							onChange={handleInputPsw}
-						/>
-					</Box>
+							>
+							<SetChannelTextField
+								label="Password"
+								InputLabelProps={{
+									sx:{
+										color:"white",
+								}
+								}}
+								variant="outlined"
+								defaultValue="*.jpg or *.png"
+								sx={{ input: { color: 'grey' } }}
+								id="validation-outlined-input"
+								onChange={handleInputPsw}
+							/>
+						</Box>
+					</div>
 				</div>
+				<div><SetChannelButton variant="contained" disableRipple onClick={handleClickSetChannel}>Create Channel</SetChannelButton></div>
 			</div>
-			<div><SetChannelButton variant="contained" disableRipple onClick={handleClickSetChannel}>Create Channel</SetChannelButton></div>
-		</div>
+		</React.Fragment>
     );
 }
