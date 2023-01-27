@@ -45,7 +45,7 @@ export class Channel
 	@Column({
 		type: 'timestamptz',
 		nullable: true,
-		default: null
+		default: () => 'CURRENT_TIMESTAMP',
 	})
 	latest_sent: Date;
 

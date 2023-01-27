@@ -1,16 +1,13 @@
 TODO :
-build without -d and check the warnings
-virer le joueur 2
-connecter les games aux boutons classic et unicorn mode (qui aura un autre nom)
-responsive : la div du menu passe sur le jeu quand on reduit la fenetre enormement (j'ai test de
-mettre ca dans App.css mais plus rien ne fonctionnait)
-changes from main to incorporate on my branch :
-1) import { PlayZone } from './Play';
-2) import { SpecZone } from './Spec';
-from adaptable-zone.tsx
+connecter alternative mode (qui aura un autre nom)
+gerer invitations de jeu recues
+gerer les webtokens (verifier expiration des tokens)
+server-side validation/sanitization on forms (mandatory)
+in game status
+quitter channels
 change ball's angle according to where it hits on the paddle
+delete sylducam docker-compose
 check del, TODO, commentaries
-randomize the direction of the ball at the beginning (recupere via websocket)
 
 Keep it:
 websockets :
@@ -36,7 +33,7 @@ http://localhost:3000/
 BACK:
 http://localhost:9999/
 DOCKER LOGS (BACK ?):
-docker logs -f nestjs
+docker logs -f nestj
 .ENV
 add it everytime in backend
 INSTALL REACT :

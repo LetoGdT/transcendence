@@ -524,7 +524,7 @@ export function OtherProfile(){
 
 	const handleClickChat = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		let convExists: boolean = false;
-		await fetch(`http://localhost:9999/api/conversations?interlocutor_id=uid`, {
+		await fetch(`http://localhost:9999/api/conversations?user2_id=${uid}`, {
 			method: "GET",
 			credentials: 'include', 
 		})

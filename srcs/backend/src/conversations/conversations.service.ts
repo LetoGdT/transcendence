@@ -68,7 +68,7 @@ export class ConversationsService
 				qb.where("conversation.user1 = :user_id", { user_id: user.id })
 				.orWhere("conversation.user2 = :recipient_id", { recipient_id: postConversationDto.recipient_id })
 			}))
-			.orWhere(new Brackets(qb => {
+			.andWhere(new Brackets(qb => {
 				qb.where("conversation.user2 = :user_id", { user_id: user.id })
 				.orWhere("conversation.user1 = :recipient_id", { recipient_id: postConversationDto.recipient_id })
 			}));
