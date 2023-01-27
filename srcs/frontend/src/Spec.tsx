@@ -52,9 +52,12 @@ function DisplayMatch(match:any){
 	url2 = url2.concat("/");
 	url2 = url2.concat(user2.id.toString());
 
-	// const handleClickSee = async (event:any) => {
-	// 	//courage Léto
-	// }
+	const handleClickSee = async (event:any) => {
+		socket.emit('spectate', {
+			player1_id: user1.id,
+			player2_id: user2.id,
+		})
+	}
 
 	return(
 		<div className='Spec-container-div'>
@@ -77,7 +80,7 @@ function DisplayMatch(match:any){
 					<IconButton
 						sx={{fontSize:"2rem"}}
 						size="large"
-						// onClick={handleClickSee}//Léto, on fait l'appel ici
+						onClick={handleClickSee}
 					>
 						<FontAwesomeIcon icon={faEye} />
 					</IconButton>
