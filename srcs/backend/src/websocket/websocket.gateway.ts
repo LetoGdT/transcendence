@@ -66,7 +66,7 @@ interface NetworkedGameState {
 const GAME_WIDTH = 1040;
 const GAME_HEIGHT = 680;
 
-type UpdateMatchHistory = (game: Game) => void;
+type UpdateMatchHistory = (game: Game, usersService: UsersService) => void;
 
 class Game {
 	public startTime: number;
@@ -97,7 +97,10 @@ class Game {
 
 	readonly id: number;
 
-	constructor(player1: RemotePlayer, player2: RemotePlayer, updateMatchHistory: UpdateMatchHistory, id: number, waiting: boolean) {
+	readonly usersService: UsersService;
+
+	constructor(player1: RemotePlayer, player2: RemotePlayer, updateMatchHistory: UpdateMatchHistory,
+		id: number, waiting: boolean, usersService: UsersService) {
 		this.startTime = Date.now();
 
 		this.player1 = player1;
@@ -112,6 +115,9 @@ class Game {
 
 		this.updateMatchHistory = updateMatchHistory;
 		this.id = id;
+		this.usersService = usersService;
+		this.usersService.changeUserStatus(this.player1.user.id, 'in-game');
+		this.usersService.changeUserStatus(this.player2.user.id, 'in-game');
 	}
 
 	setInitialSpeed(speed: number)
@@ -448,7 +454,7 @@ class GameManager {
 		
 		for (i = 0, j = 0; i < this.games.length; ++i) {
 			if (this.games[j].hasEnded()) {
-				this.games[j].updateMatchHistory(this.games[j]);
+				this.games[j].updateMatchHistory(this.games[j], this.games[j].usersService);
 				this.games.splice(j, 1);
 			} else {
 				++j;
@@ -468,10 +474,10 @@ class GameManager {
 	}
 
 	startGame(player1: Connection, player2: Connection, waiting: boolean, updateMatchHistory: UpdateMatchHistory,
-		speed?: number, score?: number) {
+		usersService: UsersService, speed?: number, score?: number) {
 		const p1 = new RemotePlayer(player1.client, player1.user);
 		const p2 = new RemotePlayer(player2.client, player2.user);
-		const game = new Game(p1, p2, updateMatchHistory, this.id, waiting);
+		const game = new Game(p1, p2, updateMatchHistory, this.id, waiting, usersService);
 
 		game.setInitialSpeed(speed);
 		game.setMaxScore(score);
@@ -691,7 +697,7 @@ export class MySocketGateway implements OnGatewayConnection,
 				const p1 = this.matchmakingQueue.pop();
 				const p2 = this.matchmakingQueue.pop();
 
-				gameManager.startGame(p1, p2, false, async (game: Game) => {
+				gameManager.startGame(p1, p2, false, async (game: Game, usersService: UsersService) => {
 					const createMatchDto: CreateMatchDto = {
 						user1: game.player1.user,
 						user2: game.player2.user,
@@ -701,9 +707,11 @@ export class MySocketGateway implements OnGatewayConnection,
 						played_at: new Date(game.startTime),
 						game_type: 'Ranked',
 					};
+					usersService.changeUserStatus(game.player1.user.id, 'online');
+					usersService.changeUserStatus(game.player2.user.id, 'online');
 					const match = await this.matchesService.createMatch(createMatchDto);
 					this.matchesService.calculateRank(match.id);
-				});
+				}, this.usersService);
 			} else {
 				client.emit('queuing');
 			}
@@ -731,7 +739,8 @@ export class MySocketGateway implements OnGatewayConnection,
 				|| gameManager.findGameByUser(this.clients[meIndex].user) != null)
 				throw new WsException('You or your opponent have already been invited');
 
-			const game = gameManager.startGame(this.clients[meIndex], this.clients[opponentIndex], true, async (game: Game) => {
+			const game = gameManager.startGame(this.clients[meIndex], this.clients[opponentIndex],true,
+				async (game: Game, usersService: UsersService) => {
 					const createMatchDto: CreateMatchDto = {
 						user1: game.player1.user,
 						user2: game.player2.user,
@@ -741,9 +750,11 @@ export class MySocketGateway implements OnGatewayConnection,
 						played_at: new Date(game.startTime),
 						game_type: 'Quick play',
 					};
+					usersService.changeUserStatus(game.player1.user.id, 'online');
+					usersService.changeUserStatus(game.player2.user.id, 'online');
 					const match = await this.matchesService.createMatch(createMatchDto);
 					this.matchesService.calculateRank(match.id);
-				}, body.ball_speed, body.winning_score);
+				}, this.usersService, body.ball_speed, body.winning_score);
 
 			this.clients[opponentIndex].client.emit('returnInvites', [{
 				game_id: game.id,
