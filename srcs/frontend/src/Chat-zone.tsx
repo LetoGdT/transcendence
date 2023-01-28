@@ -284,260 +284,6 @@ const ChannelButtonNewMessage = styled(Button)({
 	},
 });
 
-function DisplayMessage(props: any){
-	const message: Message = props?.message;	
-	const me: User = props?.me;
-
-	if (message.sender.id === me.id){
-		return(
-			<div className='Chat-message-from-self-lvl1'>
-				<div className='Chat-div-empty'></div>
-				<div className='Chat-message-from-self-lvl2'>
-					<p className='p.chat'>{message.content}</p>
-				</div>
-				<img src={me.image_url} alt={me.username} className='Chat-who'></img>
-			</div>
-		);
-	} else {
-		var uid : string = message.sender.id.toString();
-		var url : string = "/otherprofile/";
-		url = url.concat(uid);
-		return(
-			<div className='Chat-message-from-other-lvl1'>
-				<Link to={url}>
-					<img src={message.sender.image_url} alt={message.sender.username} className='Chat-who'></img>
-				</Link>
-				<div className='Chat-message-from-other-lvl2'>
-					<p className='p.chat'>{message.content}</p>
-				</div>
-				<div className='Chat-div-empty'></div>
-			</div>
-		);
-	}
-}
-
-function DisplayMessageHistory(props: any) {
-	return (
-		<div className='Chat-history-container'>
-			{props?.messages?.map((elem: Message) => {
-				return (
-					<DisplayMessage message={elem} me={props?.me} key={elem.id}/>
-				); 
-			})}
-		</div>
-	);
-}
-
-function DisplayChannel(props: any){
-	const conv = props?.conv;
-	const currentConv = props?.currentConv;
-
-	if (currentConv === conv?.id)
-		return (
-			<div>
-				<ChannelSelectedButton variant="contained" disableRipple onClick={props?.handleChangeConv} value={conv.id}>
-					{conv.name}
-				</ChannelSelectedButton>
-			</div>
-		);
-	else if (conv.new_message === true){
-		return(
-			<div>
-				<ChannelButtonNewMessage variant="contained" disableRipple onClick={props?.handleChangeConv} value={conv.id}>
-					{conv.name}
-				</ChannelButtonNewMessage>
-			</div>
-		);
-	} else {
-		return(
-			<div>
-				<ChannelButton variant="contained" disableRipple onClick={props?.handleChangeConv} value={conv.id}>
-					{conv.name}
-				</ChannelButton>
-			</div>
-		);
-	}
-}
-
-function ChatNavigate(props: any) {
-	return(
-		<div className='Chat-navigate'>
-			{props?.ConvList?.map((conv: Conversation) => {
-				return (
-					<DisplayChannel conv={conv} currentConv={props?.currentConv} key={conv.id} handleChangeConv={props?.handleChangeConv}/>
-				);
-			})}
-		</div>
-	);
-}
-
-function AdminManagement(props: any) {
-	const [me, setMe] = useState<User>();
-	const [isOwnerOrAdmin, setIsOwnerOrAdmin] = useState<boolean>(false);
-
-	useEffect(() => {
-		fetch("http://localhost:9999/api/users/me", {
-			method: "GET",
-			credentials: 'include'
-		})
-		.then(response=>response.json())
-		.then(data => setMe(data));
-	}, []);
-
-	React.useEffect(() => {
-		props?.channel.users.forEach((elem: ChannelUser) => {
-			if (elem.user.id === me?.id)
-				if (elem.role === 'Owner' || elem.role === 'Admin')
-					setIsOwnerOrAdmin(true);
-		});
-	}, [me]);
-
-	if (isOwnerOrAdmin)
-		return (
-			<div>
-				<Link to={`/managechannel/${props?.channel.id}`}>
-					<ManageButton variant='contained' disableRipple>
-						Manage Channel
-					</ManageButton>
-				</Link>
-			</div>
-		);
-	else
-		return (
-			<React.Fragment>
-			</React.Fragment>
-		);
-}
-
-function DisplayChannelAvailable(props: any){
-	const channel = props?.channel;
-	const currentUser = props?.currentUser;
-	const [password, setPassword] = React.useState("");
-
-	const handleJoin = async (event: any) => {
-		await fetch(`http://localhost:9999/api/channels/${channel.id}/users`, {
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'POST',
-			credentials: 'include',
-			body: JSON.stringify({password: password})
-		})
-		.then(response => {
-			if (!response.ok)
-				return ;
-		});
-		window.location.reload();
-	}
-
-	const handleLeave = async (event: any) => {
-		const channelUserId = (channel.users.find((user: ChannelUser) => user.user.id === currentUser.id)).id;
-		await fetch(`http://localhost:9999/api/channels/${event.target.value}/users/${channelUserId}`, {
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'DELETE',
-			credentials: 'include',
-		})
-		.then(response => {
-			if (!response.ok)
-				return ;
-		});
-		window.location.reload();
-	}
-
-	const handleInputPassword = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		setPassword(e.target.value);
-	};
-
-	const isIn = channel.users.find((channelUser: ChannelUser) => channelUser.user.id === currentUser.id);
-
-	if (typeof isIn !== "undefined"){
-		return(
-			<div className='Channels-available-div'>
-				<div className='Channels-available-button'>
-					{channel.name}
-				</div>
-				<div className='Channels-available-button'>
-					<LeaveButton variant="contained" disableRipple onClick={handleLeave} value={channel.id}>
-						Leave
-					</LeaveButton>
-				</div>
-				<div className='Channels-available-button'>
-					<AdminManagement channel={channel}/>
-				</div>
-			</div>
-		);
-	} else if (typeof isIn === "undefined" && channel.status === 'public'){
-		return(
-			<div className='Channels-available-div'>
-				<div>
-					{channel.name}
-				</div>
-				<div className='Channels-available-button'>
-					<CreateChannelButton variant="contained" disableRipple onClick={handleJoin} value={channel.id}>
-						Join
-					</CreateChannelButton>
-				</div>
-			</div>
-		);
-	} else if (typeof isIn === "undefined" && channel.status === 'protected'){
-		return(
-			<div className='Channels-available-div'>
-				<div>
-					{channel.name}
-				</div>
-				<div className='Channels-available-button'>
-					<PassawordTextField
-						label="Password"
-						InputLabelProps={{
-						sx:{
-							color:"white",
-						}
-						}}
-						variant="outlined"
-						sx={{ input: { color: 'grey' } }}
-						id="validation-outlined-input"
-						onChange={handleInputPassword}
-					/>
-				</div>
-				<div className='Channels-available-button'>
-					<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>
-						Join
-					</CreateChannelButton>
-				</div>
-			</div>
-		);
-	} else {
-		return (<React.Fragment></React.Fragment>);
-	}
-
-		
-		
-		
-}
-
-function ChannelList(props: any) {
-	return (
-		<div className='Channels-available'>
-			{
-				props?.channelsAvailable?.map((channel:any) => {
-					return(
-						<DisplayChannelAvailable channel={channel} currentUser={props?.currentUser} key={channel.id}/>
-					);	
-				})
-			}
-			<div className='Channels-available-div2'>
-				<Link to="/setchannel">
-					<CreateChannelButton variant="contained" disableRipple>Create a channel</CreateChannelButton>
-				</Link>
-			</div>
-		</div>
-	);
-}
-
 type User = {
 	id: number;
 	username: string;
@@ -644,7 +390,7 @@ function Chat() {
 
 	useEffect(() => {
 		updateMessages();
-	}, [currentConv])
+	}, [currentConv, isChannel])
 
 	async function updateConvList() {
 		let newConvList: Conversation[] = [];
@@ -744,12 +490,13 @@ function Chat() {
 	}
 
 	const handleChangeConv= async (event: any) => {
-		const id = event.target.value;
+		const isChannel = event.target.value[0] == "a";
+		const id = event.target.value.substring(1);
 		let convs = [...convList];
 		for (var elem of convs)
-			if (elem.id === id) {
+			if (elem.id === id && elem.is_channel === isChannel) {
 				setCurrentConv(id);
-				setIsChannel(elem.is_channel);
+				setIsChannel(isChannel);
 				elem.new_message = false;
 				setConvList(convs);
 				continue ;
@@ -780,13 +527,254 @@ function Chat() {
 		setNewMessage(""); // Sert à effacer le message une fois qu'on a appuyé sur le bouton send
 	}
 
+	function DisplayMessage(props: any){
+		const message: Message = props?.message;	
+
+		if (message.sender.id === currentUser.id){
+			return(
+				<div className='Chat-message-from-self-lvl1'>
+					<div className='Chat-div-empty'></div>
+					<div className='Chat-message-from-self-lvl2'>
+						<p className='p.chat'>{message.content}</p>
+					</div>
+					<img src={currentUser.image_url} alt={currentUser.username} className='Chat-who'></img>
+				</div>
+			);
+		} else {
+			var uid : string = message.sender.id.toString();
+			var url : string = "/otherprofile/";
+			url = url.concat(uid);
+			return(
+				<div className='Chat-message-from-other-lvl1'>
+					<Link to={url}>
+						<img src={message.sender.image_url} alt={message.sender.username} className='Chat-who'></img>
+					</Link>
+					<div className='Chat-message-from-other-lvl2'>
+						<p className='p.chat'>{message.content}</p>
+					</div>
+					<div className='Chat-div-empty'></div>
+				</div>
+			);
+		}
+	}
+
+	function DisplayMessageHistory() {
+		return (
+			<div className='Chat-history-container'>
+				{messages?.map((elem: Message) => {
+					return (
+						<DisplayMessage message={elem} key={elem.id}/>
+					); 
+				})}
+			</div>
+		);
+	}
+
+	function DisplayChannel(props: any){
+		const conv = props?.conv;
+
+		if (currentConv === conv?.id && isChannel === conv.is_channel)
+			return (
+				<div>
+					<ChannelSelectedButton variant="contained" disableRipple onClick={handleChangeConv} value={(conv.is_channel?"a":"b")+conv.id}>
+						{conv.name}
+					</ChannelSelectedButton>
+				</div>
+			);
+		else if (conv.new_message === true){
+			return(
+				<div>
+					<ChannelButtonNewMessage variant="contained" disableRipple onClick={handleChangeConv} value={(conv.is_channel?"a":"b")+conv.id}>
+						{conv.name}
+					</ChannelButtonNewMessage>
+				</div>
+			);
+		} else {
+			return(
+				<div>
+					<ChannelButton variant="contained" disableRipple onClick={handleChangeConv} value={(conv.is_channel?"a":"b")+conv.id}>
+						{conv.name}
+					</ChannelButton>
+				</div>
+			);
+		}
+	}
+
+	function ChatNavigate(props: any) {
+		return(
+			<div className='Chat-navigate'>
+				{convList?.map((conv: Conversation) => {
+					return (
+						<DisplayChannel conv={conv} key={conv.is_channel?"1":"2"+conv.id}/>
+					);
+				})}
+			</div>
+		);
+	}
+
+	function AdminManagement(props: any) {
+		const [isOwnerOrAdmin, setIsOwnerOrAdmin] = useState<boolean>(false);
+
+		React.useEffect(() => {
+			props?.channel.users.forEach((elem: ChannelUser) => {
+				if (elem.user.id === currentUser?.id)
+					if (elem.role === 'Owner' || elem.role === 'Admin')
+						setIsOwnerOrAdmin(true);
+			});
+		}, []);
+
+		if (isOwnerOrAdmin)
+			return (
+				<div>
+					<Link to={`/managechannel/${props?.channel.id}`}>
+						<ManageButton variant='contained' disableRipple>
+							Manage Channel
+						</ManageButton>
+					</Link>
+				</div>
+			);
+		else
+			return (
+				<React.Fragment>
+				</React.Fragment>
+			);
+	}
+
+	function DisplayChannelAvailable(props: any){
+		const channel = props?.channel;
+		const [password, setPassword] = React.useState("");
+
+		const handleJoin = async (event: any) => {
+			await fetch(`http://localhost:9999/api/channels/${event.target.value}/users`, {
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				method: 'POST',
+				credentials: 'include',
+				body: JSON.stringify({password: password})
+			})
+			.then(response => {
+				if (!response.ok)
+					return ;
+			});
+			window.location.reload();
+		}
+
+		const handleLeave = async (event: any) => {
+			const channelUserId = (channel.users.find((user: ChannelUser) => user.user.id === currentUser.id)).id;
+			await fetch(`http://localhost:9999/api/channels/${event.target.value}/users/${channelUserId}`, {
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				method: 'DELETE',
+				credentials: 'include',
+			})
+			.then(response => {
+				if (!response.ok)
+					return ;
+			});
+			window.location.reload();
+		}
+
+		const handleInputPassword = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+			setPassword(e.target.value);
+		};
+
+		const isIn = channel.users.find((channelUser: ChannelUser) => channelUser.user.id === currentUser.id);
+
+		if (typeof isIn !== "undefined"){
+			return(
+				<div className='Channels-available-div'>
+					<div className='Channels-available-button'>
+						{channel.name}
+					</div>
+					<div className='Channels-available-button'>
+						<LeaveButton variant="contained" disableRipple onClick={handleLeave} value={channel.id}>
+							Leave
+						</LeaveButton>
+					</div>
+					<div className='Channels-available-button'>
+						<AdminManagement channel={channel}/>
+					</div>
+				</div>
+			);
+		} else if (typeof isIn === "undefined" && channel.status === 'public'){
+			return(
+				<div className='Channels-available-div'>
+					<div>
+						{channel.name}
+					</div>
+					<div className='Channels-available-button'>
+						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin} value={channel.id}>
+							Join
+						</CreateChannelButton>
+					</div>
+				</div>
+			);
+		} else if (typeof isIn === "undefined" && channel.status === 'protected'){
+			return(
+				<div className='Channels-available-div'>
+					<div>
+						{channel.name}
+					</div>
+					<div className='Channels-available-button'>
+						<PassawordTextField
+							label="Password"
+							InputLabelProps={{
+							sx:{
+								color:"white",
+							}
+							}}
+							variant="outlined"
+							sx={{ input: { color: 'grey' } }}
+							id="validation-outlined-input"
+							onChange={handleInputPassword}
+						/>
+					</div>
+					<div className='Channels-available-button'>
+						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>
+							Join
+						</CreateChannelButton>
+					</div>
+				</div>
+			);
+		} else {
+			return (<React.Fragment></React.Fragment>);
+		}
+
+			
+			
+			
+	}
+
+	function ChannelList() {
+		return (
+			<div className='Channels-available'>
+				{
+					channelsAvailable?.map((channel:any) => {
+						return(
+							<DisplayChannelAvailable channel={channel} key={channel.id}/>
+						);	
+					})
+				}
+				<div className='Channels-available-div2'>
+					<Link to="/setchannel">
+						<CreateChannelButton variant="contained" disableRipple>Create a channel</CreateChannelButton>
+					</Link>
+				</div>
+			</div>
+		);
+	}
+
 	return (
 			<React.Fragment>
 				<h1>Chat</h1>
 				<div className='Chat-container'>
-					<ChatNavigate ConvList={convList} currentConv={currentConv} handleChangeConv={handleChangeConv}/>
+					<ChatNavigate />
 					<div>
-						<DisplayMessageHistory messages={messages} me={currentUser}/>
+						<DisplayMessageHistory/>
 						<div className='Chat-TextField-send-button'>
 							<div className='Chat-TextField'>
 								<TextareaAutosize
@@ -807,7 +795,7 @@ function Chat() {
 						</div>
 					</div>
 					<div className='empty'></div>
-					<ChannelList channelsAvailable={channelsAvailable} currentUser={currentUser} />
+					<ChannelList />
 				</div>
 			</React.Fragment>
 	)
