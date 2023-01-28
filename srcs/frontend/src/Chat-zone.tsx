@@ -647,16 +647,14 @@ function Chat() {
 	}, [currentConv])
 
 	async function updateConvList() {
+		let newConvList: Conversation[] = [];
+		let newChanList: Conversation[] = [];
 		let res: Conversation[] = [];
 		const old_ConvList = convList;
 
 		// Set the list of conversations for chat-navigate
-		await fetch('http://localhost:9999/api/conversations/', {
-			method: "GET",
-			credentials: 'include'
-		})
-		.then(response=>response.json())
-		.then(data => res = res.concat(data.data.map((elem: any) => {
+		await getAllPaginated('conversations')
+		.then(data => newConvList = newConvList.concat(data.map((elem: any) => {
 			let name: string;
 			if (currentUser.id === -1)
 				name = "not loaded";
@@ -674,12 +672,8 @@ function Chat() {
 		})));
 
 		// Set the list of channels for chat-navigate
-		await fetch('http://localhost:9999/api/channels/', {
-			method: "GET",
-			credentials: 'include'
-		})
-		.then(response=>response.json())
-		.then(data => res = res.concat(data.data.map((elem: any) => {
+		await getAllPaginated('channels')
+		.then(data => newChanList = newChanList.concat(data.map((elem: any) => {
 			return ({
 				id: elem.id,
 				is_channel: true,
@@ -689,6 +683,7 @@ function Chat() {
 			});
 		})));
 
+		res = newConvList.concat(newChanList);
 		old_ConvList.forEach((elem: Conversation) => {
 			let index;
 			for (index = 0 ; index < res.length ; index++)
