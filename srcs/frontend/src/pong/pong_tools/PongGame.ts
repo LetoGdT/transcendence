@@ -96,6 +96,10 @@ class PongGame
 		this.currentTicks = 0;
     }
 
+	setCountdownStart(countdownStart: number) {
+		this.countdownStart = countdownStart;
+	}
+
 	setErrorMessage(errorMessage: string) {
 		this.errorMessage = errorMessage;
 	}
@@ -355,151 +359,13 @@ class PongGame
 
 	drawScore(ctx: CanvasRenderingContext2D)
 	{
-		ctx.lineWidth = 8;
-		ctx.strokeStyle = 'white';
-		// ctx.lineJoin = 'square';
-		
-		// Draw player 1 score
-		switch (this.scorePlayer1)
-		{
-			case 0:
-				ctx.beginPath();
-				ctx.moveTo(240, 100);
-				ctx.lineTo(280, 100);
-				ctx.lineTo(280, 160);
-				ctx.lineTo(240, 160);
-				ctx.lineTo(240, 96);
-				ctx.stroke();
-				break;
-			case 1:
-				ctx.beginPath();
-				ctx.moveTo(257, 100);
-				ctx.lineTo(270, 100);
-				ctx.lineTo(270, 160);
-				ctx.stroke();
-				break;
-			case 2:
-				ctx.beginPath();
-				ctx.moveTo(236, 100);
-				ctx.lineTo(280, 100);
-				ctx.lineTo(280, 130);
-				ctx.lineTo(240, 130);
-				ctx.lineTo(240, 160);
-				ctx.lineTo(284, 160);
-				ctx.stroke();
-				break;
-			case 3:
-				ctx.beginPath();
-				ctx.moveTo(250, 100);
-				ctx.lineTo(280, 100);
-				ctx.lineTo(280, 130);
-				ctx.lineTo(260, 130);
-				ctx.lineTo(280, 130);
-				ctx.lineTo(280, 160);
-				ctx.lineTo(250, 160);
-				ctx.stroke();
-				break;
-			case 4:
-				ctx.beginPath();
-				ctx.moveTo(240, 100);
-				ctx.lineTo(240, 140);
-				ctx.lineTo(275, 140);
-				ctx.stroke();
-				ctx.beginPath();
-				ctx.moveTo(260, 125);
-				ctx.lineTo(260, 155);
-				ctx.stroke();
-				break;
-			case 5:
-				ctx.beginPath();
-				ctx.moveTo(285, 100);
-				ctx.lineTo(240, 100);
-				ctx.lineTo(240, 130);
-				ctx.lineTo(280, 130);
-				ctx.lineTo(280, 160);
-				ctx.lineTo(236, 160);
-				ctx.stroke();
-				break;
-			default: // never gets in
-				ctx.beginPath();
-				ctx.moveTo(165, 100);
-				ctx.moveTo(330, 100);
-				ctx.moveTo(330, 200);
-				ctx.moveTo(165, 200);
-				ctx.moveTo(165, 100);
-				ctx.stroke();
-		}
+		ctx.fillStyle = 'white';
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'middle';
+		ctx.font = '72px Georgia, serif';
 
-		// Draw player 2 score
-		switch (this.scorePlayer2)
-		{
-			case 0:
-				ctx.beginPath();
-				ctx.moveTo(760, 100);
-				ctx.lineTo(800, 100);
-				ctx.lineTo(800, 160);
-				ctx.lineTo(760, 160);
-				ctx.lineTo(760, 96);
-				ctx.stroke();
-				break;
-			case 1:
-				ctx.beginPath();
-				ctx.moveTo(792, 100);
-				ctx.lineTo(805, 100);
-				ctx.lineTo(805, 160);
-				ctx.stroke();
-				break;
-			case 2:
-				ctx.beginPath();
-				ctx.moveTo(771, 100);
-				ctx.lineTo(815, 100);
-				ctx.lineTo(815, 130);
-				ctx.lineTo(775, 130);
-				ctx.lineTo(775, 160);
-				ctx.lineTo(819, 160);
-				ctx.stroke();
-				break;
-			case 3:
-				ctx.beginPath();
-				ctx.moveTo(785, 100);
-				ctx.lineTo(815, 100);
-				ctx.lineTo(815, 130);
-				ctx.lineTo(795, 130);
-				ctx.lineTo(815, 130);
-				ctx.lineTo(815, 160);
-				ctx.lineTo(785, 160);
-				ctx.stroke();
-				break;
-			case 4:
-				ctx.beginPath();
-				ctx.moveTo(775, 100);
-				ctx.lineTo(775, 140);
-				ctx.lineTo(810, 140);
-				ctx.stroke();
-				ctx.beginPath();
-				ctx.moveTo(795, 125);
-				ctx.lineTo(795, 155);
-				ctx.stroke();
-				break;
-			case 5:
-				ctx.beginPath();
-				ctx.moveTo(819, 100);
-				ctx.lineTo(775, 100);
-				ctx.lineTo(775, 130);
-				ctx.lineTo(815, 130);
-				ctx.lineTo(815, 160);
-				ctx.lineTo(771, 160);
-				ctx.stroke();
-				break;
-			default: // never gets in
-				ctx.beginPath();
-				ctx.moveTo(165, 100);
-				ctx.moveTo(330, 100);
-				ctx.moveTo(330, 200);
-				ctx.moveTo(165, 200);
-				ctx.moveTo(165, 100);
-				ctx.stroke();
-		}
+		ctx.fillText(this.scorePlayer1.toString(), this.width / 4, 120);
+		ctx.fillText(this.scorePlayer2.toString(), this.width / 4 * 3, 120);
 	}
 
     updatePhysics()
