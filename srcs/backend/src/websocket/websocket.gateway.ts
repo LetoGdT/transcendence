@@ -116,13 +116,13 @@ class Game {
 
 	setInitialSpeed(speed: number)
 	{
-		if (speed >= 5 && speed <= 20)
+		if (speed != null && speed >= 5 && speed <= 20)
 			this.ballInitialSpeed = speed;
 	}
 
 	setMaxScore(score: number)
 	{
-		if (score >= 5 && score <= 20)
+		if (score != null && score >= 5 && score <= 20)
 			this.maxScore = score;
 	}
 
@@ -473,6 +473,9 @@ class GameManager {
 		const p2 = new RemotePlayer(player2.client, player2.user);
 		const game = new Game(p1, p2, updateMatchHistory, this.id, waiting);
 
+		game.setInitialSpeed(speed);
+		game.setMaxScore(score);
+
 		this.id++;
 
 		this.games.push(game);
@@ -740,7 +743,7 @@ export class MySocketGateway implements OnGatewayConnection,
 					};
 					const match = await this.matchesService.createMatch(createMatchDto);
 					this.matchesService.calculateRank(match.id);
-				});
+				}, body.ball_speed, body.winning_score);
 
 			this.clients[opponentIndex].client.emit('returnInvites', [{
 				game_id: game.id,
