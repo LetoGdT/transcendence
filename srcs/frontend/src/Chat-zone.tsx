@@ -525,7 +525,7 @@ function ChannelList(props: any) {
 			{
 				props?.channelsAvailable?.map((channel:any) => {
 					return(
-						<DisplayChannelAvailable channel={channel} currentUser={props?.currentUser}/>
+						<DisplayChannelAvailable channel={channel} currentUser={props?.currentUser} key={channel.id}/>
 					);	
 				})
 			}
