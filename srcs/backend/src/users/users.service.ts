@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import * as fs from 'fs';
 import { User } from '../typeorm/user.entity';
+import { ChannelUser } from '../typeorm/channel-user.entity';
 import { AchievementsService } from '../achievements/achievements.service';
 import { CreateUserDto, UpdateUserDto, CreateUserFriendDto } from '../dto/users.dto';
 import { PageDto } from "../dto/page.dto";
@@ -410,7 +411,8 @@ export class UsersService
 			.where('user.id = :id', { id: user.id });
 
 		const ret = await queryBuilder.getOne();
-		return ret.channelUsers.map((channelUser) => {return channelUser.channel});
+		console.log(ret);
+		return ret.channelUsers.map((channelUser: ChannelUser) => {return channelUser.channel});
 	}
 
 	async getAchievements(id: number, pageOptionsDto: PageOptionsDto)

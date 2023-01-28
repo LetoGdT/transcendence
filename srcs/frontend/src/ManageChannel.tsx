@@ -391,7 +391,7 @@ export function ManageChannel(){
 				body: JSON.stringify({user_id: props?.user.user.id, unban_date: banTime})
 			});
 			setBanTime("");
-			window.location.reload();
+			// window.location.reload();
 		}
 
 		const handleClickKick = async (event: React.MouseEvent<HTMLButtonElement>) => {

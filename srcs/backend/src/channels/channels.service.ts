@@ -586,7 +586,7 @@ export class ChannelsService
 			throw new HttpException('Channel not found', HttpStatus.NOT_FOUND);
 
 		let bannedIndex: number = channel.banlist.findIndex((users) => {
-			return users.user.id == postChannelBanDto.user_id;
+			return users.id == postChannelBanDto.user_id;
 		});
 
 		if (bannedIndex !== -1)
