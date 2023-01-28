@@ -235,6 +235,7 @@ export function Settings(){
 			credentials: 'include',
 			body: formData
 		});
+		window.location.reload();
 	}
 
 	return(
