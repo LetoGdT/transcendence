@@ -12,6 +12,7 @@ import { PleaseConnect } from './adaptable-zone';
 import { socket } from './WebsocketContext';
 import { getAllPaginated } from './tools';
 import { disableNewMessageNotificationsFn, setUpNewMessageNotificationsFn } from './Notifications'
+import { SignUpButton } from './Header-zone';
 
 const PassawordTextField = styled(TextField)({
 	'& input:valid + fieldset': {
@@ -140,11 +141,11 @@ const ChannelButton = styled(Button)({
 	boxShadow: 'none',
 	textTransform: 'none',
 	fontSize: 16,
-	padding: '6px 12px',
+	padding: '0px 12px',
 	border: '1px solid',
 	lineHeight: 1.5,
-	backgroundColor: '#646464',
-	borderColor: '#646464',
+	backgroundColor: '#000000',
+	borderColor: '#000000',
 	fontFamily: [
 		'-apple-system',
 		'BlinkMacSystemFont',
@@ -158,14 +159,52 @@ const ChannelButton = styled(Button)({
 		'"Segoe UI Symbol"',
 	].join(','),
 	'&:hover': {
-		backgroundColor: '#3b9b3b',
-		borderColor: '#646464',
+		backgroundColor: '#007dd6',
+		borderColor: '#000000',
 		boxShadow: 'none',
 	},
 	'&:active': {
 		boxShadow: 'none',
-		backgroundColor: '#4a7a4a',
-		borderColor: '#646464',
+		backgroundColor: '#000000',
+		borderColor: '#000000',
+	},
+	'&:focus': {
+		xShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
+	},
+});
+
+const ChannelSelectedButton = styled(Button)({
+	boxShadow: 'none',
+	textTransform: 'none',
+	fontSize: 16,
+	fontWeight: 'bold',
+	padding: '0px 12px',
+	border: '1px solid',
+	lineHeight: 1.5,
+	backgroundColor: '#000000',
+	borderColor: '#000000',
+	color: '#4a7a4a',
+	fontFamily: [
+		'-appel-system',
+		'BlinkMacSystemFont',
+		'"Segoe UI"',
+		'Roboto',
+		'"Helvetica Neue"',
+		'Arial',
+		'snans-serif',
+		'"Apple Color Emoji"',
+		'"Segoe UI Emoji"',
+		'"Segoe UI Symbol"',
+	].join(','),
+	'&:hover': {
+		backgroundColor: '#007dd6',
+		borderColor: '#000000',
+		boxShadow: 'none',
+	},
+	'&:active': {
+		boxShadow: 'none',
+		backgroundColor: '#000000',
+		borderColor: '#000000',
 	},
 	'&:focus': {
 		xShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
@@ -176,11 +215,13 @@ const ChannelButtonNewMessage = styled(Button)({
 	boxShadow: 'none',
 	textTransform: 'none',
 	fontSize: 16,
-	padding: '6px 12px',
+	fontWeight: 'bold',
+	padding: '0px 12px',
 	border: '1px solid',
 	lineHeight: 1.5,
-	backgroundColor: '#646464',
-	borderColor: '#646464',
+	backgroundColor: '#000000',
+	borderColor: '#000000',
+	color: '#ffd700',
 	fontFamily: [
 		'-apple-system',
 		'BlinkMacSystemFont',
@@ -194,14 +235,14 @@ const ChannelButtonNewMessage = styled(Button)({
 		'"Segoe UI Symbol"',
 	].join(','),
 	'&:hover': {
-		backgroundColor: '#3b9b3b',
-		borderColor: '#646464',
+		backgroundColor: '#007dd6',
+		borderColor: '#000000',
 		boxShadow: 'none',
 	},
 	'&:active': {
 		boxShadow: 'none',
-		backgroundColor: '#4a7a4a',
-		borderColor: '#646464',
+		backgroundColor: '#000000',
+		borderColor: '#000000',
 	},
 	'&:focus': {
 		xShadow: '0 0 0 0.2rem rgba(0,0,0,.5)',
@@ -254,8 +295,17 @@ function DisplayMessageHistory(props: any) {
 
 function DisplayChannel(props: any){
 	const conv = props?.conv;
+	const currentConv = props?.currentConv;
 
-	if (conv.new_message === true){
+	if (currentConv === conv?.id)
+		return (
+			<div>
+				<ChannelSelectedButton variant="contained" disableRipple onClick={props?.handleChangeConv} value={conv.id}>
+					{conv.name}
+				</ChannelSelectedButton>
+			</div>
+		);
+	else if (conv.new_message === true){
 		return(
 			<div>
 				<ChannelButtonNewMessage variant="contained" disableRipple onClick={props?.handleChangeConv} value={conv.id}>
@@ -279,9 +329,175 @@ function ChatNavigate(props: any) {
 		<div className='Chat-navigate'>
 			{props?.ConvList?.map((conv: Conversation) => {
 				return (
-					<DisplayChannel conv={conv} key={conv.id} handleChangeConv={props?.handleChangeConv}/>
+					<DisplayChannel conv={conv} currentConv={props?.currentConv} key={conv.id} handleChangeConv={props?.handleChangeConv}/>
 				);
 			})}
+		</div>
+	);
+}
+
+function AdminManagement(props: any) {
+	const [me, setMe] = useState<User>();
+	const [isOwnerOrAdmin, setIsOwnerOrAdmin] = useState<boolean>(false);
+
+	useEffect(() => {
+		fetch("http://localhost:9999/api/users/me", {
+			method: "GET",
+			credentials: 'include'
+		})
+		.then(response=>response.json())
+		.then(data => setMe(data));
+	}, []);
+
+	React.useEffect(() => {
+		props?.channel.users.forEach((elem: ChannelUser) => {
+			if (elem.id === me?.id)
+				if (elem.role === 'Owner' || elem.role === 'Admin')
+					setIsOwnerOrAdmin(true);
+		});
+	}, [me]);
+
+	if (isOwnerOrAdmin)
+		return (
+			<div>
+				<Link to={`/managechannel/${props?.channel.id}`}>
+					<SignUpButton variant='contained' disableRipple>
+						Manage Channel
+					</SignUpButton>
+				</Link>
+			</div>
+		);
+	else
+		return (
+			<React.Fragment>
+			</React.Fragment>
+		);
+}
+
+function DisplayChannelAvailable(props: any){
+	const channel = props?.channel;
+	const currentUser = props?.currentUser;
+	const [password, setPassword] = React.useState("");
+
+	const handleJoin = async (event: any) => {
+		await fetch(`http://localhost:9999/api/channels/${event.target.value}/users`, {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			credentials: 'include',
+			body: JSON.stringify({password: password})
+		})
+		.then(response => {
+			if (!response.ok)
+				return ;
+		});
+	}
+
+	const handleLeave = async (event: any) => {
+		await fetch(`http://localhost:9999/api/channels/${event.target.channel_id}/${currentUser.id}`, {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'DELETE',
+			credentials: 'include',
+		})
+		.then(response => {
+			if (!response.ok)
+				return ;
+		});
+	}
+
+	const handleInputPassword = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+		setPassword(e.target.value);
+	};
+
+	const isIn = channel.users.find(({ id }: any) => id === currentUser.id);
+	const isBan = channel.banlist.find(({ id }: any) => id === currentUser.id);
+
+	if (typeof isBan === "undefined"){
+		if (typeof isIn === "undefined" && channel.status === 'public'){
+			return(
+				<div className='Channels-available-div'>
+					<div>
+						{channel.name}
+					</div>
+					<div>
+						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin} value={channel.id}>Join</CreateChannelButton>
+					</div>
+				</div>
+			);
+		} else if (typeof isIn === "undefined" && channel.status === 'protected'){
+			return(
+				<div className='Channels-available-div'>
+					<div>
+						{channel.name}
+					</div>
+					<div>
+						<Box
+							component="form"
+							noValidate
+							sx={{
+								display: 'grid',
+								gap: 2,
+							}}
+						>
+							<PassawordTextField
+								label="Password"
+								InputLabelProps={{
+								sx:{
+									color:"white",
+								}
+								}}
+								variant="outlined"
+								sx={{ input: { color: 'grey' } }}
+								id="validation-outlined-input"
+								onChange={handleInputPassword}
+							/>
+						</Box>
+					</div>
+					<div>
+						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>Join</CreateChannelButton>
+					</div>
+				</div>
+			);
+		} else {
+			return(
+				<div className='Channels-available-div'>
+					<div>
+						{channel.name}
+					</div>
+					<div>
+						<LeaveButton variant="contained" disableRipple onClick={handleLeave} value={channel.id}>Leave</LeaveButton>
+					</div>
+					<div>
+						<AdminManagement channel={channel}/>
+					</div>
+				</div>
+			);
+		}
+	} else {
+		return (<React.Fragment></React.Fragment>);
+	}
+}
+
+function ChannelList(props: any) {
+	return (
+		<div className='Channels-available'>
+			{
+				props?.channelsAvailable?.map((channel:any) => {
+					return(
+						<DisplayChannelAvailable channel={channel} currentUser={props?.currentUser}/>
+					);	
+				})
+			}
+			<div className='Channels-available-div2'>
+				<Link to="/setchannel">
+					<CreateChannelButton variant="contained" disableRipple>Create a channel</CreateChannelButton>
+				</Link>
+			</div>
 		</div>
 	);
 }
@@ -306,101 +522,30 @@ type Conversation = {
 	new_message: boolean;
 }
 
-function DisplayChannelAvailable(channel:any){
-	const {name, users[], status, banlist[]} = channel.channel;
-	const [me, setMe] = useState<meProps>();
-	const [password, setPassword] = React.useState("");
+type ChannelUser = {
+	id: number;
+	user: User;
+	role: 'None' | 'Admin' | 'Owner';
+	is_muted: Boolean;
+	channel: Channel;
+}
 
-	useEffect(() => {
-		const apica = async () => {
-			const me = await fetch("http://localhost:9999/api/users/me", {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonMe = await me.json();
-			setMe(jsonMe);
-		};
+type ChannelBan = {
+	id: number;
+	user: User;
+	unban_date: Date;
+	channel: Channel;
+}
 
-		apica();
-	}, []);
-
-	//handleJoin à faire
-
-	//handleLeave à faire
-
-	const handleInputPassword = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		setPassword(e.target.value);
-	};
-
-	// const res1 = friend?.data.find(({ id }) => id === uid);
-	const isIn = users.find(({ id }) => id === me?.id);
-	const isBan = banlist.find(({ id }) => id === me?.id);
-
-	if (typeof isBan === "undefined"){
-		if (typeof isIn === "undefined" && status === 'public'){
-			return(
-				<div className='Channels-available-div'>
-					<div>
-						{name}
-					</div>
-					<div>
-						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>Join</CreateChannelButton>
-					</div>
-				</div>
-			);
-		} else if (typeof isIn === "undefined" && status === 'protected'){
-			return(
-				<div className='Channels-available-div'>
-					<div>
-						{name}
-					</div>
-					<div>
-						<Box
-							component="form"
-							noValidate
-							sx={{
-								display: 'grid',
-								gap: 2,
-							}}
-						>
-							<PassawordTextField
-								label="Password"
-								InputLabelProps={{
-								sx:{
-									color:"white",
-								}
-								}}
-								variant="outlined"
-								defaultValue="*.jpg or *.png"
-								sx={{ input: { color: 'grey' } }}
-								id="validation-outlined-input"
-								onChange={handleInputPassword}
-							/>
-						</Box>
-					</div>
-					<div>
-						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>Join</CreateChannelButton>
-					</div>
-				</div>
-			);
-		} else {
-			return(
-				<div className='Channels-available-div'>
-					<div>
-						{name}
-					</div>
-					<div>
-						<LeaveButton variant="contained" disableRipple onClick={handleLeave}>Leave</LeaveButton>
-					</div>
-				</div>
-			);
-		}
-	} else {
-		return (<React.Fragment></React.Fragment>);
-	}
-
-	
-
+type Channel = {
+	id: number;
+	name: string;
+	users: ChannelUser[];
+	messages: Message[];
+	status: string;
+	latest_sent: Date;
+	ban_list: ChannelBan[];
+	password: string;
 }
 
 function Chat() {
@@ -412,16 +557,19 @@ function Chat() {
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [convList, setConvList] = useState<Conversation[]>([]);
 	const [newMessage, setNewMessage] = React.useState("");
+	const [channelsAvailable, setChannelsAvailable] = React.useState<Channel[]>([]);
 		
 	useEffect(() => {
 		disableNewMessageNotificationsFn();
 		updateUsersMe();
+		updateChannelsAvailable();
 
 		return setUpNewMessageNotificationsFn;
 	}, []);
 
 	useEffect(() => {
 		updateConvList();
+		socket.on("newConv", updateConvList);
 	}, [currentUser]);
 
 	useEffect(() => {
@@ -476,7 +624,7 @@ function Chat() {
 		.then(data => res = res.concat(data.data.map((elem: any) => {
 			let name: string;
 			if (currentUser.id === -1)
-				name = "not leaded";
+				name = "not loaded";
 			else if (currentUser.id === elem.user1.id)
 				name = elem.user2.username;
 			else
@@ -553,6 +701,13 @@ function Chat() {
 		}
 	}
 
+	async function updateChannelsAvailable() {
+			const url = 'channels';
+
+			getAllPaginated(url, {params: new URLSearchParams({order: "DESC"})})
+			.then(data => setChannelsAvailable(data));
+	}
+
 	const handleChangeConv= async (event: any) => {
 		const id = event.target.value;
 		let convs = [...convList];
@@ -560,6 +715,8 @@ function Chat() {
 			if (elem.id === id) {
 				setCurrentConv(id);
 				setIsChannel(elem.is_channel);
+				elem.new_message = false;
+				setConvList(convs);
 				continue ;
 			}
 	}
@@ -569,7 +726,7 @@ function Chat() {
 	}
 
 	const handleSendMessage = async () => {
-		if (newMessage.length === 0)
+		if (newMessage.length === 0 || currentConv === -1)
 			return ;
 		await fetch(`http://localhost:9999/api/${isChannel?'channels':'conversations'}/${currentConv}/messages`, {
 			headers: {
@@ -579,6 +736,10 @@ function Chat() {
 			method: 'POST',
 			credentials: 'include',
 			body: JSON.stringify({content: newMessage})
+		})
+		.then(response => {
+			if (!response.ok)
+			return ;
 		});
 		socket.emit("newMessage", {convId: currentConv, isChannel: isChannel});
 		setNewMessage(""); // Sert à effacer le message une fois qu'on a appuyé sur le bouton send
@@ -588,7 +749,7 @@ function Chat() {
 			<React.Fragment>
 				<h1>Chat</h1>
 				<div className='Chat-container'>
-					<ChatNavigate ConvList={convList} handleChangeConv={handleChangeConv}/>
+					<ChatNavigate ConvList={convList} currentConv={currentConv} handleChangeConv={handleChangeConv}/>
 					<div>
 						<DisplayMessageHistory messages={messages} me={currentUser}/>
 						<div className='Chat-TextField-send-button'>
@@ -597,6 +758,7 @@ function Chat() {
 									maxRows={4}
 									aria-label="maximum height"
 									placeholder="Message"
+									value={newMessage}
 									
 									style={{ width: "100%", borderRadius: "10px"}}
 									onChange={handleInputMessage}
@@ -609,21 +771,8 @@ function Chat() {
 							</div>
 						</div>
 					</div>
-					<div className='Channels-available'>
-						{
-							//recup la liste des channels qui va s'appeler channelsAvailable
-							channelsAvailable.length && channelsAvailable?.map((channel:any) => {
-								return(
-									<DisplayChannelAvailable channel={channel} />
-								);	
-							})
-						}
-						<div className='Channels-available-div2'>
-							<Link to="/setchannel">
-								<CreateChannelButton variant="contained" disableRipple>Create a channel</CreateChannelButton>
-							</Link>
-						</div>
-					</div>
+					<div className='empty'></div>
+					<ChannelList channelsAvailable={channelsAvailable} currentUser={currentUser} />
 				</div>
 			</React.Fragment>
 	)

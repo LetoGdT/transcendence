@@ -1,0 +1,19 @@
+.Manage-Channel-container{
+    display: flex;
+    flex-direction: column;
+}
+
+.Manage-Channel-container-div{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.Manage-Channel-container-subdiv{
+    display: flex;
+    flex-direction: column;
+}
+
+.Manage-Channel-button{
+    margin: 5px;
+}

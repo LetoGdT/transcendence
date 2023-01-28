@@ -4,6 +4,7 @@ import React from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
+import Box from '@mui/material/Box';
 
 const SetChannelTextField = styled(TextField)({
 	'& input:valid + fieldset': {
@@ -69,21 +70,24 @@ export function SetChannel(){
 	};
 
 	const handleClickSetChannel = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		//?
+		const body = password.length === 0 ? {name: name} : {name: name, password: password};
+		await fetch(`http://localhost:9999/api/channels/`, {
+			method: "POST",
+			credentials: "include",
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(body)
+		});
 	};
 
     return(
-		<div className='Set-Channel-container'>
-			<div className='Set-Channel-container-div'>
-				<div>
-					<Box
-						component="form"
-						noValidate
-						sx={{
-							display: 'grid',
-							gap: 2,
-						}}
-					>
+		<React.Fragment>
+			<h1>Set Channel's parameters</h1>
+			<div className='SetChannel-container'>
+				<div className='SetChannel-container-div'>
+					<div className='SetChannel-TextField'>
 						<SetChannelTextField
 							label="Name"
 							InputLabelProps={{
@@ -92,39 +96,32 @@ export function SetChannel(){
 							}
 							}}
 							variant="outlined"
-							defaultValue="*.jpg or *.png"
+							defaultValue=""
 							sx={{ input: { color: 'grey' } }}
 							id="validation-outlined-input"
 							onChange={handleInputName}
+							value={name}
 						/>
-					</Box>
-				</div>
-				<div>
-					<Box
-						component="form"
-						noValidate
-						sx={{
-							display: 'grid',
-							gap: 2,
-						}}
-					>
+					</div>
+					<div className='SetChannel-TextField'>
 						<SetChannelTextField
-							label="Password"
+							label="Password (optional)"
 							InputLabelProps={{
-							sx:{
-								color:"white",
+								sx:{
+									color:"white",
 							}
 							}}
 							variant="outlined"
-							defaultValue="*.jpg or *.png"
+							defaultValue=""
 							sx={{ input: { color: 'grey' } }}
 							id="validation-outlined-input"
 							onChange={handleInputPsw}
+							value={password}
 						/>
-					</Box>
+					</div>
 				</div>
+				<div className='SetChannel-button'><SetChannelButton variant="contained" disableRipple onClick={handleClickSetChannel}>Create Channel</SetChannelButton></div>
 			</div>
-			<div><SetChannelButton variant="contained" disableRipple onClick={handleClickSetChannel}>Create Channel</SetChannelButton></div>
-		</div>
+		</React.Fragment>
     );
 }

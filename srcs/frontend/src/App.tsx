@@ -6,7 +6,7 @@ import { OurMenu } from './Menu-zone';
 import { Home, NotFound } from './adaptable-zone';
 import { PlayZone } from './Play';
 import { SpecZone } from './Spec';
-import { Pong } from './pong/Pong';
+import { Pong, SpectatePong } from './pong/Pong';
 import { ChatZone } from './Chat-zone';
 import { FriendsZone } from './Friend-zone';
 import { MatchHistoryZone } from './MatchHistory-zone';
@@ -24,6 +24,7 @@ import toast, {Toaster} from 'react-hot-toast';
 import { setUpNewMessageNotificationsFn, setUpNewGameNotificationFn } from './Notifications';
 import { SetPrivateGame } from './SetPrivateGame';
 import { SetChannel } from './SetChannel';
+import { ManageChannel } from './ManageChannel';
 
 function App() {
 	const router = 
@@ -49,8 +50,12 @@ function App() {
 						<Route path="/otherprofile/">
 							<Route path=':uid' element={<OtherProfile />} />
 						</Route>
+						<Route path="/spectate/:game_id" element={<SpectatePong />} />
 						<Route path="/setprivategame">
 							<Route path=':uid' element={<SetPrivateGame />} />
+						</Route>
+						<Route path="/managechannel">
+							<Route path=':cid' element={<ManageChannel />} />
 						</Route>
 						<Route path="/profile" element={<ProfileZone/>} />
 						<Route path="/signup" element={<SignUp/>} />

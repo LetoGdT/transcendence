@@ -13,7 +13,8 @@ import { Game } from './game/game.class';
 
 @Injectable()
 export class ChatService {
-	private readonly http = new HttpService();
+	async onNewMessage(chanOrConv: number, isChannel: boolean, token: string) {
+		let res: {users: number[], latest_sent: Date} = {users: [], latest_sent: new Date()};
 
 		await fetch(`http://localhost:9999/api/${isChannel?'channels':'conversations'}/?id=${chanOrConv}`, {
 			method: "GET",

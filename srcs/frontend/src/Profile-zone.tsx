@@ -101,8 +101,7 @@ export function Profile(){
 			await getAllPaginated('users/me/friends/invites')
 			.then(data => setInvites(data));
 
-			await getAllPaginated('?')//lien à mettre
-			.then(data => setGames(data));
+			socket.emit('getInvites');
 			
 			const stats = await fetch("http://localhost:9999/api/users/me/winrate", {
 				method: "GET",
@@ -116,6 +115,13 @@ export function Profile(){
 		};
 	
 		api();
+	}, []);
+
+	useEffect(() => {
+		socket.on('returnInvites', (data) => {
+			setGames(data);
+			console.log(games);//
+		})
 	}, []);
 
 	const options = {
@@ -218,7 +224,8 @@ export function Profile(){
 					</div>
 					<h4>Invitations received for playing a game</h4>
 					<div>
-						{games.length > 0 && games.map((user: any) => {
+						{	
+							games.map(({ game_id, user }: any) => {
 							var url: string = "/otherprofile";
 							url = url.concat("/");
 							url = url.concat(user.id);
@@ -233,7 +240,7 @@ export function Profile(){
 											<div>{user.username}</div>
 										</Link>
 										<div>
-											<Link to="play">
+											<Link to="/play">
 												<IconButton color="success" aria-label="accept" onClick={()=>{
 													socket.emit('respondToInvite', { id: uid });
 												}}>

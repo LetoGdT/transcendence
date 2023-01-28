@@ -1,10 +1,29 @@
 TODO :
-connecter alternative mode (qui aura un autre nom)
+DOCKER:
+WARNING: The DB_USERNAME variable is not set. Defaulting to a blank string.
+WARNING: The DB_PASSWORD variable is not set. Defaulting to a blank string.
+WARNING: The DB_NAME variable is not set. Defaulting to a blank string.
+WARNING: The PGADMIN_DEFAULT_EMAIL variable is not set. Defaulting to a blank string.
+WARNING: The PGADMIN_DEFAULT_PASSWORD variable is not set. Defaulting to a blank string.
+JEU :
+parties privees, dans other profile, need to connect button to play
+les parties ne s'arretent pas lorsque l'on change de 'page'. Devraient-elles ?
+angle lancement balle à améliorer
+CHAT :
+create channel > 400 bad request if no password set > raison = envoie ligne vide et non param vide
+messages ne s'affichent sur le chat que quand on reactualise la page
+manage channel > you seem lost + Uncaught (in promise) TypeError: Failed to execute 'fetch' on 'Window': Request with GET/HEAD method cannot have body.
+click on leave > DELETE http://localhost:9999/api/channels/undefined/1 404 (Not Found)
+cadre channels trop petit pour voir les noms entiers
+quitter channels
+USERS :
+sign up ne propose pas de créer un compte
+manque demande d'info au sign up. log in rempli tout auto
+AUTRES :
 gerer invitations de jeu recues
 gerer les webtokens (verifier expiration des tokens)
 server-side validation/sanitization on forms (mandatory)
 in game status
-quitter channels
 change ball's angle according to where it hits on the paddle
 delete sylducam docker-compose
 check del, TODO, commentaries
