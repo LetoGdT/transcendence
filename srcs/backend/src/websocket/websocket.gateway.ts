@@ -530,7 +530,7 @@ class GameManager {
 
 	getCurrentGameForUser(user: User) {
 		return this.games.find(game =>
-			game.hasUser(user) && game.getGameState() === GameState.Playing
+			game.hasUser(user) && (game.getGameState() === GameState.Playing || game.getGameState() === GameState.Created)
 		);
 	}
 
@@ -674,16 +674,21 @@ export class MySocketGateway implements OnGatewayConnection,
 			game_id: number,
 		})
 	{
-		const index = this.clients.findIndex(connection => connection.client.id == client.id);
+		const connection = this.clients.find(c => c.client.id == client.id);
 
-		if (index >= 0) {
+		if (null != connection) {
 			const game = gameManager.getGameById(body.game_id);
 			
 			if (null == game) {
 				throw new WsException("The game doesn't exist");
 			}
 
-			game.addSpectator(this.clients[index].client);
+			/* Prevent duplicated packets */
+			for (const game of gameManager.getGames()) {
+				game.removeSpectator(connection.client);
+			}
+
+			game.addSpectator(connection.client);
 		}
 	}
 
