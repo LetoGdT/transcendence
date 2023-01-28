@@ -726,7 +726,7 @@ function Chat() {
 	}
 
 	const handleSendMessage = async () => {
-		if (newMessage.length === 0)
+		if (newMessage.length === 0 || currentConv === -1)
 			return ;
 		await fetch(`http://localhost:9999/api/${isChannel?'channels':'conversations'}/${currentConv}/messages`, {
 			headers: {

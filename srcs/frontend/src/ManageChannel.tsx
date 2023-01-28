@@ -217,10 +217,9 @@ export function ManageChannel(){
 	}
 
 	async function updateChannel() {
-		await fetch(`http://localhost:9999/api/channels/`, {
+		await fetch(`http://localhost:9999/api/channels/${cid}`, {
 			method: "GET",
 			credentials: "include",
-			body: JSON.stringify({id: cid})
 		})
 		.then(response => response.json())
 		.then(data => setCurrentChannel(data));
