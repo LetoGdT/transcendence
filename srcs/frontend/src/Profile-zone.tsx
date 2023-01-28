@@ -188,34 +188,38 @@ export function Profile(){
 											<div>{user.username}</div>
 										</Link>
 										<div>
-											<IconButton color="success" aria-label="accept" onClick={()=>{
-												const response = fetch('http://localhost:9999/api/users/me/friends', {
-													headers: {
-														'Accept': 'application/json',
-														'Content-Type': 'application/json'
-													},
-													method: 'POST',
-													credentials: 'include',
-													body: JSON.stringify({ id: uid })
-												});
-											}}>
-												<CheckIcon />
-											</IconButton>
+											<Link to="/profile">
+												<IconButton color="success" aria-label="accept" onClick={()=>{
+													const response = fetch('http://localhost:9999/api/users/me/friends', {
+														headers: {
+															'Accept': 'application/json',
+															'Content-Type': 'application/json'
+														},
+														method: 'POST',
+														credentials: 'include',
+														body: JSON.stringify({ id: uid })
+													});
+												}}>
+													<CheckIcon />
+												</IconButton>
+											</Link>
 										</div>
 										<div>
-											<IconButton color="error" aria-label="reject" onClick={()=>{
-												let urltofetch : string;
-												urltofetch = 'http://localhost:9999/api/users/me/friends/invites/' + uid;												const response = fetch(urltofetch, {
-													headers: {
-														'Accept': 'application/json',
-														'Content-Type': 'application/json'
-													},
-													method: 'DELETE',
-													credentials: 'include',
-												});
-											}}>
-												<CloseIcon />
-											</IconButton>
+											<Link to="/profile">
+												<IconButton color="error" aria-label="reject" onClick={()=>{
+													let urltofetch : string;
+													urltofetch = 'http://localhost:9999/api/users/me/friends/invites/' + uid;												const response = fetch(urltofetch, {
+														headers: {
+															'Accept': 'application/json',
+															'Content-Type': 'application/json'
+														},
+														method: 'DELETE',
+														credentials: 'include',
+													});
+												}}>
+													<CloseIcon />
+												</IconButton>
+											</Link>
 										</div>
 									</div>
 								</React.Fragment>
@@ -249,11 +253,13 @@ export function Profile(){
 											</Link>
 										</div>
 										<div>
-											<IconButton color="error" aria-label="reject" onClick={()=>{
-												socket.emit('respondToInvite', { id: null });
-											}}>
-												<CloseIcon />
-											</IconButton>
+											<Link to="/profile">
+												<IconButton color="error" aria-label="reject" onClick={()=>{
+													socket.emit('respondToInvite', { id: null });
+												}}>
+													<CloseIcon />
+												</IconButton>
+											</Link>
 										</div>
 									</div>
 								</React.Fragment>
