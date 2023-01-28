@@ -452,8 +452,8 @@ function DisplayChannelAvailable(props: any){
 		setPassword(e.target.value);
 	};
 
-	const isIn = channel.users.find(({ id }: any) => id === currentUser.id);
-	const isBan = channel.banlist.find(({ id }: any) => id === currentUser.id);
+	const isIn = channel.users.find((channelUser: ChannelUser) => channelUser.user.id === currentUser.id);
+	const isBan = channel.banlist.find((channelUser: ChannelUser) => channelUser.user.id === currentUser.id);
 
 	if (typeof isBan === "undefined"){
 		if (typeof isIn === "undefined" && channel.status === 'public'){
