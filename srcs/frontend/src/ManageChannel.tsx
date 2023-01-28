@@ -5,15 +5,10 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import {Link, useParam} from 'react-router-dom';
+import {Link, useParams} from 'react-router-dom';
 
 import { NotFound } from './adaptable-zone';
-
-type userProps = {
-	id: number;
-	username: string;
-	image_url: string;
-}
+import { getAllPaginated } from './tools';
 
 const ManageChannelTextField = styled(TextField)({
 	'& input:valid + fieldset': {
@@ -141,198 +136,284 @@ const BanButton = styled(Button)({
 	},  
 });
 
-function SelectStatus(){
-
-	const handleClickSetPublic = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('?',{//a changer
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'PATCH',
-			credentials: 'include',
-			// body: JSON.stringify({image_url: newPass})//a changer
-		});
-	}
-
-	const handleClickSetPrivate = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('?',{//a changer
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'PATCH',
-			credentials: 'include',
-			// body: JSON.stringify({image_url: newPass})//a changer
-		});
-	}
-	
-	const handleClickSetProtected = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('?',{//a changer
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'PATCH',
-			credentials: 'include',
-			// body: JSON.stringify({image_url: newPass})//a changer
-		});
-	}
-
-	if (channel.status === "public"){
-		return(
-			<React.Fragment>
-				<div className='Manage-Channel-button'>
-					<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPrivate}>Set private</ManageChannelButton><
-				</div>
-				<div className='Manage-Channel-button'>
-					<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetProtected}>Set protected</ManageChannelButton><
-				</div>
-			</React.Fragment>
-		);
-	} else if (channel.status === "private"){
-		return(
-			<React.Fragment>
-				<div className='Manage-Channel-button'>
-					<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPublic}>Set public</ManageChannelButton><
-				</div>
-				<div className='Manage-Channel-button'>
-					<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetProtected}>Set protected</ManageChannelButton><
-				</div>
-			</React.Fragment>
-		);
-	} else {
-		return(
-			<React.Fragment>
-				<div className='Manage-Channel-button'>
-					<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPublic}>Set public</ManageChannelButton><
-				</div>
-				<div className='Manage-Channel-button'>
-					<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPrivate}>Set private</ManageChannelButton><
-				</div>
-			</React.Fragment>
-		);
-	}
+type User = {
+	id: number;
+	username: string;
+	image_url: string;
 }
 
-function OwnerPriv1(){
-	const [password, setPassword] = React.useState("");
-	
-	const handleInputPwd = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		setPassword(e.target.value);
-	};
+type Message = {
+	id: number;
+	content: string;
+	sender: User;
+}
 
-	const handleClickNewPwd = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('?',{//a changer
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'PATCH',
-			credentials: 'include',
-			// body: JSON.stringify({image_url: newPass})//a changer
+type ChannelUser = {
+	id: number;
+	user: User;
+	role: 'None' | 'Admin' | 'Owner';
+	is_muted: Boolean;
+	channel: Channel;
+}
+
+type ChannelBan = {
+	id: number;
+	user: User;
+	unban_date: Date;
+	channel: Channel;
+}
+
+type Channel = {
+	id: number;
+	name: string;
+	users: ChannelUser[];
+	messages: Message[];
+	status: string;
+	latest_sent: Date;
+	ban_list: ChannelBan[];
+	password: string;
+}
+
+export function ManageChannel(){
+	let { cid } = useParams();
+	const [me, setMe] = React.useState<User>();
+	const [users, setUsers] = React.useState<ChannelUser[]>([]);
+	const [isOwner, setIsOwner] = React.useState<boolean>(false);
+	const [isAdmin, setIsAdmin] = React.useState<boolean>(false);
+	const [currentChannel, setCurrentChannel] = React.useState<Channel>();
+
+	React.useEffect(() => {
+		updateUsersMe();
+	}, []);
+
+	React.useEffect(() => {
+		updateUsers();
+		updateChannel();
+	}, [cid]);
+
+	React.useEffect(() => {
+		users.forEach((elem: ChannelUser) => {
+			if (elem.id === me?.id) {
+				if (elem.role === 'Owner')
+					setIsOwner(true);
+				else if (elem.role === 'Admin')
+					setIsAdmin(true);
+			}
 		});
+	}, [users]);
+
+	async function updateUsersMe() {
+		await fetch("http://localhost:9999/api/users/isconnected", {
+			method: "GET",
+			credentials: 'include'
+		})
+		.then(response=>response.json())
+		.then(data => setMe(data));
 	}
 
-	if (/*me === owner*/){
-		return(
-			<React.Fragment>
-				<div className='Manage-Channel-container-div'>
-					<div>
-						New Password:
-					</div>
-					<div>
-						<Box
-							component="form"
-							noValidate
-							sx={{
-								display: 'grid',
-								gap: 2,
-							}}
-						>
-							<ManageChannelTextField
-								label="New Password"
-								InputLabelProps={{
-								sx:{
-									color:"white",
-								}
-								}}
-								variant="outlined"
-								defaultValue=""
-								sx={{ input: { color: 'grey' } }}
-								id="validation-outlined-input"
-								onChange={handleInputPwd}
-							/>
-						</Box>
+	async function updateUsers() {
+		getAllPaginated(`channels/${cid}/users`)
+		.then(data => setUsers(data));
+	}
+
+	async function updateChannel() {
+		await fetch(`http://localhost:9999/api/channels/`, {
+			method: "GET",
+			credentials: "include",
+			body: JSON.stringify({id: cid})
+		})
+		.then(response => response.json())
+		.then(data => setCurrentChannel(data));
+	}
+
+	function SelectStatus() {
+		const handleClickSetPublic = async (event: React.MouseEvent<HTMLButtonElement>) => {
+			await fetch(`http://localhost:9999/api/channels/${cid}`,{
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				method: 'PATCH',
+				credentials: 'include',
+				body: JSON.stringify({status: "public"})
+			});
+		};
+
+		const handleClickSetPrivate = async (event: React.MouseEvent<HTMLButtonElement>) => {
+			await fetch(`http://localhost:9999/api/channels/${cid}`,{
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				method: 'PATCH',
+				credentials: 'include',
+				body: JSON.stringify({status: "private"})
+			});
+		};
+
+		const handleClickSetProtected = async (event: React.MouseEvent<HTMLButtonElement>) => {
+			await fetch(`http://localhost:9999/api/channels/${cid}`,{
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				method: 'PATCH',
+				credentials: 'include',
+				body: JSON.stringify({status: "protected"})
+			});
+		};
+
+		if (currentChannel?.status === "public") {
+			return(
+				<React.Fragment>
+					<div className='Manage-Channel-button'>
+						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPrivate}>Set private</ManageChannelButton>
 					</div>
 					<div className='Manage-Channel-button'>
-						<ManageChannelButton variant="contained" disableRipple onClick={handleClickNewPwd}>Save Password</ManageChannelButton><
+						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetProtected}>Set protected</ManageChannelButton>
 					</div>
-				</div>
-				<div className='Manage-Channel-container-div'>
-					<div>
-						Change status: 
+				</React.Fragment>
+			);
+		} else if (currentChannel?.status === "private"){
+			return(
+				<React.Fragment>
+					<div className='Manage-Channel-button'>
+						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPublic}>Set public</ManageChannelButton>
 					</div>
-					<div>
-						<SelectStatus />
+					<div className='Manage-Channel-button'>
+						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetProtected}>Set protected</ManageChannelButton>
 					</div>
-				</div>
-			</React.Fragment>
-		);
-	} else {
+				</React.Fragment>
+			);
+		} else {
+			return(
+				<React.Fragment>
+					<div className='Manage-Channel-button'>
+						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPublic}>Set public</ManageChannelButton>
+					</div>
+					<div className='Manage-Channel-button'>
+						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPrivate}>Set private</ManageChannelButton>
+					</div>
+				</React.Fragment>
+			);
+		}
+	}
+
+	function OwnerPriv1() {
+		const [password, setPassword] = React.useState("");
+		
+		const handleInputPwd = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+			setPassword(e.target.value);
+		};
+
+		const handleClickNewPwd = async (event: any) => {
+			await fetch(`http://localhost:9999/api/channels/${cid}`, {
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				method: 'PATCH',
+				credentials: 'include',
+				body: JSON.stringify({password: password})
+			});
+			setPassword("");
+		}
+
+		if (isOwner){
+			return(
+				<React.Fragment>
+					<div className='Manage-Channel-container-div'>
+						<div>
+							<Box
+								component="form"
+								noValidate
+								sx={{
+									display: 'grid',
+									gap: 2,
+								}}
+							>
+								<ManageChannelTextField
+									label="New Password"
+									InputLabelProps={{
+									sx:{
+										color:"white",
+									}
+									}}
+									variant="outlined"
+									defaultValue=""
+									sx={{ input: { color: 'grey' } }}
+									id="validation-outlined-input"
+									onChange={handleInputPwd}
+									value={password}
+								/>
+							</Box>
+						</div>
+						<div className='Manage-Channel-button'>
+							<ManageChannelButton variant="contained" disableRipple onClick={handleClickNewPwd}>Save Password</ManageChannelButton>
+						</div>
+					</div>
+					<div className='Manage-Channel-container-div'>
+						<div>
+							Change status: 
+						</div>
+						<div>
+							<SelectStatus />
+						</div>
+					</div>
+				</React.Fragment>
+			);
+		} else {
+			return(
+				<React.Fragment></React.Fragment>
+			);
+		}
+	}
+
+	function DisplayUser(props: any){
+		const [banTime, setBanTime] = React.useState("");
+		
+		const handleInputBanTime = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+			setBanTime(e.target.value);
+		};
+
+		const handleClickBan = async (event: React.MouseEvent<HTMLButtonElement>) => {
+			await fetch(`http://localhost:9999/api/channels/${cid}/banlist`,{
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				method: 'POST',
+				credentials: 'include',
+				body: JSON.stringify({user_id: props?.user.user.id, unban_date: banTime})
+			});
+			setBanTime("");
+		}
+
+		const handleClickKick = async (event: React.MouseEvent<HTMLButtonElement>) => {
+			await fetch(`http://localhost:9999/api/channels/${cid}/users/${props?.user.user.id}`,{
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				method: 'DELETE',
+				credentials: 'include',
+			});
+		}
+
+		let url: string = "/otherprofile/";
+		url = url.concat(props?.user.user.id.toString());
 		return(
-			<React.Fragment></React.Fragment>
-		);
-	}
-}
-
-function DisplayUser(user:any){
-	const [banTime, setBanTime] = React.useState("");
-	
-	//recup les infos du user
-	
-	const handleInputBanTime = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		setBanTime(e.target.value);
-	};
-
-	const handleClickBan = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('?',{//a changer
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'PATCH',
-			credentials: 'include',
-			// body: JSON.stringify({image_url: newPass})//a changer
-		});
-	}
-
-	const handleClickKick = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('?',{//a changer
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'PATCH',
-			credentials: 'include',
-			// body: JSON.stringify({image_url: newPass})//a changer
-		});
-	}
-
-	let url: string = "/otherprofile/";
-	url = url.concat(user.id.toString());
-	return(
-		<div className='Manage-Channel-container-div'>
-			<Link to={url} >
-				<div>
-					<img src={user.image_url} alt={user.username + "'s avatar"} className='Profile-invitation-received-img'></img>
-				</div>
-				<div>{user.username}</div>
-			</Link>
-			<div className='Manage-Channel-button'><KickButton variant="contained" disableRipple onClick={handleClickKick}>Kick</KickButton></div>
-			<div className='Manage-Channel-container-subdiv'>
-				<div>
-					For banishing, please enter an end date
+			<div className='Manage-Channel-container-div'>
+				<Link to={url} >
+					<div>
+						<img src={props?.user.user.image_url} alt={props?.user.user.username + "'s avatar"} className='Profile-invitation-received-img'></img>
+					</div>
+					<div>{props?.user.user.username}</div>
+				</Link>
+				<div className='Manage-Channel-button'>
+					<KickButton variant="contained" disableRipple onClick={handleClickKick}>
+						Kick
+					</KickButton>
 				</div>
 				<div>
 					<Box
@@ -344,7 +425,7 @@ function DisplayUser(user:any){
 						}}
 					>
 						<ManageChannelTextField
-							label="Ban Time"
+							label="For banishing, please enter an end date"
 							InputLabelProps={{
 							sx:{
 								color:"white",
@@ -355,75 +436,67 @@ function DisplayUser(user:any){
 							sx={{ input: { color: 'grey' } }}
 							id="validation-outlined-input"
 							onChange={handleInputBanTime}
+							value={banTime}
 						/>
 					</Box>
 				</div>
+				<div className='Manage-Channel-button'>
+					<BanButton variant="contained" disableRipple onClick={handleClickBan}>
+						Ban
+					</BanButton>
+				</div>
+				<OwnerPriv2 user={props?.user}/>
 			</div>
-			<div className='Manage-Channel-button'><BanButton variant="contained" disableRipple onClick={handleClickBan}>Ban</BanButton></div>
-			<OwnerPriv2 />
-		</div>
-	);
-}
-
-function OwnerPriv2(){
-
-	const handleClickAdmin = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('?',{//a changer
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'PATCH',
-			credentials: 'include',
-			// body: JSON.stringify({image_url: newPass})//a changer
-		});
+		);
 	}
 
-	if(/*me === owner*/){
+	function OwnerPriv2(props: any){
+
+		const handleClickAdmin = async (event: React.MouseEvent<HTMLButtonElement>) => {
+			await fetch(`http://localhost:9999/api/channels/${cid}/users/${props?.user.user.id}`,{
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				method: 'PATCH',
+				credentials: 'include',
+				body: JSON.stringify({role: "Admin"})
+			});
+		}
+
+		if(isOwner && props?.user.role === 'None'){
+			return(
+				<div className='Manage-Channel-button'>
+					<ManageChannelButton variant="contained" disableRipple onClick={handleClickAdmin}>
+						Make Admin
+					</ManageChannelButton>
+				</div>
+			);
+		} else {
+			return(
+				<React.Fragment>
+				</React.Fragment>
+			);
+		}
+	}
+
+	// Main render 
+	//
+	//
+	if (!(isOwner || isAdmin)){
 		return(
-			<div className='Manage-Channel-button'><ManageChannelButton variant="contained" disableRipple onClick={handleClickAdmin}>Make Admin</ManageChannelButton></div>
+			<NotFound />
 		);
 	} else {
 		return(
-			<React.Fragment></React.Fragment>
-		);
-	}
-}
-
-
-export function ManageChannel(){
-	let { cid } = useParam();
-	const [me, setMe] = React.useState<userProps>();
-
-	React.useEffect(() => {
-		const api = async () => {
-			const data = await fetch("http://localhost:9999/api/users/isconnected", {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonData = await data.json();
-			setMe(jsonData);
-		};
-		
-		//recuperer les info du channel dont id est cid
-	
-		api();
-	}, []);
-
-	// if (/*me n'est pas admin ou owner*/){
-	// 	return(
-	// 		<NotFound />
-	// 	);
-	// } else {
-		return(
 			<React.Fragment>
-				<h1>Channel {channel?.name}'s management</h1>
+				<h1>Channel {currentChannel.name}'s management</h1>
 				<div className='Manage-Channel-container'>
-					<OwnerPriv1 />
+					<OwnerPriv1/>
 					<h4>List of users</h4>
 					{
 						//recuperer la liste des users
-						users.length > 0 && users?.map((user:any) => {
+						users?.map((user: ChannelUser) => {
 							return(
 								<DisplayUser user={user} />
 							);
@@ -432,5 +505,5 @@ export function ManageChannel(){
 				</div>
 			</React.Fragment>
 		);
-	// }
+	}
 }
