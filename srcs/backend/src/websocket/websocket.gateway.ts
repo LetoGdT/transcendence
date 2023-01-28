@@ -34,7 +34,7 @@ class RemotePlayer {
 		this.socket = socket;
 		this.user = user;
 		this.score = 0;
-		this.y = 0;
+		this.y = GAME_HEIGHT / 2;
 	}
 
 	emit(ev: string, ...args: any[]) {
@@ -138,7 +138,15 @@ class Game {
 
 	resetBall() {
 		/* Pick a random angle between 0 and 90 degrees */
-		const quarterPi = Math.PI / 4;
+		let quarterPi;
+
+		if (Math.random() < 0.5)
+		{
+			quarterPi = Math.PI / 4;
+		}
+		else
+			quarterPi = Math.PI * 3 / 4;
+		
 		const angle = Math.random() * quarterPi - quarterPi;
 		this.ballDirX = Math.cos(angle);
 		this.ballDirY = Math.sin(angle);
@@ -417,6 +425,10 @@ class GameManager {
 		this.games.splice(toRemove, 1);
 	}
 
+	getGameById(id: number): Game | undefined {
+		return this.games.find(e => e.id === id);
+	}
+
 	removeFinishedGames() {
 		let i, j;
 		
@@ -600,13 +612,13 @@ export class MySocketGateway implements OnGatewayConnection,
 		const index = this.clients.findIndex(connection => connection.client.id == client.id);
 
 		if (index >= 0) {
-			for (const game of gameManager.getGames())
-			{
-				if (game.id === body.game_id) {
-					game.addSpectator(client);
-					break;
-				}
+			const game = gameManager.getGameById(body.game_id);
+			
+			if (null == game) {
+				throw new WsException("The game doesn't exist");
 			}
+
+			game.addSpectator(this.clients[index].client);
 		}
 	}
 
