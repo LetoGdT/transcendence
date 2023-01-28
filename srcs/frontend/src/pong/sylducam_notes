@@ -1,13 +1,10 @@
 TODO :
-parties privees, dans other profile, need to connect button to play
 connecter alternative mode (qui aura un autre nom)
 gerer invitations de jeu recues
 gerer les webtokens (verifier expiration des tokens)
 server-side validation/sanitization on forms (mandatory)
 in game status
-quitter channels
 change ball's angle according to where it hits on the paddle
-delete sylducam docker-compose
 check del, TODO, commentaries
 
 Keep it:
@@ -34,7 +31,7 @@ http://localhost:3000/
 BACK:
 http://localhost:9999/
 DOCKER LOGS (BACK ?):
-docker logs -f nestj
+docker logs -f nestjs
 .ENV
 add it everytime in backend
 INSTALL REACT :

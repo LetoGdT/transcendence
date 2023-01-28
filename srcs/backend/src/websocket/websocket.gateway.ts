@@ -46,6 +46,7 @@ class RemotePlayer {
 
 
 enum GameState {
+	Waiting,
 	Created,
 	Countdown,
 	Playing,
@@ -96,7 +97,7 @@ class Game {
 
 	readonly id: number;
 
-	constructor(player1: RemotePlayer, player2: RemotePlayer, updateMatchHistory: UpdateMatchHistory, id: number) {
+	constructor(player1: RemotePlayer, player2: RemotePlayer, updateMatchHistory: UpdateMatchHistory, id: number, waiting: boolean) {
 		this.startTime = Date.now();
 
 		this.player1 = player1;
@@ -104,7 +105,10 @@ class Game {
 
 		this.maxScore = 50; // TODO set it back to 5
 
-		this.gameState = GameState.Created;
+		if (!waiting)
+			this.gameState = GameState.Waiting;
+		else
+			this.gameState = GameState.Created;
 
 		this.updateMatchHistory = updateMatchHistory;
 		this.id = id;
@@ -120,6 +124,16 @@ class Game {
 	{
 		if (score >= 5 && score <= 20)
 			this.maxScore = score;
+	}
+
+	getState()
+	{
+		return this.gameState;
+	}
+
+	start()
+	{
+		this.gameState = GameState.Created;
 	}
 
 	resetBall() {
@@ -416,10 +430,11 @@ class GameManager {
 		}
 	}
 
-	startGame(player1: Connection, player2: Connection, updateMatchHistory: UpdateMatchHistory) {
+	startGame(player1: Connection, player2: Connection, waiting: boolean, updateMatchHistory: UpdateMatchHistory,
+		speed?: number, score?: number) {
 		const p1 = new RemotePlayer(player1.client, player1.user);
 		const p2 = new RemotePlayer(player2.client, player2.user);
-		const game = new Game(p1, p2, updateMatchHistory, this.id);
+		const game = new Game(p1, p2, updateMatchHistory, this.id, waiting);
 
 		this.id++;
 
@@ -664,7 +679,7 @@ export class MySocketGateway implements OnGatewayConnection,
 				const p1 = this.matchmakingQueue.pop();
 				const p2 = this.matchmakingQueue.pop();
 
-				gameManager.startGame(p1, p2, async (game: Game) => {
+				gameManager.startGame(p1, p2, false, async (game: Game) => {
 					const createMatchDto: CreateMatchDto = {
 						user1: game.player1.user,
 						user2: game.player2.user,
@@ -708,15 +723,40 @@ export class MySocketGateway implements OnGatewayConnection,
 		}
 		else
 		{
-			// if (body.opponent_id == null)
-			// 	throw new WsException('You must provide an opponent');
+			if (body.opponent_id == null)
+				throw new WsException('You must provide an opponent');
 
-			// const opponentIndex: number = this.clients.findIndex(connection => {
-			// 	connection.client.id == client.id
-			// });
+			const opponentIndex: number = this.clients.findIndex(connection => {
+				connection.user.id == body.opponent_id
+			});
 
-			// if (opponentIndex === -1)
-			// 	throw new WsException('Opponent not connected');
+			const meIndex: number = this.clients.findIndex(connection => {
+				connection.client.id == client.id
+			});
+
+			if (opponentIndex === -1)
+				throw new WsException('Opponent not connected');
+
+			if (meIndex === -1)
+				throw new WsException('An unexpected error occured');
+
+			if (gameManager.findGameByUser(this.clients[meIndex].user) != null
+				|| gameManager.findGameByUser(this.clients[meIndex].user) != null)
+				throw new WsException('You or your opponent have already been invited');
+
+			gameManager.startGame(this.clients[meIndex], this.clients[opponentIndex], true, async (game: Game) => {
+					const createMatchDto: CreateMatchDto = {
+						user1: game.player1.user,
+						user2: game.player2.user,
+						score_user1: game.player1.score,
+						score_user2: game.player2.score,
+						winner: game.getWinningUser(),
+						played_at: new Date(game.startTime),
+						game_type: 'Quick play',
+					};
+					const match = await this.matchesService.createMatch(createMatchDto);
+					this.matchesService.calculateRank(match.id);
+				});
 
 			// const game = new Game(50, 'Quick play');
 			// await game.setWinningScore(body.winning_score);
@@ -725,21 +765,26 @@ export class MySocketGateway implements OnGatewayConnection,
 			// await game.addPlayer({ user: this.clients[opponentIndex].user,
 			// 	client: this.clients[opponentIndex].client });
 			// this.games.push(game);
-			// client.emit('waitingForOpponent');
+			client.emit('waitingForOpponent');
 		}
 	}
 
 	@SubscribeMessage('respondToInvite')
 	async respondToInvite(@ConnectedSocket() client: Socket)
 	{
-		// const index: number = this.clients.findIndex(connection => connection.client.id == client.id);
-		// if (index === -1)
-		// 	throw new WsException('We don\'t know you sir, but that\'s our bad');
+		const index: number = this.clients.findIndex(connection => connection.client.id == client.id);
+		if (index === -1)
+			throw new WsException('We don\'t know you sir, but that\'s our bad');
 
-		// let gameIndex: number = this.games.findIndex(async game => {
-		// 	await game.getPlayer1Id() == this.clients[index].user.id && await game.started()
-		// 	|| await game.getPlayer2Id() == this.clients[index].user.id && await game.started()
-		// });
+		const game = gameManager.findGameByUser(this.clients[index].user);
+
+		if (game == null)
+			throw new WsException('You have not been invited in a game');
+
+		if (game.getState() !== GameState.Waiting)
+			throw new WsException('Game already started');
+
+		game.start();
 
 		// if (gameIndex !== -1)
 		// 	throw new WsException('You are already in a game');
