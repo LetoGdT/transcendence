@@ -148,6 +148,8 @@ class PongGame
 		this.countdownStart = 0;
 		this.scorePlayer1 = 0;
 		this.scorePlayer2 = 0;
+		this.player1 = new Player(0, (this.height - PLAYER_HEIGHT) / 2);
+        this.player2 = new Player(this.width - PLAYER_WIDTH, (this.height - PLAYER_HEIGHT) / 2);
 	}
 
 	drawStatusScreen(ctx: CanvasRenderingContext2D, label: string) {
