@@ -70,7 +70,7 @@ export function SetChannel(){
 	};
 
 	const handleClickSetChannel = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const body = JSON.stringify({name, password});
+		const body = password.length === 0 ? {name: name} : {name: name, password: password};
 		await fetch(`http://localhost:9999/api/channels/`, {
 			method: "POST",
 			credentials: "include",
@@ -78,7 +78,7 @@ export function SetChannel(){
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
 			},
-			body,
+			body: JSON.stringify(body)
 		});
 	};
 
