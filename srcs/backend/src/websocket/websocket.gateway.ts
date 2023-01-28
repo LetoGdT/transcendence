@@ -103,7 +103,7 @@ class Game {
 		this.player1 = player1;
 		this.player2 = player2;
 
-		this.maxScore = 50; // TODO set it back to 5
+		this.maxScore = 5; // TODO set it back to 5
 
 		if (waiting)
 			this.gameState = GameState.Waiting;
