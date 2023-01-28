@@ -253,7 +253,6 @@ export function Profile(){
 										<div>
 											<IconButton color="error" aria-label="reject" onClick={()=>{
 												socket.emit('respondToInvite', { id: null });
-												window.location.reload();
 											}}>
 												<CloseIcon />
 											</IconButton>
