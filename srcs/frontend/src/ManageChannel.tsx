@@ -1,5 +1,5 @@
 import './App.css';
-import './SetChannel.css';
+import './ManageChannel.css';
 import React from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -217,12 +217,12 @@ export function ManageChannel(){
 	}
 
 	async function updateChannel() {
-		await fetch(`http://localhost:9999/api/channels/${cid}`, {
+		await fetch(`http://localhost:9999/api/channels/?id=${cid}`, {
 			method: "GET",
 			credentials: "include",
 		})
 		.then(response => response.json())
-		.then(data => setCurrentChannel(data));
+		.then(data => setCurrentChannel(data.data[0]));
 	}
 
 	function SelectStatus() {
@@ -262,14 +262,20 @@ export function ManageChannel(){
 			});
 		};
 
+		let url: string = "/managechannel/"+ cid;
+
 		if (currentChannel?.status === "public") {
 			return(
 				<React.Fragment>
 					<div className='Manage-Channel-button'>
-						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPrivate}>Set private</ManageChannelButton>
+						<Link to={url}>
+							<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPrivate}>Set private</ManageChannelButton>
+						</Link>
 					</div>
 					<div className='Manage-Channel-button'>
-						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetProtected}>Set protected</ManageChannelButton>
+						<Link to={url}>
+							<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetProtected}>Set protected</ManageChannelButton>
+						</Link>
 					</div>
 				</React.Fragment>
 			);
@@ -277,10 +283,14 @@ export function ManageChannel(){
 			return(
 				<React.Fragment>
 					<div className='Manage-Channel-button'>
-						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPublic}>Set public</ManageChannelButton>
+						<Link to={url}>
+							<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPublic}>Set public</ManageChannelButton>
+						</Link>
 					</div>
 					<div className='Manage-Channel-button'>
-						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetProtected}>Set protected</ManageChannelButton>
+						<Link to={url}>
+							<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetProtected}>Set protected</ManageChannelButton>
+						</Link>
 					</div>
 				</React.Fragment>
 			);
@@ -288,10 +298,14 @@ export function ManageChannel(){
 			return(
 				<React.Fragment>
 					<div className='Manage-Channel-button'>
-						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPublic}>Set public</ManageChannelButton>
+						<Link to={url}>
+							<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPublic}>Set public</ManageChannelButton>
+						</Link>
 					</div>
 					<div className='Manage-Channel-button'>
-						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPrivate}>Set private</ManageChannelButton>
+						<Link to={url}>
+							<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPrivate}>Set private</ManageChannelButton>
+						</Link>
 					</div>
 				</React.Fragment>
 			);
@@ -322,30 +336,21 @@ export function ManageChannel(){
 			return(
 				<React.Fragment>
 					<div className='Manage-Channel-container-div'>
-						<div>
-							<Box
-								component="form"
-								noValidate
-								sx={{
-									display: 'grid',
-									gap: 2,
+						<div className='Manage-Channel-div'>
+							<ManageChannelTextField
+								label="New Password"
+								InputLabelProps={{
+								sx:{
+									color:"white",
+								}
 								}}
-							>
-								<ManageChannelTextField
-									label="New Password"
-									InputLabelProps={{
-									sx:{
-										color:"white",
-									}
-									}}
-									variant="outlined"
-									defaultValue=""
-									sx={{ input: { color: 'grey' } }}
-									id="validation-outlined-input"
-									onChange={handleInputPwd}
-									value={password}
-								/>
-							</Box>
+								variant="outlined"
+								defaultValue=""
+								sx={{ input: { color: 'grey' } }}
+								id="validation-outlined-input"
+								onChange={handleInputPwd}
+								value={password}
+							/>
 						</div>
 						<div className='Manage-Channel-button'>
 							<ManageChannelButton variant="contained" disableRipple onClick={handleClickNewPwd}>Save Password</ManageChannelButton>
@@ -355,9 +360,7 @@ export function ManageChannel(){
 						<div>
 							Change status: 
 						</div>
-						<div>
-							<SelectStatus />
-						</div>
+						<SelectStatus />
 					</div>
 				</React.Fragment>
 			);
@@ -415,29 +418,20 @@ export function ManageChannel(){
 					</KickButton>
 				</div>
 				<div>
-					<Box
-						component="form"
-						noValidate
-						sx={{
-							display: 'grid',
-							gap: 2,
+					<ManageChannelTextField
+						label="Enter an end date"
+						InputLabelProps={{
+						sx:{
+							color:"white",
+						}
 						}}
-					>
-						<ManageChannelTextField
-							label="For banishing, please enter an end date"
-							InputLabelProps={{
-							sx:{
-								color:"white",
-							}
-							}}
-							variant="outlined"
-							defaultValue=""
-							sx={{ input: { color: 'grey' } }}
-							id="validation-outlined-input"
-							onChange={handleInputBanTime}
-							value={banTime}
-						/>
-					</Box>
+						variant="outlined"
+						defaultValue=""
+						sx={{ input: { color: 'grey' } }}
+						id="validation-outlined-input"
+						onChange={handleInputBanTime}
+						value={banTime}
+					/>
 				</div>
 				<div className='Manage-Channel-button'>
 					<BanButton variant="contained" disableRipple onClick={handleClickBan}>

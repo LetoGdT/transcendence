@@ -461,7 +461,11 @@ function DisplayChannelAvailable(props: any){
 						{channel.name}
 					</div>
 					<div className='Channels-available-button'>
-						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin} value={channel.id}>Join</CreateChannelButton>
+						<Link to="/chat">
+							<CreateChannelButton variant="contained" disableRipple onClick={handleJoin} value={channel.id}>
+								Join
+							</CreateChannelButton>
+						</Link>
 					</div>
 				</div>
 			);
@@ -472,47 +476,48 @@ function DisplayChannelAvailable(props: any){
 						{channel.name}
 					</div>
 					<div className='Channels-available-button'>
-						<Box
-							component="form"
-							noValidate
-							sx={{
-								display: 'grid',
-								gap: 2,
+						<PassawordTextField
+							label="Password"
+							InputLabelProps={{
+							sx:{
+								color:"white",
+							}
 							}}
-						>
-							<PassawordTextField
-								label="Password"
-								InputLabelProps={{
-								sx:{
-									color:"white",
-								}
-								}}
-								variant="outlined"
-								sx={{ input: { color: 'grey' } }}
-								id="validation-outlined-input"
-								onChange={handleInputPassword}
-							/>
-						</Box>
+							variant="outlined"
+							sx={{ input: { color: 'grey' } }}
+							id="validation-outlined-input"
+							onChange={handleInputPassword}
+						/>
 					</div>
 					<div className='Channels-available-button'>
-						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>Join</CreateChannelButton>
+						<Link to="/chat">
+							<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>
+								Join
+							</CreateChannelButton>
+						</Link>
 					</div>
 				</div>
 			);
-		} else {
+		} else if (typeof isIn !== "undefined"){
 			return(
 				<div className='Channels-available-div'>
 					<div className='Channels-available-button'>
 						{channel.name}
 					</div>
 					<div className='Channels-available-button'>
-						<LeaveButton variant="contained" disableRipple onClick={handleLeave} value={channel.id}>Leave</LeaveButton>
+						<Link to="/chat">
+							<LeaveButton variant="contained" disableRipple onClick={handleLeave} value={channel.id}>
+								Leave
+							</LeaveButton>
+						</Link>
 					</div>
 					<div className='Channels-available-button'>
 						<AdminManagement channel={channel}/>
 					</div>
 				</div>
 			);
+		} else {
+			return (<React.Fragment></React.Fragment>);
 		}
 	} else {
 		return (<React.Fragment></React.Fragment>);
