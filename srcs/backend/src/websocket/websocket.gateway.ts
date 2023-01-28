@@ -105,7 +105,7 @@ class Game {
 
 		this.maxScore = 50; // TODO set it back to 5
 
-		if (!waiting)
+		if (waiting)
 			this.gameState = GameState.Waiting;
 		else
 			this.gameState = GameState.Created;
@@ -145,6 +145,9 @@ class Game {
 
 		if (Math.random() < 0.5)
 			this.ballDirX *= -1;
+
+		if (Math.random() < 0.5)
+			this.ballDirY *= -1;
 
 		this.ballX = GAME_WIDTH / 2;
 		this.ballY = GAME_HEIGHT / 2;
