@@ -12,6 +12,7 @@ import { PleaseConnect } from './adaptable-zone';
 import { socket } from './WebsocketContext';
 import { getAllPaginated } from './tools';
 import { disableNewMessageNotificationsFn, setUpNewMessageNotificationsFn } from './Notifications'
+import { SignUpButton } from './Header-zone';
 
 const PassawordTextField = styled(TextField)({
 	'& input:valid + fieldset': {
@@ -335,6 +336,44 @@ function ChatNavigate(props: any) {
 	);
 }
 
+function AdminManagement(props: any) {
+	const [me, setMe] = useState<User>();
+	const [isOwnerOrAdmin, setIsOwnerOrAdmin] = useState<boolean>(false);
+
+	useEffect(() => {
+		fetch("http://localhost:9999/api/users/me", {
+			method: "GET",
+			credentials: 'include'
+		})
+		.then(response=>response.json())
+		.then(data => setMe(data));
+	}, []);
+
+	React.useEffect(() => {
+		props?.channel.users.forEach((elem: ChannelUser) => {
+			if (elem.id === me?.id)
+				if (elem.role === 'Owner' || elem.role === 'Admin')
+					setIsOwnerOrAdmin(true);
+		});
+	}, [me]);
+
+	if (isOwnerOrAdmin)
+		return (
+			<div>
+				<Link to={`/managechannel/${props?.channel.id}`}>
+					<SignUpButton variant='contained' disableRipple>
+						Manage Channel
+					</SignUpButton>
+				</Link>
+			</div>
+		);
+	else
+		return (
+			<React.Fragment>
+			</React.Fragment>
+		);
+}
+
 function DisplayChannelAvailable(props: any){
 	const channel = props?.channel;
 	const currentUser = props?.currentUser;
@@ -432,6 +471,9 @@ function DisplayChannelAvailable(props: any){
 					</div>
 					<div>
 						<LeaveButton variant="contained" disableRipple onClick={handleLeave} value={channel.id}>Leave</LeaveButton>
+					</div>
+					<div>
+						<AdminManagement channel={channel}/>
 					</div>
 				</div>
 			);

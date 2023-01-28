@@ -203,7 +203,7 @@ export function ManageChannel(){
 	}, [users]);
 
 	async function updateUsersMe() {
-		await fetch("http://localhost:9999/api/users/isconnected", {
+		await fetch("http://localhost:9999/api/users/me", {
 			method: "GET",
 			credentials: 'include'
 		})
@@ -490,7 +490,7 @@ export function ManageChannel(){
 	} else {
 		return(
 			<React.Fragment>
-				<h1>Channel {currentChannel.name}'s management</h1>
+				<h1>Channel {currentChannel?.name}'s management</h1>
 				<div className='Manage-Channel-container'>
 					<OwnerPriv1/>
 					<h4>List of users</h4>
