@@ -12,7 +12,6 @@ import { PleaseConnect } from './adaptable-zone';
 import { socket } from './WebsocketContext';
 import { getAllPaginated } from './tools';
 import { disableNewMessageNotificationsFn, setUpNewMessageNotificationsFn } from './Notifications'
-import { SignUpButton } from './Header-zone';
 
 const PassawordTextField = styled(TextField)({
 	'& input:valid + fieldset': {
@@ -26,6 +25,43 @@ const PassawordTextField = styled(TextField)({
 	'& input:valid:focus + fieldset': {
 		borderLeftWidth: 6,
 		padding: '4px !important', // override inline-style
+	},
+});
+
+const ManageButton = styled(Button)({
+	boxShadow: 'none',
+	textTransform: 'none',
+	fontSize: 16,
+	width: '157px',
+	padding: '6px 12px',
+	border: '1px solid',
+	lineHeight: 1.5,
+	backgroundColor: '#646464',
+	borderColor: '#646464',
+	fontFamily: [
+		'-apple-system',
+		'BlinkMacSystemFont',
+		'"Segoe UI"',
+		'Roboto',
+		'"Helvetica Neue"',
+		'Arial',
+		'sans-serif',
+		'"Apple Color Emoji"',
+		'"Segoe UI Emoji"',
+		'"Segoe UI Symbol"',
+	].join(','),
+	'&:hover': {
+		backgroundColor: '#007dd6',
+		borderColor: '#646464',
+		boxShadow: 'none',
+	},
+	'&:active': {
+		boxShadow: 'none',
+		backgroundColor: '#004d7b',
+		borderColor: '#646464',
+	},
+	'&:focus': {
+		adow: '0 0 0 0.2rem rgba(0,0,0,.5)',
 	},
 });
 
@@ -361,9 +397,9 @@ function AdminManagement(props: any) {
 		return (
 			<div>
 				<Link to={`/managechannel/${props?.channel.id}`}>
-					<SignUpButton variant='contained' disableRipple>
+					<ManageButton variant='contained' disableRipple>
 						Manage Channel
-					</SignUpButton>
+					</ManageButton>
 				</Link>
 			</div>
 		);
@@ -424,7 +460,7 @@ function DisplayChannelAvailable(props: any){
 					<div>
 						{channel.name}
 					</div>
-					<div>
+					<div className='Channels-available-button'>
 						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin} value={channel.id}>Join</CreateChannelButton>
 					</div>
 				</div>
@@ -435,7 +471,7 @@ function DisplayChannelAvailable(props: any){
 					<div>
 						{channel.name}
 					</div>
-					<div>
+					<div className='Channels-available-button'>
 						<Box
 							component="form"
 							noValidate
@@ -458,7 +494,7 @@ function DisplayChannelAvailable(props: any){
 							/>
 						</Box>
 					</div>
-					<div>
+					<div className='Channels-available-button'>
 						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>Join</CreateChannelButton>
 					</div>
 				</div>
@@ -466,13 +502,13 @@ function DisplayChannelAvailable(props: any){
 		} else {
 			return(
 				<div className='Channels-available-div'>
-					<div>
+					<div className='Channels-available-button'>
 						{channel.name}
 					</div>
-					<div>
+					<div className='Channels-available-button'>
 						<LeaveButton variant="contained" disableRipple onClick={handleLeave} value={channel.id}>Leave</LeaveButton>
 					</div>
-					<div>
+					<div className='Channels-available-button'>
 						<AdminManagement channel={channel}/>
 					</div>
 				</div>
