@@ -192,7 +192,6 @@ export function ManageChannel(){
 
 	React.useEffect(() => {
 		users.forEach((elem: ChannelUser) => {
-			console.log(elem.user.id);//
 			if (elem.user.id === me?.id) {
 				if (elem.role === 'Owner')
 					setIsOwner(true);
