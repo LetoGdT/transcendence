@@ -498,7 +498,7 @@ function DisplayChannelAvailable(props: any){
 					</div>
 				</div>
 			);
-		} else {
+		} else if (typeof isIn !== "undefined"){
 			return(
 				<div className='Channels-available-div'>
 					<div className='Channels-available-button'>
@@ -516,6 +516,8 @@ function DisplayChannelAvailable(props: any){
 					</div>
 				</div>
 			);
+		} else {
+			return (<React.Fragment></React.Fragment>);
 		}
 	} else {
 		return (<React.Fragment></React.Fragment>);
