@@ -97,9 +97,10 @@ const PongGameBootstrap = ({ spectate }: PongGameBootstrapProps) =>
 			game.setScore(score1, score2);
 		});
 		socket.on('win', ({ didWin }) => game.setOver(didWin));
-		socket.on('gameFound', ({ countdown }) => {
+		socket.on('gameFound', ({ countdown, player1, player2 }) => {
 			game.setConnecting();
 			game.setCountdownStart(Date.now() - countdown);
+			game.setPlayers(player1, player2);
 		});
 		socket.on('queuing', () => game.statusMessage = 'Searching for an opponent...');
 		socket.on('exception', e => {

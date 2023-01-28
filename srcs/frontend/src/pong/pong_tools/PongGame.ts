@@ -50,6 +50,12 @@ interface NetworkedGameState {
 	authoritative: boolean;
 }
 
+interface PongUserData {
+	id: number;
+	image_url: string;
+	username: string;
+}
+
 class PongGame
 {
 	public width: number;
@@ -77,6 +83,12 @@ class PongGame
 	public statusMessage: string = "Connecting...";
 
 	private countdownStart: number = 0;
+	
+	private player1Data?: PongUserData;
+	private player2Data?: PongUserData;
+
+	private player1Image?: HTMLImageElement;
+	private player2Image?: HTMLImageElement;
 
 	constructor(width: number, height: number)
     {
@@ -95,6 +107,16 @@ class PongGame
 		this.startTimer = 0;
 		this.currentTicks = 0;
     }
+
+	setPlayers(player1: PongUserData, player2: PongUserData) {
+		this.player1Data = player1;
+		this.player2Data = player2;
+	
+		this.player1Image = new Image();
+		this.player1Image.src = player1.image_url;
+		this.player2Image = new Image();
+		this.player2Image.src = player2.image_url;
+	}
 
 	setCountdownStart(countdownStart: number) {
 		this.countdownStart = countdownStart;
@@ -170,6 +192,29 @@ class PongGame
 		this.drawNet(ctx)
 		this.player1.draw(ctx);
 		this.player2.draw(ctx);
+
+		ctx.fillStyle = 'white';
+		ctx.textAlign = 'left';
+		ctx.textBaseline = 'middle';
+		ctx.font = '14px sans-serif';
+		ctx.fillText(this.player1Data?.username!, 40, this.height - 20);
+		
+		ctx.textAlign = 'right';
+		ctx.fillText(this.player2Data?.username!, this.width - 40, this.height - 20);
+
+		if (null != this.player1Image && this.player1Image.complete) {
+			// const img = this.player1Image;
+
+			// const targetWidth = 32;
+			// const targetHeight = 32;
+
+			// const sx = -img.width / 2;
+			// const sy = -img.height / 2;
+
+			// ctx.drawImage(this.player1Image,
+			// 	sx, sy, img.width, img.height,
+			// 	10, this.height - 42, targetWidth, targetHeight);
+		}
 
 		if (this.start)
 		{

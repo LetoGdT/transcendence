@@ -399,9 +399,34 @@ class Game {
 	}
 
 	netSendGameFoundPacket(socket: Socket) {
-		socket.emit('gameFound', {
-			countdown: Math.min(4000, this.timeSinceStart())
-		});
+		const { user: p1 } = this.player1;
+		const { user: p2 } = this.player2;
+		
+		const p1Data = {
+			id: p1.id,
+			image_url: p1.image_url,
+			username: p1.username,
+		};
+
+		const p2Data = {
+			id: p2.id,
+			image_url: p2.image_url,
+			username: p2.username,
+		};
+
+		if (socket.id == this.player2.socket?.id) {
+			socket.emit('gameFound', {
+				countdown: Math.min(4000, this.timeSinceStart()),
+				player1: p2Data,
+				player2: p1Data,
+			});
+		} else {
+			socket.emit('gameFound', {
+				countdown: Math.min(4000, this.timeSinceStart()),
+				player1: p1Data,
+				player2: p2Data,
+			});
+		}
 	}
 }
 
