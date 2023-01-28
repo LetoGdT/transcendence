@@ -129,6 +129,7 @@ function ActivateOrDesactivate2FAButton(){
 			method: 'POST',
 			credentials: 'include',
 		});
+		window.location.reload();
 	}
 
 	if(data?.enabled2fa === true){
@@ -188,6 +189,7 @@ export function Settings(){
 			credentials: 'include',
 			body: JSON.stringify({username: newAlias})
 		});
+		window.location.reload();
 	}
 
 	const handleChangeAvatar = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -200,6 +202,7 @@ export function Settings(){
 			credentials: 'include',
 			body: JSON.stringify({image_url: newAvatar})
 		});
+		window.location.reload();
 	}
 
 	React.useEffect(() => {
@@ -232,6 +235,7 @@ export function Settings(){
 			credentials: 'include',
 			body: formData
 		});
+		window.location.reload();
 	}
 
 	return(
