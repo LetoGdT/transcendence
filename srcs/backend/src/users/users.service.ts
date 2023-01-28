@@ -400,6 +400,19 @@ export class UsersService
 		return this.userRepository.save(user);
 	}
 
+	async getChannels(user: User)
+	{
+		const queryBuilder = this.userRepository.createQueryBuilder("user");
+
+		queryBuilder
+			.leftJoinAndSelect('user.channelUsers', 'channelUsers')
+			.leftJoinAndSelect('channelUsers.channel', 'channel')
+			.where('user.id = :id', { id: user.id });
+
+		const ret = await queryBuilder.getOne();
+		return ret.channelUsers.map((channelUser) => {return channelUser.channel});
+	}
+
 	async getAchievements(id: number, pageOptionsDto: PageOptionsDto)
 	{
 		if (id > this.IdMax)
