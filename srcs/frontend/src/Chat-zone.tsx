@@ -432,7 +432,7 @@ function DisplayChannelAvailable(props: any){
 	}
 
 	const handleLeave = async (event: any) => {
-		const channelUserId = channel.users.find((user: ChannelUser) => user.user.id === currentUser.id).id;
+		const channelUserId = (channel.users.find((user: ChannelUser) => user.user.id === currentUser.id)).id;
 		await fetch(`http://localhost:9999/api/channels/${event.target.value}/users/${channelUserId}`, {
 			headers: {
 				'Accept': 'application/json',
@@ -674,6 +674,7 @@ function Chat() {
 			});
 		})));
 
+		// Set the list of channels for chat-navigate
 		await fetch('http://localhost:9999/api/channels/', {
 			method: "GET",
 			credentials: 'include'

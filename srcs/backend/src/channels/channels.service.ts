@@ -351,7 +351,7 @@ export class ChannelsService
 			return user.id === toDelete.id;
 		});
 
-		if (user.id == user_id
+		if (user.id == toDelete.user.id
 			|| this.permissions.get(requester.role) > this.permissions.get(toDelete.role))
 		{
 			if (channel.users.length === 1)
