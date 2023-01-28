@@ -421,7 +421,7 @@ export function ManageChannel(){
 						Kick
 					</KickButton>
 				</div>
-				<div className='Manage-Channel-container-subdiv'>
+				{/*<div className='Manage-Channel-container-subdiv'>
 					<div>
 						<ManageChannelTextField
 							label="End date for banishing"
@@ -445,7 +445,7 @@ export function ManageChannel(){
 					<BanButton variant="contained" disableRipple onClick={handleClickBan}>
 						Ban
 					</BanButton>
-				</div>
+				</div>*/}
 				<OwnerPriv2 user={props?.user}/>
 			</div>
 		);

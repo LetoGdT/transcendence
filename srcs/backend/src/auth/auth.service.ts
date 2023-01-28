@@ -23,7 +23,7 @@ export class AuthService
 		try
 		{
 			// Change this to true to expire tokens in prod
-			this.jwtService.verify(token, { ignoreExpiration: true });
+			this.jwtService.verify(token, { ignoreExpiration: false });
 			return true;
 		}
 		catch (err)
