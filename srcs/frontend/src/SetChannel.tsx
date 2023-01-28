@@ -97,7 +97,6 @@ export function SetChannel(){
 							}
 							}}
 							variant="outlined"
-							defaultValue=""
 							sx={{ input: { color: 'grey' } }}
 							id="validation-outlined-input"
 							onChange={handleInputName}
@@ -113,7 +112,6 @@ export function SetChannel(){
 							}
 							}}
 							variant="outlined"
-							defaultValue=""
 							sx={{ input: { color: 'grey' } }}
 							id="validation-outlined-input"
 							onChange={handleInputPsw}

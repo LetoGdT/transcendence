@@ -200,6 +200,16 @@ export class UsersController
 		return this.usersService.getAchievements(req.user.id, pageOptionsDto);
 	}
 
+	@Get('/me/channels')
+	@UseInterceptors(ClassSerializerInterceptor)
+	@UseGuards(JwtAuthGuard)
+	@UseInterceptors(AuthInterceptor)
+	async getChannels(@Req() req: RequestWithUser)
+	{
+		return this.usersService.getChannels(req.user);
+	}
+	
+
 	@Get('/:id/achievements')
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseGuards(JwtAuthGuard)

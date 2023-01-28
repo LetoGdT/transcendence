@@ -192,7 +192,7 @@ export function ManageChannel(){
 
 	React.useEffect(() => {
 		users.forEach((elem: ChannelUser) => {
-			if (elem.id === me?.id) {
+			if (elem.user.id === me?.id) {
 				if (elem.role === 'Owner')
 					setIsOwner(true);
 				else if (elem.role === 'Admin')
@@ -346,7 +346,6 @@ export function ManageChannel(){
 								}
 								}}
 								variant="outlined"
-								defaultValue=""
 								sx={{ input: { color: 'grey' } }}
 								id="validation-outlined-input"
 								onChange={handleInputPwd}
@@ -396,7 +395,7 @@ export function ManageChannel(){
 		}
 
 		const handleClickKick = async (event: React.MouseEvent<HTMLButtonElement>) => {
-			await fetch(`http://localhost:9999/api/channels/${cid}/users/${props?.user.user.id}`,{
+			await fetch(`http://localhost:9999/api/channels/${cid}/users/${props?.user.id}`,{
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -432,7 +431,6 @@ export function ManageChannel(){
 							}
 							}}
 							variant="outlined"
-							defaultValue=""
 							sx={{ input: { color: 'grey' } }}
 							id="validation-outlined-input"
 							onChange={handleInputBanTime}
