@@ -236,6 +236,7 @@ export function ManageChannel(){
 				credentials: 'include',
 				body: JSON.stringify({status: "public"})
 			});
+			window.location.reload();
 		};
 
 		const handleClickSetPrivate = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -248,6 +249,7 @@ export function ManageChannel(){
 				credentials: 'include',
 				body: JSON.stringify({status: "private"})
 			});
+			window.location.reload();
 		};
 
 		const handleClickSetProtected = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -260,22 +262,21 @@ export function ManageChannel(){
 				credentials: 'include',
 				body: JSON.stringify({status: "protected"})
 			});
+			window.location.reload();
 		};
-
-		let url: string = "/managechannel/"+ cid;
 
 		if (currentChannel?.status === "public") {
 			return(
 				<React.Fragment>
 					<div className='Manage-Channel-button'>
-						<Link to={url}>
-							<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPrivate}>Set private</ManageChannelButton>
-						</Link>
+						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPrivate}>
+							Set private
+						</ManageChannelButton>
 					</div>
 					<div className='Manage-Channel-button'>
-						<Link to={url}>
-							<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetProtected}>Set protected</ManageChannelButton>
-						</Link>
+						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetProtected}>
+							Set protected
+						</ManageChannelButton>
 					</div>
 				</React.Fragment>
 			);
@@ -283,14 +284,14 @@ export function ManageChannel(){
 			return(
 				<React.Fragment>
 					<div className='Manage-Channel-button'>
-						<Link to={url}>
-							<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPublic}>Set public</ManageChannelButton>
-						</Link>
+						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPublic}>
+							Set public
+						</ManageChannelButton>
 					</div>
 					<div className='Manage-Channel-button'>
-						<Link to={url}>
-							<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetProtected}>Set protected</ManageChannelButton>
-						</Link>
+						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetProtected}>
+							Set protected
+						</ManageChannelButton>
 					</div>
 				</React.Fragment>
 			);
@@ -298,14 +299,14 @@ export function ManageChannel(){
 			return(
 				<React.Fragment>
 					<div className='Manage-Channel-button'>
-						<Link to={url}>
-							<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPublic}>Set public</ManageChannelButton>
-						</Link>
+						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPublic}>
+							Set public
+						</ManageChannelButton>
 					</div>
 					<div className='Manage-Channel-button'>
-						<Link to={url}>
-							<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPrivate}>Set private</ManageChannelButton>
-						</Link>
+						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPrivate}>
+							Set private
+						</ManageChannelButton>
 					</div>
 				</React.Fragment>
 			);
@@ -327,9 +328,10 @@ export function ManageChannel(){
 				},
 				method: 'PATCH',
 				credentials: 'include',
-				body: JSON.stringify({password: password})
+				body: JSON.stringify({password: password, status: "protected"})
 			});
 			setPassword("");
+			window.location.reload();
 		}
 
 		if (isOwner){
@@ -353,7 +355,9 @@ export function ManageChannel(){
 							/>
 						</div>
 						<div className='Manage-Channel-button'>
-							<ManageChannelButton variant="contained" disableRipple onClick={handleClickNewPwd}>Save Password</ManageChannelButton>
+							<ManageChannelButton variant="contained" disableRipple onClick={handleClickNewPwd}>
+								Save Password
+							</ManageChannelButton>
 						</div>
 					</div>
 					<div className='Manage-Channel-container-div'>
@@ -389,6 +393,7 @@ export function ManageChannel(){
 				body: JSON.stringify({user_id: props?.user.user.id, unban_date: banTime})
 			});
 			setBanTime("");
+			window.location.reload();
 		}
 
 		const handleClickKick = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -400,6 +405,7 @@ export function ManageChannel(){
 				method: 'DELETE',
 				credentials: 'include',
 			});
+			window.location.reload();
 		}
 
 		let url: string = "/otherprofile/";
@@ -455,6 +461,7 @@ export function ManageChannel(){
 				credentials: 'include',
 				body: JSON.stringify({role: "Admin"})
 			});
+			window.location.reload();
 		}
 
 		if(isOwner && props?.user.role === 'None'){
