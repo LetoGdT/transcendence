@@ -291,12 +291,12 @@ export class ChannelsService
 			if (patchChannelUserDto.role == 'Owner')
 				channel.users[requesterIndex].role = 'Admin';
 		}
-		else
+		else if (patchChannelUserDto.role != null)
 			throw new HttpException('You don\'t have permissions to execute this action', HttpStatus.FORBIDDEN);
 		if (patchChannelUserDto.is_muted != null
 			&& this.permissions.get(requester.role) > this.permissions.get(toChange.role))
 			channel.users[toChangeIndex].is_muted = patchChannelUserDto.is_muted;
-		else
+		else if (patchChannelUserDto.is_muted != null)
 			throw new HttpException('You don\'t have permissions to execute this action', HttpStatus.FORBIDDEN);
 
 		return this.channelRepository.save(channel);

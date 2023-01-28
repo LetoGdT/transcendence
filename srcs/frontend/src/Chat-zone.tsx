@@ -452,72 +452,71 @@ function DisplayChannelAvailable(props: any){
 		setPassword(e.target.value);
 	};
 
-	const isIn = channel.users.find((channelUser: ChannelUser) => channelUser.user.id === currentUser.id);
-	const isBan = channel.banlist.find((channelUser: ChannelUser) => channelUser.user.id === currentUser.id);
+	const isIn = channel.users.find(({ id }: any) => id === currentUser.id);
 
-	if (typeof isBan === "undefined"){
-		if (typeof isIn === "undefined" && channel.status === 'public'){
-			return(
-				<div className='Channels-available-div'>
-					<div>
-						{channel.name}
-					</div>
-					<div className='Channels-available-button'>
-						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin} value={channel.id}>
-							Join
-						</CreateChannelButton>
-					</div>
+	if (typeof isIn !== "undefined"){
+		return(
+			<div className='Channels-available-div'>
+				<div className='Channels-available-button'>
+					{channel.name}
 				</div>
-			);
-		} else if (typeof isIn === "undefined" && channel.status === 'protected'){
-			return(
-				<div className='Channels-available-div'>
-					<div>
-						{channel.name}
-					</div>
-					<div className='Channels-available-button'>
-						<PassawordTextField
-							label="Password"
-							InputLabelProps={{
-							sx:{
-								color:"white",
-							}
-							}}
-							variant="outlined"
-							sx={{ input: { color: 'grey' } }}
-							id="validation-outlined-input"
-							onChange={handleInputPassword}
-						/>
-					</div>
-					<div className='Channels-available-button'>
-						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>
-							Join
-						</CreateChannelButton>
-					</div>
+				<div className='Channels-available-button'>
+					<LeaveButton variant="contained" disableRipple onClick={handleLeave} value={channel.id}>
+						Leave
+					</LeaveButton>
 				</div>
-			);
-		} else if (typeof isIn !== "undefined"){
-			return(
-				<div className='Channels-available-div'>
-					<div className='Channels-available-button'>
-						{channel.name}
-					</div>
-					<div className='Channels-available-button'>
-						<LeaveButton variant="contained" disableRipple onClick={handleLeave} value={channel.id}>
-							Leave
-						</LeaveButton>
-					</div>
-					<div className='Channels-available-button'>
-						<AdminManagement channel={channel}/>
-					</div>
+				<div className='Channels-available-button'>
+					<AdminManagement channel={channel}/>
 				</div>
-			);
-		} else {
-			return (<React.Fragment></React.Fragment>);
-		}
+			</div>
+		);
+	} else if (typeof isIn === "undefined" && channel.status === 'public'){
+		return(
+			<div className='Channels-available-div'>
+				<div>
+					{channel.name}
+				</div>
+				<div className='Channels-available-button'>
+					<CreateChannelButton variant="contained" disableRipple onClick={handleJoin} value={channel.id}>
+						Join
+					</CreateChannelButton>
+				</div>
+			</div>
+		);
+	} else if (typeof isIn === "undefined" && channel.status === 'protected'){
+		return(
+			<div className='Channels-available-div'>
+				<div>
+					{channel.name}
+				</div>
+				<div className='Channels-available-button'>
+					<PassawordTextField
+						label="Password"
+						InputLabelProps={{
+						sx:{
+							color:"white",
+						}
+						}}
+						variant="outlined"
+						sx={{ input: { color: 'grey' } }}
+						id="validation-outlined-input"
+						onChange={handleInputPassword}
+					/>
+				</div>
+				<div className='Channels-available-button'>
+					<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>
+						Join
+					</CreateChannelButton>
+				</div>
+			</div>
+		);
 	} else {
 		return (<React.Fragment></React.Fragment>);
 	}
+
+		
+		
+		
 }
 
 function ChannelList(props: any) {
