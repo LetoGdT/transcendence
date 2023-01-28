@@ -103,7 +103,7 @@ class Game {
 		this.player1 = player1;
 		this.player2 = player2;
 
-		this.maxScore = 50; // TODO set it back to 5
+		this.maxScore = 5; // TODO set it back to 5
 
 		if (waiting)
 			this.gameState = GameState.Waiting;
@@ -137,19 +137,8 @@ class Game {
 	}
 
 	resetBall() {
-		/* Pick a random angle between 0 and 90 degrees */
-		let quarterPi;
-
-		if (Math.random() < 0.5)
-		{
-			quarterPi = Math.PI / 4;
-		}
-		else
-			quarterPi = Math.PI * 3 / 4;
-		
-		const angle = Math.random() * quarterPi - quarterPi;
-		this.ballDirX = Math.cos(angle);
-		this.ballDirY = Math.sin(angle);
+		this.ballDirY = (Math.random() * 2 - 1) / 2;
+		this.ballDirX = Math.sqrt(1 - (this.ballDirY * this.ballDirY));
 
 		if (Math.random() < 0.5)
 			this.ballDirX *= -1;
@@ -586,10 +575,10 @@ export class MySocketGateway implements OnGatewayConnection,
 	@SubscribeMessage('newMessage')
 	async onNewMessage(@ConnectedSocket() client: Socket, @MessageBody() body: any) {
 		let {users, latest_sent} = await this.chat.onNewMessage(body.chanOrConv, body.isChannel, parse(client.handshake.headers.cookie).access_token);
-		let convId: number = body.convId;
+		let convId: number = body.chanOrConv;
 		for (var user of users) {
 			for (var connection of this.clients) {
-				if (user == connection.user.id) {
+				if (user === connection.user.id) {
 					connection.client.emit("newMessage", {convId, latest_sent});
 					continue ;
 				}

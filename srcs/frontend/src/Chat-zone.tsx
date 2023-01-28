@@ -617,7 +617,6 @@ function Chat() {
 
 	useEffect(() => {
 		socket.on('newMessage', (data) => {
-			console.log(new Date());
 			const convId: number = data?.convId;
 			const latest_sent: Date = new Date(data?.latest_sent);
 			let res: Conversation[] = [...convList];
@@ -777,7 +776,7 @@ function Chat() {
 			if (!response.ok)
 			return ;
 		});
-		socket.emit("newMessage", {convId: currentConv, isChannel: isChannel});
+		socket.emit("newMessage", {chanOrConv: currentConv, isChannel: isChannel});
 		setNewMessage(""); // Sert à effacer le message une fois qu'on a appuyé sur le bouton send
 	}
 
