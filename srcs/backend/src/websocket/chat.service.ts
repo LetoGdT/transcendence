@@ -10,6 +10,7 @@ import { UserSelectDto } from '../dto/messages.dto';
 import { CreateMatchDto } from '../dto/matches.dto';
 import { Connection } from '../interfaces/connection.interface';
 import { Game } from './game/game.class';
+import { ChannelUser } from '../typeorm/channel-user.entity';
 
 @Injectable()
 export class ChatService {
@@ -32,8 +33,8 @@ export class ChatService {
 					res.users = res.users.concat(elem.user2.id);
 				}
 				else {
-					elem.users.forEach((user: any) => {
-						res.users = res.users.concat(user.id);
+					elem.users.forEach((channelUser: ChannelUser) => {
+						res.users = res.users.concat(channelUser.user.id);
 					});
 				}
 		});
