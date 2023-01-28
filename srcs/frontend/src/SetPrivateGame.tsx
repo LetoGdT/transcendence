@@ -3,7 +3,7 @@ import './SetPrivateGame.css';
 import { socket } from './WebsocketContext';
 
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Slider from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
@@ -126,6 +126,7 @@ const AskButton = styled(Button)({
 
 export function SetPrivateGame(){
 	let { uid } = useParams();
+	const navigate = useNavigate();
 	const [newPts, setNewPts] = React.useState(10);
 	const [newSpeed, setNewSpeed] = React.useState(10);
 
@@ -137,6 +138,7 @@ export function SetPrivateGame(){
 			opponent_id: uid
 		})
 		socket.emit('newGame', {id: uid});
+		navigate('/pong');
 	};
 
 	const handleNewPts = (value: any) => {

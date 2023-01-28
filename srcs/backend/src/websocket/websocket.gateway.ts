@@ -544,28 +544,16 @@ export class MySocketGateway implements OnGatewayConnection,
 		if (index != -1) {
 			const conn = this.clients[index];
 			const { user } = conn;
-			//const connections = this.queue.get(user.exp);
 
 			console.log(user.username + " has disconnected from the websocket.");
 			
-		/*	if (connections)
-			{
-				const conn_idx = connections.findIndex(conn => conn.user.id === user.id);
-				if (conn_idx != -1)
-					connections.splice(conn_idx, 1);
-			}*/
-
 			const queueIdx = this.matchmakingQueue.findIndex(e => e.client.id === client.id);
 			if (queueIdx >= 0) {
 				this.matchmakingQueue.splice(queueIdx, 1);
 			}
 
 			gameManager.handleDisconnect(conn);
-
 			await this.usersService.changeUserStatus(user.id, 'offline');
-			// TODO spectator mode
-			// for (let game of this.games)
-			// 	game.removeSpectator(this.clients[index]);
 			this.clients.splice(index, 1);
 		}
 	}
@@ -671,24 +659,6 @@ export class MySocketGateway implements OnGatewayConnection,
 			return ;
 		}
 
-		/*
-		const gameIndex: number = this.games.findIndex(async game => {
-			await game.getPlayer1Id() == body.opponent_id && await game.started()
-			|| await game.getPlayer1Id() == remoteConn.user.id && await game.started()
-			|| await game.getPlayer2Id() == body.opponent_id && await game.started()
-			|| await game.getPlayer2Id() == remoteConn.user.id && await game.started()
-		});
-
-		if (gameIndex !== -1)
-		{
-			const game = this.games[gameIndex];
-			if (await game.getPlayer1Id() == remoteConn.user.id)
-				game.setPlayer1Socket(client);
-			else
-				game.setPlayer2Socket(client);
-			client.emit('gameFound');
-		}*/
-
 		if (body.type == 'Ranked')
 		{
 			const queueIdx = this.matchmakingQueue.findIndex(e => e.user.id === remoteConn.user.id);
@@ -720,31 +690,6 @@ export class MySocketGateway implements OnGatewayConnection,
 			} else {
 				client.emit('queuing');
 			}
-
-		/*	const client_exp = remoteConn.user.exp;
-
-			for (let connections of this.queue.values())
-			{
-				for (let connection of connections)
-				{
-					if (connection.user.id == remoteConn.user.id)
-					{
-						throw new WsException('You are already in queue');
-					}
-				}
-			}
-
-			const opponent: Connection | null = this.chat.searchOpponent(this.queue, client_exp,
-				remoteConn.user.id);
-			if (opponent != null)
-			{
-				await this.chat.startGame(remoteConn, opponent, this.games);
-				return ;
-			}
-			if (this.queue.get(client_exp) != null)
-				this.queue.get(client_exp).push(remoteConn);
-			else
-				this.queue.set(client_exp, [remoteConn]);*/
 		}
 		else
 		{
@@ -787,14 +732,6 @@ export class MySocketGateway implements OnGatewayConnection,
 				game_id: game.id,
 				user: this.clients[meIndex].user,
 			}]);
-
-			// const game = new Game(50, 'Quick play');
-			// await game.setWinningScore(body.winning_score);
-			// await game.setBallSpeed(body.ball_speed);
-			// await game.addPlayer({ user: remoteConn.user, client: client });
-			// await game.addPlayer({ user: this.clients[opponentIndex].user,
-			// 	client: this.clients[opponentIndex].client });
-			// this.games.push(game);
 			client.emit('waitingForOpponent');
 		}
 	}
@@ -846,36 +783,5 @@ export class MySocketGateway implements OnGatewayConnection,
 			throw new WsException('Game already started');
 
 		game.start();
-
-		// if (gameIndex !== -1)
-		// 	throw new WsException('You are already in a game');
-
-		// gameIndex = this.games.findIndex(async game => {
-		// 	await game.getPlayer1Id() == this.clients[index].user.id
-		// 	|| await game.getPlayer2Id() == this.clients[index].user.id
-		// });
-
-		// if (gameIndex === -1)
-		// 	throw new WsException('You have not been invited in a game');
-
-		// const game = this.games[gameIndex];
-		// game.addPlayer({ user: this.clients[index].user, client: client });
-		// const clientUser: User = await game.getUser1();
-		// const opponentUser: User = await game.getUser2();
-		// await game.run();
-		// this.games.splice(gameIndex, 1);
-		// const score: { player1: number, player2: number } = await game.getScore(1);
-		// const winner: User = score.player1 === game.score.winning_score ? clientUser : opponentUser;
-		// const createMatchDto: CreateMatchDto = {
-		// 	user1: clientUser,
-		// 	user2: opponentUser,
-		// 	score_user1: score.player1,
-		// 	score_user2: score.player2,
-		// 	winner: winner,
-		// 	played_at: new Date(),
-		// 	game_type: 'Quick play',
-		// };
-		// const match = await this.matchesService.createMatch(createMatchDto);
-		// this.matchesService.calculateRank(match.id);
 	}
 }
