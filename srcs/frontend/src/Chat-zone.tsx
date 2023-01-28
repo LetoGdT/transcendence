@@ -432,7 +432,8 @@ function DisplayChannelAvailable(props: any){
 	}
 
 	const handleLeave = async (event: any) => {
-		await fetch(`http://localhost:9999/api/channels/${event.target.value}/users/${currentUser.id}`, {
+		const channelUserId = channel.users.find((user: ChannelUser) => user.user.id === currentUser.id).id;
+		await fetch(`http://localhost:9999/api/channels/${event.target.value}/users/${channelUserId}`, {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
