@@ -415,7 +415,7 @@ function DisplayChannelAvailable(props: any){
 	const [password, setPassword] = React.useState("");
 
 	const handleJoin = async (event: any) => {
-		await fetch(`http://localhost:9999/api/channels/${event.target.value}/users`, {
+		await fetch(`http://localhost:9999/api/channels/${channel.id}/users`, {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
