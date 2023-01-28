@@ -428,7 +428,7 @@ function DisplayChannelAvailable(props: any){
 			if (!response.ok)
 				return ;
 		});
-		window.location.reload();
+		// window.location.reload();
 	}
 
 	const handleLeave = async (event: any) => {
@@ -445,7 +445,7 @@ function DisplayChannelAvailable(props: any){
 			if (!response.ok)
 				return ;
 		});
-		window.location.reload();
+		// window.location.reload();
 	}
 
 	const handleInputPassword = (e: React.ChangeEvent<HTMLTextAreaElement>) => {

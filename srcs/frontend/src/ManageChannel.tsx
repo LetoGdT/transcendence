@@ -346,7 +346,6 @@ export function ManageChannel(){
 								}
 								}}
 								variant="outlined"
-								defaultValue=""
 								sx={{ input: { color: 'grey' } }}
 								id="validation-outlined-input"
 								onChange={handleInputPwd}
@@ -431,7 +430,6 @@ export function ManageChannel(){
 						}
 						}}
 						variant="outlined"
-						defaultValue=""
 						sx={{ input: { color: 'grey' } }}
 						id="validation-outlined-input"
 						onChange={handleInputBanTime}
