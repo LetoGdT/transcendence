@@ -428,7 +428,7 @@ function DisplayChannelAvailable(props: any){
 			if (!response.ok)
 				return ;
 		});
-		// window.location.reload();
+		window.location.reload();
 	}
 
 	const handleLeave = async (event: any) => {
@@ -445,14 +445,14 @@ function DisplayChannelAvailable(props: any){
 			if (!response.ok)
 				return ;
 		});
-		// window.location.reload();
+		window.location.reload();
 	}
 
 	const handleInputPassword = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setPassword(e.target.value);
 	};
 
-	const isIn = channel.users.find(({ id }: any) => id === currentUser.id);
+	const isIn = channel.users.find((channelUser: ChannelUser) => channelUser.user.id === currentUser.id);
 
 	if (typeof isIn !== "undefined"){
 		return(
@@ -672,7 +672,11 @@ function Chat() {
 		})));
 
 		// Set the list of channels for chat-navigate
-		await getAllPaginated('channels')
+		await fetch('http://localhost:9999/api/users/me/channels', {
+			method: "GET",
+			credentials: 'include'
+		})
+		.then(response=>response.json())
 		.then(data => newChanList = newChanList.concat(data.map((elem: any) => {
 			return ({
 				id: elem.id,
