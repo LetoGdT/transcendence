@@ -176,7 +176,13 @@ export function SetPrivateGame(){
 				/>
 				</div>
 			</div>
-			<div className='Set-Private-Game-Button'><AskButton variant="contained" disableRipple onClick={handleClickSetParams}>Set Parameters</AskButton></div>
+			<div className='Set-Private-Game-Button'>
+				<Link to="/play">
+					<AskButton variant="contained" disableRipple onClick={handleClickSetParams}>
+						Set Parameters
+					</AskButton>
+				</Link>
+			</div>
 		</React.Fragment>
 	);
 }
