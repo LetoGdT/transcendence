@@ -6,7 +6,7 @@ import { OurMenu } from './Menu-zone';
 import { Home, NotFound } from './adaptable-zone';
 import { PlayZone } from './Play';
 import { SpecZone } from './Spec';
-import { Pong, SpectatePong } from './pong/Pong';
+import { Pong } from './pong/Pong';
 import { ChatZone } from './Chat-zone';
 import { FriendsZone } from './Friend-zone';
 import { MatchHistoryZone } from './MatchHistory-zone';
@@ -50,7 +50,9 @@ function App() {
 						<Route path="/otherprofile/">
 							<Route path=':uid' element={<OtherProfile />} />
 						</Route>
-						<Route path="/spectate/:game_id" element={<SpectatePong />} />
+						<Route path="/spectate/:game_id" element={<Pong mode="spectate" />} />
+						<Route path="/join/:game_id" element={<Pong mode="private" />} />
+						<Route path='/pong' element={<Pong mode="ranked" />} />
 						<Route path="/setprivategame">
 							<Route path=':uid' element={<SetPrivateGame />} />
 						</Route>
@@ -61,7 +63,6 @@ function App() {
 						<Route path="/signup" element={<SignUp/>} />
 						<Route path='/2fa' element={<AuthWith2FA />} />
 						<Route path='/activate2fa' element={<Activate2FA />} />
-						<Route path='/pong' element={<Pong/>} />
 						<Route path='/setchannel' element={<SetChannel />} />
 						<Route path='*' element={<NotFound/>} />
 					</Routes>

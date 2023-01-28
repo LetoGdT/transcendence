@@ -225,40 +225,32 @@ export function Profile(){
 					<h4>Invitations received for playing a game</h4>
 					<div>
 						{	
-							games.map(({ game_id, user }: any) => {
-							var url: string = "/otherprofile";
-							url = url.concat("/");
-							url = url.concat(user.id);
-							var uid = user.id;
-							return(
+							games.map(({ game_id, user }: any) => (
 								<React.Fragment>
 									<div className='Profile-invitation-received'>
-										<Link to={url} >
+										<Link to={`/otherprofile/${user.id}`} >
 											<div>
 												<img src={user.image_url} alt={user.username + "'s avatar"} className='Profile-invitation-received-img'></img>
 											</div>
 											<div>{user.username}</div>
 										</Link>
 										<div>
-											<Link to="/play">
-												<IconButton color="success" aria-label="accept" onClick={()=>{
-													socket.emit('respondToInvite', { id: uid });
-												}}>
+											<Link to={`/join/${game_id}`}>
+												<IconButton color="success" aria-label="accept">
 													<CheckIcon />
 												</IconButton>
 											</Link>
 										</div>
 										<div>
 											<IconButton color="error" aria-label="reject" onClick={()=>{
-												socket.emit('respondToInvite', { id: null });
+												socket.emit('refuseInvite', { game_id });
 											}}>
 												<CloseIcon />
 											</IconButton>
 										</div>
 									</div>
 								</React.Fragment>
-							);
-						})}
+							))}
 					</div>
 				</div>
 			</div>

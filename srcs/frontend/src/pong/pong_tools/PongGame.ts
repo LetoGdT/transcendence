@@ -84,8 +84,8 @@ class PongGame
 
 	private countdownStart: number = 0;
 	
-	private player1Data?: PongUserData;
-	private player2Data?: PongUserData;
+	public player1Data?: PongUserData;
+	public player2Data?: PongUserData;
 
 	private player1Image?: HTMLImageElement;
 	private player2Image?: HTMLImageElement;
@@ -188,7 +188,7 @@ class PongGame
 			this.drawStatusScreen(ctx, this.statusMessage);
 			return ;
 		}
-		
+
 		this.drawNet(ctx)
 		this.player1.draw(ctx);
 		this.player2.draw(ctx);

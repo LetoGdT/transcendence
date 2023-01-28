@@ -68,23 +68,24 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 };
 
 type PongGameBootstrapProps = {
-	spectate?: number;
+	mode: 'spectate' | 'private' | 'ranked';
+	game_id: number;
 }
 
-const PongGameBootstrap = ({ spectate }: PongGameBootstrapProps) =>
+const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) =>
 {
 	const game = gameInstance;
 	const canvasRef = useCanvas(ctx => game.render(ctx));
 
-	useEffect(() =>
-	{
+	useEffect(() => {
 		if (!game.attemptedConnect) {
-			if (spectate != null) {
-				socket.emit('spectate', { game_id: spectate });
+			if (mode === 'spectate') {
+				socket.emit('spectate', { game_id });
+			} else if (mode === 'private') {
+				socket.emit('join', { game_id });
 			} else {
 				socket.emit('queue', { type: 'Ranked' });
 			}
-
 			game.attemptedConnect = true;
 		}
 		return () => {
@@ -93,6 +94,7 @@ const PongGameBootstrap = ({ spectate }: PongGameBootstrapProps) =>
 	}, []);
 
 	useEffect(() => {
+		game.statusMessage = 'Connecting...';
 		socket.on('score', ({ score1, score2 }) => {
 			game.setScore(score1, score2);
 		});
@@ -106,8 +108,16 @@ const PongGameBootstrap = ({ spectate }: PongGameBootstrapProps) =>
 		socket.on('exception', e => {
 			game.setErrorMessage(`Error: ${e.message}`);
 		});
+		socket.on('waitingForOpponent', ({ username }) => {
+			game.statusMessage = `Waiting for ${username} to join.`;
+		});
 		socket.on('start', () => game.setStart());
 		socket.on('state', state => game.netUpdateState(state));
+
+		return () => {
+			/* Notify the backend that we left the page */
+			socket.emit('gameLeft');
+		}
 	}, []);
 
 	useEffect(() => {
@@ -148,26 +158,17 @@ const PongGameBootstrap = ({ spectate }: PongGameBootstrapProps) =>
 	);
 }
 
-const Pong = () =>
-(
-	<>
-		<div>
-			<PongGameBootstrap />
-		</div>
-	</>
-);
-
-const SpectatePong = ({ }) => {
+const Pong = (props: any) => {
 	const routeParams = useParams();
-	const game_id = parseInt(routeParams.game_id!);
+	const game_id = parseInt(routeParams.game_id!);	
 
 	return (
 		<>
 			<div>
-				<PongGameBootstrap spectate={isNaN(game_id) ? -1 : game_id} />
+				<PongGameBootstrap {...props} game_id={game_id} />
 			</div>
 		</>
 	);
 };
 
-export { Pong, SpectatePong };
+export { Pong };
