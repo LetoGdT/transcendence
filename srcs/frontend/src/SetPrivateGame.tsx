@@ -7,6 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Slider from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
+import {Link} from 'react-router-dom';
 
 const MaxPtsSlider = styled(Slider)({
   color: '#3b9b3b',
