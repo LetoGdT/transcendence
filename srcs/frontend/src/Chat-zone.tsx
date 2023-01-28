@@ -364,7 +364,6 @@ function DisplayChannelAvailable(props: any){
 			},
 			method: 'DELETE',
 			credentials: 'include',
-			body: JSON.stringify({password: password})
 		})
 		.then(response => {
 			if (!response.ok)

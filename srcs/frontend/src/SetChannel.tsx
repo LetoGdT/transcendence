@@ -70,7 +70,11 @@ export function SetChannel(){
 	};
 
 	const handleClickSetChannel = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		//?
+		await fetch(`http://localhost:9999/api/channels/`, {
+			method: "POST",
+			credentials: "include",
+			body: JSON.stringify({name: name, password: password})
+		});
 	};
 
     return(
@@ -91,7 +95,8 @@ export function SetChannel(){
 							sx={{ input: { color: 'grey' } }}
 							id="validation-outlined-input"
 							onChange={handleInputName}
-							/>
+							value={name}
+						/>
 					</div>
 					<div className='SetChannel-TextField'>
 						<SetChannelTextField
@@ -106,6 +111,7 @@ export function SetChannel(){
 							sx={{ input: { color: 'grey' } }}
 							id="validation-outlined-input"
 							onChange={handleInputPsw}
+							value={password}
 						/>
 					</div>
 				</div>
