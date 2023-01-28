@@ -73,6 +73,8 @@ class Game {
 	public player1: RemotePlayer;
 	public player2: RemotePlayer;
 
+	private winningUser?: User;
+
 	private maxScore: number; // TODO link it to customization slider (between 5 and 20)
 
 	private gameState: GameState;
@@ -197,18 +199,6 @@ class Game {
 			for (const spec of this.spectators) {
 				spec.emit('state', this.createStateUpdatePacket(1, true));
 			}
-
-			/* End the game if it is taking too long */
-			if (this.getWinningUser() !== null) {
-				if (this.player1.score === this.maxScore) {
-					this.player1.emit('win', { didWin: true });
-					this.player2.emit('win', { didWin: false });
-				} else if (this.player2.score === this.maxScore) {
-					this.player1.emit('win', { didWin: false });
-					this.player2.emit('win', { didWin: true });
-				}
-				this.gameState = GameState.Ended;
-			}
 		}
 	}
 
@@ -244,7 +234,7 @@ class Game {
 
 	playerScored(playerIndex: number) {
 		this.resetBall();
-		
+
 		if (playerIndex === 1) {
 			this.player1.score++;
 		} else if (playerIndex === 2) {
@@ -252,8 +242,19 @@ class Game {
 		}
 
 		this.sendScoreUpdatePacket();
-
 		this.scoredTimer = 75; /* 1.5s * TPS (50) */
+
+		if (this.player1.score === this.maxScore) {
+			this.winningUser = this.player1.user;
+			this.player1.emit('win', { didWin: true });
+			this.player2.emit('win', { didWin: false });
+			this.gameState = GameState.Ended;
+		} else if (this.player2.score === this.maxScore) {
+			this.winningUser = this.player2.user;
+			this.player1.emit('win', { didWin: false });
+			this.player2.emit('win', { didWin: true });
+			this.gameState = GameState.Ended;
+		}
 	}
 
 	paddleCollides() {
@@ -501,6 +502,12 @@ class GameManager {
 		speed?: number, score?: number) {
 		const p1 = new RemotePlayer(player1.client, player1.user);
 		const p2 = new RemotePlayer(player2.client, player2.user);
+
+		/* Quick and dirty fix the prevent the game from starting if the players aren't both connected */
+		if (privateGame) {
+			p2.socket = null;
+		}
+
 		const game = new Game(p1, p2, updateMatchHistory, this.id, privateGame);
 
 		game.setInitialSpeed(speed);
@@ -511,6 +518,8 @@ class GameManager {
 		this.games.push(game);
 
 		console.log(`[GameManager] Creating new ${privateGame ? 'private' : 'public'} game with ${player1.user.username} and ${player2.user.username}`);
+
+		
 
 		return game;
 	}
@@ -783,24 +792,21 @@ export class MySocketGateway implements OnGatewayConnection,
 			// 	throw new WsException('You or your opponent have already been invited');
 
 			const game = gameManager.startGame(this.clients[meIndex], this.clients[opponentIndex], true, async (game: Game) => {
-					const createMatchDto: CreateMatchDto = {
-						user1: game.player1.user,
-						user2: game.player2.user,
-						score_user1: game.player1.score,
-						score_user2: game.player2.score,
-						winner: game.getWinningUser(),
-						played_at: new Date(game.startTime),
-						game_type: 'Quick play',
-					};
-					const match = await this.matchesService.createMatch(createMatchDto);
-					/* TODO calculate rank for private games ? */
-					this.matchesService.calculateRank(match.id);
-				}, body.ball_speed, body.winning_score);
-
-			this.clients[opponentIndex].client.emit('returnInvites', [{
-				game_id: game.id,
-				user: this.clients[meIndex].user,
-			}]);
+				const createMatchDto: CreateMatchDto = {
+					user1: game.player1.user,
+					user2: game.player2.user,
+					score_user1: game.player1.score,
+					score_user2: game.player2.score,
+					winner: game.getWinningUser(),
+					played_at: new Date(game.startTime),
+					game_type: 'Quick play',
+				};
+				const match = await this.matchesService.createMatch(createMatchDto);
+				/* TODO calculate rank for private games ? */
+				this.matchesService.calculateRank(match.id);
+			}, body.ball_speed, body.winning_score);
+			this.clients[meIndex].client.emit('gameCreated', { game_id: game.id });
+			this.sendInvitesList(this.clients[opponentIndex]);
 		}
 	}
 
@@ -820,7 +826,7 @@ export class MySocketGateway implements OnGatewayConnection,
 		if (null != connection) {
 			let game = gameManager.getCurrentGameForUser(connection.user);
 
-			if (null != game) {
+			if (null != game && !game.privateGame) {
 				throw new WsException('You are already in a public game');
 			}
 
