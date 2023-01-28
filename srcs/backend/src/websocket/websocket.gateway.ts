@@ -124,7 +124,15 @@ class Game {
 
 	resetBall() {
 		/* Pick a random angle between 0 and 90 degrees */
-		const quarterPi = Math.PI / 4;
+		let quarterPi;
+
+		if (Math.random() < 0.5)
+		{
+			quarterPi = Math.PI / 4;
+		}
+		else
+			quarterPi = Math.PI * 3 / 4;
+		
 		const angle = Math.random() * quarterPi - quarterPi;
 		this.ballDirX = Math.cos(angle);
 		this.ballDirY = Math.sin(angle);
