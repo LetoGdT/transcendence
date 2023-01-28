@@ -387,7 +387,7 @@ function AdminManagement(props: any) {
 
 	React.useEffect(() => {
 		props?.channel.users.forEach((elem: ChannelUser) => {
-			if (elem.id === me?.id)
+			if (elem.user.id === me?.id)
 				if (elem.role === 'Owner' || elem.role === 'Admin')
 					setIsOwnerOrAdmin(true);
 		});
