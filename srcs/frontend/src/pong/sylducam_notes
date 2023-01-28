@@ -1,6 +1,12 @@
 TODO :
 parties privees, dans other profile, need to connect button to play
 connecter alternative mode (qui aura un autre nom)
+les parties ne s'arretent pas lorsque l'on change de 'page'. Devraient-elles ?
+angle lancement balle à améliorer
+channels erreur 400 bad request à la ceation. Rien en se passe quand on clique sur create channel
+chat envoi de message > 403 forbidden
+manage channel > you seem lost + Uncaught (in promise) TypeError: Failed to execute 'fetch' on 'Window': Request with GET/HEAD method cannot have body.
+DELETE http://localhost:9999/api/channels/undefined/1 404 (Not Found)
 gerer invitations de jeu recues
 gerer les webtokens (verifier expiration des tokens)
 server-side validation/sanitization on forms (mandatory)
