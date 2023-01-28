@@ -244,16 +244,24 @@ class Game {
 		this.sendScoreUpdatePacket();
 		this.scoredTimer = 75; /* 1.5s * TPS (50) */
 
+		let wonPlayerIndex = 0;
+
 		if (this.player1.score === this.maxScore) {
 			this.winningUser = this.player1.user;
 			this.player1.emit('win', { didWin: true });
 			this.player2.emit('win', { didWin: false });
 			this.gameState = GameState.Ended;
+			wonPlayerIndex = 1;
 		} else if (this.player2.score === this.maxScore) {
 			this.winningUser = this.player2.user;
 			this.player1.emit('win', { didWin: false });
 			this.player2.emit('win', { didWin: true });
 			this.gameState = GameState.Ended;
+			wonPlayerIndex = 2;
+		}
+
+		for (const spec of this.spectators) {
+			spec.emit('spectator-game-result', { id: wonPlayerIndex });
 		}
 	}
 
@@ -329,12 +337,7 @@ class Game {
 	}
 
 	getWinningUser(): User | null {
-		if (this.player1.score >= this.maxScore) {
-			return this.player1.user;
-		} else if (this.player2.score >= this.maxScore) {
-			return this.player2.user;
-		}
-		return null;
+		return this.winningUser;
 	}
 
 	timeSinceStart() {
@@ -812,6 +815,13 @@ export class MySocketGateway implements OnGatewayConnection,
 			}, body.ball_speed, body.winning_score);
 			this.clients[meIndex].client.emit('gameCreated', { game_id: game.id });
 			this.sendInvitesList(this.clients[opponentIndex]);
+
+			/* Broadcast the notification to every socket this user has */
+			for (const { user, client } of this.clients) {
+				if (user.id === this.clients[opponentIndex].user.id) {
+					client.emit('newGame');
+				}
+			}
 		}
 	}
 

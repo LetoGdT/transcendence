@@ -100,6 +100,9 @@ const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) =>
 			game.setScore(score1, score2);
 		});
 		socket.on('win', ({ didWin }) => game.setOver(didWin));
+		socket.on('spectator-game-result', ({ id }) => {
+			game.setSpectatorWin(id);
+		});
 		socket.on('gameFound', ({ countdown, player1, player2 }) => {
 			game.setConnecting();
 			game.setCountdownStart(Date.now() - countdown);
@@ -126,20 +129,19 @@ const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) =>
 		return () => clearInterval(timer);
 	}, []);
 
-	// useEffect(() => {
-	// 	game.handleMovement();
-	// 	setMove(false);
-	// }, [move]);
-
 	const onKeyUp = (e: React.KeyboardEvent) => {
 		e.preventDefault();
-		// setMove(true);
-		game.handleKeyUp(e.code);
+
+		if (mode !== 'spectate') {
+			game.handleKeyUp(e.code);
+		}
 	};
 	const onKeyDown = (e: React.KeyboardEvent) => {
 		e.preventDefault();
-		// setMove(true);
-		game.handleKeyDown(e.code);
+
+		if (mode !== 'spectate') {
+			game.handleKeyDown(e.code);
+		}
 	};
 
 	return (
