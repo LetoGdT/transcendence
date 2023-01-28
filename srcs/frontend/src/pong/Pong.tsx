@@ -2,6 +2,7 @@ import { red } from '@mui/material/colors';
 import React, { useState, useEffect, useRef } from 'react';
 import PongGame from './pong_tools/PongGame';
 import { socket } from '../WebsocketContext';
+import { useParams } from 'react-router-dom';
 
 const GAME_WIDTH = 1040;
 const GAME_HEIGHT = 680;
@@ -66,23 +67,29 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 	return canvasRef;
 };
 
-const PongGameBootstrap = () =>
+type PongGameBootstrapProps = {
+	spectate?: number;
+}
+
+const PongGameBootstrap = ({ spectate }: PongGameBootstrapProps) =>
 {
-	// const [winner, setWinner] = useState(-1);
-	// const [lastUpdate, setLastUpdate] = useState(performance.now());
-	// const [checkRefresh, setCheckRefresh] = useState(false);
-	// const [move, setMove] = useState(false);
-	
 	const game = gameInstance;
 	const canvasRef = useCanvas(ctx => game.render(ctx));
 
 	useEffect(() =>
 	{
-		if (game.attemptedConnect === false)
-		{
-			socket.emit('queue', { type: 'Ranked' });
+		if (!game.attemptedConnect) {
+			if (spectate != null) {
+				socket.emit('spectate', { game_id: spectate });
+			} else {
+				socket.emit('queue', { type: 'Ranked' });
+			}
+
 			game.attemptedConnect = true;
 		}
+		return () => {
+			game.attemptedConnect = false;
+		};
 	}, []);
 
 	useEffect(() => {
@@ -90,7 +97,10 @@ const PongGameBootstrap = () =>
 			game.setScore(score1, score2);
 		});
 		socket.on('win', ({ didWin }) => game.setOver(didWin));
-		socket.on('gameFound', () => game.setConnecting());
+		socket.on('gameFound', ({ countdown }) => {
+			game.setConnecting();
+			game.setCountdownStart(Date.now() - countdown);
+		});
 		socket.on('queuing', () => game.statusMessage = 'Searching for an opponent...');
 		socket.on('exception', e => {
 			game.setErrorMessage(`Error: ${e.message}`);
@@ -141,9 +151,22 @@ const Pong = () =>
 (
 	<>
 		<div>
-			<PongGameBootstrap/>
+			<PongGameBootstrap />
 		</div>
 	</>
 );
 
-export { Pong };
+const SpectatePong = ({ }) => {
+	const routeParams = useParams();
+	const game_id = parseInt(routeParams.game_id!);
+
+	return (
+		<>
+			<div>
+				<PongGameBootstrap spectate={isNaN(game_id) ? -1 : game_id} />
+			</div>
+		</>
+	);
+};
+
+export { Pong, SpectatePong };
