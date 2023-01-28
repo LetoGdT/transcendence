@@ -6,7 +6,7 @@ import { OurMenu } from './Menu-zone';
 import { Home, NotFound } from './adaptable-zone';
 import { PlayZone } from './Play';
 import { SpecZone } from './Spec';
-import { Pong } from './pong/Pong';
+import { Pong, SpectatePong } from './pong/Pong';
 import { ChatZone } from './Chat-zone';
 import { FriendsZone } from './Friend-zone';
 import { MatchHistoryZone } from './MatchHistory-zone';
@@ -17,65 +17,14 @@ import { SignUp } from './adaptable-zone';
 import { AuthWith2FA } from './authWith2fa';
 import { Activate2FA } from './activate2fa';
 // import { Pong } from './pong/Pong';
-import { BrowserRouter as Router, Route, Routes} from 'react-router-dom'
-import { socket, websocketContext } from './WebsocketContext'
+import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import { socket, websocketContext } from './WebsocketContext';
 // import { useState, useEffect } from 'react';
 import toast, {Toaster} from 'react-hot-toast';
+import { setUpNewMessageNotificationsFn, setUpNewGameNotificationFn } from './Notifications';
 import { SetPrivateGame } from './SetPrivateGame';
-
-const newGame = () => {
-	toast.custom(
-		<div className='Notif'>
-			You've got a new invitation for a game.<br></br>
-			Please go to your profile to accept or reject.
-		</div>,
-		{
-			duration: 5000,
-			position: 'top-center',
-		
-			// Styling
-			// style: {
-			// 	borderRadius: '10px',
-			// 	background: '#007dd6',
-			// 	color: '#fff',
-			// },
-			// className: '',
-		
-			// Custom Icon
-			// icon: '👏',
-		
-			// Change colors of success/error/loading icon
-			// iconTheme: {
-			//   primary: '#000',
-			//   secondary: '#fff',
-			// },
-		
-			// Aria
-			ariaProps: {
-			role: 'status',
-			'aria-live': 'polite',
-			},
-		}
-	);
-};
-
-const newMessage = () => {
-	toast.custom(
-		<div className='Notif'>
-			You've got a new message in chat.
-		</div>,
-		{
-			duration: 5000,
-			position: 'top-center',
-
-			// Aria
-			ariaProps: {
-			role: 'status',
-			'aria-live': 'polite',
-			},
-		}
-	);
-};
+import { SetChannel } from './SetChannel';
+import { ManageChannel } from './ManageChannel';
 
 function App() {
 	const router = 
@@ -87,8 +36,6 @@ function App() {
 				<OurMenu/>
 			</div>
 			<div>
-				<button onClick={newGame}>Make me a toast</button>
-				<button onClick={newMessage}>Make me a toast</button>
 				<Toaster />
 			</div>
 			<div className='Adaptable'>
@@ -103,14 +50,19 @@ function App() {
 						<Route path="/otherprofile/">
 							<Route path=':uid' element={<OtherProfile />} />
 						</Route>
+						<Route path="/spectate/:game_id" element={<SpectatePong />} />
 						<Route path="/setprivategame">
 							<Route path=':uid' element={<SetPrivateGame />} />
+						</Route>
+						<Route path="/managechannel">
+							<Route path=':cid' element={<ManageChannel />} />
 						</Route>
 						<Route path="/profile" element={<ProfileZone/>} />
 						<Route path="/signup" element={<SignUp/>} />
 						<Route path='/2fa' element={<AuthWith2FA />} />
 						<Route path='/activate2fa' element={<Activate2FA />} />
 						<Route path='/pong' element={<Pong/>} />
+						<Route path='/setchannel' element={<SetChannel />} />
 						<Route path='*' element={<NotFound/>} />
 					</Routes>
 				</div>
@@ -134,6 +86,9 @@ function App() {
 		};
 	
 		api();
+
+		setUpNewMessageNotificationsFn();
+		setUpNewGameNotificationFn();
 	}, []);
 	
 	const isLoggedIn = me;

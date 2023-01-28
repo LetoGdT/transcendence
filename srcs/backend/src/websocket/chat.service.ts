@@ -13,38 +13,34 @@ import { Game } from './game/game.class';
 
 @Injectable()
 export class ChatService {
-	private readonly http = new HttpService();
+	async onNewMessage(chanOrConv: number, isChannel: boolean, token: string) {
+		let res: {users: number[], latest_sent: Date} = {users: [], latest_sent: new Date()};
+
+		await fetch(`http://localhost:9999/api/${isChannel?'channels':'conversations'}/?id=${chanOrConv}`, {
+			method: "GET",
+			credentials: 'include',
+			headers: {
+				'Cookie': `access_token=${token}`,
+			}
+		})
+		.then(response=>response.json())
+		.then(data => data.data[0])
+		.then((elem) => {
+				res.latest_sent = elem.latest_sent;
+				if (!isChannel) {
+					res.users = res.users.concat(elem.user1.id);
+					res.users = res.users.concat(elem.user2.id);
+				}
+				else {
+					elem.users.forEach((user: any) => {
+						res.users = res.users.concat(user.id);
+					});
+				}
+		});
+		return res;
+	}
 
 	constructor(private readonly matchesService: MatchesService) {}
-
-	async getTailMessages(othersId: number, cookie: string) {
-		const headersRequest = {
-			access_token: cookie,
-			withCredentials: 'true',
-		};
-		return this.http.get(
-			/*** DEPRECATED ! ***/
-			"localhost:9999/privmsg/" +
-				"?Order=DESC",
-			{
-				headers: headersRequest,
-			},
-		);
-
-		/**
-		 * New way of doing: Get latest conversations at 'http://localhost:9999/conversations',
-		 * save the id, then get the messages
-		 * at 'http://localhost:9999/conversations/<conversation_id>/messages', where conversation_id
-		 * is the id saved earlier.
-		 **/
-	}
-
-	async onNewMessage() {
-		/**
-		 * Create a message at POST 'http://localhost:9999/conversations/<conversation_id>/messages'
-		 * with body: { content : 'The message's content' }
-		 **/
-	}
 
 	searchOpponent(queue: Map<number, Connection[]>, client_exp: number, user_id: number): Connection | null
 	{
@@ -77,31 +73,31 @@ export class ChatService {
 
 	async startGame(client: Connection, opponent: Connection, games: Game[])
 	{
-		const game = new Game(50, 'Ranked');
-		game.addPlayer({ user: client.user, client: client.client });
-		game.addPlayer({ user: opponent.user, client: opponent.client });
-		client.client.emit('gameFound');
-		opponent.client.emit('gameFound');
-		games.push(game);
-		await game.run();
-		const gameIndex: number = games.findIndex(async game => {
-			(await game.getPlayer1Id()) == client.user.id
-			&& (await game.getPlayer2Id()) == opponent.user.id
-		});
-		games.splice(gameIndex, 1);
-		const score: { player1: number, player2: number } = await game.getScore(1);
-		const winner: User = score.player1 === 5 ? client.user : opponent.user;
-		const createMatchDto: CreateMatchDto = {
-			user1: client.user,
-			user2: opponent.user,
-			score_user1: score.player1,
-			score_user2: score.player2,
-			winner: winner,
-			played_at: new Date(),
-			game_type: 'Ranked',
-		};
-		const match = await this.matchesService.createMatch(createMatchDto);
-		this.matchesService.calculateRank(match.id);
+		// const game = new Game(50, 'Ranked');
+		// game.addPlayer({ user: client.user, client: client.client });
+		// game.addPlayer({ user: opponent.user, client: opponent.client });
+		// client.client.emit('gameFound');
+		// opponent.client.emit('gameFound');
+		// games.push(game);
+		// await game.run();
+		// const gameIndex: number = games.findIndex(async game => {
+		// 	(await game.getPlayer1Id()) == client.user.id
+		// 	&& (await game.getPlayer2Id()) == opponent.user.id
+		// });
+		// games.splice(gameIndex, 1);
+		// const score: { player1: number, player2: number } = await game.getScore(1);
+		// const winner: User = score.player1 === 5 ? client.user : opponent.user;
+		// const createMatchDto: CreateMatchDto = {
+		// 	user1: client.user,
+		// 	user2: opponent.user,
+		// 	score_user1: score.player1,
+		// 	score_user2: score.player2,
+		// 	winner: winner,
+		// 	played_at: new Date(),
+		// 	game_type: 'Ranked',
+		// };
+		// const match = await this.matchesService.createMatch(createMatchDto);
+		// this.matchesService.calculateRank(match.id);
 	}
 
 	printQ(queue: Map<number, Connection[]>)

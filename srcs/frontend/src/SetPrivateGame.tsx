@@ -3,10 +3,11 @@ import './SetPrivateGame.css';
 import { socket } from './WebsocketContext';
 
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Slider from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
+import {Link} from 'react-router-dom';
 
 const MaxPtsSlider = styled(Slider)({
   color: '#3b9b3b',
@@ -126,6 +127,7 @@ const AskButton = styled(Button)({
 
 export function SetPrivateGame(){
 	let { uid } = useParams();
+	const navigate = useNavigate();
 	const [newPts, setNewPts] = React.useState(10);
 	const [newSpeed, setNewSpeed] = React.useState(10);
 
@@ -136,6 +138,8 @@ export function SetPrivateGame(){
 			winning_score: newPts,
 			opponent_id: uid
 		})
+		socket.emit('newGame', {id: uid});
+		navigate('/pong');
 	};
 
 	const handleNewPts = (value: any) => {
@@ -173,7 +177,13 @@ export function SetPrivateGame(){
 				/>
 				</div>
 			</div>
-			<div className='Set-Private-Game-Button'><AskButton variant="contained" disableRipple onClick={handleClickSetParams}>Set Parameters</AskButton></div>
+			<div className='Set-Private-Game-Button'>
+				<Link to="/play">
+					<AskButton variant="contained" disableRipple onClick={handleClickSetParams}>
+						Set Parameters
+					</AskButton>
+				</Link>
+			</div>
 		</React.Fragment>
 	);
 }

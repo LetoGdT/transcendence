@@ -1,0 +1,21 @@
+.SetChannel-container{
+	display: flex;
+	flex-direction: column;
+	align-content: center;
+}
+
+.SetChannel-container-div{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.SetChannel-TextField{
+    margin-left: 5px;
+	margin-right: 5px;
+}
+
+.SetChannel-button{
+	margin: 5px;
+	padding: 1em;
+}
