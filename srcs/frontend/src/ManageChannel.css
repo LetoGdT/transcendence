@@ -19,6 +19,7 @@
 .Manage-Channel-container-subdiv{
     display: flex;
     flex-direction: column;
+    font-size: small;
 }
 
 .Manage-Channel-button{

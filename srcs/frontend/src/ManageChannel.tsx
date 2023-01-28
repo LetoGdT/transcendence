@@ -421,20 +421,25 @@ export function ManageChannel(){
 						Kick
 					</KickButton>
 				</div>
-				<div>
-					<ManageChannelTextField
-						label="Enter an end date"
-						InputLabelProps={{
-						sx:{
-							color:"white",
-						}
-						}}
-						variant="outlined"
-						sx={{ input: { color: 'grey' } }}
-						id="validation-outlined-input"
-						onChange={handleInputBanTime}
-						value={banTime}
-					/>
+				<div className='Manage-Channel-container-subdiv'>
+					<div>
+						<ManageChannelTextField
+							label="End date for banishing"
+							InputLabelProps={{
+							sx:{
+								color:"white",
+							}
+							}}
+							variant="outlined"
+							sx={{ input: { color: 'grey' } }}
+							id="validation-outlined-input"
+							onChange={handleInputBanTime}
+							value={banTime}
+						/>
+					</div>
+					<div>
+						format: yyyy-mm-dd hh:mm
+					</div>
 				</div>
 				<div className='Manage-Channel-button'>
 					<BanButton variant="contained" disableRipple onClick={handleClickBan}>
