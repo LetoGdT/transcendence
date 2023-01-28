@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Link } from 'react-router-dom';
 
@@ -429,6 +428,7 @@ function DisplayChannelAvailable(props: any){
 			if (!response.ok)
 				return ;
 		});
+		window.location.reload();
 	}
 
 	const handleLeave = async (event: any) => {
@@ -444,6 +444,7 @@ function DisplayChannelAvailable(props: any){
 			if (!response.ok)
 				return ;
 		});
+		window.location.reload();
 	}
 
 	const handleInputPassword = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -461,11 +462,9 @@ function DisplayChannelAvailable(props: any){
 						{channel.name}
 					</div>
 					<div className='Channels-available-button'>
-						<Link to="/chat">
-							<CreateChannelButton variant="contained" disableRipple onClick={handleJoin} value={channel.id}>
-								Join
-							</CreateChannelButton>
-						</Link>
+						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin} value={channel.id}>
+							Join
+						</CreateChannelButton>
 					</div>
 				</div>
 			);
@@ -490,11 +489,9 @@ function DisplayChannelAvailable(props: any){
 						/>
 					</div>
 					<div className='Channels-available-button'>
-						<Link to="/chat">
-							<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>
-								Join
-							</CreateChannelButton>
-						</Link>
+						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>
+							Join
+						</CreateChannelButton>
 					</div>
 				</div>
 			);
@@ -505,11 +502,9 @@ function DisplayChannelAvailable(props: any){
 						{channel.name}
 					</div>
 					<div className='Channels-available-button'>
-						<Link to="/chat">
-							<LeaveButton variant="contained" disableRipple onClick={handleLeave} value={channel.id}>
-								Leave
-							</LeaveButton>
-						</Link>
+						<LeaveButton variant="contained" disableRipple onClick={handleLeave} value={channel.id}>
+							Leave
+						</LeaveButton>
 					</div>
 					<div className='Channels-available-button'>
 						<AdminManagement channel={channel}/>
