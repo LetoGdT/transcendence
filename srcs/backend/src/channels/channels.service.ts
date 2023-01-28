@@ -90,21 +90,6 @@ export class ChannelsService
 			.andWhere(channelUserQueryFilterDto.role != null
 				? 'channelUser.role = :role'
 				: 'TRUE', { role: channelUserQueryFilterDto.role })
-			// .andWhere(userQueryFilterDto.id != null
-			// 	? 'user.id = :id'
-			// 	: 'TRUE', { id: userQueryFilterDto.id })
-			// .andWhere(userQueryFilterDto.uid != null
-			// 	? 'user.uid = :uid'
-			// 	: 'TRUE', { uid: userQueryFilterDto.uid })
-			// .andWhere(userQueryFilterDto.username != null
-			// 	? 'user.username LIKE :username'
-			// 	: 'TRUE', { username: userQueryFilterDto.username })
-			// .andWhere(userQueryFilterDto.email != null
-			// 	? 'user.email LIKE :email'
-			// 	: 'TRUE', { email: userQueryFilterDto.email })
-			// .andWhere(userQueryFilterDto.image_url != null
-			// 	? 'user.image_url LIKE :image_url'
-			// 	: 'TRUE', { image_url: userQueryFilterDto.image_url })
 			.orderBy('channelUser.id', pageOptionsDto.order)
 			.skip(pageOptionsDto.skip)
 			.take(pageOptionsDto.take);
@@ -366,7 +351,7 @@ export class ChannelsService
 			return user.id === toDelete.id;
 		});
 
-		if (requester.id == toDelete.id
+		if (user.id == user_id
 			|| this.permissions.get(requester.role) > this.permissions.get(toDelete.role))
 		{
 			if (channel.users.length === 1)
