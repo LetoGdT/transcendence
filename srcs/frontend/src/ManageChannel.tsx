@@ -395,7 +395,7 @@ export function ManageChannel(){
 		}
 
 		const handleClickKick = async (event: React.MouseEvent<HTMLButtonElement>) => {
-			await fetch(`http://localhost:9999/api/channels/${cid}/users/${props?.user.user.id}`,{
+			await fetch(`http://localhost:9999/api/channels/${cid}/users/${props?.user.id}`,{
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
