@@ -406,6 +406,14 @@ class GameManager {
 		return this.games;
 	}
 
+	cancelGame(id: number)
+	{
+		const toRemove = this.games.findIndex((game) => {
+			return game.id == id;
+		});
+		this.games.splice(toRemove, 1);
+	}
+
 	removeFinishedGames() {
 		let i, j;
 		
@@ -439,6 +447,8 @@ class GameManager {
 		this.id++;
 
 		this.games.push(game);
+
+		return game;
 	}
 
 	findGameByUser(user: User) {
@@ -727,11 +737,11 @@ export class MySocketGateway implements OnGatewayConnection,
 				throw new WsException('You must provide an opponent');
 
 			const opponentIndex: number = this.clients.findIndex(connection => {
-				connection.user.id == body.opponent_id
+				return connection.user.id == body.opponent_id
 			});
 
 			const meIndex: number = this.clients.findIndex(connection => {
-				connection.client.id == client.id
+				return connection.client.id == client.id
 			});
 
 			if (opponentIndex === -1)
@@ -744,7 +754,7 @@ export class MySocketGateway implements OnGatewayConnection,
 				|| gameManager.findGameByUser(this.clients[meIndex].user) != null)
 				throw new WsException('You or your opponent have already been invited');
 
-			gameManager.startGame(this.clients[meIndex], this.clients[opponentIndex], true, async (game: Game) => {
+			const game = gameManager.startGame(this.clients[meIndex], this.clients[opponentIndex], true, async (game: Game) => {
 					const createMatchDto: CreateMatchDto = {
 						user1: game.player1.user,
 						user2: game.player2.user,
@@ -758,6 +768,11 @@ export class MySocketGateway implements OnGatewayConnection,
 					this.matchesService.calculateRank(match.id);
 				});
 
+			this.clients[opponentIndex].client.emit('returnInvites', [{
+				game_id: game.id,
+				user: this.clients[meIndex].user,
+			}]);
+
 			// const game = new Game(50, 'Quick play');
 			// await game.setWinningScore(body.winning_score);
 			// await game.setBallSpeed(body.ball_speed);
@@ -769,8 +784,32 @@ export class MySocketGateway implements OnGatewayConnection,
 		}
 	}
 
+	@SubscribeMessage('getInvites')
+	async getInvite(@ConnectedSocket() client: Socket)
+	{
+		const index: number = this.clients.findIndex(connection => connection.client.id == client.id);
+		if (index === -1)
+			throw new WsException('We don\'t know you sir, but that\'s our bad');
+
+		const game = gameManager.findGameByUser(this.clients[index].user);
+
+		if (game == null)
+			return;
+
+		const player1 = game.player1.user;
+
+		const player2 = game.player2.user;
+
+		const senderUser = player1.id === this.clients[index].user.id ? player2 : player1;
+
+		client.emit('returnInvites', [{
+			game_id: game.id,
+			user: senderUser,
+		}]);
+	}
+
 	@SubscribeMessage('respondToInvite')
-	async respondToInvite(@ConnectedSocket() client: Socket)
+	async respondToInvite(@ConnectedSocket() client: Socket, @MessageBody() body: { id: number | null })
 	{
 		const index: number = this.clients.findIndex(connection => connection.client.id == client.id);
 		if (index === -1)
@@ -780,6 +819,13 @@ export class MySocketGateway implements OnGatewayConnection,
 
 		if (game == null)
 			throw new WsException('You have not been invited in a game');
+
+		if (body.id === null)
+		{
+			gameManager.cancelGame(game.id);
+			client.emit('returnInvites', []);
+			return;
+		}
 
 		if (game.getState() !== GameState.Waiting)
 			throw new WsException('Game already started');

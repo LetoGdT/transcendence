@@ -16,7 +16,7 @@ const NormalModeButton = styled(Button)({
 	padding: '6px 12px',
 	border: '1px solid',
 	lineHeight: 1.5,
-	backgroundColor: '#3aeb34',
+	backgroundColor: '#646464',
 	borderColor: '#646464',
 	fontFamily: [
 		'-apple-system',
@@ -86,9 +86,9 @@ function Play(){
 						<NormalModeButton variant="contained" disableRipple>PLAY<br></br>Classic Mode</NormalModeButton>
 					</Link>
 				</div>
-				<div className='Play-button'>
+				{/*<div className='Play-button'>
 					<UnicornModeButton variant="contained" disableRipple>PLAY<br></br>Unicorn Mode</UnicornModeButton>
-				</div>
+				</div>*/}
 			</div>
 		</React.Fragment>
 	);
