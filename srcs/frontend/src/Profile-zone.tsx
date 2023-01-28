@@ -198,6 +198,7 @@ export function Profile(){
 													credentials: 'include',
 													body: JSON.stringify({ id: uid })
 												});
+												window.location.reload();
 											}}>
 												<CheckIcon />
 											</IconButton>
@@ -213,6 +214,7 @@ export function Profile(){
 													method: 'DELETE',
 													credentials: 'include',
 												});
+												window.location.reload();
 											}}>
 												<CloseIcon />
 											</IconButton>

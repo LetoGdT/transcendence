@@ -75,6 +75,7 @@ type PongGameBootstrapProps = {
 const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) =>
 {
 	const game = gameInstance;
+	game.newGame();
 	const canvasRef = useCanvas(ctx => game.render(ctx));
 
 	useEffect(() => {

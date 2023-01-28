@@ -90,21 +90,6 @@ export class ChannelsService
 			.andWhere(channelUserQueryFilterDto.role != null
 				? 'channelUser.role = :role'
 				: 'TRUE', { role: channelUserQueryFilterDto.role })
-			// .andWhere(userQueryFilterDto.id != null
-			// 	? 'user.id = :id'
-			// 	: 'TRUE', { id: userQueryFilterDto.id })
-			// .andWhere(userQueryFilterDto.uid != null
-			// 	? 'user.uid = :uid'
-			// 	: 'TRUE', { uid: userQueryFilterDto.uid })
-			// .andWhere(userQueryFilterDto.username != null
-			// 	? 'user.username LIKE :username'
-			// 	: 'TRUE', { username: userQueryFilterDto.username })
-			// .andWhere(userQueryFilterDto.email != null
-			// 	? 'user.email LIKE :email'
-			// 	: 'TRUE', { email: userQueryFilterDto.email })
-			// .andWhere(userQueryFilterDto.image_url != null
-			// 	? 'user.image_url LIKE :image_url'
-			// 	: 'TRUE', { image_url: userQueryFilterDto.image_url })
 			.orderBy('channelUser.id', pageOptionsDto.order)
 			.skip(pageOptionsDto.skip)
 			.take(pageOptionsDto.take);
@@ -306,12 +291,12 @@ export class ChannelsService
 			if (patchChannelUserDto.role == 'Owner')
 				channel.users[requesterIndex].role = 'Admin';
 		}
-		else
+		else if (patchChannelUserDto.role != null)
 			throw new HttpException('You don\'t have permissions to execute this action', HttpStatus.FORBIDDEN);
 		if (patchChannelUserDto.is_muted != null
 			&& this.permissions.get(requester.role) > this.permissions.get(toChange.role))
 			channel.users[toChangeIndex].is_muted = patchChannelUserDto.is_muted;
-		else
+		else if (patchChannelUserDto.is_muted != null)
 			throw new HttpException('You don\'t have permissions to execute this action', HttpStatus.FORBIDDEN);
 
 		return this.channelRepository.save(channel);
@@ -366,7 +351,7 @@ export class ChannelsService
 			return user.id === toDelete.id;
 		});
 
-		if (requester.id == toDelete.id
+		if (user.id == toDelete.user.id
 			|| this.permissions.get(requester.role) > this.permissions.get(toDelete.role))
 		{
 			if (channel.users.length === 1)

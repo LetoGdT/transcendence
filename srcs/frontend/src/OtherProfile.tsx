@@ -262,6 +262,7 @@ function AddOrRemoveButton(uid: string | undefined){
 			method: 'DELETE',
 			credentials: 'include',
 		});
+		window.location.reload();
 	};
 
 	const [friend, setFriend] = useState<friendProps>();
@@ -306,6 +307,7 @@ function BlockOrUnblockButton(uid: string | undefined){
 			credentials: 'include',
 			body: JSON.stringify({ id: uid })
 		});
+		window.location.reload();
 	};
 
 	const handleClickUnblock = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -319,6 +321,7 @@ function BlockOrUnblockButton(uid: string | undefined){
 			method: 'DELETE',
 			credentials: 'include',
 		});
+		window.location.reload();
 	};
 
 	const [blocked, setBlocked] = useState<blockedProps[]>([]);

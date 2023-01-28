@@ -5,6 +5,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import {Link} from 'react-router-dom';
 
 const SetChannelTextField = styled(TextField)({
 	'& input:valid + fieldset': {
@@ -120,7 +121,13 @@ export function SetChannel(){
 						/>
 					</div>
 				</div>
-				<div className='SetChannel-button'><SetChannelButton variant="contained" disableRipple onClick={handleClickSetChannel}>Create Channel</SetChannelButton></div>
+				<div className='SetChannel-button'>
+					<Link to="/chat">
+						<SetChannelButton variant="contained" disableRipple onClick={handleClickSetChannel}>
+							Create Channel
+						</SetChannelButton>
+					</Link>
+				</div>
 			</div>
 		</React.Fragment>
     );

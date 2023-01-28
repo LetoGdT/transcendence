@@ -1,10 +1,9 @@
 import './App.css';
-import './SetChannel.css';
+import './ManageChannel.css';
 import React from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
 import {Link, useParams} from 'react-router-dom';
 
 import { NotFound } from './adaptable-zone';
@@ -217,12 +216,12 @@ export function ManageChannel(){
 	}
 
 	async function updateChannel() {
-		await fetch(`http://localhost:9999/api/channels/${cid}`, {
+		await fetch(`http://localhost:9999/api/channels/?id=${cid}`, {
 			method: "GET",
 			credentials: "include",
 		})
 		.then(response => response.json())
-		.then(data => setCurrentChannel(data));
+		.then(data => setCurrentChannel(data.data[0]));
 	}
 
 	function SelectStatus() {
@@ -236,6 +235,7 @@ export function ManageChannel(){
 				credentials: 'include',
 				body: JSON.stringify({status: "public"})
 			});
+			window.location.reload();
 		};
 
 		const handleClickSetPrivate = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -248,6 +248,7 @@ export function ManageChannel(){
 				credentials: 'include',
 				body: JSON.stringify({status: "private"})
 			});
+			window.location.reload();
 		};
 
 		const handleClickSetProtected = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -260,16 +261,21 @@ export function ManageChannel(){
 				credentials: 'include',
 				body: JSON.stringify({status: "protected"})
 			});
+			window.location.reload();
 		};
 
 		if (currentChannel?.status === "public") {
 			return(
 				<React.Fragment>
 					<div className='Manage-Channel-button'>
-						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPrivate}>Set private</ManageChannelButton>
+						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPrivate}>
+							Set private
+						</ManageChannelButton>
 					</div>
 					<div className='Manage-Channel-button'>
-						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetProtected}>Set protected</ManageChannelButton>
+						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetProtected}>
+							Set protected
+						</ManageChannelButton>
 					</div>
 				</React.Fragment>
 			);
@@ -277,10 +283,14 @@ export function ManageChannel(){
 			return(
 				<React.Fragment>
 					<div className='Manage-Channel-button'>
-						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPublic}>Set public</ManageChannelButton>
+						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPublic}>
+							Set public
+						</ManageChannelButton>
 					</div>
 					<div className='Manage-Channel-button'>
-						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetProtected}>Set protected</ManageChannelButton>
+						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetProtected}>
+							Set protected
+						</ManageChannelButton>
 					</div>
 				</React.Fragment>
 			);
@@ -288,10 +298,14 @@ export function ManageChannel(){
 			return(
 				<React.Fragment>
 					<div className='Manage-Channel-button'>
-						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPublic}>Set public</ManageChannelButton>
+						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPublic}>
+							Set public
+						</ManageChannelButton>
 					</div>
 					<div className='Manage-Channel-button'>
-						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPrivate}>Set private</ManageChannelButton>
+						<ManageChannelButton variant="contained" disableRipple onClick={handleClickSetPrivate}>
+							Set private
+						</ManageChannelButton>
 					</div>
 				</React.Fragment>
 			);
@@ -313,51 +327,43 @@ export function ManageChannel(){
 				},
 				method: 'PATCH',
 				credentials: 'include',
-				body: JSON.stringify({password: password})
+				body: JSON.stringify({password: password, status: "protected"})
 			});
 			setPassword("");
+			window.location.reload();
 		}
 
 		if (isOwner){
 			return(
 				<React.Fragment>
 					<div className='Manage-Channel-container-div'>
-						<div>
-							<Box
-								component="form"
-								noValidate
-								sx={{
-									display: 'grid',
-									gap: 2,
+						<div className='Manage-Channel-div'>
+							<ManageChannelTextField
+								label="New Password"
+								InputLabelProps={{
+								sx:{
+									color:"white",
+								}
 								}}
-							>
-								<ManageChannelTextField
-									label="New Password"
-									InputLabelProps={{
-									sx:{
-										color:"white",
-									}
-									}}
-									variant="outlined"
-									defaultValue=""
-									sx={{ input: { color: 'grey' } }}
-									id="validation-outlined-input"
-									onChange={handleInputPwd}
-									value={password}
-								/>
-							</Box>
+								variant="outlined"
+								defaultValue=""
+								sx={{ input: { color: 'grey' } }}
+								id="validation-outlined-input"
+								onChange={handleInputPwd}
+								value={password}
+							/>
 						</div>
 						<div className='Manage-Channel-button'>
-							<ManageChannelButton variant="contained" disableRipple onClick={handleClickNewPwd}>Save Password</ManageChannelButton>
+							<ManageChannelButton variant="contained" disableRipple onClick={handleClickNewPwd}>
+								Save Password
+							</ManageChannelButton>
 						</div>
 					</div>
 					<div className='Manage-Channel-container-div'>
 						<div>
 							Change status: 
 						</div>
-						<div>
-							<SelectStatus />
-						</div>
+						<SelectStatus />
 					</div>
 				</React.Fragment>
 			);
@@ -386,6 +392,7 @@ export function ManageChannel(){
 				body: JSON.stringify({user_id: props?.user.user.id, unban_date: banTime})
 			});
 			setBanTime("");
+			window.location.reload();
 		}
 
 		const handleClickKick = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -397,6 +404,7 @@ export function ManageChannel(){
 				method: 'DELETE',
 				credentials: 'include',
 			});
+			window.location.reload();
 		}
 
 		let url: string = "/otherprofile/";
@@ -414,17 +422,10 @@ export function ManageChannel(){
 						Kick
 					</KickButton>
 				</div>
-				<div>
-					<Box
-						component="form"
-						noValidate
-						sx={{
-							display: 'grid',
-							gap: 2,
-						}}
-					>
+				<div className='Manage-Channel-container-subdiv'>
+					<div>
 						<ManageChannelTextField
-							label="For banishing, please enter an end date"
+							label="End date for banishing"
 							InputLabelProps={{
 							sx:{
 								color:"white",
@@ -437,7 +438,10 @@ export function ManageChannel(){
 							onChange={handleInputBanTime}
 							value={banTime}
 						/>
-					</Box>
+					</div>
+					<div>
+						format: yyyy-mm-dd hh:mm
+					</div>
 				</div>
 				<div className='Manage-Channel-button'>
 					<BanButton variant="contained" disableRipple onClick={handleClickBan}>
@@ -461,6 +465,7 @@ export function ManageChannel(){
 				credentials: 'include',
 				body: JSON.stringify({role: "Admin"})
 			});
+			window.location.reload();
 		}
 
 		if(isOwner && props?.user.role === 'None'){
