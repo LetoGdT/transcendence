@@ -424,7 +424,7 @@ export function ManageChannel(){
 				</div>
 				<div>
 					<ManageChannelTextField
-						label="Enter an end date"
+						label="End date for banishing"
 						InputLabelProps={{
 						sx:{
 							color:"white",
