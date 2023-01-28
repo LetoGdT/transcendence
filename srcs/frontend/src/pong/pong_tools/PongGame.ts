@@ -84,11 +84,13 @@ class PongGame
 
 	private countdownStart: number = 0;
 	
-	private player1Data?: PongUserData;
-	private player2Data?: PongUserData;
+	public player1Data?: PongUserData;
+	public player2Data?: PongUserData;
 
-	private player1Image?: HTMLImageElement;
-	private player2Image?: HTMLImageElement;
+	private player1Image: HTMLImageElement | null;
+	private player2Image: HTMLImageElement | null;
+
+	private spectatorWinIndex: number = 0;
 
 	constructor(width: number, height: number)
     {
@@ -106,6 +108,9 @@ class PongGame
 
 		this.startTimer = 0;
 		this.currentTicks = 0;
+
+		this.player1Image = null;
+		this.player2Image = null;
     }
 
 	setPlayers(player1: PongUserData, player2: PongUserData) {
@@ -150,6 +155,11 @@ class PongGame
 		this.scorePlayer2 = 0;
 		this.player1 = new Player(0, (this.height - PLAYER_HEIGHT) / 2);
         this.player2 = new Player(this.width - PLAYER_WIDTH, (this.height - PLAYER_HEIGHT) / 2);
+		this.spectatorWinIndex = 0;
+		this.player1Image = null;
+		this.player2Image = null;
+		this.player1Data = undefined;
+		this.player2Data = undefined;
 	}
 
 	drawStatusScreen(ctx: CanvasRenderingContext2D, label: string) {
@@ -179,6 +189,40 @@ class PongGame
 		ctx.fillText(label, this.width / 2, this.height / 2 + 70);
 	}
 
+	drawUserNames(ctx: CanvasRenderingContext2D) {
+		ctx.fillStyle = 'white';
+		ctx.textAlign = 'left';
+		ctx.textBaseline = 'middle';
+		ctx.font = '14px sans-serif';
+		ctx.fillText(this.player1Data?.username!, 68, this.height - 20);
+		
+		ctx.textAlign = 'right';
+		ctx.fillText(this.player2Data?.username!, this.width - 68, this.height - 20);
+
+		this.drawUserAvatar(ctx, this.player1Image, 10, this.height - 48 - 10, 48, 48);
+		this.drawUserAvatar(ctx, this.player2Image, this.width - 58, this.height - 48 - 10, 48, 48);
+	}
+
+	setSpectatorWin(playerIndex: number) {
+		this.spectatorWinIndex = playerIndex;
+	}
+
+	drawUserAvatar(ctx: CanvasRenderingContext2D, img: HTMLImageElement | null, x: number, y: number, imageWidth: number, imageHeight: number) {
+		if (null != img && img.complete) {
+			const aspectRatio = img.width / Math.max(1, img.height);
+			const fixedImageWidth = imageWidth * aspectRatio;
+
+			ctx.save();
+			ctx.translate(x, y);
+			ctx.beginPath();
+			ctx.arc(imageWidth / 2, imageHeight / 2, Math.min(imageWidth, imageHeight) / 2, 0, 2 * Math.PI, false);
+			ctx.clip();
+			ctx.drawImage(img,
+				(imageWidth - fixedImageWidth) / 2, 0, fixedImageWidth, imageHeight);
+			ctx.restore();
+		}
+	}
+
 	/**
 	 * Called when the browser need to refresh the canvas
 	 * @param ctx the rendering context of the canvas
@@ -203,32 +247,31 @@ class PongGame
 			this.drawStatusScreen(ctx, this.statusMessage);
 			return ;
 		}
-		
+
 		this.drawNet(ctx)
 		this.player1.draw(ctx);
 		this.player2.draw(ctx);
-
-		ctx.fillStyle = 'white';
-		ctx.textAlign = 'left';
-		ctx.textBaseline = 'middle';
-		ctx.font = '14px sans-serif';
-		ctx.fillText(this.player1Data?.username!, 40, this.height - 20);
+		this.drawUserNames(ctx);
 		
-		ctx.textAlign = 'right';
-		ctx.fillText(this.player2Data?.username!, this.width - 40, this.height - 20);
+		if (this.spectatorWinIndex > 0) {
+			const w = this.width * 0.1;
+			const yPos = (this.height * 0.5 - w) / 2;
 
-		if (null != this.player1Image && this.player1Image.complete) {
-			// const img = this.player1Image;
+			let text = '';
 
-			// const targetWidth = 32;
-			// const targetHeight = 32;
+			if (this.spectatorWinIndex === 1) {
+				this.drawUserAvatar(ctx, this.player1Image, (this.width - w) / 2, yPos, w, w);
+				text = 'Player 1 Won';
+			} else if (this.spectatorWinIndex === 2) {
+				this.drawUserAvatar(ctx, this.player2Image, (this.width - w) / 2, yPos, w, w);
+				text = 'Player 2 Won';
+			}
 
-			// const sx = -img.width / 2;
-			// const sy = -img.height / 2;
-
-			// ctx.drawImage(this.player1Image,
-			// 	sx, sy, img.width, img.height,
-			// 	10, this.height - 42, targetWidth, targetHeight);
+			ctx.fillStyle = 'white';
+			ctx.textAlign = 'center';
+			ctx.textBaseline = 'top';
+			ctx.font = '48px sans-serif';
+			ctx.fillText(text, this.width / 2, yPos + 120);
 		}
 
 		if (this.start)

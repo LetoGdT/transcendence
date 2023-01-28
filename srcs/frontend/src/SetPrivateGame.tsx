@@ -131,16 +131,34 @@ export function SetPrivateGame(){
 	const [newPts, setNewPts] = React.useState(10);
 	const [newSpeed, setNewSpeed] = React.useState(10);
 
+	const [ isCreatingGame, setCreatingGame ] = React.useState(false);
+
 	const handleClickSetParams = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		if (isCreatingGame)
+			return ;
+		
+		setCreatingGame(true);
+
 		socket.emit('queue', {
 			type: 'Quick play',
 			ball_speed: newSpeed,
 			winning_score: newPts,
 			opponent_id: uid
 		})
-		socket.emit('newGame', {id: uid});
-		navigate('/pong');
 	};
+
+	const onGameCreated = ({ game_id }: { game_id: number }) => {
+		console.log('GAAAAAMe created ' + game_id);
+		navigate(`/join/${game_id}`);
+	};
+
+	React.useEffect(() => {
+		socket.on('gameCreated', onGameCreated);
+
+		return () => {
+			socket.off('gameCreated', onGameCreated);
+		};
+	}, []);
 
 	const handleNewPts = (value: any) => {
 		setNewPts(value);
@@ -178,11 +196,9 @@ export function SetPrivateGame(){
 				</div>
 			</div>
 			<div className='Set-Private-Game-Button'>
-				<Link to="/play">
-					<AskButton variant="contained" disableRipple onClick={handleClickSetParams}>
-						Set Parameters
-					</AskButton>
-				</Link>
+				<AskButton variant="contained" disableRipple onClick={handleClickSetParams} disabled={isCreatingGame}>
+					Set Parameters
+				</AskButton>
 			</div>
 		</React.Fragment>
 	);
