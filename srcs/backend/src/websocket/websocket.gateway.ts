@@ -73,7 +73,7 @@ class Game {
 	public player1: RemotePlayer;
 	public player2: RemotePlayer;
 
-	private maxScore: number;
+	private maxScore: number; // TODO link it to customization slider (between 5 and 20)
 
 	private gameState: GameState;
 
@@ -83,7 +83,7 @@ class Game {
 	private ballDirX: number = 0;
 	private ballDirY: number = 0;
 
-	private ballInitialSpeed: number = 10;
+	private ballInitialSpeed: number = 10; // TODO link it to customization slider (between 5 and 20)
 	private ballAcceleration: number = 0.03;
 	private ballSpeed: number = 0;
 	private ballRadius: number = 5;
