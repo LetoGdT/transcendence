@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import PongGame from './pong_tools/PongGame';
 import { socket } from '../WebsocketContext';
 import { useParams } from 'react-router-dom';
+import { PleaseConnect } from '../adaptable-zone';
 
 const GAME_WIDTH = 1040;
 const GAME_HEIGHT = 680;
