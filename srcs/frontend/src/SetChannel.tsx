@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import {Link} from 'react-router-dom';
+import { Notification } from './Notifications';
 
 const SetChannelTextField = styled(TextField)({
 	'& input:valid + fieldset': {
@@ -80,7 +81,14 @@ export function SetChannel(){
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(body)
-		});
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+			else
+				window.location.reload();
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
 	};
 
     return(

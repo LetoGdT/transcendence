@@ -8,6 +8,7 @@ import {Link, useParams} from 'react-router-dom';
 
 import { NotFound } from './adaptable-zone';
 import { getAllPaginated } from './tools';
+import { Notification } from './Notifications';
 
 const ManageChannelTextField = styled(TextField)({
 	'& input:valid + fieldset': {
@@ -234,8 +235,14 @@ export function ManageChannel(){
 				method: 'PATCH',
 				credentials: 'include',
 				body: JSON.stringify({status: "public"})
-			});
-			window.location.reload();
+			})
+			.then(response => {
+				if (!response.ok)
+					return response.json();
+				else
+					window.location.reload();
+			})
+			.then(data => {if (data !== undefined) Notification(data.message)});
 		};
 
 		const handleClickSetPrivate = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -247,8 +254,14 @@ export function ManageChannel(){
 				method: 'PATCH',
 				credentials: 'include',
 				body: JSON.stringify({status: "private"})
-			});
-			window.location.reload();
+			})
+			.then(response => {
+				if (!response.ok)
+					return response.json();
+				else
+					window.location.reload();
+			})
+			.then(data => {if (data !== undefined) Notification(data.message)});
 		};
 
 		const handleClickSetProtected = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -260,8 +273,14 @@ export function ManageChannel(){
 				method: 'PATCH',
 				credentials: 'include',
 				body: JSON.stringify({status: "protected"})
-			});
-			window.location.reload();
+			})
+			.then(response => {
+				if (!response.ok)
+					return response.json();
+				else
+					window.location.reload();
+			})
+			.then(data => {if (data !== undefined) Notification(data.message)});
 		};
 
 		if (currentChannel?.status === "public") {
@@ -328,9 +347,15 @@ export function ManageChannel(){
 				method: 'PATCH',
 				credentials: 'include',
 				body: JSON.stringify({password: password, status: "protected"})
-			});
+			})
+			.then(response => {
+				if (!response.ok)
+					return response.json();
+				else
+					window.location.reload();
+			})
+			.then(data => {if (data !== undefined) Notification(data.message)});
 			setPassword("");
-			window.location.reload();
 		}
 
 		if (isOwner){
@@ -389,9 +414,15 @@ export function ManageChannel(){
 				method: 'POST',
 				credentials: 'include',
 				body: JSON.stringify({user_id: props?.user.user.id, unban_date: banTime})
-			});
+			})
+			.then(response => {
+				if (!response.ok)
+					return response.json();
+				else
+					window.location.reload();
+			})
+			.then(data => {if (data !== undefined) Notification(data.message)});
 			setBanTime("");
-			window.location.reload();
 		}
 
 		const handleClickKick = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -402,8 +433,14 @@ export function ManageChannel(){
 				},
 				method: 'DELETE',
 				credentials: 'include',
-			});
-			window.location.reload();
+			})
+			.then(response => {
+				if (!response.ok)
+					return response.json();
+				else
+					window.location.reload();
+			})
+			.then(data => {if (data !== undefined) Notification(data.message)});
 		}
 
 		let url: string = "/otherprofile/";
@@ -462,8 +499,14 @@ export function ManageChannel(){
 				method: 'PATCH',
 				credentials: 'include',
 				body: JSON.stringify({role: "Admin"})
-			});
-			window.location.reload();
+			})
+			.then(response => {
+				if (!response.ok)
+					return response.json();
+				else
+					window.location.reload();
+			})
+			.then(data => {if (data !== undefined) Notification(data.message)});
 		}
 
 		if(isOwner && props?.user.role === 'None'){

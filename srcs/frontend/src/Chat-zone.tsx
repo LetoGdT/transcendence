@@ -524,9 +524,10 @@ function Chat() {
 		.then(response => {
 			if (!response.ok)
 				return response.json();
+			else
+				socket.emit("newMessage", {chanOrConv: currentConv, isChannel: isChannel});
 		})
 		.then(data => {if (data !== undefined) Notification(data.message)});
-		socket.emit("newMessage", {chanOrConv: currentConv, isChannel: isChannel});
 		setNewMessage(""); // Sert à effacer le message une fois qu'on a appuyé sur le bouton send
 	}
 
@@ -659,9 +660,11 @@ function Chat() {
 			})
 			.then(response => {
 				if (!response.ok)
-					return ;
-			});
-			window.location.reload();
+					return response.json();
+				else
+					window.location.reload();
+			})
+			.then(data => {if (data !== undefined) Notification(data.message);});
 		}
 
 		const handleLeave = async (event: any) => {
@@ -676,9 +679,11 @@ function Chat() {
 			})
 			.then(response => {
 				if (!response.ok)
-					return ;
-			});
-			window.location.reload();
+					return response.json();
+				else
+					window.location.reload();
+			})
+			.then(data => {if (data !== undefined) Notification(data.message);});
 		}
 
 		const handleInputPassword = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
