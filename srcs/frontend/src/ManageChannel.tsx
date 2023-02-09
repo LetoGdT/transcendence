@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import {Link, useParams} from 'react-router-dom';
 
-import { NotFound } from './adaptable-zone';
+import { NotFound, PleaseConnect } from './adaptable-zone';
 import { getAllPaginated } from './tools';
 
 const ManageChannelTextField = styled(TextField)({
@@ -173,7 +173,7 @@ type Channel = {
 	password: string;
 }
 
-export function ManageChannel(){
+function ManageChannel(){
 	let { cid } = useParams();
 	const [me, setMe] = React.useState<User>();
 	const [users, setUsers] = React.useState<ChannelUser[]>([]);
@@ -507,5 +507,40 @@ export function ManageChannel(){
 				</div>
 			</React.Fragment>
 		);
+	}
+}
+
+export function ManaChanZone(){
+	let { cid } = useParams();
+	const [me, setMe] = React.useState<Boolean>(false);
+
+	React.useEffect(() => {
+		const api = async () => {
+			await fetch("http://localhost:9999/api/users/isconnected", {
+				method: "GET",
+				credentials: 'include'
+			})
+			.then((response) => {
+				if (!response.ok)
+					setMe(false);
+				else
+					setMe(true);
+			});
+		};
+	
+		api();
+	}, []);
+	
+	const isLoggedIn = me;
+	if (isLoggedIn){
+		return (
+			<ManageChannel />
+		);
+	}
+	else 
+	{
+		return (
+			<PleaseConnect />
+		 );
 	}
 }

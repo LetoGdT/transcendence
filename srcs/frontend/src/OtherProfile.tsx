@@ -7,7 +7,7 @@ import { Link, useParams } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import { Chart } from "react-google-charts";
 import { useState, useEffect } from "react";
-import { NotFound } from './adaptable-zone';
+import { NotFound, PleaseConnect } from './adaptable-zone';
 import { FromEXPtoLvl, getAllPaginated, ToNextLevel } from './tools';
 import { OneAchievement } from './Profile-zone';
 import { socket } from './WebsocketContext';
@@ -456,7 +456,7 @@ function OneMatch(match:any){
 	}
 }
 
-export function OtherProfile(){
+function OtherProfile(){
 	let { uid } = useParams();
 	const [is404, setIs404] = React.useState(false);
 	const [data, setResult] = useState<resultProps>();
@@ -612,3 +612,39 @@ export function OtherProfile(){
 		);
 	}
 }
+
+export function OProfileZone(){
+	let { cid } = useParams();
+	const [me, setMe] = React.useState<Boolean>(false);
+
+	React.useEffect(() => {
+		const api = async () => {
+			await fetch("http://localhost:9999/api/users/isconnected", {
+				method: "GET",
+				credentials: 'include'
+			})
+			.then((response) => {
+				if (!response.ok)
+					setMe(false);
+				else
+					setMe(true);
+			});
+		};
+	
+		api();
+	}, []);
+	
+	const isLoggedIn = me;
+	if (isLoggedIn){
+		return (
+			<OtherProfile />
+		);
+	}
+	else 
+	{
+		return (
+			<PleaseConnect />
+		 );
+	}
+}
+

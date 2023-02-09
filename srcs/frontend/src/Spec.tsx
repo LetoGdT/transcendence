@@ -116,9 +116,6 @@ function SpecAMatch(){
 	);
 }
 
-type meProps = {
-};
-
 export function SpecZone(){
 	const [me, setMe] = useState<Boolean>(false);
 

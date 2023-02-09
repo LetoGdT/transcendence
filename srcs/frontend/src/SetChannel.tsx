@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import {Link} from 'react-router-dom';
+import { PleaseConnect } from './adaptable-zone';
 
 const SetChannelTextField = styled(TextField)({
 	'& input:valid + fieldset': {
@@ -129,4 +130,38 @@ export function SetChannel(){
 			</div>
 		</React.Fragment>
     );
+}
+
+export function SetChanZone(){
+	const [me, setMe] = React.useState<Boolean>(false);
+
+	React.useEffect(() => {
+		const api = async () => {
+			await fetch("http://localhost:9999/api/users/isconnected", {
+				method: "GET",
+				credentials: 'include'
+			})
+			.then((response) => {
+				if (!response.ok)
+					setMe(false);
+				else
+					setMe(true);
+			});
+		};
+	
+		api();
+	}, []);
+	
+	const isLoggedIn = me;
+	if (isLoggedIn){
+		return (
+			<SetChannel />
+		);
+	}
+	else 
+	{
+		return (
+			<PleaseConnect />
+		 );
+	}
 }

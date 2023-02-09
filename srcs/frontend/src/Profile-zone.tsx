@@ -82,7 +82,7 @@ export function OneAchievement(achievement: any){
 	}
 }
 
-export function Profile(){
+function Profile(){
 	const [data, setResult] = useState<resultProps>();
 	const [invites, setInvites] = useState<invitesProps[]>([]);
 	const [games, setGames] = useState<gamesProps[]>([]);
@@ -259,9 +259,6 @@ export function Profile(){
 		</React.Fragment>
 	);
 }
-
-type meProps = {
-};
 
 export function ProfileZone(){
 	const [me, setMe] = useState<Boolean>(false);

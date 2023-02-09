@@ -153,7 +153,7 @@ function ActivateOrDesactivate2FAButton(){
 	}
 }
 
-export function Settings(){
+function Settings(){
 	const [data, setResult] = useState<resultProps>();
 	const [newAvatar, setNewAvatar] = React.useState("");
 	const [newAlias, setNewAlias] = React.useState("");
@@ -344,9 +344,6 @@ export function Settings(){
 		</React.Fragment>
 	);
 }
-
-type meProps = {
-};
 
 export function SettingsZone(){
 	const [me, setMe] = useState<Boolean>(false);

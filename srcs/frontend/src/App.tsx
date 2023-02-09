@@ -12,18 +12,17 @@ import { FriendsZone } from './Friend-zone';
 import { MatchHistoryZone } from './MatchHistory-zone';
 import { SettingsZone } from './Settings-zone';
 import { ProfileZone} from './Profile-zone';
-import { OtherProfile } from './OtherProfile';
+import { OProfileZone } from './OtherProfile';
 import { SignUp } from './adaptable-zone';
 import { AuthWith2FA } from './authWith2fa';
 import { Activate2FA } from './activate2fa';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import { socket, websocketContext } from './WebsocketContext';
-// import { useState, useEffect } from 'react';
-import toast, {Toaster} from 'react-hot-toast';
+import {Toaster} from 'react-hot-toast';
 import { setUpNewMessageNotificationsFn, setUpNewGameNotificationFn } from './Notifications';
 import { SetPrivateGame } from './SetPrivateGame';
-import { SetChannel } from './SetChannel';
-import { ManageChannel } from './ManageChannel';
+import { SetChanZone } from './SetChannel';
+import { ManaChanZone } from './ManageChannel';
 
 function App() {
 	const router = 
@@ -47,7 +46,7 @@ function App() {
 						<Route path="/settings" element={<SettingsZone/>} />
 						<Route path="/specamatch" element={<SpecZone/>} />
 						<Route path="/otherprofile/">
-							<Route path=':uid' element={<OtherProfile />} />
+							<Route path=':uid' element={<OProfileZone />} />
 						</Route>
 						<Route path="/spectate/:game_id" element={<Pong mode="spectate" />} />
 						<Route path="/join/:game_id" element={<Pong mode="private" />} />
@@ -56,13 +55,13 @@ function App() {
 							<Route path=':uid' element={<SetPrivateGame />} />
 						</Route>
 						<Route path="/managechannel">
-							<Route path=':cid' element={<ManageChannel />} />
+							<Route path=':cid' element={<ManaChanZone />} />
 						</Route>
 						<Route path="/profile" element={<ProfileZone/>} />
 						<Route path="/signup" element={<SignUp/>} />
 						<Route path='/2fa' element={<AuthWith2FA />} />
 						<Route path='/activate2fa' element={<Activate2FA />} />
-						<Route path='/setchannel' element={<SetChannel />} />
+						<Route path='/setchannel' element={<SetChanZone />} />
 						<Route path='*' element={<NotFound/>} />
 					</Routes>
 				</div>
