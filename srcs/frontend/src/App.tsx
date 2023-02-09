@@ -6,7 +6,7 @@ import { OurMenu } from './Menu-zone';
 import { Home, NotFound } from './adaptable-zone';
 import { PlayZone } from './Play';
 import { SpecZone } from './Spec';
-import { PongZone } from './pong/Pong';
+import { Pong } from './pong/Pong';
 import { ChatZone } from './Chat-zone';
 import { FriendsZone } from './Friend-zone';
 import { MatchHistoryZone } from './MatchHistory-zone';
@@ -48,9 +48,9 @@ function App() {
 						<Route path="/otherprofile/">
 							<Route path=':uid' element={<OProfileZone />} />
 						</Route>
-						<Route path="/spectate/:game_id" element={<PongZone mode="spectate" />} />
-						<Route path="/join/:game_id" element={<PongZone mode="private" />} />
-						<Route path='/pong' element={<PongZone mode="ranked" />} />
+						<Route path="/spectate/:game_id" element={<Pong mode="spectate" />} />
+						<Route path="/join/:game_id" element={<Pong mode="private" />} />
+						<Route path='/pong' element={<Pong mode="ranked" />} />
 						<Route path="/setprivategame">
 							<Route path=':uid' element={<SetPGameZone />} />
 						</Route>

@@ -165,20 +165,48 @@ const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) =>
 const Pong = (props: any) => {
 	const routeParams = useParams();
 	const game_id = parseInt(routeParams.game_id!);	
+	const [me, setMe] = React.useState<Boolean>(false);
 
-	return (
-		<>
-			<div>
-				<PongGameBootstrap {...props} game_id={game_id} />
-			</div>
-		</>
-	);
+	React.useEffect(() => {
+		const api = async () => {
+			await fetch("http://localhost:9999/api/users/isconnected", {
+				method: "GET",
+				credentials: 'include'
+			})
+			.then((response) => {
+				if (!response.ok)
+					setMe(false);
+				else
+					setMe(true);
+			});
+		};
+	
+		api();
+	}, []);
+	
+	const isLoggedIn = me;
+	if (isLoggedIn){
+		return (
+			<>
+				<div>
+					<PongGameBootstrap {...props} game_id={game_id} />
+				</div>
+			</>
+		);
+	}
+	else 
+	{
+		return (
+			<PleaseConnect />
+		 );
+	}
 };
 
-// export { Pong };
+export { Pong };
 
 export function PongZone(){
 	const routeParams = useParams();
+	const game_id = parseInt(routeParams.game_id!);
 	const [me, setMe] = React.useState<Boolean>(false);
 
 	React.useEffect(() => {
