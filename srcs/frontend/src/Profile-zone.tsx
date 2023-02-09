@@ -30,7 +30,6 @@ type statsProps = {
 }
 
 type invitesProps = {
-	data: [];
 };
 
 type gamesProps = {
@@ -98,8 +97,12 @@ function Profile(){
 			const jsonData = await data.json();
 			setResult(jsonData);
 
-			await getAllPaginated('users/me/friends/invites')
-			.then(data => setInvites(data));
+			await fetch('http://localhost:9999/api/users/me/friends/invites', {
+				method: "GET",
+				credentials: 'include'
+			})
+			.then(response => response.json())
+			.then(data => { console.log(data); setInvites(data) });
 
 			socket.emit('getInvites');
 			
@@ -120,7 +123,7 @@ function Profile(){
 	useEffect(() => {
 		socket.on('returnInvites', (data) => {
 			setGames(data);
-			console.log(games);//
+			// console.log(games);//
 		})
 	}, []);
 
@@ -198,7 +201,7 @@ function Profile(){
 													credentials: 'include',
 													body: JSON.stringify({ id: uid })
 												});
-												window.location.reload();
+												// window.location.reload();
 											}}>
 												<CheckIcon />
 											</IconButton>
@@ -214,7 +217,7 @@ function Profile(){
 													method: 'DELETE',
 													credentials: 'include',
 												});
-												window.location.reload();
+												// window.location.reload();
 											}}>
 												<CloseIcon />
 											</IconButton>

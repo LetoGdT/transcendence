@@ -138,10 +138,9 @@ export class UsersController
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
-	async getUserFriendInvitations(@Query() pageOptionsDto: PageOptionsDto,
-		@Req() req: RequestWithUser)
+	async getUserFriendInvitations(@Req() req: RequestWithUser)
 	{
-		return this.usersService.getUserFriendInvitations(pageOptionsDto, req.user);
+		return this.usersService.getUserFriendInvitations(req.user);
 	}
 
 	@Post('/me/friends/invites')

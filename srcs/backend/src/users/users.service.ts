@@ -157,7 +157,7 @@ export class UsersService
 		queryBuilder1
 			.leftJoinAndSelect('user.following', 'following')
 			.leftJoinAndSelect('user.followers', 'followers')
-			.leftJoinAndSelect('user.invited', 'invited')
+			.leftJoinAndSelect('user.invitations', 'invitations')
 			.where('user.id = :id', { id: user.id });
 
 		user = await queryBuilder1.getOne();
@@ -179,14 +179,14 @@ export class UsersService
 		if (newFriend == null)
 			throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
-		const invitationIndex: number = user.invited.findIndex((users) => {
+		const invitationIndex: number = user.invitations.findIndex((users) => {
 			return users.id == createUserFriendDto.id;
 		});
 
-		if (invitationIndex == -1)
+		if (invitationIndex === -1)
 			throw new BadRequestException('You were not invited by this user');
 
-		user.invited.splice(invitationIndex, 1);
+		user.invitations.splice(invitationIndex, 1);
 		user.following.push(newFriend);
 		user.followers.push(newFriend);
 		return this.userRepository.save(user);
@@ -218,24 +218,16 @@ export class UsersService
 		return this.userRepository.save(user);
 	}
 
-	async getUserFriendInvitations(pageOptionsDto: PageOptionsDto,
-		user: User)
+	async getUserFriendInvitations(user: User)
 	{
 		const queryBuilder = this.userRepository.createQueryBuilder("user");
 
 		queryBuilder
-			.leftJoin('user.invitations', 'invitations')
-			.where('invitations.id = :id', { id: user.id })
-			.orderBy("user.id", pageOptionsDto.order)
-			.skip(pageOptionsDto.skip)
-			.take(pageOptionsDto.take);
+			.leftJoinAndSelect('user.invitations', 'invitations')
+			.where('user.id = :id', { id: user.id })
 
-		const itemCount = await queryBuilder.getCount();
-		const { entities } = await queryBuilder.getRawAndEntities();
-
-		const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
-
-		return new PageDto(entities, pageMetaDto);
+		const ret = await queryBuilder.getOne();
+		return ret.invitations;
 	}
 
 	async inviteUser(user: User, createUserFriendDto: CreateUserFriendDto)
@@ -257,14 +249,14 @@ export class UsersService
 			return users.id == createUserFriendDto.id;
 		});
 
-		if (checkIfFriend != -1)
+		if (checkIfFriend !== -1)
 			throw new BadRequestException('You are already friends!');
 
 		let toAddIndex: number = user.invitations.findIndex((users) => {
 			return users.id == createUserFriendDto.id;
 		});
 
-		if (toAddIndex != -1)
+		if (toAddIndex !== -1)
 			throw new BadRequestException('You can only send one invite at a time.');
 
 		const queryBuilder2 = this.userRepository.createQueryBuilder('user');

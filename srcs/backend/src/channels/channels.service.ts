@@ -620,6 +620,7 @@ export class ChannelsService
 		bannedUser.unban_date = postChannelBanDto.unban_date;
 
 		channel.banlist.push(bannedUser);
+		await this.channelUserRepository.remove(channel.users[toBanIndex]);
 		channel.users.splice(toBanIndex, 1);
 		return this.channelRepository.save(channel);
 	}
