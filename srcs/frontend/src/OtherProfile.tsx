@@ -11,6 +11,7 @@ import { NotFound } from './adaptable-zone';
 import { FromEXPtoLvl, getAllPaginated, ToNextLevel } from './tools';
 import { OneAchievement } from './Profile-zone';
 import { socket } from './WebsocketContext';
+import { Notification } from './Notifications';
 
 type resultProps = {
 	email: string;
@@ -248,7 +249,14 @@ function AddOrRemoveButton(uid: string | undefined){
 			method: 'POST',
 			credentials: 'include',
 			body: JSON.stringify({ id: uid })
-		});
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+			else
+				window.location.reload();
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
 	};
 
 	const handleClickRemove = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -261,8 +269,14 @@ function AddOrRemoveButton(uid: string | undefined){
 			},
 			method: 'DELETE',
 			credentials: 'include',
-		});
-		window.location.reload();
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+			else
+				window.location.reload();
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
 	};
 
 	const [friend, setFriend] = useState<friendProps>();
@@ -306,8 +320,14 @@ function BlockOrUnblockButton(uid: string | undefined){
 			method: 'POST',
 			credentials: 'include',
 			body: JSON.stringify({ id: uid })
-		});
-		window.location.reload();
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+			else
+				window.location.reload();
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
 	};
 
 	const handleClickUnblock = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -320,8 +340,14 @@ function BlockOrUnblockButton(uid: string | undefined){
 			},
 			method: 'DELETE',
 			credentials: 'include',
-		});
-		window.location.reload();
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+			else
+				window.location.reload();
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
 	};
 
 	const [blocked, setBlocked] = useState<blockedProps[]>([]);
@@ -542,8 +568,14 @@ export function OtherProfile(){
 				method: 'POST',
 				credentials: 'include',
 				body: JSON.stringify({ recipient_id: uid })
-			});
-			socket.emit("newConv", {id: uid});
+			})
+			.then(response => {
+				if (!response.ok)
+					return response.json();
+				else
+					socket.emit("newConv", {id: uid});
+			})
+			.then(data => {if (data !== undefined) Notification(data.message)});
 		}
 	};
 
