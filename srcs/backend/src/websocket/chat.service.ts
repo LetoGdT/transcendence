@@ -24,9 +24,12 @@ export class ChatService {
 				'Cookie': `access_token=${token}`,
 			}
 		})
-		.then(response=>response.json())
-		.then(data => data.data[0])
-		.then((elem) => {
+		.then(response => {
+			if (response.ok)
+				return response.json();
+		})
+		.then(data => {if (data !== undefined) return data.data[0];})
+		.then(elem => {if (elem !== undefined) {
 				res.latest_sent = elem.latest_sent;
 				if (!isChannel) {
 					res.users = res.users.concat(elem.user1.id);
@@ -37,7 +40,7 @@ export class ChatService {
 						res.users = res.users.concat(channelUser.user.id);
 					});
 				}
-		});
+		}});
 		return res;
 	}
 
