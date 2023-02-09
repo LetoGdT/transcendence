@@ -411,7 +411,6 @@ export class UsersService
 			.where('user.id = :id', { id: user.id });
 
 		const ret = await queryBuilder.getOne();
-		console.log(ret);
 		return ret.channelUsers.map((channelUser: ChannelUser) => {return channelUser.channel});
 	}
 

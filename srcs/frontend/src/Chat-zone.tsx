@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import { PleaseConnect } from './adaptable-zone';
 import { socket } from './WebsocketContext';
 import { getAllPaginated } from './tools';
-import { disableNewMessageNotificationsFn, setUpNewMessageNotificationsFn } from './Notifications'
+import { Notification, disableNewMessageNotificationsFn, setUpNewMessageNotificationsFn } from './Notifications'
 
 const PassawordTextField = styled(TextField)({
 	'& input:valid + fieldset': {
@@ -508,8 +508,10 @@ function Chat() {
 	}
 
 	const handleSendMessage = async () => {
-		if (newMessage.length === 0 || currentConv === -1)
+		if (newMessage.length === 0 || currentConv === -1) {
+			Notification("You have nowhere to send a message");
 			return ;
+		}
 		await fetch(`http://localhost:9999/api/${isChannel?'channels':'conversations'}/${currentConv}/messages`, {
 			headers: {
 				'Accept': 'application/json',
@@ -521,8 +523,9 @@ function Chat() {
 		})
 		.then(response => {
 			if (!response.ok)
-			return ;
-		});
+				return response.json();
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
 		socket.emit("newMessage", {chanOrConv: currentConv, isChannel: isChannel});
 		setNewMessage(""); // Sert à effacer le message une fois qu'on a appuyé sur le bouton send
 	}
