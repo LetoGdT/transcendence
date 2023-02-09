@@ -106,6 +106,7 @@ function SetChannel(){
 					<div className='SetChannel-TextField'>
 						<SetChannelTextField
 							label="Password (optional)"
+							type="password"
 							InputLabelProps={{
 								sx:{
 									color:"white",

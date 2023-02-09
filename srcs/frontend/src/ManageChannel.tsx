@@ -350,6 +350,7 @@ function ManageChannel(){
 						<div className='Manage-Channel-div'>
 							<ManageChannelTextField
 								label="New Password"
+								type="password"
 								InputLabelProps={{
 								sx:{
 									color:"white",
