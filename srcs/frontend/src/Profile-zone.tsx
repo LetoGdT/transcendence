@@ -14,6 +14,7 @@ import GameAchievement from './game_achievement.png';
 import MessageAchievement from './message_achievement.png';
 import FriendAchievement from './friend_achievement.png';
 import { socket } from './WebsocketContext';
+import { Notification } from './Notifications';
 
 type resultProps = {
 	email: string;
@@ -197,8 +198,14 @@ export function Profile(){
 													method: 'POST',
 													credentials: 'include',
 													body: JSON.stringify({ id: uid })
-												});
-												window.location.reload();
+												})
+												.then(response => {
+													if (!response.ok)
+														return response.json();
+													else
+														window.location.reload();
+												})
+												.then(data => {if (data !== undefined) Notification(data.message)});
 											}}>
 												<CheckIcon />
 											</IconButton>
@@ -213,8 +220,14 @@ export function Profile(){
 													},
 													method: 'DELETE',
 													credentials: 'include',
-												});
-												window.location.reload();
+												})
+												.then(response => {
+													if (!response.ok)
+														return response.json();
+													else
+														window.location.reload();
+												})
+												.then(data => {if (data !== undefined) Notification(data.message)});
 											}}>
 												<CloseIcon />
 											</IconButton>
