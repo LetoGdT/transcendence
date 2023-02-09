@@ -7,7 +7,8 @@ import { AchievementsService } from '../achievements/achievements.service';
 import { Conversation } from '../typeorm/conversation.entity';
 import { Message } from '../typeorm/message.entity';
 import { User } from '../typeorm/user.entity';
-import { PostConversationDto, PostConversationMessageDto, UpdateConversationMessageDto } from '../dto/conversations.dto';
+import { PostConversationDto, UpdateConversationMessageDto } from '../dto/conversations.dto';
+import { PostMessageDto } from '../dto/messages.dto';
 import { PageDto } from "../dto/page.dto";
 import { PageMetaDto } from "../dto/page-meta.dto";
 import { PageOptionsDto } from "../dto/page-options.dto";
@@ -59,7 +60,7 @@ export class ConversationsService
 	}
 
 	async createConversation(user: User, postConversationDto: PostConversationDto): Promise<Conversation>
-	{
+	{	
 		if (user.id == postConversationDto.recipient_id)
 			throw new BadRequestException('You\'d better talk in your head!');
 
@@ -149,7 +150,7 @@ export class ConversationsService
 		return new PageDto(entities, pageMetaDto);
 	}
 
-	async createConversationMessage(postConversationMessageDto: PostConversationMessageDto,
+	async createConversationMessage(postMessageDto: PostMessageDto,
 		conversation_id: number,
 		user: User): Promise<Conversation>
 	{
@@ -206,7 +207,7 @@ export class ConversationsService
 
 		const newMessage : Message = new Message();
 		newMessage.sender = user;
-		newMessage.content = postConversationMessageDto.content;
+		newMessage.content = postMessageDto.content;
 		conversation.latest_sent = newMessage.sent_date;
 
 		conversation.messages.push(newMessage);

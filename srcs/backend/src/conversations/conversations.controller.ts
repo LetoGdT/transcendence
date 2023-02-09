@@ -12,8 +12,9 @@ import { PageOptionsDto } from "../dto/page-options.dto";
 import { MessageQueryFilterDto, ConversationQueryFilterDto } from '../dto/query-filters.dto';
 import { UserSelectDto } from '../dto/messages.dto';
 import {
-	PostConversationDto, PostConversationMessageDto, UpdateConversationMessageDto
+	PostConversationDto, UpdateConversationMessageDto
 } from '../dto/conversations.dto';
+import { PostMessageDto } from '../dto/messages.dto';
 import { JwtAuthGuard } from '../guards/jwt.guard';
 import { RequestWithUser } from '../interfaces/RequestWithUser.interface';
 
@@ -183,11 +184,11 @@ export class ConversationsController
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
-	createConversationMessage(@Body() postConversationMessageDto: PostConversationMessageDto,
+	createConversationMessage(@Body() postMessageDto: PostMessageDto,
 		@Param('id', ParseIntPipe) id: number,
 		@Req() req: RequestWithUser)
 	{
-		return this.conversationsService.createConversationMessage(postConversationMessageDto, id, req.user);
+		return this.conversationsService.createConversationMessage(postMessageDto, id, req.user);
 	}
 
 	/**

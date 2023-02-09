@@ -593,7 +593,7 @@ export class MySocketGateway implements OnGatewayConnection,
 			return ;
 		}
 		const user = await this.auth.tokenOwner(cookies.access_token);
-		if (user == null)
+		if (user == null || (user.enabled2fa && this.auth.tokenInfos(cookies.access_token).enabled2fa))
 		{
 			client.disconnect();
 			return ;

@@ -20,15 +20,8 @@ export class UserSelectDto
 
 export class PostMessageDto
 {
-	@Type(() => Number)
-	@Min(1)
-	@Max(Number.MAX_SAFE_INTEGER)
-	@IsOptional()
-	recipient_id ?: number;
-
-	recipient_name ?: string;
-
 	@IsNotEmpty()
+	@Max(500)
 	content: string;
 }
 
@@ -36,5 +29,6 @@ export class UpdateMessageDto
 {
 	@Type(() => String)
 	@IsNotEmpty()
+	@Max(500)
 	content: string;
 }

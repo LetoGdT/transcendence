@@ -10,16 +10,10 @@ export class PostConversationDto
 	recipient_id: number;
 }
 
-export class PostConversationMessageDto
-{
-	@Type(() => String)
-	@IsNotEmpty()
-	content: string;
-}
-
 export class UpdateConversationMessageDto
 {
 	@Type(() => String)
 	@IsNotEmpty()
+	@Max(500)
 	content: string;
 }

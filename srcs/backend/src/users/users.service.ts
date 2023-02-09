@@ -2,6 +2,7 @@ import { Logger, Injectable, BadRequestException, HttpStatus, HttpException } fr
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import * as fs from 'fs';
+import * as mmm from 'mmmagic';
 import { User } from '../typeorm/user.entity';
 import { ChannelUser } from '../typeorm/channel-user.entity';
 import { AchievementsService } from '../achievements/achievements.service';
@@ -119,6 +120,9 @@ export class UsersService
 		const user = await this.userRepository.findOne({ where: { uid: createUserDto.uid }});
 		if (user)
 			return user;
+		const userTestUsername = await this.userRepository.findOne({ where: { username: createUserDto.username }});
+		if (userTestUsername != null)
+			createUserDto.username += "2";
 		const newUser: User = this.userRepository.create(createUserDto);
 		return this.userRepository.save(newUser);
 	}
@@ -411,7 +415,6 @@ export class UsersService
 			.where('user.id = :id', { id: user.id });
 
 		const ret = await queryBuilder.getOne();
-		console.log(ret);
 		return ret.channelUsers.map((channelUser: ChannelUser) => {return channelUser.channel});
 	}
 
@@ -465,5 +468,15 @@ export class UsersService
 		const user = await this.userRepository.findOne({ where: { id: id }});
 		user.status = status;
 		return this.userRepository.save(user);
+	}
+
+	async mimeFromData (path: string)
+	{
+		let magic = new mmm.Magic(mmm.MAGIC_MIME_TYPE);
+		return new Promise((resolve, reject) =>
+			magic.detectFile(path, (error, mimeType) => {
+				return resolve(mimeType);
+			})
+		);
 	}
 }
