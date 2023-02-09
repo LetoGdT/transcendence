@@ -121,7 +121,7 @@ function OneMatch(match:any){
 	}
 }
 
-export function MatchHistory(){
+function MatchHistory(){
 	const [matchs, setMatchs] = useState<matchHistoryProps[]>([]);
 
 	useEffect(() => {

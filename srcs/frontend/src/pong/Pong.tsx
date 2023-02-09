@@ -174,4 +174,39 @@ const Pong = (props: any) => {
 	);
 };
 
-export { Pong };
+// export { Pong };
+
+export function PongZone(){
+	const routeParams = useParams();
+	const [me, setMe] = React.useState<Boolean>(false);
+
+	React.useEffect(() => {
+		const api = async () => {
+			await fetch("http://localhost:9999/api/users/isconnected", {
+				method: "GET",
+				credentials: 'include'
+			})
+			.then((response) => {
+				if (!response.ok)
+					setMe(false);
+				else
+					setMe(true);
+			});
+		};
+	
+		api();
+	}, []);
+	
+	const isLoggedIn = me;
+	if (isLoggedIn){
+		return (
+			<Pong />
+		);
+	}
+	else 
+	{
+		return (
+			<PleaseConnect />
+		 );
+	}
+}

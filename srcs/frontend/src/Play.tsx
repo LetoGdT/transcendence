@@ -45,37 +45,6 @@ const NormalModeButton = styled(Button)({
 	},
 });
 
-const UnicornModeButton = styled(Button)({
-	boxShadow: 'none',
-	width: '400px',
-	height: '126px',
-	textTransform: 'none',
-	fontSize: 27,
-	padding: '6px 12px',
-	border: '1px solid',
-	lineHeight: 1.5,
-	backgroundColor: '#646464',
-	borderColor: '#646464',
-	color: '#34ebe5',
-	fontFamily: [
-		'Chilanka',
-      	'cursive',
-	].join(','),
-	'&:hover': {
-		backgroundColor: '#9542f5',
-		borderColor: '#646464',
-		boxShadow: 'none',
-	},
-	'&:active': {
-		boxShadow: 'none',
-		backgroundColor: '#7F1DEC',
-		borderColor: '#646464',
-	},
-	'&:focus': {
-		adow: '0 0 0 0.2rem rgba(0,0,0,.5)',
-	},
-});
-
 function Play(){
 	return(
 		<React.Fragment>
@@ -86,9 +55,6 @@ function Play(){
 						<NormalModeButton variant="contained" disableRipple>PLAY<br></br>Classic Mode</NormalModeButton>
 					</Link>
 				</div>
-				{/*<div className='Play-button'>
-					<UnicornModeButton variant="contained" disableRipple>PLAY<br></br>Unicorn Mode</UnicornModeButton>
-				</div>*/}
 			</div>
 		</React.Fragment>
 	);

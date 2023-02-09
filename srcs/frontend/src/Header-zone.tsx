@@ -181,9 +181,6 @@ function UserNotLogged(){
 	);
 }
 
-type meProps = {
-};
-
 function AvatarZone(props:any){
 	const [me, setMe] = useState<Boolean>(false);
 

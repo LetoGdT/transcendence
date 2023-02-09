@@ -13,7 +13,7 @@ type resultProps = {
 	data: [];
 }
 
-export function Friends(){
+function Friends(){
 	const [data, setResult] = useState<resultProps[]>([]);
 
 	useEffect(() => {
@@ -50,9 +50,6 @@ export function Friends(){
 		</React.Fragment>
 	);
 }
-
-type meProps = {
-};
 
 export function FriendsZone(){
 	const [me, setMe] = useState<Boolean>(false);
