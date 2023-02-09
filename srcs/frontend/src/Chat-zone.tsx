@@ -722,6 +722,7 @@ function Chat() {
 					<div className='Channels-available-button'>
 						<PassawordTextField
 							label="Password"
+							type="password"
 							InputLabelProps={{
 							sx:{
 								color:"white",
