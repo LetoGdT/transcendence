@@ -8,15 +8,6 @@ import { IconButton } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { socket } from './WebsocketContext'
 
-
-type opponentProps = {
-	username: string;
-};
-
-type gameProps = {
-	game: { player1_id: number, player2_id: number };
-}
-
 type matchInfo = {
 	game_id: number;
 	player1_id: number;
@@ -63,8 +54,6 @@ function DisplayMatch({ match: { game_id, player1_id, player2_id, player1_userna
 }
 
 function SpecAMatch(){
-	// const [data1, setResult1] = useState<opponentProps>();
-	// const [data2, setResult2] = useState<opponentProps>();
 	const [games, setGames] = useState<matchInfo[]>([]);
 
 	useEffect(() => {
@@ -73,26 +62,6 @@ function SpecAMatch(){
 			socket.emit('getGames');
 		}, 1000);
 		return () => clearInterval(refreshTimer);
-		// const api = async () => {
-		// 	let urltofetch1 : string;
-		// 	urltofetch1 = `http://localhost:9999/api/users/${user1.id}`;
-		// 	const data1 = await fetch(urltofetch1, {
-		// 		method: "GET",
-		// 		credentials: 'include'
-		// 	});
-		// 	const jsonData1 = await data1.json();
-		// 	setResult1(jsonData1);
-			
-		// 	let urltofetch : string;
-		// 	urltofetch = `http://localhost:9999/api/users/${user2.id}`;
-		// 	const data2 = await fetch(urltofetch, {
-		// 		method: "GET",
-		// 		credentials: 'include'
-		// 	});
-		// 	const jsonData = await data2.json();
-		// 	setResult2(jsonData);
-		// };
-		// api();
 	}, []);
 
 	const updateGames = (games: matchInfo[]) => setGames(games);

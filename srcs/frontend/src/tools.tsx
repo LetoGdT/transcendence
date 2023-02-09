@@ -118,25 +118,3 @@ export function ToNextLevel(exp: number | undefined){
 		toNextLevel
 	);
 }
-
-// type isConnectedResult = {
-
-// };
-
-// export async function IsConnected(){//a faire
-// 	const [isConnected, setIsConnected] = useState<isConnectedResult>();
-
-// 	useEffect(() => {
-// 		const api = async () => {
-// 			const data = await fetch("http://localhost:9999/api/users/isconnected", {
-// 				method: "GET",
-// 				credentials: 'include'
-// 			});
-// 			// const jsonData = await data.json();
-// 			// setIsConnected(jsonData);
-// 			setIsConnected(data);
-// 		};
-// 		api();
-// 	}, []);
-	
-// }
