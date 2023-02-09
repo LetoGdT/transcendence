@@ -20,7 +20,7 @@ import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import { socket, websocketContext } from './WebsocketContext';
 import {Toaster} from 'react-hot-toast';
 import { setUpNewMessageNotificationsFn, setUpNewGameNotificationFn } from './Notifications';
-import { SetPrivateGame } from './SetPrivateGame';
+import { SetPGameZone } from './SetPrivateGame';
 import { SetChanZone } from './SetChannel';
 import { ManaChanZone } from './ManageChannel';
 
@@ -52,7 +52,7 @@ function App() {
 						<Route path="/join/:game_id" element={<PongZone mode="private" />} />
 						<Route path='/pong' element={<PongZone mode="ranked" />} />
 						<Route path="/setprivategame">
-							<Route path=':uid' element={<SetPrivateGame />} />
+							<Route path=':uid' element={<SetPGameZone />} />
 						</Route>
 						<Route path="/managechannel">
 							<Route path=':cid' element={<ManaChanZone />} />
