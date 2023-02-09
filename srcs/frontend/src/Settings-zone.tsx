@@ -9,6 +9,7 @@ import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
 import { useState, useEffect } from "react";
 import { PleaseConnect } from './adaptable-zone';
+import { Notification } from './Notifications';
 
 type resultProps = {
 	username: string;
@@ -128,8 +129,14 @@ function ActivateOrDesactivate2FAButton(){
 			},
 			method: 'POST',
 			credentials: 'include',
-		});
-		window.location.reload();
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+			else
+				window.location.reload();
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
 	}
 
 	if(data?.enabled2fa === true){
@@ -188,8 +195,14 @@ export function Settings(){
 			method: 'PATCH',
 			credentials: 'include',
 			body: JSON.stringify({username: newAlias})
-		});
-		window.location.reload();
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+			else
+				window.location.reload();
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
 	}
 
 	const handleChangeAvatar = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -201,24 +214,15 @@ export function Settings(){
 			method: 'PATCH',
 			credentials: 'include',
 			body: JSON.stringify({image_url: newAvatar})
-		});
-		window.location.reload();
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+			else
+				window.location.reload();
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
 	}
-
-	React.useEffect(() => {
-		const api = async () => {
-			const response = await fetch('http://localhost:9999/api/users/me?',{
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json'
-				},
-				method: 'PATCH',
-				credentials: 'include',
-				body: JSON.stringify({image_url: newAvatar})
-			});
-		};
-
-	});
 
 	const uploadAvatar = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		const input = document.querySelector('input[type="file"]') as HTMLInputElement;
@@ -234,8 +238,14 @@ export function Settings(){
 			method: 'POST',
 			credentials: 'include',
 			body: formData
-		});
-		window.location.reload();
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+			else
+				window.location.reload();
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
 	}
 
 	return(
