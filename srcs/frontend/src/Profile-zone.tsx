@@ -217,7 +217,7 @@ function Profile(){
 													method: 'DELETE',
 													credentials: 'include',
 												});
-												window.location.reload();
+												// window.location.reload();
 											}}>
 												<CloseIcon />
 											</IconButton>

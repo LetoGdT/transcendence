@@ -38,3 +38,7 @@
 	height: auto;
 	max-height: 210px;
 }
+
+.example {
+	font-size: small;
+}

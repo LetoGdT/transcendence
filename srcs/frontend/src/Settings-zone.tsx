@@ -135,11 +135,9 @@ function ActivateOrDesactivate2FAButton(){
 	if(data?.enabled2fa === true){
 		return(
 			<div className='Settings-container-div-lvl4'>
-				<Link to={"/activate2fa"}>
-					<SettingsButton2 variant="contained" disableRipple onClick={
-						handleDesactivate2FA
-					}>Desactivate</SettingsButton2>
-				</Link>
+				<SettingsButton2 variant="contained" disableRipple onClick={
+					handleDesactivate2FA
+				}>Desactivate</SettingsButton2>
             </div>
 		);
 	} else {
@@ -251,28 +249,21 @@ function Settings(){
 							</div>
 							<div className='Settings-container-div-lvl4'>
 								<div>
-									<Box
-										component="form"
-										noValidate
-										sx={{
-											display: 'grid',
-											gap: 2,
+									<SettingsTextField
+										label="New avatar"
+										InputLabelProps={{
+										sx:{
+											color:"white",
+										}
 										}}
-									>
-										<SettingsTextField
-											label="New avatar"
-											InputLabelProps={{
-											sx:{
-												color:"white",
-											}
-											}}
-											variant="outlined"
-											defaultValue="*.jpg or *.png"
-											sx={{ input: { color: 'grey' } }}
-											id="validation-outlined-input"
-											onChange={handleInputAvatar}
-										/>
-									</Box>
+										variant="outlined"
+										sx={{ input: { color: 'grey' } }}
+										id="validation-outlined-input"
+										onChange={handleInputAvatar}
+									/>
+								</div>
+								<div className='example'>
+									*.jpg or *.png
 								</div>
 								<div>
 									<SettingsButton variant="contained" disableRipple onClick={
@@ -302,14 +293,7 @@ function Settings(){
 								{data?.username}
 							</div>
 							<div className='Settings-container-div-lvl4'>
-							<Box
-									component="form"
-									noValidate
-									sx={{
-										display: 'grid',
-										gap: 2,
-									}}
-								>
+								<div>
 									<SettingsTextField
 										label="New alias"
 										InputLabelProps={{
@@ -318,12 +302,14 @@ function Settings(){
 											}
 										}}
 										variant="outlined"
-										defaultValue="ex: Toto"
 										sx={{ input: { color: 'grey' } }}
 										id="validation-outlined-input"
 										onChange={handleInputAlias}
 									/>
-								</Box>
+								</div>
+								<div className='example'>
+									ex: Toto
+								</div>
 							</div>
 							<div>
 								<SettingsButton variant="contained" disableRipple onClick={
