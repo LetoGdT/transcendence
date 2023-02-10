@@ -67,21 +67,20 @@ function App() {
 				</div>
 			</Router>
 
-	type meProps = {
-		id: number;
-		username: string;
-		image_url: string;
-	}
-	const [me, setMe] = useState<meProps>();
+	const [me, setMe] = useState<Boolean>();
 
 	useEffect(() => {
 		const api = async () => {
-			const data = await fetch("http://localhost:9999/api/users/isconnected", {
+			await fetch("http://localhost:9999/api/users/isconnected", {
 				method: "GET",
 				credentials: 'include'
+			})
+			.then((response) => {
+				if (!response.ok)
+					setMe(false);
+				else
+					setMe(true);
 			});
-			const jsonData = await data.json();
-			setMe(jsonData);
 		};
 	
 		api();

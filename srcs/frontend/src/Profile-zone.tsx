@@ -102,7 +102,7 @@ function Profile(){
 				credentials: 'include'
 			})
 			.then(response => response.json())
-			.then(data => { console.log(data); setInvites(data) });
+			.then(data => { setInvites(data) });
 
 			socket.emit('getInvites');
 			
