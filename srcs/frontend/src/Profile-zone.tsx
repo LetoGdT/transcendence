@@ -201,7 +201,7 @@ function Profile(){
 													credentials: 'include',
 													body: JSON.stringify({ id: uid })
 												});
-												// window.location.reload();
+												window.location.reload();
 											}}>
 												<CheckIcon />
 											</IconButton>
@@ -217,7 +217,7 @@ function Profile(){
 													method: 'DELETE',
 													credentials: 'include',
 												});
-												// window.location.reload();
+												window.location.reload();
 											}}>
 												<CloseIcon />
 											</IconButton>
