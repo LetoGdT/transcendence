@@ -60,8 +60,8 @@ function App() {
 						<Route path="/profile" element={<ProfileZone/>} />
 						<Route path="/signup" element={<SignUp/>} />
 						<Route path='/2fa' element={<AuthWith2FA />} />
-						<Route path='/activate2fa' element={<Activate2FA />} />
 						<Route path='/setchannel' element={<SetChanZone />} />
+						<Route path='/activate2fa' element={<Activate2FA />} />
 						<Route path='*' element={<NotFound/>} />
 					</Routes>
 				</div>
