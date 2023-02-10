@@ -12,7 +12,7 @@ export function Home(){
 			<h1>Home</h1>
 			<p>Bienvenue sur notre projet ft_transcendence.
 				<br></br>
-				Ce projet a été réalisé par <a href='https://profile.intra.42.fr/users/tlafay'>tlafay</a>, <a href='https://profile.intra.42.fr/users/lgaudet-'>lgaudet-</a>, <a href='https://profile.intra.42.fr/users/sylducam'>sylducam</a> et <a href='https://profile.intra.42.fr/users/lburnet'>lburnet</a>
+				Ce projet a été réalisé par <a href='https://profile.intra.42.fr/users/tlafay'>tlafay</a>, <a href='https://profile.intra.42.fr/users/lgaudet-'>lgaudet-</a> et <a href='https://profile.intra.42.fr/users/lburnet'>lburnet</a>
 				<br></br>
 				HF pendant cette correction.
 			</p>
