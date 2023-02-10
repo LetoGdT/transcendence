@@ -4,6 +4,7 @@ import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
+import { Notification } from './Notifications';
 
 const CodeOf2FATextField = styled(TextField)({
 	'& input:valid + fieldset': {
@@ -58,7 +59,6 @@ const SendButton = styled(Button)({
 
 export function AuthWith2FA(): React.ReactElement{
 	const [code2FA, setCode2FA] = React.useState("");
-	const [error, setError] = React.useState("");
 
 	const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setCode2FA(e.target.value);
@@ -77,15 +77,15 @@ export function AuthWith2FA(): React.ReactElement{
 		.then(response => {
 			if (!response.ok)
 				return response.json();
+			window.location.replace('/');
 			return null;
 		})
-		.then(data => setError(data != null ? data.message : null));
+		.then(data => {if (data != null) Notification(data.message)});
 	}
 	
 	return(
 		<React.Fragment>
 			<h1>2FA</h1>
-			{ error && <h3 className="Error"> { error } </h3> }
 			<CodeOf2FATextField
 				label="6 digits code"
 				InputLabelProps={{
