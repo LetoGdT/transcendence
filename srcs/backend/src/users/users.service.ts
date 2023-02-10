@@ -253,7 +253,7 @@ export class UsersService
 
 		queryBuilder1
 			.leftJoinAndSelect('user.following', 'following')
-			.leftJoinAndSelect('user.invitations', 'invitations')
+			.leftJoinAndSelect('user.invited', 'invited')
 			.leftJoinAndSelect('user.banlist', 'banlist')
 			.where('user.id = :id', { id: user.id });
 
@@ -266,7 +266,7 @@ export class UsersService
 		if (checkIfFriend !== -1)
 			throw new BadRequestException('You are already friends!');
 
-		let toAddIndex: number = user.invitations.findIndex((users) => {
+		let toAddIndex: number = user.invited.findIndex((users) => {
 			return users.id == createUserFriendDto.id;
 		});
 
@@ -304,7 +304,7 @@ export class UsersService
 		if (newInvited == null)
 			throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
-		user.invitations.push(newInvited);
+		user.invited.push(newInvited);
 		return this.userRepository.save(user);
 	}
 
