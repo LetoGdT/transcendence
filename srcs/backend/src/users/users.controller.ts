@@ -43,18 +43,8 @@ export class UsersController
 	}
 
 	@Get('/isconnected')
-	// @UseInterceptors(ClassSerializerInterceptor)
-	// @UseInterceptors(AuthInterceptor)
 	@UseGuards(JwtAuthGuard)
-	async isConnected()
-	{
-
-		return true;
-		// if (req.user != null && req.user.enabled2fa
-		// 	&& !(await this.authService.tokenInfos(req.cookies.access_token).enabled2fa))
-		// 	return false;
-		// return req.user != null;
-	}
+	async isConnected() {}
 
 	@Get('/me')
 	@UseInterceptors(ClassSerializerInterceptor)
@@ -75,7 +65,7 @@ export class UsersController
 	@SerializeOptions({
 		groups: ['me'],
 	})
-	updateUser(@Body() updateUserDto: UpdateUserDto,
+	async updateUser(@Body() updateUserDto: UpdateUserDto,
 		@Req() req: RequestWithUser)
 	{
 		if (Object.keys(updateUserDto).length === 0)

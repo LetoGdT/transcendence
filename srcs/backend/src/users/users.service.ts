@@ -1,5 +1,6 @@
 import { Logger, Injectable, BadRequestException, HttpStatus, HttpException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { HttpService } from "@nestjs/axios";
 import { Repository, UpdateResult } from 'typeorm';
 import * as fs from 'fs';
 import * as mmm from 'mmmagic';
@@ -12,15 +13,14 @@ import { PageMetaDto } from "../dto/page-meta.dto";
 import { UserQueryFilterDto } from '../dto/query-filters.dto';
 import { PageOptionsDto } from "../dto/page-options.dto";
 
-// QueryFailedError UpdateValuesMissingError
-
 @Injectable()
 export class UsersService
 {
 	IdMax: number = Number.MAX_SAFE_INTEGER;
 
 	constructor(@InjectRepository(User) private readonly userRepository: Repository<User>,
-		private achievementsService: AchievementsService) {}
+		private achievementsService: AchievementsService,
+		private readonly http: HttpService) {}
 
 	public async getUsers(pageOptionsDto: PageOptionsDto,
 		userQueryFilterDto: UserQueryFilterDto): Promise<PageDto<User>>
@@ -90,13 +90,27 @@ export class UsersService
 
 		if (updateUserDto.image_url != null)
 		{
+			let response;
+			try
+			{
+				response = await this.http.axiosRef({
+					url: updateUserDto.image_url,
+					method: 'GET',
+					responseType: 'arraybuffer'
+				});
+			}
+			catch (err) { throw new BadRequestException('Invalid url') }
+			const type = await this.mimeFromBuffer(response.data);
+			if (typeof type === "string" && type.split('/')[0] !== 'image')
+				throw new BadRequestException('Invalid file; expected an image');
 			let oldPath;
+			let toDelete: boolean = true;
 			try
 			{
 				oldPath = './src/static' + (new URL(user.image_url)).pathname;
 			}
-			catch (err) { return; }
-			if (fs.existsSync(oldPath))
+			catch (err) { toDelete = false }
+			if (toDelete && fs.existsSync(oldPath))
 			{
 				fs.unlink(oldPath, (err) => {
 					if (err)
@@ -302,19 +316,19 @@ export class UsersService
 		const queryBuilder = this.userRepository.createQueryBuilder('user');
 
 		queryBuilder
-			.leftJoinAndSelect('user.invited', 'invited')
+			.leftJoinAndSelect('user.invitations', 'invitations')
 			.where('user.id = :id', { id: user.id });
 
 		user = await queryBuilder.getOne();
 
-		const toRemoveIndex: number = user.invited.findIndex((users) => {
+		const toRemoveIndex: number = user.invitations.findIndex((users) => {
 			return users.id == user_id;
 		});
 
 		if (toRemoveIndex == -1)
 			throw new BadRequestException('User did not invite you');
 
-		user.invited.splice(toRemoveIndex, 1);
+		user.invitations.splice(toRemoveIndex, 1);
 		return this.userRepository.save(user);
 	}
 
@@ -430,7 +444,7 @@ export class UsersService
 		{
 			oldPath = './src/static' + (new URL(user.image_url)).pathname;
 		}
-		catch (err) { return; }
+		catch (err) {}
 		if (fs.existsSync(oldPath))
 		{
 			fs.unlink(oldPath, (err) => {
@@ -462,11 +476,21 @@ export class UsersService
 		return this.userRepository.save(user);
 	}
 
-	async mimeFromData (path: string)
+	async mimeFromData(path: string)
 	{
 		let magic = new mmm.Magic(mmm.MAGIC_MIME_TYPE);
 		return new Promise((resolve, reject) =>
 			magic.detectFile(path, (error, mimeType) => {
+				return resolve(mimeType);
+			})
+		);
+	}
+
+	async mimeFromBuffer(buffer: Buffer)
+	{
+		let magic = new mmm.Magic(mmm.MAGIC_MIME_TYPE);
+		return new Promise((resolve, reject) =>
+			magic.detect(buffer, (error, mimeType) => {
 				return resolve(mimeType);
 			})
 		);

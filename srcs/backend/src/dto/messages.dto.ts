@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional, Max, Min, IsNotEmpty } from "class-validator";
+import { IsInt, IsOptional, Max, Min, IsNotEmpty, MaxLength } from "class-validator";
 
 export class UserSelectDto
 {
@@ -21,7 +21,7 @@ export class UserSelectDto
 export class PostMessageDto
 {
 	@IsNotEmpty()
-	@Max(500)
+	@MaxLength(500)
 	content: string;
 }
 
@@ -29,6 +29,6 @@ export class UpdateMessageDto
 {
 	@Type(() => String)
 	@IsNotEmpty()
-	@Max(500)
+	@MaxLength(500)
 	content: string;
 }
