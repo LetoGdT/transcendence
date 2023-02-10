@@ -407,7 +407,7 @@ function OneMatch(match:any){
 				</div>
 				<div className='Match-Summary'>
 					<div className='Match-Player-score'>
-						<div>You</div>
+						<div>{user1.username}</div>
 						<div className='Match-Player-points'>{score_user1}</div>
 					</div>
 					<div className='Match-VS'>
@@ -436,7 +436,7 @@ function OneMatch(match:any){
 				</div>
 				<div className='Match-Summary'>
 					<div className='Match-Player-score'>
-						<div>You</div>
+						<div>{user2.username}</div>
 						<div className='Match-Player-points'>{score_user2}</div>
 					</div>
 					<div className='Match-VS'>
