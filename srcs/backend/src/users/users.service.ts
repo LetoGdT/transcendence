@@ -361,6 +361,8 @@ export class UsersService
 
 		queryBuilder1
 			.leftJoinAndSelect('user.banlist', 'banlist')
+			.leftJoinAndSelect('user.followers', 'followers')
+			.leftJoinAndSelect('user.invitations', 'invitations')
 			.where('user.id = :id', { id: user.id });
 
 		user = await queryBuilder1.getOne();
@@ -375,7 +377,9 @@ export class UsersService
 		const queryBuilder2 = this.userRepository.createQueryBuilder('user');
 
 		queryBuilder2
-			.where('user.id = :id', { id: createUserFriendDto.id });
+			.where('user.id = :id', { id: createUserFriendDto.id })
+			.leftJoinAndSelect('user.following', 'following')
+			.leftJoinAndSelect('user.invitations', 'invitations');
 
 		const newBan: User | null = await queryBuilder2.getOne();
 
@@ -384,6 +388,23 @@ export class UsersService
 				HttpStatus.INTERNAL_SERVER_ERROR);
 
 		user.banlist.push(newBan);
+		const friendIndex: number = user.followers.findIndex((users) => {
+			return users.id == createUserFriendDto.id;
+		});
+		if (friendIndex !== -1)
+		{
+			user.followers.splice(friendIndex, 1);
+			const followingIndex: number = newBan.following.findIndex((users) => {
+				return users.id == createUserFriendDto.id;
+			});
+			newBan.following.splice(followingIndex, 1);
+		}
+		const invitationIndex: number = user.invitations.findIndex((users) => {
+			return users.id == createUserFriendDto.id;
+		})
+		if (invitationIndex !== -1)
+			user.invitations.splice(invitationIndex, 1);
+		this.userRepository.save(newBan);
 		return this.userRepository.save(user);
 	}
 
