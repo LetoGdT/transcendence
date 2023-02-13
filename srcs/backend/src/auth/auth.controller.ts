@@ -143,8 +143,11 @@ export class AuthController
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	disable2fa(@Req() req: RequestWithUser)
+	disable2fa(@Req() req: RequestWithUser, @Body() { code } : { code: string })
 	{
+		const isCodeValid = this.authService.is2faCodeValid(code, req.user);
+		if (!isCodeValid)
+			throw new UnauthorizedException('Invalid code');
 		return this.usersService.disable2fa(req.user);
 	}
 

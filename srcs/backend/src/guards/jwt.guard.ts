@@ -66,6 +66,7 @@ export class JwtAuthGuard extends AuthGuard('jwt')
 		response.cookie('access_token', newAccessToken, cookie_options);
 		response.cookie('refresh_token', newRefreshToken, cookie_options);
 
+		// console.log('Refreshed');
 		return true;
 	}
 }
