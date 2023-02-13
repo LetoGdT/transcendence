@@ -223,10 +223,6 @@ function Profile(){
 													},
 													method: 'DELETE',
 													credentials: 'include',
-<<<<<<< HEAD
-												});
-												// window.location.reload();
-=======
 												})
 												.then(response => {
 													if (!response.ok)
@@ -235,7 +231,6 @@ function Profile(){
 														window.location.reload();
 												})
 												.then(data => {if (data !== undefined) Notification(data.message)});
->>>>>>> correctifs-après-premier-échec
 											}}>
 												<CloseIcon />
 											</IconButton>
