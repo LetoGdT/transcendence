@@ -601,6 +601,7 @@ export class MySocketGateway implements OnGatewayConnection,
 
 		this.clients.push({user, client});
 		await this.usersService.changeUserStatus(user.id, 'online');
+		console.log(user.username + " has connected to the websocket");
 	}
 
 	removeClientFromQueue(client: Connection) {

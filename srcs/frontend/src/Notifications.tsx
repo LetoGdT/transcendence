@@ -1,4 +1,3 @@
-
 import toast from 'react-hot-toast';
 import { socket } from './WebsocketContext';
 
@@ -42,6 +41,24 @@ const newMessage = () => {
 	toast.custom(
 		<div className='Notif'>
 			You've got a new message in chat.
+		</div>,
+		{
+			duration: 5000,
+			position: 'top-center',
+
+			// Aria
+			ariaProps: {
+			role: 'status',
+			'aria-live': 'polite',
+			},
+		}
+	);
+};
+
+export const Notification = (notif: string) => {
+	toast.custom(
+		<div className='Notif'>
+			{notif}
 		</div>,
 		{
 			duration: 5000,

@@ -14,6 +14,7 @@ import GameAchievement from './game_achievement.png';
 import MessageAchievement from './message_achievement.png';
 import FriendAchievement from './friend_achievement.png';
 import { socket } from './WebsocketContext';
+import { Notification } from './Notifications';
 
 type resultProps = {
 	email: string;
@@ -170,7 +171,7 @@ function Profile(){
 					<div className='Profile-achievement-container'>
 						{achievements.length > 0 && achievements.map((achievement:any) => {
 							return(
-								<OneAchievement achievement={achievement} />
+								<OneAchievement achievement={achievement} key={achievement.id}/>
 							);
 						})}
 					</div>
@@ -183,7 +184,7 @@ function Profile(){
 							var uid = user.id;
 							return(
 								<React.Fragment>
-									<div className='Profile-invitation-received'>
+									<div className='Profile-invitation-received' key={user.id}>
 										<Link to={url} >
 											<div>
 												<img src={user.image_url} alt={user.username + "'s avatar"} className='Profile-invitation-received-img'></img>
@@ -200,8 +201,14 @@ function Profile(){
 													method: 'POST',
 													credentials: 'include',
 													body: JSON.stringify({ id: uid })
-												});
-												window.location.reload();
+												})
+												.then(response => {
+													if (!response.ok)
+														return response.json();
+													else
+														window.location.reload();
+												})
+												.then(data => {if (data !== undefined) Notification(data.message)});
 											}}>
 												<CheckIcon />
 											</IconButton>
@@ -216,8 +223,14 @@ function Profile(){
 													},
 													method: 'DELETE',
 													credentials: 'include',
-												});
-												// window.location.reload();
+												})
+												.then(response => {
+													if (!response.ok)
+														return response.json();
+													else
+														window.location.reload();
+												})
+												.then(data => {if (data !== undefined) Notification(data.message)});
 											}}>
 												<CloseIcon />
 											</IconButton>
@@ -232,7 +245,7 @@ function Profile(){
 						{	
 							games.map(({ game_id, user }: any) => (
 								<React.Fragment>
-									<div className='Profile-invitation-received'>
+									<div className='Profile-invitation-received' key={game_id}>
 										<Link to={`/otherprofile/${user.id}`} >
 											<div>
 												<img src={user.image_url} alt={user.username + "'s avatar"} className='Profile-invitation-received-img'></img>

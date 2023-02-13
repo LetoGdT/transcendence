@@ -4,6 +4,7 @@ import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
+import { Notification } from './Notifications';
 
 const CodeOf2FATextField = styled(TextField)({
 	'& input:valid + fieldset': {
@@ -72,7 +73,14 @@ export function Activate2FA(): React.ReactElement{
 			method: 'POST',
 			credentials: 'include',
 			body: JSON.stringify({code: code2FA})
-		});
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+			else
+				window.location.replace('/settings');
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
 	}
 	
 	return(
