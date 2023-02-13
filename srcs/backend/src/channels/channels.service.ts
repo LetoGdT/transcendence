@@ -115,6 +115,9 @@ export class ChannelsService
 		const owner = new ChannelUser();
 		owner.user = requester;
 		owner.role = 'Owner';
+		postChannelDto.name = postChannelDto.name.trim();
+		if (postChannelDto.name.length < 3)
+			throw new BadRequestException('Channel length (trimmed spaces not included) must be greater or equal to 3');
 		const newChannel = await this.channelRepository.create({
 			name: postChannelDto.name,
 			users: [owner],
@@ -174,7 +177,6 @@ export class ChannelsService
 
 		else
 			channel.password = null;
-
 		return this.channelRepository.save(channel);
 	}
 
