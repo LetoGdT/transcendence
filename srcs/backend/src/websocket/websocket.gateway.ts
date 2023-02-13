@@ -169,16 +169,16 @@ class Game {
 				this.start();
 			}
 		} else if (this.gameState === GameState.Created) {
-			console.log('Game is starting');
+			// console.log('Game is starting');
 			if (null != this.player1.socket) {
 				this.netSendGameFoundPacket(this.player1.socket);
-				console.log('Packet sent');
+				// console.log('Packet sent');
 			}
 			if (null != this.player2.socket) {
 				this.netSendGameFoundPacket(this.player2.socket);
-				console.log('Packet sent');
+				// console.log('Packet sent');
 			}
-			console.log('Switching to countdown state');
+			// console.log('Switching to countdown state');
 			this.gameState = GameState.Countdown;
 		} else if (this.gameState === GameState.Countdown) {
 			if (this.timeSinceStart() >= 4000) {
@@ -368,7 +368,7 @@ class Game {
 			}
 		}
 	}
-	
+
 	removeSpectator(socket: Socket) {
 		const idx = this.spectators.findIndex(e => e.id === socket.id);
 
@@ -637,7 +637,7 @@ export class MySocketGateway implements OnGatewayConnection,
 			// gameManager.handleDisconnect(connection);
 		}
 
-		console.log('Player left the queue');
+		console.log(`${connection.user.username} left the queue`);
 	}
 
 	@SubscribeMessage('newMessage')
@@ -775,6 +775,7 @@ export class MySocketGateway implements OnGatewayConnection,
 					this.matchesService.calculateRank(match.id);
 				}, this.usersService);
 			} else {
+				console.log(`${remoteConn.user.username} is queuing`);
 				client.emit('queuing');
 			}
 		}
