@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import { PleaseConnect } from './adaptable-zone';
 import { socket } from './WebsocketContext';
 import { getAllPaginated } from './tools';
-import { disableNewMessageNotificationsFn, setUpNewMessageNotificationsFn } from './Notifications'
+import { Notification, disableNewMessageNotificationsFn, setUpNewMessageNotificationsFn } from './Notifications'
 
 const PassawordTextField = styled(TextField)({
 	'& input:valid + fieldset': {
@@ -508,8 +508,10 @@ function Chat() {
 	}
 
 	const handleSendMessage = async () => {
-		if (newMessage.length === 0 || currentConv === -1)
+		if (newMessage.length === 0 || currentConv === -1) {
+			Notification("You have nowhere to send a message");
 			return ;
+		}
 		await fetch(`http://localhost:9999/api/${isChannel?'channels':'conversations'}/${currentConv}/messages`, {
 			headers: {
 				'Accept': 'application/json',
@@ -521,9 +523,11 @@ function Chat() {
 		})
 		.then(response => {
 			if (!response.ok)
-			return ;
-		});
-		socket.emit("newMessage", {chanOrConv: currentConv, isChannel: isChannel});
+				return response.json();
+			else
+				socket.emit("newMessage", {chanOrConv: currentConv, isChannel: isChannel});
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
 		setNewMessage(""); // Sert à effacer le message une fois qu'on a appuyé sur le bouton send
 	}
 
@@ -656,9 +660,11 @@ function Chat() {
 			})
 			.then(response => {
 				if (!response.ok)
-					return ;
-			});
-			window.location.reload();
+					return response.json();
+				else
+					window.location.reload();
+			})
+			.then(data => {if (data !== undefined) Notification(data.message);});
 		}
 
 		const handleLeave = async (event: any) => {
@@ -673,9 +679,11 @@ function Chat() {
 			})
 			.then(response => {
 				if (!response.ok)
-					return ;
-			});
-			window.location.reload();
+					return response.json();
+				else
+					window.location.reload();
+			})
+			.then(data => {if (data !== undefined) Notification(data.message);});
 		}
 
 		const handleInputPassword = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -687,15 +695,15 @@ function Chat() {
 		if (typeof isIn !== "undefined"){
 			return(
 				<div className='Channels-available-div'>
-					<div className='Channels-available-button'>
+					<div className='Channels-available-button' key={1}>
 						{channel.name}
 					</div>
-					<div className='Channels-available-button'>
+					<div className='Channels-available-button' key={2}>
 						<LeaveButton variant="contained" disableRipple onClick={handleLeave} value={channel.id}>
 							Leave
 						</LeaveButton>
 					</div>
-					<div className='Channels-available-button'>
+					<div className='Channels-available-button' key={3}>
 						<AdminManagement channel={channel}/>
 					</div>
 				</div>
@@ -703,10 +711,10 @@ function Chat() {
 		} else if (typeof isIn === "undefined" && channel.status === 'public'){
 			return(
 				<div className='Channels-available-div'>
-					<div>
+					<div key={1}>
 						{channel.name}
 					</div>
-					<div className='Channels-available-button'>
+					<div className='Channels-available-button' key={2}>
 						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin} value={channel.id}>
 							Join
 						</CreateChannelButton>
@@ -716,10 +724,10 @@ function Chat() {
 		} else if (typeof isIn === "undefined" && channel.status === 'protected'){
 			return(
 				<div className='Channels-available-div'>
-					<div>
+					<div key={1}>
 						{channel.name}
 					</div>
-					<div className='Channels-available-button'>
+					<div className='Channels-available-button' key={2}>
 						<PassawordTextField
 							label="Password"
 							type="password"
@@ -734,7 +742,7 @@ function Chat() {
 							onChange={handleInputPassword}
 						/>
 					</div>
-					<div className='Channels-available-button'>
+					<div className='Channels-available-button' key={3}>
 						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>
 							Join
 						</CreateChannelButton>
@@ -744,10 +752,6 @@ function Chat() {
 		} else {
 			return (<React.Fragment></React.Fragment>);
 		}
-
-			
-			
-			
 	}
 
 	function ChannelList() {
