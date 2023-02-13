@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import {Link} from 'react-router-dom';
 import { PleaseConnect } from './adaptable-zone';
+import { Notification } from './Notifications';
 
 const SetChannelTextField = styled(TextField)({
 	'& input:valid + fieldset': {
@@ -80,7 +81,14 @@ function SetChannel(){
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(body)
-		});
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+			else
+				window.location.reload();
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
 	};
 
     return(
