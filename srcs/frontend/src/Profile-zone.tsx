@@ -168,7 +168,7 @@ export function Profile(){
 					<div className='Profile-achievement-container'>
 						{achievements.length > 0 && achievements.map((achievement:any) => {
 							return(
-								<OneAchievement achievement={achievement} />
+								<OneAchievement achievement={achievement} key={achievement.id}/>
 							);
 						})}
 					</div>
@@ -181,7 +181,7 @@ export function Profile(){
 							var uid = user.id;
 							return(
 								<React.Fragment>
-									<div className='Profile-invitation-received'>
+									<div className='Profile-invitation-received' key={user.id}>
 										<Link to={url} >
 											<div>
 												<img src={user.image_url} alt={user.username + "'s avatar"} className='Profile-invitation-received-img'></img>
@@ -242,7 +242,7 @@ export function Profile(){
 						{	
 							games.map(({ game_id, user }: any) => (
 								<React.Fragment>
-									<div className='Profile-invitation-received'>
+									<div className='Profile-invitation-received' key={game_id}>
 										<Link to={`/otherprofile/${user.id}`} >
 											<div>
 												<img src={user.image_url} alt={user.username + "'s avatar"} className='Profile-invitation-received-img'></img>

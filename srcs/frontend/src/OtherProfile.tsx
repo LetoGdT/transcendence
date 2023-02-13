@@ -620,7 +620,7 @@ export function OtherProfile(){
 						<div className='Profile-achievement-container'>
 							{achievements.length > 0 && achievements.map((achievement:any) => {
 								return(
-									<OneAchievement achievement={achievement} />
+									<OneAchievement achievement={achievement} key={achievement.id}/>
 								);
 							})}
 						</div>
@@ -628,7 +628,7 @@ export function OtherProfile(){
 						<div className='Match-container-otherProfile'>
 							{matchs.length > 0 && matchs.map((match:any) => {
 								return(
-										<OneMatch match={match} />
+										<OneMatch match={match} key={match.id}/>
 								);
 							})}
 						</div>

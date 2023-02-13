@@ -695,15 +695,15 @@ function Chat() {
 		if (typeof isIn !== "undefined"){
 			return(
 				<div className='Channels-available-div'>
-					<div className='Channels-available-button'>
+					<div className='Channels-available-button' key={1}>
 						{channel.name}
 					</div>
-					<div className='Channels-available-button'>
+					<div className='Channels-available-button' key={2}>
 						<LeaveButton variant="contained" disableRipple onClick={handleLeave} value={channel.id}>
 							Leave
 						</LeaveButton>
 					</div>
-					<div className='Channels-available-button'>
+					<div className='Channels-available-button' key={3}>
 						<AdminManagement channel={channel}/>
 					</div>
 				</div>
@@ -711,10 +711,10 @@ function Chat() {
 		} else if (typeof isIn === "undefined" && channel.status === 'public'){
 			return(
 				<div className='Channels-available-div'>
-					<div>
+					<div key={1}>
 						{channel.name}
 					</div>
-					<div className='Channels-available-button'>
+					<div className='Channels-available-button' key={2}>
 						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin} value={channel.id}>
 							Join
 						</CreateChannelButton>
@@ -724,10 +724,10 @@ function Chat() {
 		} else if (typeof isIn === "undefined" && channel.status === 'protected'){
 			return(
 				<div className='Channels-available-div'>
-					<div>
+					<div key={1}>
 						{channel.name}
 					</div>
-					<div className='Channels-available-button'>
+					<div className='Channels-available-button' key={2}>
 						<PassawordTextField
 							label="Password"
 							InputLabelProps={{
@@ -741,7 +741,7 @@ function Chat() {
 							onChange={handleInputPassword}
 						/>
 					</div>
-					<div className='Channels-available-button'>
+					<div className='Channels-available-button' key={3}>
 						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>
 							Join
 						</CreateChannelButton>
@@ -751,10 +751,6 @@ function Chat() {
 		} else {
 			return (<React.Fragment></React.Fragment>);
 		}
-
-			
-			
-			
 	}
 
 	function ChannelList() {

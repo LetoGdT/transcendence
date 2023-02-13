@@ -139,7 +139,7 @@ export function MatchHistory(){
 					{matchs.map((match:any) => {
 						return(
 							
-								<OneMatch match={match} />
+								<OneMatch match={match} key={match.id}/>
 							
 						);
 					})}

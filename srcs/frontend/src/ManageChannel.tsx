@@ -543,7 +543,7 @@ export function ManageChannel(){
 						//recuperer la liste des users
 						users?.map((user: ChannelUser) => {
 							return(
-								<DisplayUser user={user} />
+								<DisplayUser user={user} key={user.id}/>
 							);
 						})
 					}
