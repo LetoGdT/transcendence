@@ -116,7 +116,7 @@ export class ChannelsService
 		owner.user = requester;
 		owner.role = 'Owner';
 		const newChannel = await this.channelRepository.create({
-			name: postChannelDto.name,
+			name: postChannelDto.name.trim(),
 			users: [owner],
 			status: 'public',
 		});
@@ -174,7 +174,6 @@ export class ChannelsService
 
 		else
 			channel.password = null;
-
 		return this.channelRepository.save(channel);
 	}
 
