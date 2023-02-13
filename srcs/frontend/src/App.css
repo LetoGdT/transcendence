@@ -23,6 +23,14 @@
 	text-align: center;
 }
 
+.ErrorNotif{
+	background-color: #bb1d03;
+	color: antiquewhite;
+	border-radius: 10px;
+	padding: 10px;
+	text-align: center;
+}
+
 a:link {
 	text-decoration: none;
 	color: rgb(0, 125, 214);

@@ -1,3 +1,4 @@
+import './App.css';
 import toast from 'react-hot-toast';
 import { socket } from './WebsocketContext';
 
@@ -10,23 +11,6 @@ const newGame = () => {
 		{
 			duration: 5000,
 			position: 'top-center',
-		
-			// Styling
-			// style: {
-			// 	borderRadius: '10px',
-			// 	background: '#007dd6',
-			// 	color: '#fff',
-			// },
-			// className: '',
-		
-			// Custom Icon
-			// icon: '👏',
-		
-			// Change colors of success/error/loading icon
-			// iconTheme: {
-			//   primary: '#000',
-			//   secondary: '#fff',
-			// },
 		
 			// Aria
 			ariaProps: {
@@ -57,7 +41,7 @@ const newMessage = () => {
 
 export const Notification = (notif: string) => {
 	toast.custom(
-		<div className='Notif'>
+		<div className='ErrorNotif'>
 			{notif}
 		</div>,
 		{
