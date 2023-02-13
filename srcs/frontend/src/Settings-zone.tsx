@@ -121,37 +121,23 @@ function ActivateOrDesactivate2FAButton(){
 		api();
 	}, []);
 
-	const handleDesactivate2FA = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('http://localhost:9999/api/2fa/disable',{
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'POST',
-			credentials: 'include',
-		})
-		.then(response => {
-			if (!response.ok)
-				return response.json();
-			else
-				window.location.reload();
-		})
-		.then(data => {if (data !== undefined) Notification(data.message)});
-	}
-
 	if(data?.enabled2fa === true){
 		return(
 			<div className='Settings-container-div-lvl4'>
-				<SettingsButton2 variant="contained" disableRipple onClick={
-					handleDesactivate2FA
-				}>Desactivate</SettingsButton2>
+				<Link to={"/desactivate2fa"}>
+					<SettingsButton2 variant="contained" disableRipple>
+						Desactivate
+					</SettingsButton2>
+				</Link>
             </div>
 		);
 	} else {
 		return(
 			<div className='Settings-container-div-lvl4'>
 				<Link to={"/activate2fa"}>
-					<SettingsButton variant="contained" disableRipple >Activate</SettingsButton>
+					<SettingsButton variant="contained" disableRipple >
+						Activate
+					</SettingsButton>
 				</Link>
             </div>
 		);

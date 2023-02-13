@@ -15,7 +15,7 @@ import { ProfileZone} from './Profile-zone';
 import { OProfileZone } from './OtherProfile';
 import { SignUp } from './adaptable-zone';
 import { AuthWith2FA } from './authWith2fa';
-import { Activate2FA } from './activate2fa';
+import { Activate2FA, Desactivate2FA } from './activate2fa';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import { socket, websocketContext } from './WebsocketContext';
 import {Toaster} from 'react-hot-toast';
@@ -62,6 +62,7 @@ function App() {
 						<Route path='/2fa' element={<AuthWith2FA />} />
 						<Route path='/setchannel' element={<SetChanZone />} />
 						<Route path='/activate2fa' element={<Activate2FA />} />
+						<Route path='/desactivate2fa' element={<Desactivate2FA />} />
 						<Route path='*' element={<NotFound/>} />
 					</Routes>
 				</div>
