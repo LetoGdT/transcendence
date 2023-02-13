@@ -664,6 +664,12 @@ export class MySocketGateway implements OnGatewayConnection,
 		}
 	}
 
+	@SubscribeMessage('newChannel')
+	async onNewChannel() {
+		for (var connection of this.clients)
+			connection.client.emit("newChannel");
+	}
+
 	@SubscribeMessage('newGame')
 	async onNewGame(@MessageBody() body: any) {
 		for (var connection of this.clients) {

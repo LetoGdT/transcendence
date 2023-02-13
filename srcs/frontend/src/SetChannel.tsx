@@ -7,6 +7,7 @@ import { styled } from '@mui/material/styles';
 import {Link} from 'react-router-dom';
 import { PleaseConnect } from './adaptable-zone';
 import { Notification } from './Notifications';
+import { socket } from './WebsocketContext';
 
 const SetChannelTextField = styled(TextField)({
 	'& input:valid + fieldset': {
@@ -85,8 +86,10 @@ function SetChannel(){
 		.then(response => {
 			if (!response.ok)
 				return response.json();
-			else
+			else {
 				window.location.reload();
+				socket.emit('newChannel');
+			}
 		})
 		.then(data => {if (data !== undefined) Notification(data.message)});
 	};

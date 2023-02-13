@@ -345,13 +345,21 @@ function Chat() {
 		disableNewMessageNotificationsFn();
 		updateUsersMe();
 		updateChannelsAvailable();
+		socket.on("newChannel", updateChannelsAvailable);
 
-		return setUpNewMessageNotificationsFn;
+		return () => {
+			setUpNewMessageNotificationsFn();
+			socket.off("newChannel");
+		}
 	}, []);
 
 	useEffect(() => {
 		updateConvList();
 		socket.on("newConv", updateConvList);
+
+		return () => {
+			socket.off('newConv');
+		}
 	}, [currentUser]);
 
 	useEffect(() => {
@@ -384,7 +392,6 @@ function Chat() {
 		
 		return () => {
 			socket.off('newMessage');
-			socket.off('newConvChan');
 		}
 	}, [convList, currentConv]);
 
@@ -680,8 +687,10 @@ function Chat() {
 			.then(response => {
 				if (!response.ok)
 					return response.json();
-				else
+				else {
 					window.location.reload();
+					socket.emit('newChannel');
+				}
 			})
 			.then(data => {if (data !== undefined) Notification(data.message);});
 		}
