@@ -669,7 +669,7 @@ function Chat() {
 
 		const handleLeave = async (event: any) => {
 			const channelUserId = (channel.users.find((user: ChannelUser) => user.user.id === currentUser.id)).id;
-			await fetch(`http://localhost:9999/api/channels/${event.target.value}/users/${channelUserId}`, {
+			await fetch(`http://localhost:9999/api/channels/${props?.channel.id}/users/${channelUserId}`, {
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
