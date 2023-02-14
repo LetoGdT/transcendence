@@ -135,7 +135,6 @@ export function Desactivate2FA(): React.ReactElement{
 	return(
 		<React.Fragment>
 			<h1>2FA</h1>
-			<img className='transparent' src='http://localhost:9999/api/2fa/generate' alt='QR code'></img>
 			<CodeOf2FATextField
 				label="6 digits code"
 				InputLabelProps={{
