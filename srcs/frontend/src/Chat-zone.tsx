@@ -345,13 +345,21 @@ function Chat() {
 		disableNewMessageNotificationsFn();
 		updateUsersMe();
 		updateChannelsAvailable();
+		socket.on("newChannel", updateChannelsAvailable);
 
-		return setUpNewMessageNotificationsFn;
+		return () => {
+			setUpNewMessageNotificationsFn();
+			socket.off("newChannel");
+		}
 	}, []);
 
 	useEffect(() => {
 		updateConvList();
 		socket.on("newConv", updateConvList);
+
+		return () => {
+			socket.off('newConv');
+		}
 	}, [currentUser]);
 
 	useEffect(() => {
@@ -384,7 +392,6 @@ function Chat() {
 		
 		return () => {
 			socket.off('newMessage');
-			socket.off('newConvChan');
 		}
 	}, [convList, currentConv]);
 
@@ -649,7 +656,7 @@ function Chat() {
 		const [password, setPassword] = React.useState("");
 
 		const handleJoin = async (event: any) => {
-			await fetch(`http://localhost:9999/api/channels/${event.target.value}/users`, {
+			await fetch(`http://localhost:9999/api/channels/${props?.channel.id}/users`, {
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -669,7 +676,7 @@ function Chat() {
 
 		const handleLeave = async (event: any) => {
 			const channelUserId = (channel.users.find((user: ChannelUser) => user.user.id === currentUser.id)).id;
-			await fetch(`http://localhost:9999/api/channels/${event.target.value}/users/${channelUserId}`, {
+			await fetch(`http://localhost:9999/api/channels/${props?.channel.id}/users/${channelUserId}`, {
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -680,8 +687,10 @@ function Chat() {
 			.then(response => {
 				if (!response.ok)
 					return response.json();
-				else
+				else {
 					window.location.reload();
+					socket.emit('newChannel');
+				}
 			})
 			.then(data => {if (data !== undefined) Notification(data.message);});
 		}

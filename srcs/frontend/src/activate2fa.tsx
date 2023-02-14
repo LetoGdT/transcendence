@@ -105,3 +105,52 @@ export function Activate2FA(): React.ReactElement{
 		</React.Fragment>
 	);
 }
+
+export function Desactivate2FA(): React.ReactElement{
+	const [code2FA, setCode2FA] = React.useState("");
+
+	const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+		setCode2FA(e.target.value);
+	};
+
+	const handleSend = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		const response = await fetch('http://localhost:9999/api/2fa/disable',{
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			method: 'POST',
+			credentials: 'include',
+			body: JSON.stringify({code: code2FA})
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+			else
+				window.location.replace('/settings');
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
+	}
+	
+	return(
+		<React.Fragment>
+			<h1>2FA</h1>
+			<img className='transparent' src='http://localhost:9999/api/2fa/generate' alt='QR code'></img>
+			<CodeOf2FATextField
+				label="6 digits code"
+				InputLabelProps={{
+					sx:{
+						color:"white",
+					}
+				}}
+				variant="outlined"
+				sx={{ input: {color: "grey"} }}
+				id="validation-outlined-input"
+				onChange={handleInput}
+			/>
+			<SendButton variant="contained" disableRipple onClick={
+				handleSend
+			}>Send</SendButton>
+		</React.Fragment>
+	);
+}

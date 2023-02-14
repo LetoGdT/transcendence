@@ -63,7 +63,7 @@ export function Home(){
 							url = url.concat("/");
 							url = url.concat(user.id);
 							return(
-								<Link to={url} >
+								<Link to={url} key={user.id}>
 									<div className='Friend-container-div'>
 										<div>
 											<img src={user.image_url} alt={user.username + "'s avatar"} className='Friend-avatar'></img>
