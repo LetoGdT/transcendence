@@ -245,7 +245,7 @@ export class UsersController
 	@UseInterceptors(AuthInterceptor)
 	async uploadImage(@UploadedFile(new ParseFilePipe({
 		validators: [
-			new MaxFileSizeValidator({ maxSize: 1000 }),
+			new MaxFileSizeValidator({ maxSize: 10000 }),
 			new FileTypeValidator({ fileType: 'image/*' }),
 			],
 	})) file: Express.Multer.File, @Req() req: RequestWithUser)
