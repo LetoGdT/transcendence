@@ -29,7 +29,7 @@ function OneMatch(match:any){
 	useEffect(() => {
 		const api = async () => {
 			let urltofetch1 : string;
-			urltofetch1 = `http://localhost:9999/api/users/${user1.id}`;
+			urltofetch1 = `http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/${user1.id}`;
 			const data1 = await fetch(urltofetch1, {
 				method: "GET",
 				credentials: 'include'
@@ -38,7 +38,7 @@ function OneMatch(match:any){
 			setResult1(jsonData1);
 			
 			let urltofetch : string;
-			urltofetch = `http://localhost:9999/api/users/${user2.id}`;
+			urltofetch = `http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/${user2.id}`;
 			const data2 = await fetch(urltofetch, {
 				method: "GET",
 				credentials: 'include'
@@ -46,7 +46,7 @@ function OneMatch(match:any){
 			const jsonData = await data2.json();
 			setResult2(jsonData);
 
-			const me = await fetch("http://localhost:9999/api/users/me", {
+			const me = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me`, {
 				method: "GET",
 				credentials: 'include'
 			});
@@ -154,7 +154,7 @@ export function MatchHistoryZone(){
 
 	useEffect(() => {
 		const api = async () => {
-			await fetch("http://localhost:9999/api/users/isconnected", {
+			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/isconnected`, {
 				method: "GET",
 				credentials: 'include'
 			})
