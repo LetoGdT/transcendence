@@ -1,9 +1,10 @@
-import { red } from '@mui/material/colors';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import PongGame from './pong_tools/PongGame';
 import { socket } from '../WebsocketContext';
 import { useParams } from 'react-router-dom';
 import { PleaseConnect } from '../adaptable-zone';
+import { LogInButton } from '../Header-zone';
+import { Link } from 'react-router-dom';
 
 const GAME_WIDTH = 1040;
 const GAME_HEIGHT = 680;
@@ -145,21 +146,49 @@ const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) =>
 		}
 	};
 
-	return (
-		<div style={{position: 'fixed', top:'350px', bottom:'25px', left:0, right:0}}>
-
-			<div style={{aspectRatio: 16 / 9 , maxHeight:'100%', maxWidth:'100%', marginLeft:'auto', marginRight:'auto'}}>
-				<canvas
-					id="responsive-canvas"
-					ref={canvasRef}
-					onKeyDown={onKeyDown}
-					onKeyUp={onKeyUp}
-					tabIndex={-1}
-					>
-				</canvas>
+	if (game.over === false){
+		return (
+			<div style={{position: 'fixed', top:'350px', bottom:'25px', left:0, right:0}}>
+	
+				<div style={{aspectRatio: 16 / 9 , maxHeight:'100%', maxWidth:'100%', marginLeft:'auto', marginRight:'auto'}}>
+					<canvas
+						id="responsive-canvas"
+						ref={canvasRef}
+						onKeyDown={onKeyDown}
+						onKeyUp={onKeyUp}
+						tabIndex={-1}
+						>
+					</canvas>
+				</div>
+	
 			</div>
-		</div>
-	);
+		);
+	} else {
+		console.log("fini");//on y est pas apparemment
+		return (
+			<div style={{position: 'fixed', top:'350px', bottom:'25px', left:0, right:0}}>
+	
+				<div style={{aspectRatio: 16 / 9 , maxHeight:'100%', maxWidth:'100%', marginLeft:'auto', marginRight:'auto'}}>
+					<canvas
+						id="responsive-canvas"
+						ref={canvasRef}
+						onKeyDown={onKeyDown}
+						onKeyUp={onKeyUp}
+						tabIndex={-1}
+						>
+					</canvas>
+				</div>
+				<div>
+					<Link to='/play'>
+						<LogInButton variant="contained" disableRipple>
+							OK
+						</LogInButton>
+					</Link>
+				</div>
+			</div>
+		);
+	}
+	
 }
 
 const Pong = (props: any) => {
