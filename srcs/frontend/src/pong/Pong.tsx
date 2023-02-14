@@ -146,7 +146,7 @@ const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) =>
 		}
 	};
 
-	if (game.over === false){
+	// if (game.over === false){
 		return (
 			<div style={{position: 'fixed', top:'350px', bottom:'25px', left:0, right:0}}>
 	
@@ -163,31 +163,31 @@ const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) =>
 	
 			</div>
 		);
-	} else {
-		console.log("fini");//on y est pas apparemment
-		return (
-			<div style={{position: 'fixed', top:'350px', bottom:'25px', left:0, right:0}}>
+	// } else {
+	// 	console.log("fini");//on y est pas apparemment
+	// 	return (
+	// 		<div style={{position: 'fixed', top:'350px', bottom:'25px', left:0, right:0}}>
 	
-				<div style={{aspectRatio: 16 / 9 , maxHeight:'100%', maxWidth:'100%', marginLeft:'auto', marginRight:'auto'}}>
-					<canvas
-						id="responsive-canvas"
-						ref={canvasRef}
-						onKeyDown={onKeyDown}
-						onKeyUp={onKeyUp}
-						tabIndex={-1}
-						>
-					</canvas>
-				</div>
-				<div>
-					<Link to='/play'>
-						<LogInButton variant="contained" disableRipple>
-							OK
-						</LogInButton>
-					</Link>
-				</div>
-			</div>
-		);
-	}
+	// 			<div style={{aspectRatio: 16 / 9 , maxHeight:'100%', maxWidth:'100%', marginLeft:'auto', marginRight:'auto'}}>
+	// 				<canvas
+	// 					id="responsive-canvas"
+	// 					ref={canvasRef}
+	// 					onKeyDown={onKeyDown}
+	// 					onKeyUp={onKeyUp}
+	// 					tabIndex={-1}
+	// 					>
+	// 				</canvas>
+	// 			</div>
+	// 			<div>
+	// 				<Link to='/play'>
+	// 					<LogInButton variant="contained" disableRipple>
+	// 						OK
+	// 					</LogInButton>
+	// 				</Link>
+	// 			</div>
+	// 		</div>
+	// 	);
+	// }
 	
 }
 
