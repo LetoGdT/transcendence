@@ -1,0 +1,9 @@
+.Pong{
+	display: flex;
+	flex-direction: column;
+	background-color: #3d3f44;
+}
+
+.OKButton{
+	align-self: center;
+}

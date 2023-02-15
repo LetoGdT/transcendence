@@ -1,9 +1,10 @@
+import '../Pong.css'
 import React, { useEffect } from 'react';
 import PongGame from './pong_tools/PongGame';
 import { socket } from '../WebsocketContext';
 import { useParams } from 'react-router-dom';
 import { PleaseConnect } from '../adaptable-zone';
-import { LogInButton } from '../Header-zone';
+import { SignUpButton } from '../Header-zone';
 import { Link } from 'react-router-dom';
 
 const GAME_WIDTH = 1040;
@@ -78,6 +79,7 @@ const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) =>
 {
 	const game = gameInstance;
 	const canvasRef = useCanvas(ctx => game.render(ctx));
+	const [over, setOver] = React.useState<Boolean>(false);
 
 	useEffect(() => {
 		game.newGame();
@@ -101,7 +103,10 @@ const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) =>
 		socket.on('score', ({ score1, score2 }) => {
 			game.setScore(score1, score2);
 		});
-		socket.on('win', ({ didWin }) => game.setOver(didWin));
+		socket.on('win', ({ didWin }) => {
+			game.setOver(didWin);
+			setOver(true);
+		});
 		socket.on('spectator-game-result', ({ id }) => {
 			game.setSpectatorWin(id);
 		});
@@ -146,7 +151,9 @@ const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) =>
 		}
 	};
 
-	// if (game.over === false){
+	console.log(game.over);//
+
+	if (over === false){
 		return (
 			<div style={{position: 'fixed', top:'350px', bottom:'25px', left:0, right:0}}>
 	
@@ -160,34 +167,34 @@ const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) =>
 						>
 					</canvas>
 				</div>
-	
 			</div>
 		);
-	// } else {
-	// 	console.log("fini");//on y est pas apparemment
-	// 	return (
-	// 		<div style={{position: 'fixed', top:'350px', bottom:'25px', left:0, right:0}}>
-	
-	// 			<div style={{aspectRatio: 16 / 9 , maxHeight:'100%', maxWidth:'100%', marginLeft:'auto', marginRight:'auto'}}>
-	// 				<canvas
-	// 					id="responsive-canvas"
-	// 					ref={canvasRef}
-	// 					onKeyDown={onKeyDown}
-	// 					onKeyUp={onKeyUp}
-	// 					tabIndex={-1}
-	// 					>
-	// 				</canvas>
-	// 			</div>
-	// 			<div>
-	// 				<Link to='/play'>
-	// 					<LogInButton variant="contained" disableRipple>
-	// 						OK
-	// 					</LogInButton>
-	// 				</Link>
-	// 			</div>
-	// 		</div>
-	// 	);
-	// }
+	} else {
+		return (
+			<div className="Pong">
+				<div style={{position: 'fixed', top:'350px', bottom:'25px', left:0, right:0}}>
+		
+					<div style={{aspectRatio: 16 / 9 , maxHeight:'100%', maxWidth:'100%', marginLeft:'auto', marginRight:'auto'}}>
+						<canvas
+							id="responsive-canvas"
+							ref={canvasRef}
+							onKeyDown={onKeyDown}
+							onKeyUp={onKeyUp}
+							tabIndex={-1}
+							>
+						</canvas>
+					</div>
+				</div>
+				<div className="OKButton">
+					<Link to='/play'>
+						<SignUpButton variant="contained" disableRipple>
+							OK
+						</SignUpButton>
+					</Link>
+				</div>
+			</div>
+		);
+	}
 }
 
 const Pong = (props: any) => {
@@ -215,11 +222,9 @@ const Pong = (props: any) => {
 	const isLoggedIn = me;
 	if (isLoggedIn){
 		return (
-			<>
-				<div>
-					<PongGameBootstrap {...props} game_id={game_id} />
-				</div>
-			</>
+			<div>
+				<PongGameBootstrap {...props} game_id={game_id} />
+			</div>
 		);
 	}
 	else 
@@ -231,39 +236,3 @@ const Pong = (props: any) => {
 };
 
 export { Pong };
-
-export function PongZone(){
-	const routeParams = useParams();
-	const game_id = parseInt(routeParams.game_id!);
-	const [me, setMe] = React.useState<Boolean>(false);
-
-	React.useEffect(() => {
-		const api = async () => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/isconnected`, {
-				method: "GET",
-				credentials: 'include'
-			})
-			.then((response) => {
-				if (!response.ok)
-					setMe(false);
-				else
-					setMe(true);
-			});
-		};
-	
-		api();
-	}, []);
-	
-	const isLoggedIn = me;
-	if (isLoggedIn){
-		return (
-			<Pong />
-		);
-	}
-	else 
-	{
-		return (
-			<PleaseConnect />
-		 );
-	}
-}
