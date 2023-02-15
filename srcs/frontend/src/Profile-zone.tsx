@@ -47,10 +47,10 @@ export function OneAchievement(achievement: any){
 	if (achievementType.name === "I'm a sociable person"){
 		return(
 			<div className='Profile-achievement-container-div'>
-				<div>
+				<div key = "img">
 					<img src={MessageAchievement} alt='1 sent in chat' className='Profile-achievement-container-div-img'></img>
 				</div>
-				<div>
+				<div key = "what">
 					1st message sent
 				</div>
 			</div>
@@ -58,10 +58,10 @@ export function OneAchievement(achievement: any){
 	} else if (achievementType.name === "I'm a mundaine person"){
 		return(
 			<div className='Profile-achievement-container-div'>
-				<div>
+				<div  key = "img">
 					<img src={FriendAchievement} alt='1 friend made' className='Profile-achievement-container-div-img'></img>
 				</div>
-				<div>
+				<div key = "what">
 					1st friend get
 				</div>
 			</div>
@@ -69,16 +69,16 @@ export function OneAchievement(achievement: any){
 	} else if (achievementType.name === "I'm a gamer"){
 		return(
 			<div className='Profile-achievement-container-div'>
-				<div>
+				<div key = "img">
 					<img src={GameAchievement} alt='1 game played' className='Profile-achievement-container-div-img'></img>
 				</div>
-				<div>
+				<div key = "what">
 					1st game played
 				</div>
 			</div>
 		);
 	} else {
-		return(<div></div>);
+		return(<div key = "empty"></div>);
 	}
 }
 
@@ -162,10 +162,10 @@ function Profile(){
 						/>
 					</div>
 				</div>
-				<div>
+				<div key = "game info + invitations">
 					<div className='Profile-game-info'>
-						<div><b>Level:</b> {FromEXPtoLvl(data?.exp)}</div>
-						<div><b>To next level:</b> {ToNextLevel(data?.exp)} EXP</div>
+						<div key = "lvl"><b>Level:</b> {FromEXPtoLvl(data?.exp)}</div>
+						<div key = "till next lvl"><b>To next level:</b> {ToNextLevel(data?.exp)} EXP</div>
 					</div>
 					<h4>Achievements</h4>
 					<div className='Profile-achievement-container'>
@@ -176,99 +176,100 @@ function Profile(){
 						})}
 					</div>
 					<h4>Invitations received for friendship</h4>
-					<div>
+					<div key = "invitation for friendship">
 						{invites.length > 0 && invites.map((user: any) => {
 							var url: string = "/otherprofile";
 							url = url.concat("/");
 							url = url.concat(user.id);
 							var uid = user.id;
 							return(
-								<React.Fragment>
-									<div className='Profile-invitation-received' key={user.id}>
-										<Link to={url} >
-											<div>
-												<img src={user.image_url} alt={user.username + "'s avatar"} className='Profile-invitation-received-img'></img>
-											</div>
-											<div>{user.username}</div>
-										</Link>
-										<div>
-											<IconButton color="success" aria-label="accept" onClick={()=>{
-												const response = fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me/friends`, {
-													headers: {
-														'Accept': 'application/json',
-														'Content-Type': 'application/json'
-													},
-													method: 'POST',
-													credentials: 'include',
-													body: JSON.stringify({ id: uid })
-												})
-												.then(response => {
-													if (!response.ok)
-														return response.json();
-													else
-														window.location.reload();
-												})
-												.then(data => {if (data !== undefined) Notification(data.message)});
-											}}>
-												<CheckIcon />
-											</IconButton>
+								<div className='Profile-invitation-received' key={user.id}>
+									<Link to={url} >
+										<div key = "img">
+											<img src={user.image_url} alt={user.username + "'s avatar"} className='Profile-invitation-received-img'></img>
 										</div>
-										<div>
-											<IconButton color="error" aria-label="reject" onClick={()=>{
-												let urltofetch : string;
-												urltofetch = `http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me/friends/invites/` + uid;												const response = fetch(urltofetch, {
-													headers: {
-														'Accept': 'application/json',
-														'Content-Type': 'application/json'
-													},
-													method: 'DELETE',
-													credentials: 'include',
-												})
-												.then(response => {
-													if (!response.ok)
-														return response.json();
-													else
-														window.location.reload();
-												})
-												.then(data => {if (data !== undefined) Notification(data.message)});
-											}}>
-												<CloseIcon />
-											</IconButton>
+										<div key = "name">
+											{user.username}
 										</div>
+									</Link>
+									<div key = "accept">
+										<IconButton color="success" aria-label="accept" onClick={()=>{
+											const response = fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me/friends`, {
+												headers: {
+													'Accept': 'application/json',
+													'Content-Type': 'application/json'
+												},
+												method: 'POST',
+												credentials: 'include',
+												body: JSON.stringify({ id: uid })
+											})
+											.then(response => {
+												if (!response.ok)
+													return response.json();
+												else
+													window.location.reload();
+											})
+											.then(data => {if (data !== undefined) Notification(data.message)});
+										}}>
+											<CheckIcon />
+										</IconButton>
 									</div>
-								</React.Fragment>
+									<div key = "refuse">
+										<IconButton color="error" aria-label="reject" onClick={()=>{
+											let urltofetch : string;
+											urltofetch = `http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me/friends/invites/` + uid;												const response = fetch(urltofetch, {
+												headers: {
+													'Accept': 'application/json',
+													'Content-Type': 'application/json'
+												},
+												method: 'DELETE',
+												credentials: 'include',
+											})
+											.then(response => {
+												if (!response.ok)
+													return response.json();
+												else
+													window.location.reload();
+											})
+											.then(data => {if (data !== undefined) Notification(data.message)});
+										}}>
+											<CloseIcon />
+										</IconButton>
+									</div>
+								</div>
 							);
 						})}
 					</div>
 					<h4>Invitations received for playing a game</h4>
-					<div>
+					<div key = "invitation for playing">
 						{	
 							games.map(({ game_id, user }: any) => (
-								<React.Fragment>
-									<div className='Profile-invitation-received' key={game_id}>
-										<Link to={`/otherprofile/${user.id}`} >
-											<div>
-												<img src={user.image_url} alt={user.username + "'s avatar"} className='Profile-invitation-received-img'></img>
-											</div>
-											<div>{user.username}</div>
-										</Link>
-										<div>
-											<Link to={`/join/${game_id}`}>
-												<IconButton color="success" aria-label="accept">
-													<CheckIcon />
-												</IconButton>
-											</Link>
+								<div className='Profile-invitation-received' key={game_id}>
+									<Link to={`/otherprofile/${user.id}`} >
+										<div key="img">
+											<img src={user.image_url} alt={user.username + "'s avatar"} className='Profile-invitation-received-img'></img>
 										</div>
-										<div>
-											<IconButton color="error" aria-label="reject" onClick={()=>{
-												socket.emit('refuseInvite', { game_id });
-											}}>
-												<CloseIcon />
+										<div key = "name">
+											{user.username}
+										</div>
+									</Link>
+									<div key="accept">
+										<Link to={`/join/${game_id}`}>
+											<IconButton color="success" aria-label="accept">
+												<CheckIcon />
 											</IconButton>
-										</div>
+										</Link>
 									</div>
-								</React.Fragment>
-							))}
+									<div key = "refuse">
+										<IconButton color="error" aria-label="reject" onClick={()=>{
+											socket.emit('refuseInvite', { game_id });
+										}}>
+											<CloseIcon />
+										</IconButton>
+									</div>
+								</div>
+							))
+						}
 					</div>
 				</div>
 			</div>

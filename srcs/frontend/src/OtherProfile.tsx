@@ -253,8 +253,6 @@ function AddOrRemoveButton(uid: string | undefined){
 		.then(response => {
 			if (!response.ok)
 				return response.json();
-			else
-				window.location.reload();
 		})
 		.then(data => {if (data !== undefined) Notification(data.message)});
 	};
