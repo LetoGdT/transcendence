@@ -260,6 +260,7 @@ function Profile(){
 										</Link>
 									</div>
 									<div key = "refuse">
+										{/* un toast ici stp Léto */}
 										<IconButton color="error" aria-label="reject" onClick={()=>{
 											socket.emit('refuseInvite', { game_id });
 										}}>
