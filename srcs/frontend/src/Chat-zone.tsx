@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import { PleaseConnect } from './adaptable-zone';
 import { socket } from './WebsocketContext';
 import { getAllPaginated } from './tools';
-import { Notification, disableNewMessageNotificationsFn, setUpNewMessageNotificationsFn } from './Notifications'
+import { Notification, setUpNewMessageNotificationsFn } from './Notifications'
 
 const PassawordTextField = styled(TextField)({
 	'& input:valid + fieldset': {
@@ -342,24 +342,22 @@ function Chat() {
 	const [channelsAvailable, setChannelsAvailable] = React.useState<Channel[]>([]);
 		
 	useEffect(() => {
-		disableNewMessageNotificationsFn();
 		updateUsersMe();
 		updateChannelsAvailable();
 		socket.on("newChannel", updateChannelsAvailable);
 
 		return () => {
-			setUpNewMessageNotificationsFn();
+			socket.off('newMessage');
 			socket.off("newChannel");
+			socket.off('newConv');
+			setUpNewMessageNotificationsFn();
 		}
 	}, []);
 
 	useEffect(() => {
 		updateConvList();
+		socket.off("newConv");
 		socket.on("newConv", updateConvList);
-
-		return () => {
-			socket.off('newConv');
-		}
 	}, [currentUser]);
 
 	useEffect(() => {
@@ -370,6 +368,7 @@ function Chat() {
 	}, [convList])
 
 	useEffect(() => {
+		socket.off('newMessage');
 		socket.on('newMessage', (data) => {
 			const convId: number = data?.convId;
 			const latest_sent: Date = new Date(data?.latest_sent);
@@ -389,10 +388,6 @@ function Chat() {
 				updateMessages();
 			}
 		});
-		
-		return () => {
-			socket.off('newMessage');
-		}
 	}, [convList, currentConv]);
 
 	useEffect(() => {

@@ -60,35 +60,11 @@ export const Notification = (notif: string[]) => {
 };
 
 export const setUpNewMessageNotificationsFn = () => {
-	disableNewMessageNotificationsFn();
-	socket.on("newMessage", () => {
-		newMessage();
-
-		return () => {
-			socket.off("newMessage");
-		}
-	});
-	socket.on("newConv", () => {
-		newMessage();
-
-		return () => {
-			socket.off("newConv");
-		}
-	});
+	socket.off('newMessage');
+	socket.on("newMessage", newMessage);
 }
 
 export const setUpNewGameNotificationFn = () => {
 	socket.off("newGame");
-	socket.on("newGame", () => {
-		newGame();
-
-		return () => {
-			socket.off("newGame");
-		}
-	});
-}
-
-export const disableNewMessageNotificationsFn = () => {
-	socket.off("newMessage");
-	socket.off("newConv");
+	socket.on("newGame", newGame);
 }
