@@ -129,7 +129,7 @@ function UserLogged(){
 
 	useEffect(() => {
 		const api = async () => {
-			const data = await fetch("http://localhost:9999/api/users/me", {
+			const data = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me`, {
 				method: "GET",
 				credentials: 'include'
 			});
@@ -143,14 +143,15 @@ function UserLogged(){
 	const handleSocketClose = (event: React.MouseEvent<HTMLButtonElement>) => {
         socket.close();
     };
-    
+    let linkToLogout : string = `http://${process.env.REACT_APP_HOSTNAME}:9999/logout`;
+
     return(
         <div className='Avatar-zone'>
             <div className='Avatar-zone-img'>
                 <img src={data?.image_url} alt='avatar' className='Avatar-zone-img'></img>
             </div>
             <div className='Avatar-zone-buttons'>
-                <a href='http://localhost:9999/logout'>
+                <a href={linkToLogout}>
                     <LogOutButton variant="contained" disableRipple onClick={handleSocketClose}>Log Out</LogOutButton>
                 </a>
             </div>
@@ -163,6 +164,8 @@ function UserNotLogged(){
         socket.open();
     };
 
+	let linkToLog : string = `http://${process.env.REACT_APP_HOSTNAME}:9999/log`;
+
 	return(
 		<div className='Avatar-zone'>
 			<div className='Avatar-zone-buttons'>
@@ -172,7 +175,7 @@ function UserNotLogged(){
 					</Link>
 				</div>
 				<div className='Avatar-zone-1button'>
-					<a href='http://localhost:9999/log'>
+					<a href={linkToLog}>
 						<LogInButton variant="contained" disableRipple>Log In</LogInButton>
 					</a>
 				</div>
@@ -186,7 +189,7 @@ function AvatarZone(props:any){
 
 	useEffect(() => {
 		const api = async () => {
-			await fetch("http://localhost:9999/api/users/isconnected", {
+			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/isconnected`, {
 				method: "GET",
 				credentials: 'include'
 			})

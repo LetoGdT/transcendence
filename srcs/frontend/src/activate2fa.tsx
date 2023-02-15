@@ -65,7 +65,7 @@ export function Activate2FA(): React.ReactElement{
 	};
 
 	const handleSend = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('http://localhost:9999/api/2fa/enable',{
+		const response = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/2fa/enable`,{
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -82,11 +82,11 @@ export function Activate2FA(): React.ReactElement{
 		})
 		.then(data => {if (data !== undefined) Notification(data.message)});
 	}
-	
+	let qrcode: string = `http://${process.env.REACT_APP_HOSTNAME}:9999/api/2fa/generate`;
 	return(
 		<React.Fragment>
 			<h1>2FA</h1>
-			<img className='transparent' src='http://localhost:9999/api/2fa/generate' alt='QR code'></img>
+			<img className='transparent' src={qrcode} alt='QR code'></img>
 			<CodeOf2FATextField
 				label="6 digits code"
 				InputLabelProps={{
@@ -114,7 +114,7 @@ export function Desactivate2FA(): React.ReactElement{
 	};
 
 	const handleSend = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('http://localhost:9999/api/2fa/disable',{
+		const response = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/2fa/disable`,{
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'

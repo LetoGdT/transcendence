@@ -18,7 +18,7 @@ export function Home(){
 
 	React.useEffect(() => {
 		const api = async () => {
-			await fetch("http://localhost:9999/api/users/isconnected", {
+			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/isconnected`, {
 				method: "GET",
 				credentials: 'include'
 			})
@@ -112,6 +112,7 @@ export function SpecAMatch(){
 		</div>
 	);
 }
+let linkToLog : string = `http://${process.env.REACT_APP_HOSTNAME}:9999/log`;
 
 export function PleaseConnect(){
 	return(
@@ -125,7 +126,7 @@ export function PleaseConnect(){
 				<Link to='/signup'>
 					<SignUpButton variant="contained" disableRipple>Sign Up</SignUpButton>
 				</Link>
-				<a href='http://localhost:9999/log'>
+				<a href={linkToLog}>
 					<LogInButton variant="contained" disableRipple>Log In</LogInButton>
 				</a>
 			</Stack>

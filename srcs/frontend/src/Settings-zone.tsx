@@ -110,7 +110,7 @@ function ActivateOrDesactivate2FAButton(){
 
 	useEffect(() => {
 		const api = async () => {
-			const data = await fetch("http://localhost:9999/api/users/me", {
+			const data = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me`, {
 				method: "GET",
 				credentials: 'include'
 			});
@@ -151,7 +151,7 @@ function Settings(){
 
 	useEffect(() => {
 		const api = async () => {
-			const data = await fetch("http://localhost:9999/api/users/me", {
+			const data = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me`, {
 				method: "GET",
 				credentials: 'include'
 			});
@@ -171,7 +171,7 @@ function Settings(){
 	};
 
 	const handleChangeAlias = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('http://localhost:9999/api/users/me',{
+		const response = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me`,{
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -190,7 +190,7 @@ function Settings(){
 	}
 
 	const handleChangeAvatar = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('http://localhost:9999/api/users/me',{
+		const response = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me`,{
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -215,7 +215,7 @@ function Settings(){
 		const file = input.files[0];
 		const formData = new FormData();
 		formData.append('file', file, file.name);
-		const response = await fetch('http://localhost:9999/api/users/me/picture',{
+		const response = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me/picture`,{
 			headers: {
 					'Accept': 'application/json',
 				},
@@ -332,7 +332,7 @@ export function SettingsZone(){
 
 	useEffect(() => {
 		const api = async () => {
-			await fetch("http://localhost:9999/api/users/isconnected", {
+			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/isconnected`, {
 				method: "GET",
 				credentials: 'include'
 			})
