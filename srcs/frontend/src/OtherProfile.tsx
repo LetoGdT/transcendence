@@ -241,7 +241,7 @@ const AskButton = styled(Button)({
 function AddOrRemoveButton(uid: string | undefined){
 
 	const handleClickInvite = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('http://localhost:9999/api/users/me/friends/invites', {
+		const response = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me/friends/invites`, {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'

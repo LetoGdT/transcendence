@@ -7,6 +7,7 @@ import {WebSocketGateway,
 		ConnectedSocket,
 		WsException
 } from '@nestjs/websockets';
+import { Logger } from '@nestjs/common';
 import { Server,
 		 Socket,
 } from 'socket.io';
@@ -29,6 +30,7 @@ class RemotePlayer {
 	user: User;
 	score: number;
 	y: number;
+	private readonly logger = new Logger(RemotePlayer.name);
 
 	constructor(socket: Socket, user: User) {
 		this.socket = socket;
@@ -103,6 +105,8 @@ class Game {
 
 	readonly usersService: UsersService;
 
+	private readonly logger = new Logger(Game.name);
+
 	constructor(player1: RemotePlayer, player2: RemotePlayer, updateMatchHistory: UpdateMatchHistory,
 		id: number, privateGame: boolean, usersService: UsersService, speed?: number, maxScore?: number) {
 		this.startTime = Date.now();
@@ -169,16 +173,16 @@ class Game {
 				this.start();
 			}
 		} else if (this.gameState === GameState.Created) {
-			console.log('Game is starting');
+			// this.logger.log('Game is starting');
 			if (null != this.player1.socket) {
 				this.netSendGameFoundPacket(this.player1.socket);
-				console.log('Packet sent');
+				// this.logger.log('Packet sent');
 			}
 			if (null != this.player2.socket) {
 				this.netSendGameFoundPacket(this.player2.socket);
-				console.log('Packet sent');
+				// this.logger.log('Packet sent');
 			}
-			console.log('Switching to countdown state');
+			// this.logger.log('Switching to countdown state');
 			this.gameState = GameState.Countdown;
 		} else if (this.gameState === GameState.Countdown) {
 			if (this.timeSinceStart() >= 4000) {
@@ -368,7 +372,7 @@ class Game {
 			}
 		}
 	}
-	
+
 	removeSpectator(socket: Socket) {
 		const idx = this.spectators.findIndex(e => e.id === socket.id);
 
@@ -460,6 +464,7 @@ class Game {
 class GameManager {
 	private games: Game[];
 	private id: number = 1;
+	private readonly logger = new Logger(GameManager.name);
 
 	constructor() {
 		this.games = [];
@@ -521,7 +526,7 @@ class GameManager {
 
 		this.games.push(game);
 
-		console.log(`[GameManager] Creating new ${privateGame ? 'private' : 'public'} game with ${player1.user.username} and ${player2.user.username}`);
+		this.logger.log(`[GameManager] Creating new ${privateGame ? 'private' : 'public'} game with ${player1.user.username} and ${player2.user.username}`);
 
 		
 
@@ -565,6 +570,9 @@ setInterval(() => {
 @WebSocketGateway(9998, { cors: true })
 export class MySocketGateway implements OnGatewayConnection, 
 										OnGatewayDisconnect {
+
+	private readonly logger = new Logger(MySocketGateway.name);
+
 	constructor(private readonly auth: AuthService,
 				private readonly chat: ChatService,
 				private readonly usersService: UsersService,
@@ -601,7 +609,7 @@ export class MySocketGateway implements OnGatewayConnection,
 
 		this.clients.push({user, client});
 		await this.usersService.changeUserStatus(user.id, 'online');
-		console.log(user.username + " has connected to the websocket");
+		this.logger.log(user.username + " has connected to the websocket");
 	}
 
 	removeClientFromQueue(client: Connection) {
@@ -618,7 +626,7 @@ export class MySocketGateway implements OnGatewayConnection,
 			const conn = this.clients[index];
 			const { user } = conn;
 
-			console.log(user.username + " has disconnected from the websocket.");
+			this.logger.log(user.username + " has disconnected from the websocket.");
 			
 			this.removeClientFromQueue(conn);
 
@@ -637,7 +645,7 @@ export class MySocketGateway implements OnGatewayConnection,
 			// gameManager.handleDisconnect(connection);
 		}
 
-		console.log('Player left the queue');
+		this.logger.log(`${connection.user.username} left the queue`);
 	}
 
 	@SubscribeMessage('newMessage')
@@ -781,6 +789,7 @@ export class MySocketGateway implements OnGatewayConnection,
 					this.matchesService.calculateRank(match.id);
 				}, this.usersService);
 			} else {
+				this.logger.log(`${remoteConn.user.username} is queuing`);
 				client.emit('queuing');
 			}
 		}

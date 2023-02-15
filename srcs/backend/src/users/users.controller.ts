@@ -4,7 +4,7 @@ import {
 	UnauthorizedException, ClassSerializerInterceptor,
 	UseInterceptors, Query, Req, UseFilters, Body, UploadedFile, Res,
 	StreamableFile, Header, Response, ParseFilePipe, FileTypeValidator,
-	SerializeOptions, HttpStatus, HttpException
+	SerializeOptions, HttpStatus, HttpException, MaxFileSizeValidator
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
@@ -245,6 +245,7 @@ export class UsersController
 	@UseInterceptors(AuthInterceptor)
 	async uploadImage(@UploadedFile(new ParseFilePipe({
 		validators: [
+			new MaxFileSizeValidator({ maxSize: 10000 }),
 			new FileTypeValidator({ fileType: 'image/*' }),
 			],
 	})) file: Express.Multer.File, @Req() req: RequestWithUser)
