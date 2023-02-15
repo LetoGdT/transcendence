@@ -110,14 +110,14 @@ export class ChannelsService
 		const count = await queryBuilder.getCount();
 
 		if (count >= 1)
-			throw new BadRequestException('A channel with this name already exists');
+			throw new BadRequestException(['A channel with this name already exists']);
 
 		const owner = new ChannelUser();
 		owner.user = requester;
 		owner.role = 'Owner';
 		postChannelDto.name = postChannelDto.name.trim();
 		if (postChannelDto.name.length < 3)
-			throw new BadRequestException('Channel length (trimmed spaces not included) must be greater or equal to 3');
+			throw new BadRequestException(['Channel length (trimmed spaces not included) must be greater or equal to 3']);
 		const newChannel = await this.channelRepository.create({
 			name: postChannelDto.name,
 			users: [owner],
@@ -135,7 +135,7 @@ export class ChannelsService
 	async updateChannel(id: number, patchChannelDto: PatchChannelDto,  user: User)
 	{
 		if (id > this.IdMax)
-			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
+			throw new BadRequestException([`id must not be greater than ${this.IdMax}`]);
 
 		const queryBuilder = this.channelRepository.createQueryBuilder('channel');
 
@@ -147,7 +147,7 @@ export class ChannelsService
 		const channel = await queryBuilder.getOne();
 
 		if (channel == null)
-			throw new BadRequestException('Channel not found');
+			throw new BadRequestException(['Channel not found']);
 
 		let channelUser: ChannelUser | null = null;
 
@@ -171,7 +171,7 @@ export class ChannelsService
 		if (channel.status == 'protected' && channelUser.role === 'Owner')
 		{
 			if (patchChannelDto.password == null)
-				throw new BadRequestException('A password is expected for protected channels');
+				throw new BadRequestException(['A password is expected for protected channels']);
 			channel.password = await bcrypt.hash(patchChannelDto.password, 10);
 		}
 
@@ -184,7 +184,7 @@ export class ChannelsService
 	async joinChannel(id: number, requester: User, password: string): Promise<Channel>
 	{
 		if (id > this.IdMax)
-			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
+			throw new BadRequestException([`id must not be greater than ${this.IdMax}`]);
 
 		const queryBuilder = this.channelRepository.createQueryBuilder('channel');
 
@@ -198,15 +198,15 @@ export class ChannelsService
 		const channel = await queryBuilder.getOne();
 
 		if (channel == null)
-			throw new BadRequestException('Channel not found');
+			throw new BadRequestException(['Channel not found']);
 
 		if (channel.status == 'private')
-			throw new BadRequestException('This channel is private');
+			throw new BadRequestException(['This channel is private']);
 
 		if (channel.status == 'protected')
 		{
 			if (password == null)
-				throw new BadRequestException('A password is expected for protected channels');
+				throw new BadRequestException(['A password is expected for protected channels']);
 			const isMatch: boolean = await bcrypt.compare(password, channel.password);
 			if (!isMatch)
 				throw new HttpException('Passwords don\'t match', HttpStatus.FORBIDDEN);
@@ -227,7 +227,7 @@ export class ChannelsService
 		for (let channelUser of channel.users)
 		{
 			if (JSON.stringify(channelUser.user) == JSON.stringify(requester))
-				throw new BadRequestException('You are already in this channel');
+				throw new BadRequestException(['You are already in this channel']);
 		}
 
 		const newUser = new ChannelUser();
@@ -242,7 +242,7 @@ export class ChannelsService
 		patchChannelUserDto: PatchChannelUserDto)
 	{
 		if (channel_id > this.IdMax || user_id > this.IdMax)
-			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
+			throw new BadRequestException([`id must not be greater than ${this.IdMax}`]);
 
 		const queryBuilder = this.channelRepository.createQueryBuilder('channel');
 
@@ -271,11 +271,11 @@ export class ChannelsService
 		if (requester == null)
 			throw new HttpException('You are not in this channel', HttpStatus.FORBIDDEN);
 		if (toChange == null)
-			throw new BadRequestException('User not found');
+			throw new BadRequestException(['User not found']);
 		if (channel == null)
-			throw new BadRequestException('Channel not found');
+			throw new BadRequestException(['Channel not found']);
 		if (requester.id == toChange.id)
-			throw new BadRequestException('You can\'t modify your own role !');
+			throw new BadRequestException(['You can\'t modify your own role !']);
 
 		const toChangeIndex = channel.users.findIndex((user) => {
 			return user.id === toChange.id;
@@ -320,7 +320,7 @@ export class ChannelsService
 	async deleteChannelUser(channel_id: number, user_id: number, user: User): Promise<Channel>
 	{
 		if (channel_id > this.IdMax || user_id > this.IdMax)
-			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
+			throw new BadRequestException([`id must not be greater than ${this.IdMax}`]);
 
 		const queryBuilder = this.channelRepository.createQueryBuilder('channel');
 
@@ -345,9 +345,9 @@ export class ChannelsService
 		if (requester == null)
 			throw new HttpException('You are not in this channel', HttpStatus.FORBIDDEN);
 		if (toDelete == null)
-			throw new BadRequestException('User not found');
+			throw new BadRequestException(['User not found']);
 		if (channel == null)
-			throw new BadRequestException('Channel not found');
+			throw new BadRequestException(['Channel not found']);
 
 		const toDeleteIndex = channel.users.findIndex((user) => {
 			return user.id === toDelete.id;
@@ -386,7 +386,7 @@ export class ChannelsService
 	async createChannelMessage(channel_id: number, postMessageDto: PostMessageDto, sender: User)
 	{
 		if (channel_id > this.IdMax)
-			throw new BadRequestException(`channel_id must not be greater than ${this.IdMax}`);
+			throw new BadRequestException([`channel_id must not be greater than ${this.IdMax}`]);
 
 		const queryBuilder = this.channelRepository.createQueryBuilder('channel');
 
@@ -435,7 +435,7 @@ export class ChannelsService
 		updateMessageDto: UpdateMessageDto, sender: User)
 	{
 		if (channel_id > this.IdMax)
-			throw new BadRequestException(`channel_id must not be greater than ${this.IdMax}`);
+			throw new BadRequestException([`channel_id must not be greater than ${this.IdMax}`]);
 
 		const queryBuilder = this.channelRepository.createQueryBuilder('channel');
 
@@ -473,7 +473,7 @@ export class ChannelsService
 	async deleteChannelMessage(channel_id: number, message_id: number, sender: User)
 	{
 		if (channel_id > this.IdMax)
-			throw new BadRequestException(`channel_id must not be greater than ${this.IdMax}`);
+			throw new BadRequestException([`channel_id must not be greater than ${this.IdMax}`]);
 
 		const queryBuilder = this.channelRepository.createQueryBuilder('channel');
 
@@ -540,7 +540,7 @@ export class ChannelsService
 		channelBanQueryFilterDto: ChannelBanQueryFilterDto): Promise<PageDto<ChannelBan>>
 	{
 		if (channel_id > this.IdMax)
-			throw new BadRequestException(`channel_id must not be greater than ${this.IdMax}`);
+			throw new BadRequestException([`channel_id must not be greater than ${this.IdMax}`]);
 
 		const queryBuilder = this.channelBanRepository.createQueryBuilder('channelBan');
 
@@ -572,7 +572,7 @@ export class ChannelsService
 	async banChannelUser(channel_id: number, postChannelBanDto: PostChannelBanDto, user: User)
 	{
 		if (channel_id > this.IdMax)
-			throw new BadRequestException(`channel_id must not be greater than ${this.IdMax}`);
+			throw new BadRequestException([`channel_id must not be greater than ${this.IdMax}`]);
 
 		const queryBuilder = this.channelRepository.createQueryBuilder('channel');
 
@@ -592,7 +592,7 @@ export class ChannelsService
 		});
 
 		if (bannedIndex !== -1)
-			throw new BadRequestException('User is already banned');
+			throw new BadRequestException(['User is already banned']);
 
 		const users = channel.users;
 
@@ -611,7 +611,7 @@ export class ChannelsService
 			throw new HttpException('User was not found', HttpStatus.NOT_FOUND);
 
 		if (toBanIndex === userIndex)
-			throw new BadRequestException('You can\'t ban yourself !');
+			throw new BadRequestException(['You can\'t ban yourself !']);
 
 		if (this.permissions.get(users[userIndex].role) <= this.permissions.get(users[toBanIndex].role))
 			throw new HttpException('You can\'t ban a user with a higher or equal role', HttpStatus.FORBIDDEN);
@@ -630,7 +630,7 @@ export class ChannelsService
 	async updateChannelBan(channel_id: number, ban_id: number, updateChannelBanDto: UpdateChannelBanDto, user: User)
 	{
 		if (channel_id > this.IdMax)
-			throw new BadRequestException(`channel_id must not be greater than ${this.IdMax}`);
+			throw new BadRequestException([`channel_id must not be greater than ${this.IdMax}`]);
 
 		const queryBuilder = this.channelRepository.createQueryBuilder('channel');
 
@@ -662,7 +662,7 @@ export class ChannelsService
 			throw new HttpException('User ban was not found', HttpStatus.NOT_FOUND);
 
 		if (banlist[bannedIndex].id === user.id)
-			throw new BadRequestException('You can\'t unban yourself !');
+			throw new BadRequestException(['You can\'t unban yourself !']);
 
 		if (this.permissions.get(channel.users[userIndex].role) < this.permissions.get('Admin'))
 			throw new HttpException('You need to be admin or owner to edit a ban', HttpStatus.FORBIDDEN);
@@ -674,7 +674,7 @@ export class ChannelsService
 	async deleteChannelBan(channel_id: number, ban_id: number, user: User)
 	{
 		if (channel_id > this.IdMax)
-			throw new BadRequestException(`channel_id must not be greater than ${this.IdMax}`);
+			throw new BadRequestException([`channel_id must not be greater than ${this.IdMax}`]);
 
 		const queryBuilder = this.channelRepository.createQueryBuilder('channel');
 
@@ -706,7 +706,7 @@ export class ChannelsService
 			throw new HttpException('User ban was not found', HttpStatus.NOT_FOUND);
 
 		if (banlist[bannedIndex].id === user.id)
-			throw new BadRequestException('You can\'t unban yourself !');
+			throw new BadRequestException(['You can\'t unban yourself !']);
 
 		if (this.permissions.get(channel.users[userIndex].role) < this.permissions.get('Admin'))
 			throw new HttpException('You need to be admin or owner to edit a ban', HttpStatus.FORBIDDEN);
