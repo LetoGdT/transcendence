@@ -87,11 +87,15 @@ function SetChannel(){
 			if (!response.ok)
 				return response.json();
 			else {
-				window.location.reload();
 				socket.emit('newChannel');
+				window.location.replace('/chat');
 			}
 		})
-		.then(data => {if (data !== undefined) Notification(data.message)});
+		.then(data => {
+			if (data !== undefined) {
+				Notification(data.message);
+			}
+		});
 	};
 
     return(
@@ -132,11 +136,9 @@ function SetChannel(){
 					</div>
 				</div>
 				<div className='SetChannel-button'>
-					<Link to="/chat">
-						<SetChannelButton variant="contained" disableRipple onClick={handleClickSetChannel}>
-							Create Channel
-						</SetChannelButton>
-					</Link>
+					<SetChannelButton variant="contained" disableRipple onClick={handleClickSetChannel}>
+						Create Channel
+					</SetChannelButton>
 				</div>
 			</div>
 		</React.Fragment>

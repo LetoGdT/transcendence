@@ -39,22 +39,24 @@ const newMessage = () => {
 	);
 };
 
-export const Notification = (notif: string) => {
-	toast.custom(
-		<div className='ErrorNotif'>
-			{notif}
-		</div>,
-		{
-			duration: 5000,
-			position: 'top-center',
+export const Notification = (notif: string[]) => {
+	notif.forEach((errorMsg: string) => {
+		toast.custom(
+			<div className='ErrorNotif'>
+				{errorMsg}
+			</div>,
+			{
+				duration: 5000,
+				position: 'top-center',
 
-			// Aria
-			ariaProps: {
-			role: 'status',
-			'aria-live': 'polite',
-			},
-		}
-	);
+				// Aria
+				ariaProps: {
+				role: 'status',
+				'aria-live': 'polite',
+				},
+			}
+		);
+	});
 };
 
 export const setUpNewMessageNotificationsFn = () => {

@@ -516,7 +516,7 @@ function Chat() {
 
 	const handleSendMessage = async () => {
 		if (newMessage.length === 0 || currentConv === -1) {
-			Notification("You have nowhere to send a message");
+			Notification(["You have nowhere to send a message"]);
 			return ;
 		}
 		await fetch(`http://localhost:9999/api/${isChannel?'channels':'conversations'}/${currentConv}/messages`, {
