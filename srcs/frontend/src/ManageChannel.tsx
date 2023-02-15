@@ -212,18 +212,18 @@ function ManageChannel(){
 	}
 
 	async function updateUsers() {
-		try {
+		// try {
 			getAllPaginated(`channels/${cid}/users`)
 			.then(data => setUsers(data));
-		} catch (err) {
-			if (err instanceof Error)
-			{
-				console.log('Maybe a toast here ? ^^');
-				// err.cause contains the response, so all the infos you could ever dream of :)
-				if (err.cause instanceof Response)
-					console.log(err.cause.status);
-			}
-		}
+		// } catch (err) {
+		// 	if (err instanceof Error)
+		// 	{
+		// 		console.log('Maybe a toast here ? ^^');
+		// 		// err.cause contains the response, so all the infos you could ever dream of :)
+		// 		if (err.cause instanceof Response)
+		// 			console.log(err.cause.status);
+		// 	}
+		// }
 	}
 
 	async function updateChannel() {

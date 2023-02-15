@@ -188,7 +188,6 @@ const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) =>
 	// 		</div>
 	// 	);
 	// }
-	
 }
 
 const Pong = (props: any) => {

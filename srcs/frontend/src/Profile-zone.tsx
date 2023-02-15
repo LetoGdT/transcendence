@@ -124,7 +124,6 @@ function Profile(){
 	useEffect(() => {
 		socket.on('returnInvites', (data) => {
 			setGames(data);
-			// console.log(games);//
 		})
 	}, []);
 

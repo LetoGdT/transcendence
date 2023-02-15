@@ -149,7 +149,6 @@ function SetPrivateGame(){
 	};
 
 	const onGameCreated = ({ game_id }: { game_id: number }) => {
-		console.log('GAAAAAMe created ' + game_id);
 		navigate(`/join/${game_id}`);
 	};
 
