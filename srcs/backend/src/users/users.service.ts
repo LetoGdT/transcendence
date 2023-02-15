@@ -65,7 +65,7 @@ export class UsersService
 		if (id == null)
 			throw new HttpException('id is undefined', HttpStatus.INTERNAL_SERVER_ERROR);
 		if (id > this.IdMax)
-			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
+			throw new BadRequestException([`id must not be greater than ${this.IdMax}`]);
 		return this.userRepository.findOne({ where: { id: id } });
 	}
 
@@ -83,7 +83,7 @@ export class UsersService
 			where: { username: updateUserDto.username }
 		});
 		if (updateUserDto.username != null && dup != null)
-			throw new BadRequestException('Username already exists');
+			throw new BadRequestException(['Username already exists']);
 
 		if (updateUserDto.username != null)
 			user.username = updateUserDto.username;
@@ -99,10 +99,10 @@ export class UsersService
 					responseType: 'arraybuffer'
 				});
 			}
-			catch (err) { throw new BadRequestException('Invalid url') }
+			catch (err) { throw new BadRequestException(['Invalid url']) }
 			const type = await this.mimeFromBuffer(response.data);
 			if (typeof type === "string" && type.split('/')[0] !== 'image')
-				throw new BadRequestException('Invalid file; expected an image');
+				throw new BadRequestException(['Invalid file; expected an image']);
 			let oldPath;
 			let toDelete: boolean = true;
 			try
@@ -164,7 +164,7 @@ export class UsersService
 	async createUserFriend(user: User, createUserFriendDto: CreateUserFriendDto)
 	{
 		if (user.id == createUserFriendDto.id)
-			throw new BadRequestException('You can\'t be friend with yourself. But love yourself.')
+			throw new BadRequestException(['You can\'t be friend with yourself. But love yourself.']);
 
 		const queryBuilder1 = this.userRepository.createQueryBuilder('user');
 
@@ -181,7 +181,7 @@ export class UsersService
 		});
 
 		if (toAddIndex != -1)
-			throw new BadRequestException('You are already friends');
+			throw new BadRequestException(['You are already friends']);
 
 		const queryBuilder2 = this.userRepository.createQueryBuilder('user');
 
@@ -198,7 +198,7 @@ export class UsersService
 		});
 
 		if (invitationIndex === -1)
-			throw new BadRequestException('You were not invited by this user');
+			throw new BadRequestException(['You were not invited by this user']);
 
 		user.invitations.splice(invitationIndex, 1);
 		user.following.push(newFriend);
@@ -209,7 +209,7 @@ export class UsersService
 	async deleteUserFriend(user: User, user_id: number)
 	{
 		if (user_id > this.IdMax)
-			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
+			throw new BadRequestException([`id must not be greater than ${this.IdMax}`]);
 
 		const queryBuilder = this.userRepository.createQueryBuilder('user');
 
@@ -225,7 +225,7 @@ export class UsersService
 		});
 
 		if (toRemoveIndex == -1)
-			throw new BadRequestException('User is not in your friendlist');
+			throw new BadRequestException(['User is not in your friendlist']);
 
 		user.following.splice(toRemoveIndex, 1);
 		user.followers.splice(toRemoveIndex, 1);
@@ -247,7 +247,7 @@ export class UsersService
 	async inviteUser(user: User, createUserFriendDto: CreateUserFriendDto)
 	{
 		if (user.id == createUserFriendDto.id)
-			throw new BadRequestException('You can\'t invite yourself.')
+			throw new BadRequestException(['You can\'t invite yourself.']);
 
 		const queryBuilder1 = this.userRepository.createQueryBuilder('user');
 
@@ -264,14 +264,14 @@ export class UsersService
 		});
 
 		if (checkIfFriend !== -1)
-			throw new BadRequestException('You are already friends!');
+			throw new BadRequestException(['You are already friends!']);
 
 		let toAddIndex: number = user.invited.findIndex((users) => {
 			return users.id == createUserFriendDto.id;
 		});
 
 		if (toAddIndex !== -1)
-			throw new BadRequestException('You can only send one invite at a time.');
+			throw new BadRequestException(['You can only send one invite at a time.']);
 
 		const queryBuilder2 = this.userRepository.createQueryBuilder('user');
 
@@ -311,7 +311,7 @@ export class UsersService
 	async declineInvitation(user: User, user_id: number)
 	{
 		if (user_id > this.IdMax)
-			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
+			throw new BadRequestException([`id must not be greater than ${this.IdMax}`]);
 
 		const queryBuilder = this.userRepository.createQueryBuilder('user');
 
@@ -326,7 +326,7 @@ export class UsersService
 		});
 
 		if (toRemoveIndex == -1)
-			throw new BadRequestException('User did not invite you');
+			throw new BadRequestException(['User did not invite you']);
 
 		user.invitations.splice(toRemoveIndex, 1);
 		return this.userRepository.save(user);
@@ -347,7 +347,7 @@ export class UsersService
 		const retUser: User | null = await queryBuilder.getOne();
 
 		if (retUser == null)
-			throw new BadRequestException("User doesn\'t exist");
+			throw new BadRequestException(["User doesn\'t exist"]);
 
 		return retUser.banlist;
 	}
@@ -355,7 +355,7 @@ export class UsersService
 	async banUser(createUserFriendDto: CreateUserFriendDto, user: User)
 	{
 		if (user.id == createUserFriendDto.id)
-			throw new BadRequestException('Do you really want to ban yourself ?!');
+			throw new BadRequestException(['Do you really want to ban yourself ?!']);
 
 		const queryBuilder1 = this.userRepository.createQueryBuilder('user');
 
@@ -372,7 +372,7 @@ export class UsersService
 		});
 
 		if (toBanIndex != -1)
-			throw new BadRequestException('You already banned this user');
+			throw new BadRequestException(['You already banned this user']);
 
 		const queryBuilder2 = this.userRepository.createQueryBuilder('user');
 
@@ -411,13 +411,14 @@ export class UsersService
 			});
 			newBan.invitations.splice(invitationIndex, 1);
 		}
+		await this.userRepository.save(newBan);
 		return this.userRepository.save(user);
 	}
 
 	async unbanUser(user: User, user_id: number)
 	{
 		if (user_id > this.IdMax)
-			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
+			throw new BadRequestException([`id must not be greater than ${this.IdMax}`]);
 
 		const queryBuilder = this.userRepository.createQueryBuilder('user');
 
@@ -432,7 +433,7 @@ export class UsersService
 		});
 
 		if (toRemoveIndex == -1)
-			throw new BadRequestException('User is not in your banlist');
+			throw new BadRequestException(['User is not in your banlist']);
 
 		user.banlist.splice(toRemoveIndex, 1);
 		return this.userRepository.save(user);
@@ -454,7 +455,7 @@ export class UsersService
 	async getAchievements(id: number, pageOptionsDto: PageOptionsDto)
 	{
 		if (id > this.IdMax)
-			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
+			throw new BadRequestException([`id must not be greater than ${this.IdMax}`]);
 		return this.achievementsService.getUserAchievements(pageOptionsDto, id);
 	}
 
