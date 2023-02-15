@@ -785,26 +785,28 @@ function Chat() {
 	return (
 			<React.Fragment>
 				<h1>Chat</h1>
-				<div className='Chat-container'>
-					<ChatNavigate />
-					<div>
-						<DisplayMessageHistory/>
-						<div className='Chat-TextField-send-button'>
-							<div className='Chat-TextField'>
-								<TextareaAutosize
-									maxRows={4}
-									aria-label="maximum height"
-									placeholder="Message"
-									value={newMessage}
-									
-									style={{ width: "100%", borderRadius: "10px"}}
-									onChange={handleInputMessage}
-								/> 
-							</div>
-							<div className='Chat-send-button'>
-								<SendButton variant="contained" disableRipple
-								onClick={handleSendMessage}
-								>Send</SendButton>
+				<div className='Chat-zone-container'>
+					<div className='Chat-container'>
+						<ChatNavigate />
+						<div>
+							<DisplayMessageHistory/>
+							<div className='Chat-TextField-send-button'>
+								<div className='Chat-TextField'>
+									<TextareaAutosize
+										maxRows={4}
+										aria-label="maximum height"
+										placeholder="Message"
+										value={newMessage}
+										
+										style={{ width: "100%", borderRadius: "10px"}}
+										onChange={handleInputMessage}
+									/> 
+								</div>
+								<div className='Chat-send-button'>
+									<SendButton variant="contained" disableRipple
+									onClick={handleSendMessage}
+									>Send</SendButton>
+								</div>
 							</div>
 						</div>
 					</div>
