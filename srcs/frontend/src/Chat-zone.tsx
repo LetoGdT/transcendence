@@ -515,7 +515,7 @@ function Chat() {
 	}
 
 	const handleSendMessage = async () => {
-		if (newMessage.length === 0 || currentConv === -1) {
+		if (currentConv === -1) {
 			Notification(["You have nowhere to send a message"]);
 			return ;
 		}
