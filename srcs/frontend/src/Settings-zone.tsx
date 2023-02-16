@@ -307,7 +307,7 @@ function Settings(){
 									ex: Toto
 								</div>
 							</div>
-							<div>
+							<div className='Settings-container-div-lvl4'>
 								<SettingsButton variant="contained" disableRipple onClick={
 									handleChangeAlias
 								}>Change Alias</SettingsButton>

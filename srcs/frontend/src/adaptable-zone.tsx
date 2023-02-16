@@ -1,5 +1,6 @@
 import './App.css'
 import './Friend.css'
+import './Home.css'
 
 import * as React from 'react';
 import Button from '@mui/material/Button';
@@ -10,6 +11,57 @@ import { getAllPaginated } from './tools';
 
 type resultProps = {
 	data: [];
+}
+
+function Presentation(){
+	return(
+		<div>
+			<h1>Home</h1>
+			<div className='Presentation'>
+				<div>
+					Bienvenue sur notre projet ft_transcendence.
+					<br></br>
+					Ce projet a été réalisé par :
+					<br></br>
+				</div>
+				<div className='Presentation-container'>
+					<div className='Presentation-container-div'>
+						<a href='https://profile.intra.42.fr/users/tlafay'>
+							<div>
+								<img src="https://cdn.intra.42.fr/users/74354c8527133922edfca5bdfa9e0d74/tlafay.jpg" alt={"tlafay's avatar"} className='Presentation-avatar'></img>
+							</div>
+							<div className='Presentation-Name-status'>
+								<div className='Presentation-name'>tlafay</div>
+							</div>
+						</a>
+					</div>
+					<div className='Presentation-container-div'>
+						<a href='https://profile.intra.42.fr/users/lburnet'>
+							<div>
+								<img src="https://cdn.intra.42.fr/users/554ea290ae9a8010d1b07010036acbce/lburnet.jpg" alt={"lburnet's avatar"} className='Presentation-avatar'></img>
+							</div>
+							<div className='Presentation-Name-status'>
+								<div className='Presentation-name'>lburnet</div>
+							</div>
+						</a>
+					</div>
+					<div className='Presentation-container-div'>
+						<a href='https://profile.intra.42.fr/users/lgaudet-'>
+							<div>
+								<img src="https://cdn.intra.42.fr/users/809d99670399b657256668e1e5873a5b/lgaudet-.jpg" alt={"lgaudet-'s avatar"} className='Presentation-avatar'></img>
+							</div>
+							<div className='Presentation-Name-status'>
+								<div className='Presentation-name'>lgaudet-</div>
+							</div>
+						</a>
+					</div>
+				</div>
+				<div>
+					HF pendant cette correction.
+				</div>
+			</div>
+		</div>
+	);
 }
 
 export function Home(){
@@ -46,15 +98,7 @@ export function Home(){
 	if (isLoggedIn){
 		return (
 			<React.Fragment>
-				<div>
-					<h1>Home</h1>
-					<p>Bienvenue sur notre projet ft_transcendence.
-						<br></br>
-						Ce projet a été réalisé par <a href='https://profile.intra.42.fr/users/tlafay'>tlafay</a>, <a href='https://profile.intra.42.fr/users/lgaudet-'>lgaudet-</a> et <a href='https://profile.intra.42.fr/users/lburnet'>lburnet</a>
-						<br></br>
-						HF pendant cette correction.
-					</p>
-				</div>
+				<Presentation />
 				<div>
 					<h1>List of users</h1>
 					<div className='Friend-container'>
