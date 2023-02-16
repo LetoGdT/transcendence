@@ -62,7 +62,7 @@ export class ConversationsService
 	async createConversation(user: User, postConversationDto: PostConversationDto): Promise<Conversation>
 	{	
 		if (user.id == postConversationDto.recipient_id)
-			throw new BadRequestException('You\'d better talk in your head!');
+			throw new BadRequestException(['You\'d better talk in your head!']);
 
 		const queryBuilder = this.conversationsRepository.createQueryBuilder('conversation')
 			.where(new Brackets(qb => {
@@ -77,12 +77,12 @@ export class ConversationsService
 		const count = await queryBuilder.getCount();
 
 		if (count >= 1)
-			throw new BadRequestException('Conversation already exists');
+			throw new BadRequestException(['Conversation already exists']);
 
 		const recipient = await this.usersService.getOneById(postConversationDto.recipient_id);
 
 		if (recipient == null)
-			throw new BadRequestException('User not found');
+			throw new BadRequestException(['User not found']);
 
 		const newConversation = await this.conversationsRepository.create({
 			user1: user,
@@ -99,7 +99,7 @@ export class ConversationsService
 		options?: { as_sender?: boolean, as_recipient?: boolean }): Promise<PageDto<Message>>
 	{
 		if (conversation_id > this.IdMax)
-			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
+			throw new BadRequestException([`id must not be greater than ${this.IdMax}`]);
 
 		const count = await this.conversationsRepository.createQueryBuilder('conversation')
 			.leftJoinAndSelect('conversation.user1', 'user1')
@@ -112,7 +112,7 @@ export class ConversationsService
 			.getCount();
 
 		if (count != 1)
-			throw new HttpException('You are not a part of this conversation', HttpStatus.FORBIDDEN);
+			throw new HttpException(['You are not a part of this conversation'], HttpStatus.FORBIDDEN);
 
 		const queryBuilder= this.messagesRepository.createQueryBuilder('message');
 
@@ -155,7 +155,7 @@ export class ConversationsService
 		user: User): Promise<Conversation>
 	{
 		if (conversation_id > this.IdMax)
-			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
+			throw new BadRequestException([`id must not be greater than ${this.IdMax}`]);
 
 		const queryBuilder = this.conversationsRepository.createQueryBuilder('conversation')
 			.leftJoinAndSelect('conversation.user1', 'user1')
@@ -170,12 +170,12 @@ export class ConversationsService
 		const count = await queryBuilder.getCount();
 
 		if (count != 1)
-			throw new HttpException('You are not a part of this conversation', HttpStatus.FORBIDDEN);
+			throw new HttpException(['You are not a part of this conversation'], HttpStatus.FORBIDDEN);
 
 		const conversation = await queryBuilder.getOne();
 
 		if (conversation == null)
-			throw new HttpException("An unexpected error occured", HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new HttpException(["An unexpected error occured"], HttpStatus.INTERNAL_SERVER_ERROR);
 
 		const userSelect = conversation.user1.id == user.id ? 'user2': 'user1'
 
@@ -191,19 +191,19 @@ export class ConversationsService
 		const receiverConversation = await queryBuilder2.getOne();
 
 		if (receiverConversation == null)
-			throw new HttpException("An unexpected error occured", HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new HttpException(["An unexpected error occured"], HttpStatus.INTERNAL_SERVER_ERROR);
 
 		const receiver = receiverConversation[userSelect];
 
 		if (receiver == null)
-			throw new BadRequestException('An error occured');
+			throw new BadRequestException(['An error occured']);
 
 		let bannedIndex: number = receiver.banlist.findIndex((user) => {
 			return user.id == user.id;
 		});
 
 		if (bannedIndex != -1)
-			throw new HttpException('You have been blocked by this user', HttpStatus.FORBIDDEN);
+			throw new HttpException(['You have been blocked by this user'], HttpStatus.FORBIDDEN);
 
 		const newMessage : Message = new Message();
 		newMessage.sender = user;
@@ -229,7 +229,7 @@ export class ConversationsService
 		user: User)
 	{
 		if (conversation_id > this.IdMax)
-			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
+			throw new BadRequestException([`id must not be greater than ${this.IdMax}`]);
 
 		const queryBuilder = this.conversationsRepository.createQueryBuilder('conversation')
 			.leftJoinAndSelect('conversation.user1', 'user1')
@@ -245,22 +245,22 @@ export class ConversationsService
 		const count = await queryBuilder.getCount();
 
 		if (count != 1)
-			throw new HttpException('You are not a part of this conversation', HttpStatus.FORBIDDEN);
+			throw new HttpException(['You are not a part of this conversation'], HttpStatus.FORBIDDEN);
 
 		const conversation = await queryBuilder.getOne();
 
 		if (conversation == null)
-			throw new HttpException("An unexpected error occured", HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new HttpException(["An unexpected error occured"], HttpStatus.INTERNAL_SERVER_ERROR);
 
 		let messageIndex: number = conversation.messages.findIndex((message) => {
 			return message.id == message_id;
 		});
 
 		if (messageIndex === -1)
-			throw new HttpException('Message not found', HttpStatus.NOT_FOUND);
+			throw new HttpException(['Message not found'], HttpStatus.NOT_FOUND);
 
 		if (conversation.messages[messageIndex].sender.id != user.id)
-			throw new HttpException('You can only modify your own messages', HttpStatus.FORBIDDEN);
+			throw new HttpException(['You can only modify your own messages'], HttpStatus.FORBIDDEN);
 
 		return this.messagesService.updateMessageFromId(message_id, updateConversationMessageDto.content);
 	}
@@ -270,7 +270,7 @@ export class ConversationsService
 		user: User)
 	{
 		if (conversation_id > this.IdMax)
-			throw new BadRequestException(`id must not be greater than ${this.IdMax}`);
+			throw new BadRequestException([`id must not be greater than ${this.IdMax}`]);
 
 		const queryBuilder = this.conversationsRepository.createQueryBuilder('conversation')
 			.leftJoinAndSelect('conversation.user1', 'user1')
@@ -286,22 +286,22 @@ export class ConversationsService
 		const count = await queryBuilder.getCount();
 
 		if (count != 1)
-			throw new HttpException('You are not a part of this conversation', HttpStatus.FORBIDDEN);
+			throw new HttpException(['You are not a part of this conversation'], HttpStatus.FORBIDDEN);
 
 		const conversation: Conversation | null = await queryBuilder.getOne();
 
 		if (conversation == null)
-			throw new HttpException("An unexpected error occured", HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new HttpException(["An unexpected error occured"], HttpStatus.INTERNAL_SERVER_ERROR);
 
 		let messageIndex: number = conversation.messages.findIndex((message) => {
 			return message.id == message_id;
 		});
 
 		if (messageIndex === -1)
-			throw new HttpException('Message not found', HttpStatus.NOT_FOUND);
+			throw new HttpException(['Message not found'], HttpStatus.NOT_FOUND);
 
 		if (conversation.messages[messageIndex].sender.id != user.id)
-			throw new HttpException('You can only modify your own messages', HttpStatus.FORBIDDEN);
+			throw new HttpException(['You can only modify your own messages'], HttpStatus.FORBIDDEN);
 
 		await this.messagesService.deleteMessage(conversation.messages[messageIndex]);
 		

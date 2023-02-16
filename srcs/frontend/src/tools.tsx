@@ -10,7 +10,7 @@ export async function getPaginatedRequest(url: string, pageStart: number, pageEn
 	options?: { take?: number, params?: URLSearchParams }): Promise<any>
 {
 	let ret: any = [];
-	const fullUrl = `http://${process.env.REACT_APP_HOSTNAME}:9999/api/` + url + '?';
+	const fullUrl = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/` + url + '?';
 	if (options === undefined || options.take === undefined){
 		for (let i: number = pageStart - 1; i !== pageEnd; i++)
 		{
@@ -56,7 +56,7 @@ export async function getAllPaginated(url: string,
 	let take: string = "30";
 	if (options !== undefined && options.take !== undefined)
 		take = options.take.toString();
-	const fullUrl = `http://${process.env.REACT_APP_HOSTNAME}:9999/api/` + url + '?';
+	const fullUrl = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/` + url + '?';
 	for (let i: number = 0;; i++)
 	{
 		const params = new URLSearchParams({

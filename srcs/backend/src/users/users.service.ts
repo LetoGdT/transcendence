@@ -1,5 +1,6 @@
 import { Logger, Injectable, BadRequestException, HttpStatus, HttpException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ConfigService } from '@nestjs/config';
 import { HttpService } from "@nestjs/axios";
 import { Repository, UpdateResult } from 'typeorm';
 import * as fs from 'fs';
@@ -20,7 +21,8 @@ export class UsersService
 
 	constructor(@InjectRepository(User) private readonly userRepository: Repository<User>,
 		private achievementsService: AchievementsService,
-		private readonly http: HttpService) {}
+		private readonly http: HttpService,
+		private readonly configService: ConfigService) {}
 
 	public async getUsers(pageOptionsDto: PageOptionsDto,
 		userQueryFilterDto: UserQueryFilterDto): Promise<PageDto<User>>
@@ -63,7 +65,7 @@ export class UsersService
 	async getOneById(id: number): Promise<User | null>
 	{
 		if (id == null)
-			throw new HttpException('id is undefined', HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new HttpException(['id is undefined'], HttpStatus.INTERNAL_SERVER_ERROR);
 		if (id > this.IdMax)
 			throw new BadRequestException([`id must not be greater than ${this.IdMax}`]);
 		return this.userRepository.findOne({ where: { id: id } });
@@ -72,7 +74,7 @@ export class UsersService
 	async getOneByRefresh(refresh: string): Promise<User | null>
 	{
 		if (refresh == null)
-			throw new HttpException('refresh is undefined', HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new HttpException(['refresh is undefined'], HttpStatus.INTERNAL_SERVER_ERROR);
 		return this.userRepository.findOne({ where: { refresh_token: refresh } });
 	}
 
@@ -114,7 +116,7 @@ export class UsersService
 			{
 				fs.unlink(oldPath, (err) => {
 					if (err)
-						throw new HttpException('There was an error deleting the previous file',
+						throw new HttpException(['There was an error deleting the previous file'],
 							HttpStatus.INTERNAL_SERVER_ERROR)
 				});
 			}
@@ -191,7 +193,7 @@ export class UsersService
 		const newFriend = await queryBuilder2.getOne();
 
 		if (newFriend == null)
-			throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+			throw new HttpException(['User not found'], HttpStatus.NOT_FOUND);
 
 		const invitationIndex: number = user.invitations.findIndex((users) => {
 			return users.id == createUserFriendDto.id;
@@ -282,7 +284,7 @@ export class UsersService
 		const user2: User | null = await queryBuilder2.getOne();
 
 		if (user2 == null)
-			throw new HttpException("An unexpected error occured: invalid id",
+			throw new HttpException(["An unexpected error occured: invalid id"],
 				HttpStatus.INTERNAL_SERVER_ERROR);
 
 		let checkBan: number = user2.banlist.findIndex((users) => {
@@ -290,19 +292,19 @@ export class UsersService
 		});
 
 		if (checkBan != -1)
-			throw new HttpException('You have been blocked by this user', HttpStatus.FORBIDDEN);
+			throw new HttpException(['You have been blocked by this user'], HttpStatus.FORBIDDEN);
 
 		checkBan = user.banlist.findIndex((users) => {
 			return users.id == user2.id
 		})
 
 		if (checkBan != -1)
-			throw new HttpException('You blocked this user', HttpStatus.FORBIDDEN);
+			throw new HttpException(['You blocked this user'], HttpStatus.FORBIDDEN);
 
 		const newInvited = await queryBuilder2.getOne();
 
 		if (newInvited == null)
-			throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+			throw new HttpException(['User not found'], HttpStatus.NOT_FOUND);
 
 		user.invited.push(newInvited);
 		return this.userRepository.save(user);
@@ -385,7 +387,7 @@ export class UsersService
 		const newBan: User | null = await queryBuilder2.getOne();
 
 		if (newBan == null)
-			throw new HttpException("An unexpected error occured: invalid id",
+			throw new HttpException(["An unexpected error occured: invalid id"],
 				HttpStatus.INTERNAL_SERVER_ERROR);
 
 		user.banlist.push(newBan);
@@ -477,11 +479,11 @@ export class UsersService
 		{
 			fs.unlink(oldPath, (err) => {
 				if (err)
-					throw new HttpException('There was an error deleting the previous file',
+					throw new HttpException(['There was an error deleting the previous file'],
 						HttpStatus.INTERNAL_SERVER_ERROR)
 			});
 		}
-		user.image_url = 'http://localhost:9999/uploads/' + filename;
+		user.image_url = `${this.configService.get<string>('REACT_APP_NESTJS_HOSTNAME')}/uploads/${filename}`;
 		this.userRepository.save(user);
 	}
 

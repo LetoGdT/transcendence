@@ -8,7 +8,10 @@ import { JwtAuthGuard } from '../guards/jwt.guard';
 @Controller('achievements')
 export class AchievementsController
 {
-	constructor(private readonly achievementsService: AchievementsService) {}
+	constructor(private readonly achievementsService: AchievementsService)
+	{
+		achievementsService.initAchievementTypes();
+	}
 
 	@Get('/types')
 	@UseGuards(JwtAuthGuard)

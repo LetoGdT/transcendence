@@ -567,7 +567,7 @@ setInterval(() => {
 	gameManager.tick();
 }, 20);
 
-@WebSocketGateway(9998, { cors: true })
+@WebSocketGateway({ cors: true })
 export class MySocketGateway implements OnGatewayConnection, 
 										OnGatewayDisconnect {
 

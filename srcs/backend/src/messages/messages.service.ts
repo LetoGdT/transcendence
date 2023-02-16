@@ -110,7 +110,7 @@ export class MessagesService
 	async updateMessageFromId(id: number, content: string)
 	{
 		if (id > this.IdMax)
-			throw new BadRequestException(`channel_id must not be greater than ${this.IdMax}`);
+			throw new BadRequestException([`channel_id must not be greater than ${this.IdMax}`]);
 
 		const queryBuilder = this.messageRepository.createQueryBuilder("message");
 
@@ -119,7 +119,7 @@ export class MessagesService
 			.getOne();
 
 		if (message == null)
-			throw new HttpException("An unexpected error occured: invalid id", HttpStatus.INTERNAL_SERVER_ERROR)
+			throw new HttpException(["An unexpected error occured: invalid id"], HttpStatus.INTERNAL_SERVER_ERROR)
 
 		message.content = content;
 

@@ -203,7 +203,7 @@ function ManageChannel(){
 	}, [users]);
 
 	async function updateUsersMe() {
-		await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me`, {
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`, {
 			method: "GET",
 			credentials: 'include'
 		})
@@ -227,7 +227,7 @@ function ManageChannel(){
 	}
 
 	async function updateChannel() {
-		await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/channels/?id=${cid}`, {
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/?id=${cid}`, {
 			method: "GET",
 			credentials: "include",
 		})
@@ -237,7 +237,7 @@ function ManageChannel(){
 
 	function SelectStatus() {
 		const handleClickSetPublic = async (event: React.MouseEvent<HTMLButtonElement>) => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/channels/${cid}`,{
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/${cid}`,{
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -256,7 +256,7 @@ function ManageChannel(){
 		};
 
 		const handleClickSetPrivate = async (event: React.MouseEvent<HTMLButtonElement>) => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/channels/${cid}`,{
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/${cid}`,{
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -275,7 +275,7 @@ function ManageChannel(){
 		};
 
 		const handleClickSetProtected = async (event: React.MouseEvent<HTMLButtonElement>) => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/channels/${cid}`,{
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/${cid}`,{
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -349,7 +349,7 @@ function ManageChannel(){
 		};
 
 		const handleClickNewPwd = async (event: any) => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/channels/${cid}`, {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/${cid}`, {
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -417,7 +417,7 @@ function ManageChannel(){
 		};
 
 		const handleClickBan = async (event: React.MouseEvent<HTMLButtonElement>) => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/channels/${cid}/banlist`,{
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/${cid}/banlist`,{
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -437,7 +437,7 @@ function ManageChannel(){
 		}
 
 		const handleClickKick = async (event: React.MouseEvent<HTMLButtonElement>) => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/channels/${cid}/users/${props?.user.id}`,{
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/${cid}/users/${props?.user.id}`,{
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -502,7 +502,7 @@ function ManageChannel(){
 	function OwnerPriv2(props: any){
 
 		const handleClickAdmin = async (event: React.MouseEvent<HTMLButtonElement>) => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/channels/${cid}/users/${props?.user.id}`,{
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/${cid}/users/${props?.user.id}`,{
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -570,7 +570,7 @@ export function ManaChanZone(){
 
 	React.useEffect(() => {
 		const api = async () => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/isconnected`, {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/isconnected`, {
 				method: "GET",
 				credentials: 'include'
 			})

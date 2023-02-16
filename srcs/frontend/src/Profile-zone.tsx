@@ -91,14 +91,14 @@ function Profile(){
 
 	useEffect(() => {
 		const api = async () => {
-			const data = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me`, {
+			const data = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`, {
 				method: "GET",
 				credentials: 'include'
 			});
 			const jsonData = await data.json();
 			setResult(jsonData);
 
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me/friends/invites`, {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/friends/invites`, {
 				method: "GET",
 				credentials: 'include'
 			})
@@ -107,7 +107,7 @@ function Profile(){
 
 			socket.emit('getInvites');
 			
-			const stats = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me/winrate`, {
+			const stats = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/winrate`, {
 				method: "GET",
 				credentials: 'include'
 			});
@@ -193,7 +193,7 @@ function Profile(){
 									</Link>
 									<div key = "accept">
 										<IconButton color="success" aria-label="accept" onClick={()=>{
-											const response = fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me/friends`, {
+											const response = fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/friends`, {
 												headers: {
 													'Accept': 'application/json',
 													'Content-Type': 'application/json'
@@ -216,7 +216,7 @@ function Profile(){
 									<div key = "refuse">
 										<IconButton color="error" aria-label="reject" onClick={()=>{
 											let urltofetch : string;
-											urltofetch = `http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me/friends/invites/` + uid;												const response = fetch(urltofetch, {
+											urltofetch = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/friends/invites/` + uid;												const response = fetch(urltofetch, {
 												headers: {
 													'Accept': 'application/json',
 													'Content-Type': 'application/json'
@@ -281,7 +281,7 @@ export function ProfileZone(){
 
 	useEffect(() => {
 		const api = async () => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/isconnected`, {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/isconnected`, {
 				method: "GET",
 				credentials: 'include'
 			})
