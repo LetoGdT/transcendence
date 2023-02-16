@@ -83,6 +83,15 @@ export class AchievementsService
 
 	async initAchievementTypes()
 	{
+		const queryBuilder = this.achievementTypeRepository.createQueryBuilder("achievementType");
+
+		queryBuilder
+			.where('achievementType.name = :name', { name: 'I\'m a sociable person'});
+
+		const achievementType = await queryBuilder.getOne();
+
+		if (achievementType != null)
+			return;
 		const newAchievementType = await this.achievementTypeRepository.create({
 			name: 'I\'m a sociable person',
 			description: 'Send your first message',
