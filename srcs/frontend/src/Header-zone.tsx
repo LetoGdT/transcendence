@@ -129,7 +129,7 @@ function UserLogged(){
 
 	useEffect(() => {
 		const api = async () => {
-			const data = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me`, {
+			const data = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`, {
 				method: "GET",
 				credentials: 'include'
 			});
@@ -143,7 +143,7 @@ function UserLogged(){
 	const handleSocketClose = (event: React.MouseEvent<HTMLButtonElement>) => {
         socket.close();
     };
-    let linkToLogout : string = `http://${process.env.REACT_APP_HOSTNAME}:9999/logout`;
+    let linkToLogout : string = `${process.env.REACT_APP_NESTJS_HOSTNAME}/logout`;
 
     return(
         <div className='Avatar-zone'>
@@ -164,7 +164,7 @@ function UserNotLogged(){
         socket.open();
     };
 
-	let linkToLog : string = `http://${process.env.REACT_APP_HOSTNAME}:9999/log`;
+	let linkToLog : string = `${process.env.REACT_APP_NESTJS_HOSTNAME}/log`;
 
 	return(
 		<div className='Avatar-zone'>
@@ -189,7 +189,7 @@ function AvatarZone(props:any){
 
 	useEffect(() => {
 		const api = async () => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/isconnected`, {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/isconnected`, {
 				method: "GET",
 				credentials: 'include'
 			})

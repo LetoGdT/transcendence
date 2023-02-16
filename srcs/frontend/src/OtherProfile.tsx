@@ -241,7 +241,7 @@ const AskButton = styled(Button)({
 function AddOrRemoveButton(uid: string | undefined){
 
 	const handleClickInvite = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me/friends/invites`, {
+		const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/friends/invites`, {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -259,7 +259,7 @@ function AddOrRemoveButton(uid: string | undefined){
 
 	const handleClickRemove = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		let urltofetch : string;
-		urltofetch = `http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me/friends/` + uid;
+		urltofetch = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/friends/` + uid;
 		const response = await fetch(urltofetch, {
 			headers: {
 				'Accept': 'application/json',
@@ -281,7 +281,7 @@ function AddOrRemoveButton(uid: string | undefined){
 
 	useEffect(() => {
 		const api = async () => {
-			const friend = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me/friends/`, {
+			const friend = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/friends/`, {
 				method: "GET",
 				credentials: 'include'
 			});
@@ -310,7 +310,7 @@ function AddOrRemoveButton(uid: string | undefined){
 function BlockOrUnblockButton(uid: string | undefined){
 
 	const handleClickBlock = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me/banlist`, {
+		const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/banlist`, {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -330,7 +330,7 @@ function BlockOrUnblockButton(uid: string | undefined){
 
 	const handleClickUnblock = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		let urltofetch : string;
-		urltofetch = `http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me/banlist/` + uid;
+		urltofetch = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/banlist/` + uid;
 		const response = await fetch(urltofetch, {
 			headers: {
 				'Accept': 'application/json',
@@ -352,7 +352,7 @@ function BlockOrUnblockButton(uid: string | undefined){
 
 	useEffect(() => {
 		const api = async () => {
-			const blocked = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me/banlist/`, {
+			const blocked = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/banlist/`, {
 				method: "GET",
 				credentials: 'include'
 			});
@@ -388,7 +388,7 @@ function OneMatch(match:any){
 	useEffect(() => {
 		const api = async () => {
 			let urltofetch1 : string;
-			urltofetch1 = `http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/${user1.id}`;
+			urltofetch1 = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/${user1.id}`;
 			const data1 = await fetch(urltofetch1, {
 				method: "GET",
 				credentials: 'include'
@@ -397,7 +397,7 @@ function OneMatch(match:any){
 			setResult1(jsonData1);
 			
 			let urltofetch : string;
-			urltofetch = `http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/${user2.id}`;
+			urltofetch = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/${user2.id}`;
 			const data2 = await fetch(urltofetch, {
 				method: "GET",
 				credentials: 'include'
@@ -405,7 +405,7 @@ function OneMatch(match:any){
 			const jsonData = await data2.json();
 			setResult2(jsonData);
 
-			urltofetch = `http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/${uid}`;
+			urltofetch = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/${uid}`;
 			const me = await fetch(urltofetch, {
 				method: "GET",
 				credentials: 'include'
@@ -492,7 +492,7 @@ function OtherProfile(){
 	useEffect(() => {
 		const api = async () => {
 			let urltofetch : string;
-			urltofetch = `http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/${uid}`;
+			urltofetch = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/${uid}`;
 			const data = await fetch(urltofetch, {
 				method: "GET",
 				credentials: 'include'
@@ -516,7 +516,7 @@ function OtherProfile(){
 			})
 			.then(data => setError(data != null ? data.message : null));
 
-			const stats = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/matches/${uid}/winrate`, {
+			const stats = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/matches/${uid}/winrate`, {
 				method: "GET",
 				credentials: 'include'
 			});
@@ -551,14 +551,14 @@ function OtherProfile(){
 
 	const handleClickChat = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		let convExists: boolean = false;
-		await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/conversations?user2_id=${uid}`, {
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/conversations?user2_id=${uid}`, {
 			method: "GET",
 			credentials: 'include', 
 		})
 		.then(response=>response.json())
 		.then(data => convExists = data.data.length !== 0);
 		if (!convExists) {
-			const response = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/conversations/`, {
+			const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/conversations/`, {
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -649,7 +649,7 @@ export function OProfileZone(){
 
 	React.useEffect(() => {
 		const api = async () => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/isconnected`, {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/isconnected`, {
 				method: "GET",
 				credentials: 'include'
 			})

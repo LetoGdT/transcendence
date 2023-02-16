@@ -209,7 +209,7 @@ export function SetPGameZone(){
 
 	React.useEffect(() => {
 		const api = async () => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/isconnected`, {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/isconnected`, {
 				method: "GET",
 				credentials: 'include'
 			})

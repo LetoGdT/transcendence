@@ -44,7 +44,7 @@ export class AuthService
 			.getOne();
 
 		if (ret == null)
-			throw new HttpException('An unexpected error occured: token owner does not exist',
+			throw new HttpException(['An unexpected error occured: token owner does not exist'],
 				HttpStatus.INTERNAL_SERVER_ERROR);
 
 		return ret;
@@ -61,7 +61,7 @@ export class AuthService
 	{
 		const user = await this.userRepository.findOne({where: { id: id }});
 		if (user == null)
-			throw new HttpException('An unexpected error occured: user does not exist',
+			throw new HttpException(['An unexpected error occured: user does not exist'],
 				HttpStatus.INTERNAL_SERVER_ERROR);
 
 		const payload = { username: user.username, sub: user.id, enabled2fa: enabled2fa };
@@ -123,7 +123,7 @@ export class Api42
 				grant_type: 'authorization_code',
 				client_id: this.configService.get<string>('UID'),
 				client_secret: this.configService.get<string>('SECRET'),
-				redirect_uri: 'http://localhost:9999/callback',
+				redirect_uri: `${this.configService.get<string>('REACT_APP_NESTJS_HOSTNAME')}/callback`,
 				code: auth_code
 			},
 		);
