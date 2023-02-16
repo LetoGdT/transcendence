@@ -420,7 +420,7 @@ function Chat() {
 		})));
 
 		// Set the list of channels for chat-navigate
-		await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me/channels`, {
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/channels`, {
 			method: "GET",
 			credentials: 'include'
 		})
@@ -449,7 +449,7 @@ function Chat() {
 
 	async function updateUsersMe() {
 		// set Current_user_id
-		await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/me/`, {
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/`, {
 			method: "GET",
 			credentials: 'include'
 		})
@@ -514,11 +514,7 @@ function Chat() {
 			Notification(["You have nowhere to send a message"]);
 			return ;
 		}
-		if (newMessage.length == 0) {
-			Notification(["Your message is empty"]);
-			return ;
-		}
-		await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/${isChannel?'channels':'conversations'}/${currentConv}/messages`, {
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/${isChannel?'channels':'conversations'}/${currentConv}/messages`, {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -655,7 +651,7 @@ function Chat() {
 		const [password, setPassword] = React.useState("");
 
 		const handleJoin = async (event: any) => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/channels/${props?.channel.id}/users`, {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/${props?.channel.id}/users`, {
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -675,7 +671,7 @@ function Chat() {
 
 		const handleLeave = async (event: any) => {
 			const channelUserId = (channel.users.find((user: ChannelUser) => user.user.id === currentUser.id)).id;
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/channels/${props?.channel.id}/users/${channelUserId}`, {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/${props?.channel.id}/users/${channelUserId}`, {
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -821,7 +817,7 @@ export function ChatZone(){
 
 	useEffect(() => {
 		const api = async () => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/isconnected`, {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/isconnected`, {
 				method: "GET",
 				credentials: 'include'
 			})

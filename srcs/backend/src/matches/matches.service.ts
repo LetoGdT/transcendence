@@ -118,7 +118,7 @@ export class MatchesService
 		const match: Match | null = await queryBuilder.getOne();
 
 		if (match == null)
-			throw new BadRequestException("Invalid match id: calculateRank()");
+			throw new BadRequestException(["Invalid match id: calculateRank()"]);
 
 
 		// All the data you could ever want.

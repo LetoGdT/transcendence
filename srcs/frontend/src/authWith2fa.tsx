@@ -65,7 +65,7 @@ export function AuthWith2FA(): React.ReactElement{
 	};
 
 	const handleSend = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/2fa/authenticate`,{
+		const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/2fa/authenticate`,{
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'

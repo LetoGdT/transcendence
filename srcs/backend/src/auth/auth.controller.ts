@@ -39,7 +39,7 @@ export class AuthController
 		if (uid == undefined || secret == undefined)
 			throw new HttpException('42API credentials not set. Did you forget to create .env ?',
 				HttpStatus.INTERNAL_SERVER_ERROR);
-		let redirect_uri: string = 'http://localhost:9999/callback';
+		let redirect_uri: string = `${this.configService.get<string>('REACT_APP_NESTJS_HOSTNAME')}/callback`;
 		let state: string = randomBytes(32).toString("hex");
 		this.state = state;
 		let url = `${host}?client_id=${uid}&redirect_uri=${redirect_uri}&response_type=code&scope=public&state=${state}`;
@@ -62,7 +62,7 @@ export class AuthController
 		res.cookie('access_token', access_token,
 			{
 				httpOnly: true,		// Prevent xss
-				sameSite: 'lax',	// Prevent CSRF
+				sameSite: 'none',	// Prevent CSRF
 				secure: true,		// Just info for the browser
 			}
 		);
@@ -71,13 +71,13 @@ export class AuthController
 			res.cookie('refresh_token', refresh_token,
 				{
 					httpOnly: true,		// Prevent xss
-					sameSite: 'lax',	// Prevent CSRF
+					sameSite: 'none',	// Prevent CSRF
 					secure: true,		// Just info for the browser
 				}
 			);
-			return (res.redirect('http://localhost:3000'));
+			return (res.redirect(`${this.configService.get<string>('REACT_APP_REACT_HOSTNAME')}`));
 		}
-		return (res.redirect('http://localhost:3000/2fa'));
+		return (res.redirect(`${this.configService.get<string>('REACT_APP_REACT_HOSTNAME')}/2fa`));
 	}
 
 	@Get('/logout')
@@ -91,18 +91,18 @@ export class AuthController
 		res.clearCookie('access_token',
 			{
 				httpOnly: true,
-				sameSite: 'lax',
+				sameSite: 'none',
 				secure: true,
 			}
 		);
 		res.clearCookie('refresh_token',
 			{
 				httpOnly: true,
-				sameSite: 'lax',
+				sameSite: 'none',
 				secure: true,
 			}
 		);
-		return (res.redirect('http://localhost:3000/'));
+		return (res.redirect(`${this.configService.get<string>('REACT_APP_REACT_HOSTNAME')}/`));
 	}
 
 	@Get('/gen_token')
@@ -167,14 +167,14 @@ export class AuthController
 		res.cookie('access_token', access_token,
 			{
 				httpOnly: true,		// Prevent xss
-				sameSite: 'lax',	// Prevent CSRF
+				sameSite: 'none',	// Prevent CSRF
 				secure: true,		// Just info for the browser
 			}
 		);
 		res.cookie('refresh_token', refresh_token,
 			{
 				httpOnly: true,		// Prevent xss
-				sameSite: 'lax',	// Prevent CSRF
+				sameSite: 'none',	// Prevent CSRF
 				secure: true,		// Just info for the browser
 			}
 		);

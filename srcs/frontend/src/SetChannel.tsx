@@ -74,7 +74,7 @@ function SetChannel(){
 
 	const handleClickSetChannel = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		const body = password.length === 0 ? {name: name} : {name: name, password: password};
-		await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/channels/`, {
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/`, {
 			method: "POST",
 			credentials: "include",
 			headers: {
@@ -150,7 +150,7 @@ export function SetChanZone(){
 
 	React.useEffect(() => {
 		const api = async () => {
-			await fetch(`http://${process.env.REACT_APP_HOSTNAME}:9999/api/users/isconnected`, {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/isconnected`, {
 				method: "GET",
 				credentials: 'include'
 			})
