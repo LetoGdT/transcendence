@@ -26,7 +26,7 @@ function Friends(){
 
 	return(
 		<React.Fragment>
-			<h1>Friends</h1>
+			<h1 className='Centered'>Friends</h1>
 			<div className='Friend-container'>
 				{data.length > 0 && data?.map((user: any) => {
 					var url: string = "/otherprofile";

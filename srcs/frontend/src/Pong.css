@@ -9,7 +9,6 @@
 }
 
 .Pong-window-lvl1{
-	/* position: 'fixed', top:'350px', bottom:'25px', left:0, right:0; */
 	position: fixed;
 	top: 350px;
 	bottom: 25px;
