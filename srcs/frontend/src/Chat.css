@@ -84,6 +84,7 @@
 	width: 40px;
 	border-radius: 50%;
 	height: 40px;
+	object-fit: cover;
 	align-self: flex-end;
 }
 
@@ -102,7 +103,7 @@
 	border-style: solid;
 	border-width: 3px;
 	margin: 3px;
-	border-radius: 0px 15px 10px 10px;
+	border-radius: 0px 10px 15px 10px;
 	border-color: #007dd6;
 	padding: 5px;
 	overflow-wrap: break-word;
