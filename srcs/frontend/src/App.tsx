@@ -6,7 +6,7 @@ import { OurMenu } from './Menu-zone';
 import { Home, NotFound } from './adaptable-zone';
 import { PlayZone } from './Play';
 import { SpecZone } from './Spec';
-import { Pong } from './pong/Pong';
+import { Pong } from './Pong';
 import { ChatZone } from './Chat-zone';
 import { FriendsZone } from './Friend-zone';
 import { MatchHistoryZone } from './MatchHistory-zone';
