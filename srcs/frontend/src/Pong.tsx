@@ -1,46 +1,64 @@
-import Ball, { BALL_SPEED } from "./Ball";
-import Player, { PLAYER_WIDTH, PLAYER_HEIGHT } from "./Player";
-import { socket } from '../../WebsocketContext';
+import './Pong.css'
+import React, { useEffect } from 'react';
+import { socket } from 'WebsocketContext';
+import { useParams } from 'react-router-dom';
+import { PleaseConnect } from '../adaptable-zone';
+import { SignUpButton } from '../Header-zone';
+import { Link } from 'react-router-dom';
+
+const BALL_SPEED = 5;
+
+class Ball{
+	public x: number;
+	public y: number;
+	public r: number;//?
+	public speedX: number;
+	public speedY: number;
+
+	constructor(x: number, y: number){
+		this.x = x;
+		this.y = y;
+		this.r = 5;
+		this.speedX = BALL_SPEED;
+		this.speedY = BALL_SPEED;
+	}
+
+	draw(ctx: CanvasRenderingContext2D){
+		ctx.beginPath();
+		ctx.fillStyle = 'white';
+		ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
+		ctx.fill();
+	}
+}
+
+const PLAYER_HEIGHT = 100;
+const PLAYER_WIDTH = 13;
+
+class Player{
+	public x: number;
+	public y: number;
+	public width: number
+	public height: number
+	
+	constructor(x: number, y: number){
+		this.x = x;
+		this.y = y;
+		this.width = PLAYER_WIDTH;
+		this.height = PLAYER_HEIGHT;
+	}
+
+	draw(ctx: CanvasRenderingContext2D){
+		ctx.fillStyle = 'white';
+		ctx.fillRect(this.x, this.y, this.width, this.height);
+	}
+}
 
 const PLAYER1_DOWN_KEY = 'KeyS';
 const PLAYER1_UP_KEY = 'KeyW';
 
 const TICKRATE = 50;
 
-// interface Object2D
-// {
-// 	x: number;
-// 	y: number;
-// }
-
-// interface BallData
-// {
-// 	coordinates: Object2D;
-// 	speed: number;
-// 	direction: Object2D;
-// }
-
-// interface Players
-// {
-// 	player1:
-// 	{
-// 	  x: number,
-// 	  y: number,
-// 	},
-// 	player2:
-// 	{
-// 	  x: number,
-// 	  y: number,
-// 	},
-// }
-
-// interface Score
-// {
-// 	player1: number,
-// 	player2: number,
-// }
-
-interface NetworkedGameState {
+interface NetworkedGameState{
 	p1_y: number;
 	p2_y: number;
 	ball_x: number;
@@ -50,28 +68,26 @@ interface NetworkedGameState {
 	authoritative: boolean;
 }
 
-interface PongUserData {
+interface PongUserData{
 	id: number;
 	image_url: string;
 	username: string;
 }
 
-class PongGame
-{
+class PongGame{
 	public width: number;
 	public height: number;
 	private player1: Player;
-    private player2: Player;
+	private player2: Player;
 	private scorePlayer1: number;
 	private scorePlayer2: number;
 	private scoreToWin: number;
-    private start: boolean = true; // Meaning start screen
-    public over: boolean = false; // Meaning game over
-    private ball: Ball;
-    private keyStates: any;
+	private start: boolean = true; // Meaning start screen
+	public over: boolean = false; // Meaning game over
+	private ball: Ball;
+	private keyStates: any;
 	private timer: number;
 	private connecting: boolean = true;
-	// private socket: Socket;
 	private errorMessage: string = '';
 
 	private startTimer: number;
@@ -92,18 +108,20 @@ class PongGame
 
 	private spectatorWinIndex: number = 0;
 
-	constructor(width: number, height: number)
-    {
+	constructor(width: number, height: number){
 		this.width = width;
 		this.height = height;
-        this.player1 = new Player(0, (height - PLAYER_HEIGHT) / 2);
-        this.player2 = new Player(width - PLAYER_WIDTH, (height - PLAYER_HEIGHT) / 2);
+		this.player1 = new Player(0, (height - PLAYER_HEIGHT) / 2);
+		this.player2 = new Player(
+			width - PLAYER_WIDTH,
+			(height - PLAYER_HEIGHT) / 2
+		);
 		this.scorePlayer1 = 0;
 		this.scorePlayer2 = 0;
 		this.scoreToWin = 50;
 
-        this.ball = new Ball(width / 2, height / 2);
-        this.keyStates = [];
+		this.ball = new Ball(width / 2, height / 2);
+		this.keyStates = [];
 		this.timer = 225;
 
 		this.startTimer = 0;
@@ -111,9 +129,9 @@ class PongGame
 
 		this.player1Image = null;
 		this.player2Image = null;
-    }
+	}
 
-	setPlayers(player1: PongUserData, player2: PongUserData) {
+	setPlayers(player1: PongUserData, player2: PongUserData){
 		this.player1Data = player1;
 		this.player2Data = player2;
 	
@@ -123,27 +141,24 @@ class PongGame
 		this.player2Image.src = player2.image_url;
 	}
 
-	setCountdownStart(countdownStart: number) {
+	setCountdownStart(countdownStart: number){
 		this.countdownStart = countdownStart;
 	}
 
-	setErrorMessage(errorMessage: string) {
+	setErrorMessage(errorMessage: string){
 		this.errorMessage = errorMessage;
 	}
 
-	setConnecting()
-	{
+	setConnecting(){
 		this.connecting = false;
 		this.countdownStart = Date.now();
 	}
 
-	setStart()
-	{
+	setStart(){
 		this.start = false;
 	}
 
-	newGame()
-	{
+	newGame(){
 		this.start = true; // Meaning start screen
 		this.over = false; // Meaning game over
 		this.connecting = true;
@@ -154,7 +169,10 @@ class PongGame
 		this.scorePlayer1 = 0;
 		this.scorePlayer2 = 0;
 		this.player1 = new Player(0, (this.height - PLAYER_HEIGHT) / 2);
-        this.player2 = new Player(this.width - PLAYER_WIDTH, (this.height - PLAYER_HEIGHT) / 2);
+		this.player2 = new Player(
+			this.width - PLAYER_WIDTH,
+			(this.height - PLAYER_HEIGHT) / 2
+		);
 		this.spectatorWinIndex = 0;
 		this.player1Image = null;
 		this.player2Image = null;
@@ -162,7 +180,7 @@ class PongGame
 		this.player2Data = undefined;
 	}
 
-	drawStatusScreen(ctx: CanvasRenderingContext2D, label: string) {
+	drawStatusScreen(ctx: CanvasRenderingContext2D, label: string){
 		const r = this.currentTicks * 10 / TICKRATE;
 
 		const w = Math.sin(Date.now() * 0.005) * 10 + 30;
@@ -173,7 +191,13 @@ class PongGame
 		ctx.arc(this.width / 2, this.height / 2, w, r, r + Math.PI / 2);
 		ctx.stroke();
 		ctx.beginPath();
-		ctx.arc(this.width / 2, this.height / 2, w, r + Math.PI, r + Math.PI * 1.5);
+		ctx.arc(
+			this.width / 2,
+			this.height / 2,
+			w,
+			r + Math.PI,
+			r + Math.PI * 1.5
+		);
 		ctx.stroke();
 
 		const w2 = Math.sin(1 + Date.now() * 0.005) * 10 + 30;
@@ -189,7 +213,8 @@ class PongGame
 		ctx.fillText(label, this.width / 2, this.height / 2 + 70);
 	}
 
-	drawUserNames(ctx: CanvasRenderingContext2D) {
+	//a revoir pour ecrire victory/defeat
+	drawUserNames(ctx: CanvasRenderingContext2D){
 		ctx.fillStyle = 'white';
 		ctx.textAlign = 'left';
 		ctx.textBaseline = 'middle';
@@ -197,17 +222,27 @@ class PongGame
 		ctx.fillText(this.player1Data?.username!, 68, this.height - 20);
 		
 		ctx.textAlign = 'right';
-		ctx.fillText(this.player2Data?.username!, this.width - 68, this.height - 20);
+		ctx.fillText(
+			this.player2Data?.username!,
+			this.width - 68,
+			this.height - 20
+		);
 
 		this.drawUserAvatar(ctx, this.player1Image, 10, this.height - 48 - 10, 48, 48);
 		this.drawUserAvatar(ctx, this.player2Image, this.width - 58, this.height - 48 - 10, 48, 48);
 	}
 
-	setSpectatorWin(playerIndex: number) {
+	setSpectatorWin(playerIndex: number){
 		this.spectatorWinIndex = playerIndex;
 	}
 
-	drawUserAvatar(ctx: CanvasRenderingContext2D, img: HTMLImageElement | null, x: number, y: number, imageWidth: number, imageHeight: number) {
+	drawUserAvatar(
+		ctx: CanvasRenderingContext2D,
+		img: HTMLImageElement | null,
+		x: number, y: number,
+		imageWidth: number,
+		imageHeight: number
+	){
 		if (null != img && img.complete) {
 			const aspectRatio = img.width / Math.max(1, img.height);
 			const fixedImageWidth = imageWidth * aspectRatio;
@@ -215,10 +250,20 @@ class PongGame
 			ctx.save();
 			ctx.translate(x, y);
 			ctx.beginPath();
-			ctx.arc(imageWidth / 2, imageHeight / 2, Math.min(imageWidth, imageHeight) / 2, 0, 2 * Math.PI, false);
+			ctx.arc(
+				imageWidth / 2,
+				imageHeight / 2,
+				Math.min(imageWidth, imageHeight) / 2, 0, 2 * Math.PI,
+				false
+			);
 			ctx.clip();
-			ctx.drawImage(img,
-				(imageWidth - fixedImageWidth) / 2, 0, fixedImageWidth, imageHeight);
+			ctx.drawImage(
+				img,
+				(imageWidth - fixedImageWidth) / 2,
+				0,
+				fixedImageWidth,
+				imageHeight
+			);
 			ctx.restore();
 		}
 	}
@@ -227,14 +272,12 @@ class PongGame
 	 * Called when the browser need to refresh the canvas
 	 * @param ctx the rendering context of the canvas
 	 */
-	render(ctx: CanvasRenderingContext2D)
-	{
-        // Clear the screen
+	render(ctx: CanvasRenderingContext2D){
+		// Clear the screen
 		ctx.fillStyle = 'black';
 		ctx.fillRect(0, 0, this.width, this.height);
 
-		if (this.errorMessage !== '')
-		{
+		if (this.errorMessage !== ''){
 			ctx.fillStyle = 'white';
 			ctx.textAlign = 'center';
 			ctx.textBaseline = 'middle';
@@ -471,71 +514,71 @@ class PongGame
 		ctx.fillText(this.scorePlayer2.toString(), this.width / 4 * 3, 120);
 	}
 
-    updatePhysics()
+	updatePhysics()
 	{
-        // Rebounds on top and bottom
-        if (this.ball.y > this.height || this.ball.y < 0)
-        {
-            this.ball.speedY *= -1;
-        }
+		// Rebounds on top and bottom
+		if (this.ball.y > this.height || this.ball.y < 0)
+		{
+			this.ball.speedY *= -1;
+		}
 
-        // The ball reaches the right or left limit
-        if (this.ball.x < PLAYER_WIDTH)
-        {
-            this.collide(this.player1);
-        }
-        else if (this.ball.x > this.width - PLAYER_WIDTH)
-        {
-            this.collide(this.player2);
-        }
+		// The ball reaches the right or left limit
+		if (this.ball.x < PLAYER_WIDTH)
+		{
+			this.collide(this.player1);
+		}
+		else if (this.ball.x > this.width - PLAYER_WIDTH)
+		{
+			this.collide(this.player2);
+		}
 
-        // The ball's speed increases each time
-        this.ball.x += this.ball.speedX;
-        this.ball.y += this.ball.speedY;
-    }
+		// The ball's speed increases each time
+		this.ball.x += this.ball.speedX;
+		this.ball.y += this.ball.speedY;
+	}
 	
 	setOver(didWin: boolean) {
 		this.over = true;
 		this.didWin = didWin;
 	}
  
-    collide(opponent: Player)
-    {
-        // The player misses the ball
-        if (this.ball.y < opponent.y || this.ball.y > opponent.y + PLAYER_HEIGHT)
-        {
-            // The player who scores gets 1 point
-            if (opponent === this.player1)
-	        {
-                this.scorePlayer2++;
-			}
-            else
+	collide(opponent: Player)
+	{
+		// The player misses the ball
+		if (this.ball.y < opponent.y || this.ball.y > opponent.y + PLAYER_HEIGHT)
+		{
+			// The player who scores gets 1 point
+			if (opponent === this.player1)
 			{
-                this.scorePlayer1++;
+				this.scorePlayer2++;
 			}
-            // End of the game if one player reaches scoreToWin
-            if (this.scorePlayer1 === this.scoreToWin || this.scorePlayer2 === this.scoreToWin)
-            {
-                this.over = true
-                return;
-            }
-            // Set ball and players to the center
-            this.ball.x = this.width / 2;
-            this.ball.y = this.height / 2;
+			else
+			{
+				this.scorePlayer1++;
+			}
+			// End of the game if one player reaches scoreToWin
+			if (this.scorePlayer1 === this.scoreToWin || this.scorePlayer2 === this.scoreToWin)
+			{
+				this.over = true
+				return;
+			}
+			// Set ball and players to the center
+			this.ball.x = this.width / 2;
+			this.ball.y = this.height / 2;
 
-            // Reset speed
-            this.ball.speedX = BALL_SPEED;
-            this.ball.speedY = BALL_SPEED;
-        }
+			// Reset speed
+			this.ball.speedX = BALL_SPEED;
+			this.ball.speedY = BALL_SPEED;
+		}
 		// The player hits the ball
-        else
-        {
-            // Increase speed and change direction
-            this.ball.x += 1;
+		else
+		{
+			// Increase speed and change direction
+			this.ball.x += 1;
 			this.ball.speedX *= -1.2;
-            this.changeDirection(opponent.y);
-        }
-    }
+			this.changeDirection(opponent.y);
+		}
+	}
 
 	changeDirection(playerPosition: number)
 	{
@@ -596,15 +639,247 @@ class PongGame
 		}
 	}
 
-    handleKeyUp(code: string)
+	handleKeyUp(code: string)
 	{
-        delete this.keyStates[code];
-    }
+		delete this.keyStates[code];
+	}
 
-    handleKeyDown(code: string)
-    {
-        this.keyStates[code] = true;
-    }
+	handleKeyDown(code: string)
+	{
+		this.keyStates[code] = true;
+	}
 }
 
-export default PongGame;
+
+
+
+
+const GAME_WIDTH = 1040;
+const GAME_HEIGHT = 680;
+
+const gameInstance = new PongGame(GAME_WIDTH, GAME_HEIGHT);
+
+const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
+{
+	const canvasRef = React.useRef<HTMLCanvasElement>(null);
+	const resizeHandler = () => {
+		if (canvasRef.current instanceof HTMLCanvasElement) {
+			const c = canvasRef.current;
+			const pixelRatio = window.devicePixelRatio || 1;
+
+			c.width = c.clientWidth * pixelRatio;
+			c.height = c.clientHeight * pixelRatio;
+		}
+	};
+
+	React.useEffect(() => {
+		window.addEventListener('resize', resizeHandler);
+
+		return () => {
+			window.removeEventListener('resize', resizeHandler);
+		};
+	}, []);
+
+	React.useEffect(() =>
+	{
+		const canvas = canvasRef.current;
+		let animFrameId: number;
+		
+		if (null === canvas)
+			return ;
+		const ctx = canvas.getContext('2d');
+		if (null === ctx)
+			return ;
+		
+		// Force a size update to keep it in sync
+		resizeHandler();
+
+		function render()
+		{
+			const c = ctx as CanvasRenderingContext2D;
+
+			c.setTransform(
+				c.canvas.width / GAME_WIDTH, 0,
+				0, c.canvas.height / GAME_HEIGHT,0, 0);
+			draw(c);
+
+			animFrameId = window.requestAnimationFrame(render);
+		}
+
+		render();
+
+		return () =>
+		{
+			window.cancelAnimationFrame(animFrameId);
+		}
+	}, [draw]);
+
+	return canvasRef;
+};
+
+type PongGameBootstrapProps = {
+	mode: 'spectate' | 'private' | 'ranked';
+	game_id: number;
+}
+
+const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) =>
+{
+	const game = gameInstance;
+	const canvasRef = useCanvas(ctx => game.render(ctx));
+	const [over, setOver] = React.useState<Boolean>(false);
+
+	useEffect(() => {
+		game.newGame();
+		if (!game.attemptedConnect) {
+			if (mode === 'spectate') {
+				socket.emit('spectate', { game_id });
+			} else if (mode === 'private') {
+				socket.emit('join', { game_id });
+			} else {
+				socket.emit('queue', { type: 'Ranked' });
+			}
+			game.attemptedConnect = true;
+		}
+		return () => {
+			game.attemptedConnect = false;
+		};
+	}, []);
+
+	useEffect(() => {
+		game.statusMessage = 'Connecting...';
+		socket.on('score', ({ score1, score2 }) => {
+			game.setScore(score1, score2);
+		});
+		socket.on('win', ({ didWin }) => {
+			game.setOver(didWin);
+			setOver(true);
+		});
+		socket.on('spectator-game-result', ({ id }) => {
+			game.setSpectatorWin(id);
+		});
+		socket.on('gameFound', ({ countdown, player1, player2 }) => {
+			game.setConnecting();
+			game.setCountdownStart(Date.now() - countdown);
+			game.setPlayers(player1, player2);
+		});
+		socket.on('queuing', () => game.statusMessage = 'Searching for an opponent...');
+		socket.on('exception', e => {
+			game.setErrorMessage(`Error: ${e.message}`);
+		});
+		socket.on('waitingForOpponent', ({ username }) => {
+			game.statusMessage = `Waiting for ${username} to join.`;
+		});
+		socket.on('start', () => game.setStart());
+		socket.on('state', state => game.netUpdateState(state));
+
+		return () => {
+			/* Notify the backend that we left the page */
+			socket.emit('gameLeft');
+		}
+	}, []);
+
+	useEffect(() => {
+		const timer = setInterval(() => game.update(), 20);
+		return () => clearInterval(timer);
+	}, []);
+
+	const onKeyUp = (e: React.KeyboardEvent) => {
+		e.preventDefault();
+
+		if (mode !== 'spectate') {
+			game.handleKeyUp(e.code);
+		}
+	};
+	const onKeyDown = (e: React.KeyboardEvent) => {
+		e.preventDefault();
+
+		if (mode !== 'spectate') {
+			game.handleKeyDown(e.code);
+		}
+	};
+
+	console.log(game.over);//
+
+	if (over === false){
+		return (
+			<div style={{position: 'fixed', top:'350px', bottom:'25px', left:0, right:0}}>
+	
+				<div style={{aspectRatio: 16 / 9 , maxHeight:'100%', maxWidth:'100%', marginLeft:'auto', marginRight:'auto'}}>
+					<canvas
+						id="responsive-canvas"
+						ref={canvasRef}
+						onKeyDown={onKeyDown}
+						onKeyUp={onKeyUp}
+						tabIndex={-1}
+						>
+					</canvas>
+				</div>
+			</div>
+		);
+	} else {
+		return (
+			<div className="Pong">
+				<div style={{position: 'fixed', top:'350px', bottom:'25px', left:0, right:0}}>
+		
+					<div style={{aspectRatio: 16 / 9 , maxHeight:'100%', maxWidth:'100%', marginLeft:'auto', marginRight:'auto'}}>
+						<canvas
+							id="responsive-canvas"
+							ref={canvasRef}
+							onKeyDown={onKeyDown}
+							onKeyUp={onKeyUp}
+							tabIndex={-1}
+							>
+						</canvas>
+					</div>
+				</div>
+				<div className="OKButton">
+					<Link to='/play'>
+						<SignUpButton variant="contained" disableRipple>
+							OK
+						</SignUpButton>
+					</Link>
+				</div>
+			</div>
+		);
+	}
+}
+
+const Pong = (props: any) => {
+	const routeParams = useParams();
+	const game_id = parseInt(routeParams.game_id!);	
+	const [me, setMe] = React.useState<Boolean>(false);
+
+	React.useEffect(() => {
+		const api = async () => {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/isconnected`, {
+				method: "GET",
+				credentials: 'include'
+			})
+			.then((response) => {
+				if (!response.ok)
+					setMe(false);
+				else
+					setMe(true);
+			});
+		};
+	
+		api();
+	}, []);
+	
+	const isLoggedIn = me;
+	if (isLoggedIn){
+		return (
+			<div>
+				<PongGameBootstrap {...props} game_id={game_id} />
+			</div>
+		);
+	}
+	else 
+	{
+		return (
+			<PleaseConnect />
+		 );
+	}
+};
+
+export { Pong };
