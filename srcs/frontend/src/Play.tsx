@@ -46,13 +46,17 @@ const NormalModeButton = styled(Button)({
 });
 
 function Play(){
+	const handleClick = () => {
+		
+	};
+
 	return(
 		<React.Fragment>
 			<h1>Play</h1>
 			<div className='Play-container'>
 				<div className='Play-button'>
 					<Link to="/pong">
-						<NormalModeButton variant="contained" disableRipple>PLAY<br></br>Classic Mode</NormalModeButton>
+						<NormalModeButton variant="contained" disableRipple onClick={handleClick}>PLAY<br></br>Classic Mode</NormalModeButton>
 					</Link>
 				</div>
 			</div>
