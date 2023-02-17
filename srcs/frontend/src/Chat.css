@@ -174,9 +174,13 @@
 		display: flex;
 		flex-wrap: wrap;
 		flex-direction: row;
-		margin: 10px;
+		/* margin: 10px; */
 		min-height: 66px;
 		width: 100%;
 		align-items: center;
+	}
+
+	.empty{
+		margin-right: 0em;
 	}
 }
