@@ -7,3 +7,20 @@
 .OKButton{
 	align-self: center;
 }
+
+.Pong-window-lvl1{
+	/* position: 'fixed', top:'350px', bottom:'25px', left:0, right:0; */
+	position: fixed;
+	top: 350px;
+	bottom: 25px;
+	left: 0px;
+	right: 0px;
+}
+
+.Pong-window-lvl2{
+	aspect-ratio: 16 / 9;
+	max-height: 100%;
+	max-width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+}
