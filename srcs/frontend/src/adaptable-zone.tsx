@@ -16,7 +16,7 @@ type resultProps = {
 function Presentation(){
 	return(
 		<div>
-			<h1>Home</h1>
+			<h1 className='Centered'>Home</h1>
 			<div className='Presentation'>
 				<div>
 					Bienvenue sur notre projet ft_transcendence.
@@ -100,7 +100,7 @@ export function Home(){
 			<React.Fragment>
 				<Presentation />
 				<div>
-					<h1>List of users</h1>
+					<h1 className='Centered'>List of users</h1>
 					<div className='Friend-container'>
 						{data.length > 0 && data?.map((user: any) => {
 							var url: string = "/otherprofile";
