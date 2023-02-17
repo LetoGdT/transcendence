@@ -131,6 +131,7 @@ class PongGame{
 		this.player2Image = null;
 	}
 
+	//setters
 	setPlayers(player1: PongUserData, player2: PongUserData){
 		this.player1Data = player1;
 		this.player2Data = player2;
@@ -158,28 +159,21 @@ class PongGame{
 		this.start = false;
 	}
 
-	newGame(){
-		this.start = true; // Meaning start screen
-		this.over = false; // Meaning game over
-		this.connecting = true;
-		this.errorMessage = '';
-		this.didWin = false;
-		this.attemptedConnect = false;
-		this.countdownStart = 0;
-		this.scorePlayer1 = 0;
-		this.scorePlayer2 = 0;
-		this.player1 = new Player(0, (this.height - PLAYER_HEIGHT) / 2);
-		this.player2 = new Player(
-			this.width - PLAYER_WIDTH,
-			(this.height - PLAYER_HEIGHT) / 2
-		);
-		this.spectatorWinIndex = 0;
-		this.player1Image = null;
-		this.player2Image = null;
-		this.player1Data = undefined;
-		this.player2Data = undefined;
+	setSpectatorWin(playerIndex: number){
+		this.spectatorWinIndex = playerIndex;
 	}
 
+	setOver(didWin: boolean){
+		this.over = true;
+		this.didWin = didWin;
+	}
+
+	setScore(score1: number, score2: number){
+		this.scorePlayer1 = score1;
+		this.scorePlayer2 = score2;
+	}
+
+	//drawers
 	drawStatusScreen(ctx: CanvasRenderingContext2D, label: string){
 		const r = this.currentTicks * 10 / TICKRATE;
 
@@ -213,7 +207,6 @@ class PongGame{
 		ctx.fillText(label, this.width / 2, this.height / 2 + 70);
 	}
 
-	//a revoir pour ecrire victory/defeat
 	drawUserNames(ctx: CanvasRenderingContext2D){
 		ctx.fillStyle = 'white';
 		ctx.textAlign = 'left';
@@ -244,10 +237,6 @@ class PongGame{
 			48,
 			48
 		);
-	}
-
-	setSpectatorWin(playerIndex: number){
-		this.spectatorWinIndex = playerIndex;
 	}
 
 	drawUserAvatar(
@@ -290,7 +279,6 @@ class PongGame{
 	}
 
 	drawNet(ctx: CanvasRenderingContext2D){
-		// Draw net
 		ctx.lineWidth = 5;
 		ctx.strokeStyle = 'white';
 		ctx.beginPath();
@@ -311,6 +299,29 @@ class PongGame{
 		ctx.fillText(this.scorePlayer2.toString(), this.width / 4 * 3, 120);
 	}
 
+	//other functions
+	newGame(){
+		this.start = true; // Meaning start screen
+		this.over = false; // Meaning game over
+		this.connecting = true;
+		this.errorMessage = '';
+		this.didWin = false;
+		this.attemptedConnect = false;
+		this.countdownStart = 0;
+		this.scorePlayer1 = 0;
+		this.scorePlayer2 = 0;
+		this.player1 = new Player(0, (this.height - PLAYER_HEIGHT) / 2);
+		this.player2 = new Player(
+			this.width - PLAYER_WIDTH,
+			(this.height - PLAYER_HEIGHT) / 2
+		);
+		this.spectatorWinIndex = 0;
+		this.player1Image = null;
+		this.player2Image = null;
+		this.player1Data = undefined;
+		this.player2Data = undefined;
+	}
+
 	updatePhysics(){
 		// Rebounds on top and bottom
 		if (this.ball.y > this.height || this.ball.y < 0){
@@ -327,11 +338,6 @@ class PongGame{
 		// The ball's speed increases each time
 		this.ball.x += this.ball.speedX;
 		this.ball.y += this.ball.speedY;
-	}
-	
-	setOver(didWin: boolean){
-		this.over = true;
-		this.didWin = didWin;
 	}
 
 	collide(opponent: Player){
@@ -384,11 +390,6 @@ class PongGame{
 
 			socket.emit('move', { y: this.player1.y });
 		}
-	}
-
-	setScore(score1: number, score2: number){
-		this.scorePlayer1 = score1;
-		this.scorePlayer2 = score2;
 	}
 
 	netUpdateState(state: NetworkedGameState){
@@ -507,7 +508,6 @@ class PongGame{
 			ctx.lineWidth = 27;
 			ctx.strokeStyle = 'white';
 			ctx.fillStyle = 'white';
-			//voir pour modif ça
 			if (timeSinceStart < 1){
 				this.drawWord(ctx, "3");
 			} else if (timeSinceStart < 2){
@@ -533,10 +533,6 @@ class PongGame{
 	}	
 
 }
-
-
-
-
 
 const GAME_WIDTH = 1040;
 const GAME_HEIGHT = 680;
@@ -653,7 +649,8 @@ const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) => {
 		socket.on('start', () => {
 			game.setStart()
 		});
-		socket.on('state', state => {game.netUpdateState(state)
+		socket.on('state', state => {
+			game.netUpdateState(state)
 		});
 
 		return () => {
@@ -692,7 +689,7 @@ const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) => {
 						onKeyDown={onKeyDown}
 						onKeyUp={onKeyUp}
 						tabIndex={-1}
-						>
+					>
 					</canvas>
 				</div>
 			</div>
@@ -708,7 +705,7 @@ const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) => {
 							onKeyDown={onKeyDown}
 							onKeyUp={onKeyUp}
 							tabIndex={-1}
-							>
+						>
 						</canvas>
 					</div>
 				</div>
