@@ -605,14 +605,13 @@ const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) => {
 
 	useEffect(() => {
 		game.newGame();
-		if (!game.attemptedConnect){
-			if (mode === 'spectate'){
+		if (!game.attemptedConnect)
+		{
+			if (mode === 'spectate')
 				socket.emit('spectate', { game_id });
-			} else if (mode === 'private'){
+			else if (mode === 'private')
 				socket.emit('join', { game_id });
-			} else{
-				socket.emit('queue', { type: 'Ranked' });
-			}
+			// socket.emit('getInfos');
 			game.attemptedConnect = true;
 		}
 		return () => {

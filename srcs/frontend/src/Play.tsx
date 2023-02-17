@@ -5,6 +5,7 @@ import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom'
 import { PleaseConnect } from "./adaptable-zone";
+import { socket } from './WebsocketContext';
 
 
 const NormalModeButton = styled(Button)({
@@ -47,7 +48,7 @@ const NormalModeButton = styled(Button)({
 
 function Play(){
 	const handleClick = () => {
-		
+		socket.emit('queue', { type: 'Ranked' });
 	};
 
 	return(

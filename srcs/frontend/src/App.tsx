@@ -50,7 +50,7 @@ function App() {
 						</Route>
 						<Route path="/spectate/:game_id" element={<Pong mode="spectate" />} />
 						<Route path="/join/:game_id" element={<Pong mode="private" />} />
-						<Route path='/pong' element={<Pong mode="ranked" />} />
+						<Route path='/pong' element={<Pong />} />
 						<Route path="/setprivategame">
 							<Route path=':uid' element={<SetPGameZone />} />
 						</Route>
