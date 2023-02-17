@@ -25,7 +25,8 @@
 }
 
 .Presentation-avatar{
-	height: auto;
+	height: 100px;
 	border-radius: 50%;
 	width: 100px;
+	object-fit: cover;
 }
