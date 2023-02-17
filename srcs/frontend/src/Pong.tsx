@@ -282,241 +282,12 @@ class PongGame{
 		}
 	}
 
-	/**
-	 * Called when the browser need to refresh the canvas
-	 * @param ctx the rendering context of the canvas
-	 */
-	render(ctx: CanvasRenderingContext2D){
-		// Clear the screen
-		ctx.fillStyle = 'black';
-		ctx.fillRect(0, 0, this.width, this.height);
-
-		if (this.errorMessage !== ''){
-			ctx.fillStyle = 'white';
-			ctx.textAlign = 'center';
-			ctx.textBaseline = 'middle';
-			ctx.font = '18px sans-serif';
-			ctx.fillText(
-				this.errorMessage,
-				this.width / 2,
-				this.height / 2,
-				Math.min(this.width, 200)
-			);
-			return ;
-		} else if (this.connecting){
-			this.drawStatusScreen(ctx, this.statusMessage);
-			return ;
-		}
-
-		this.drawNet(ctx)
-		this.player1.draw(ctx);
-		this.player2.draw(ctx);
-		this.drawUserNames(ctx);
-		
-		if (this.spectatorWinIndex > 0){
-			const w = this.width * 0.1;
-			const yPos = (this.height * 0.5 - w) / 2;
-
-			let text = '';
-
-			if (this.spectatorWinIndex === 1){
-				this.drawUserAvatar(
-					ctx,
-					this.player1Image,
-					(this.width - w) / 2,
-					yPos,
-					w,
-					w
-				);
-				text = 'Player 1 Won';
-			} else if (this.spectatorWinIndex === 2){
-				this.drawUserAvatar(
-					ctx,
-					this.player2Image,
-					(this.width - w) / 2,
-					yPos,
-					w,
-					w
-				);
-				text = 'Player 2 Won';
-			}
-
-			ctx.fillStyle = 'white';
-			ctx.textAlign = 'center';
-			ctx.textBaseline = 'top';
-			ctx.font = '48px sans-serif';
-			ctx.fillText(
-				text,
-				this.width / 2,
-				yPos + 120
-			);
-		}
-
-		if (this.start){
-			const timeSinceStart = (Date.now() - this.countdownStart) / 1000;
-
-			this.drawScore(ctx);
-
-			// Display set = start game
-			ctx.lineWidth = 27;
-			ctx.strokeStyle = 'white';
-			ctx.fillStyle = 'white';
-			//voir pour modif ça
-			if (timeSinceStart < 1){
-				// Draw 3
-				ctx.fillRect(445, 225, 150, 27);
-				ctx.fillRect(568, 252, 27, 200);
-				ctx.fillRect(495, 325, 85, 27);
-				ctx.fillRect(445, 425, 150, 27);
-			} else if (timeSinceStart < 2){
-				// Draw 2
-				ctx.fillStyle='white';
-				ctx.fillRect(445, 225, 150, 27);
-				ctx.fillRect(568, 252, 27, 100);
-				ctx.fillRect(445, 325, 150, 27);
-				ctx.fillRect(445, 325, 27, 100);
-				ctx.fillRect(445, 425, 150, 27);
-			} else if (timeSinceStart < 3){
-				// Draw 1
-				ctx.fillStyle='white';
-				ctx.fillRect(480, 225, 27, 27);
-				ctx.fillRect(507, 225, 27, 200);
-			}
-		} else{
-			if (this.over === false){
-				this.ball.draw(ctx);
-				this.drawScore(ctx);
-			} else{
-				this.ball.x = this.width / 2;
-				this.ball.y = this.height / 2;
-				this.drawScore(ctx);
-				//voir pour modif ca
-				if (this.didWin){
-					// Draw 'VICTORY'
-					ctx.strokeStyle = 'white';
-					ctx.lineWidth = 20;
-					// Draw 'V'
-					ctx.beginPath();
-					ctx.moveTo(145, 270);
-					ctx.lineTo(195, 390);
-					ctx.lineTo(245, 270);
-					ctx.stroke();
-					// Draw 'I'
-					ctx.beginPath();
-					ctx.moveTo(290, 265);
-					ctx.lineTo(290, 415);
-					ctx.stroke();
-					// Draw 'C'
-					ctx.beginPath();
-					ctx.moveTo(415, 275);
-					ctx.lineTo(340, 275);
-					ctx.lineTo(340, 405);
-					ctx.lineTo(415, 405);
-					ctx.stroke();
-					// Draw 'T'
-					ctx.beginPath();
-					ctx.moveTo(445, 275);
-					ctx.lineTo(540, 275);
-					ctx.stroke();
-					ctx.moveTo(492, 275);
-					ctx.lineTo(492, 415);
-					ctx.stroke();
-					// Draw 'O'
-					ctx.beginPath();
-					ctx.moveTo(580, 275);
-					ctx.lineTo(655, 275);
-					ctx.lineTo(655, 405);
-					ctx.lineTo(580, 405);
-					ctx.lineTo(580, 265);
-					ctx.stroke();
-					// Draw 'R'
-					ctx.beginPath();
-					ctx.moveTo(705, 265);
-					ctx.lineTo(705, 415);
-					ctx.stroke();
-					ctx.moveTo(705, 275);
-					ctx.lineTo(780, 275);
-					ctx.lineTo(780, 340);
-					ctx.lineTo(720, 340);
-					ctx.lineTo(780, 410);
-					ctx.stroke();
-					// Draw 'Y'
-					ctx.beginPath();
-					ctx.moveTo(830, 272);
-					ctx.lineTo(877, 335);
-					ctx.stroke();
-					ctx.beginPath();
-					ctx.moveTo(915, 272);
-					ctx.lineTo(830, 415);
-					ctx.stroke();
-				} else{
-					// Draw 'DEFEAT'
-					ctx.strokeStyle = 'white';
-					ctx.lineWidth = 20;
-					// Draw 'D'
-					ctx.beginPath();
-					ctx.moveTo(145, 275);
-					ctx.lineTo(220, 290);
-					ctx.lineTo(220, 390);
-					ctx.lineTo(145, 405);
-					ctx.lineTo(145, 275);
-					ctx.lineTo(220, 290);
-					ctx.stroke();
-					// Draw 'E'
-					ctx.beginPath();
-					ctx.moveTo(365, 275);
-					ctx.lineTo(290, 275);
-					ctx.lineTo(290, 405);
-					ctx.lineTo(365, 405);
-					ctx.stroke();
-					ctx.beginPath();
-					ctx.moveTo(290, 340);
-					ctx.lineTo(330, 340);
-					ctx.stroke();
-					// Draw 'F'
-					ctx.beginPath();
-					ctx.moveTo(425, 415);
-					ctx.lineTo(425, 275);
-					ctx.lineTo(500, 275);
-					ctx.stroke();
-					ctx.beginPath();
-					ctx.moveTo(425, 320);
-					ctx.lineTo(465, 320);
-					ctx.stroke();
-					// Draw 'E'
-					ctx.beginPath();
-					ctx.moveTo(635, 275);
-					ctx.lineTo(560, 275);
-					ctx.lineTo(560, 405);
-					ctx.lineTo(635, 405);
-					ctx.stroke();
-					ctx.beginPath();
-					ctx.moveTo(560, 340);
-					ctx.lineTo(600, 340);
-					ctx.stroke();
-					// Draw 'A'
-					ctx.beginPath();
-					ctx.moveTo(695, 415);
-					ctx.lineTo(695, 275);
-					ctx.lineTo(770, 275);
-					ctx.lineTo(770, 415);
-					ctx.stroke();
-					ctx.beginPath();
-					ctx.moveTo(695, 330);
-					ctx.lineTo(770, 330);
-					ctx.stroke();
-					// Draw 'T'
-					ctx.beginPath();
-					ctx.moveTo(830, 275);
-					ctx.lineTo(925, 275);
-					ctx.stroke();
-					ctx.moveTo(877, 275);
-					ctx.lineTo(877, 415);
-					ctx.stroke();
-				}
-			}
-		}
-	}	
+	drawWord(ctx: CanvasRenderingContext2D, ccl: string){
+		ctx.fillStyle = 'white';
+		ctx.textBaseline = 'middle';
+		ctx.font = '120px Georgia, serif';
+		ctx.fillText(ccl, this.width / 2, this.height / 2);
+	}
 
 	drawNet(ctx: CanvasRenderingContext2D){
 		// Draw net
@@ -562,7 +333,7 @@ class PongGame{
 		this.over = true;
 		this.didWin = didWin;
 	}
- 
+
 	collide(opponent: Player){
 		// The player misses the ball
 		if (this.ball.y < opponent.y
@@ -656,6 +427,111 @@ class PongGame{
 	handleKeyDown(code: string){
 		this.keyStates[code] = true;
 	}
+
+	/**
+	 * Called when the browser need to refresh the canvas
+	 * @param ctx the rendering context of the canvas
+	 */
+	render(ctx: CanvasRenderingContext2D){
+		// Clear the screen
+		ctx.fillStyle = 'black';
+		ctx.fillRect(0, 0, this.width, this.height);
+
+		if (this.errorMessage !== ''){
+			ctx.fillStyle = 'white';
+			ctx.textAlign = 'center';
+			ctx.textBaseline = 'middle';
+			ctx.font = '18px sans-serif';
+			ctx.fillText(
+				this.errorMessage,
+				this.width / 2,
+				this.height / 2,
+				Math.min(this.width, 200)
+			);
+			return ;
+		} else if (this.connecting){
+			this.drawStatusScreen(ctx, this.statusMessage);
+			return ;
+		}
+
+		this.drawNet(ctx)
+		this.player1.draw(ctx);
+		this.player2.draw(ctx);
+		this.drawUserNames(ctx);
+		
+		if (this.spectatorWinIndex > 0){
+			const w = this.width * 0.1;
+			const yPos = (this.height * 0.5 - w) / 2;
+
+			let text = '';
+
+			if (this.spectatorWinIndex === 1){
+				this.drawUserAvatar(
+					ctx,
+					this.player1Image,
+					(this.width - w) / 2,
+					yPos,
+					w,
+					w
+				);
+				text = 'Player 1 Won';
+			} else if (this.spectatorWinIndex === 2){
+				this.drawUserAvatar(
+					ctx,
+					this.player2Image,
+					(this.width - w) / 2,
+					yPos,
+					w,
+					w
+				);
+				text = 'Player 2 Won';
+			}
+
+			ctx.fillStyle = 'white';
+			ctx.textAlign = 'center';
+			ctx.textBaseline = 'top';
+			ctx.font = '48px sans-serif';
+			ctx.fillText(
+				text,
+				this.width / 2,
+				yPos + 120
+			);
+		}
+
+		if (this.start){
+			const timeSinceStart = (Date.now() - this.countdownStart) / 1000;
+
+			this.drawScore(ctx);
+
+			// Display set = start game
+			ctx.lineWidth = 27;
+			ctx.strokeStyle = 'white';
+			ctx.fillStyle = 'white';
+			//voir pour modif ça
+			if (timeSinceStart < 1){
+				this.drawWord(ctx, "3");
+			} else if (timeSinceStart < 2){
+				this.drawWord(ctx, "2");
+			} else if (timeSinceStart < 3){
+				this.drawWord(ctx, "1");
+			}
+		} else{
+			if (this.over === false){
+				this.ball.draw(ctx);
+				this.drawScore(ctx);
+			} else{
+				this.ball.x = this.width / 2;
+				this.ball.y = this.height / 2;
+				this.drawScore(ctx);
+				if (this.didWin){
+					this.drawWord(ctx, "VICTORY");
+				} else{
+					this.drawWord(ctx, "DEFEAT");
+				}
+			}
+		}
+	}	
+
 }
 
 
