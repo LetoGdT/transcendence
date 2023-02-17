@@ -23,7 +23,9 @@
 
 .Friend-avatar{
 	max-width: 100px;
-	height: auto;
+	height: 100px;
+	width: 100px;
+	object-fit: cover;
 }
 
 .Friend-status{
