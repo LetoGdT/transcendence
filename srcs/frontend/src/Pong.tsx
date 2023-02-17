@@ -1,9 +1,9 @@
 import './Pong.css'
 import React, { useEffect } from 'react';
-import { socket } from 'WebsocketContext';
+import { socket } from './WebsocketContext';
 import { useParams } from 'react-router-dom';
-import { PleaseConnect } from '../adaptable-zone';
-import { SignUpButton } from '../Header-zone';
+import { PleaseConnect } from './adaptable-zone';
+import { SignUpButton } from './Header-zone';
 import { Link } from 'react-router-dom';
 
 const BALL_SPEED = 5;
@@ -228,8 +228,22 @@ class PongGame{
 			this.height - 20
 		);
 
-		this.drawUserAvatar(ctx, this.player1Image, 10, this.height - 48 - 10, 48, 48);
-		this.drawUserAvatar(ctx, this.player2Image, this.width - 58, this.height - 48 - 10, 48, 48);
+		this.drawUserAvatar(
+			ctx,
+			this.player1Image,
+			10,
+			this.height - 48 - 10,
+			48,
+			48
+		);
+		this.drawUserAvatar(
+			ctx,
+			this.player2Image,
+			this.width - 58,
+			this.height - 48 - 10,
+			48,
+			48
+		);
 	}
 
 	setSpectatorWin(playerIndex: number){
@@ -282,11 +296,14 @@ class PongGame{
 			ctx.textAlign = 'center';
 			ctx.textBaseline = 'middle';
 			ctx.font = '18px sans-serif';
-			ctx.fillText(this.errorMessage, this.width / 2, this.height / 2, Math.min(this.width, 200));
+			ctx.fillText(
+				this.errorMessage,
+				this.width / 2,
+				this.height / 2,
+				Math.min(this.width, 200)
+			);
 			return ;
-		}
-		else if (this.connecting)
-		{
+		} else if (this.connecting){
 			this.drawStatusScreen(ctx, this.statusMessage);
 			return ;
 		}
@@ -296,17 +313,31 @@ class PongGame{
 		this.player2.draw(ctx);
 		this.drawUserNames(ctx);
 		
-		if (this.spectatorWinIndex > 0) {
+		if (this.spectatorWinIndex > 0){
 			const w = this.width * 0.1;
 			const yPos = (this.height * 0.5 - w) / 2;
 
 			let text = '';
 
-			if (this.spectatorWinIndex === 1) {
-				this.drawUserAvatar(ctx, this.player1Image, (this.width - w) / 2, yPos, w, w);
+			if (this.spectatorWinIndex === 1){
+				this.drawUserAvatar(
+					ctx,
+					this.player1Image,
+					(this.width - w) / 2,
+					yPos,
+					w,
+					w
+				);
 				text = 'Player 1 Won';
-			} else if (this.spectatorWinIndex === 2) {
-				this.drawUserAvatar(ctx, this.player2Image, (this.width - w) / 2, yPos, w, w);
+			} else if (this.spectatorWinIndex === 2){
+				this.drawUserAvatar(
+					ctx,
+					this.player2Image,
+					(this.width - w) / 2,
+					yPos,
+					w,
+					w
+				);
 				text = 'Player 2 Won';
 			}
 
@@ -314,11 +345,14 @@ class PongGame{
 			ctx.textAlign = 'center';
 			ctx.textBaseline = 'top';
 			ctx.font = '48px sans-serif';
-			ctx.fillText(text, this.width / 2, yPos + 120);
+			ctx.fillText(
+				text,
+				this.width / 2,
+				yPos + 120
+			);
 		}
 
-		if (this.start)
-		{
+		if (this.start){
 			const timeSinceStart = (Date.now() - this.countdownStart) / 1000;
 
 			this.drawScore(ctx);
@@ -327,13 +361,14 @@ class PongGame{
 			ctx.lineWidth = 27;
 			ctx.strokeStyle = 'white';
 			ctx.fillStyle = 'white';
-			if (timeSinceStart < 1) {
+			//voir pour modif ça
+			if (timeSinceStart < 1){
 				// Draw 3
 				ctx.fillRect(445, 225, 150, 27);
 				ctx.fillRect(568, 252, 27, 200);
 				ctx.fillRect(495, 325, 85, 27);
 				ctx.fillRect(445, 425, 150, 27);
-			} else if (timeSinceStart < 2) {
+			} else if (timeSinceStart < 2){
 				// Draw 2
 				ctx.fillStyle='white';
 				ctx.fillRect(445, 225, 150, 27);
@@ -341,27 +376,22 @@ class PongGame{
 				ctx.fillRect(445, 325, 150, 27);
 				ctx.fillRect(445, 325, 27, 100);
 				ctx.fillRect(445, 425, 150, 27);
-			} else if (timeSinceStart < 3) {
+			} else if (timeSinceStart < 3){
 				// Draw 1
 				ctx.fillStyle='white';
 				ctx.fillRect(480, 225, 27, 27);
 				ctx.fillRect(507, 225, 27, 200);
 			}
-		}
-		else
-		{
-			if (this.over === false)
-			{
+		} else{
+			if (this.over === false){
 				this.ball.draw(ctx);
 				this.drawScore(ctx);
-			}
-			else
-			{
+			} else{
 				this.ball.x = this.width / 2;
 				this.ball.y = this.height / 2;
 				this.drawScore(ctx);
-				if (this.didWin)
-				{
+				//voir pour modif ca
+				if (this.didWin){
 					// Draw 'VICTORY'
 					ctx.strokeStyle = 'white';
 					ctx.lineWidth = 20;
@@ -419,9 +449,7 @@ class PongGame{
 					ctx.moveTo(915, 272);
 					ctx.lineTo(830, 415);
 					ctx.stroke();
-				}
-				else
-				{
+				} else{
 					// Draw 'DEFEAT'
 					ctx.strokeStyle = 'white';
 					ctx.lineWidth = 20;
@@ -490,8 +518,7 @@ class PongGame{
 		}
 	}	
 
-	drawNet(ctx: CanvasRenderingContext2D)
-	{
+	drawNet(ctx: CanvasRenderingContext2D){
 		// Draw net
 		ctx.lineWidth = 5;
 		ctx.strokeStyle = 'white';
@@ -503,8 +530,7 @@ class PongGame{
 		ctx.setLineDash([]); // sets the line back to solid
 	}
 
-	drawScore(ctx: CanvasRenderingContext2D)
-	{
+	drawScore(ctx: CanvasRenderingContext2D){
 		ctx.fillStyle = 'white';
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
@@ -514,21 +540,16 @@ class PongGame{
 		ctx.fillText(this.scorePlayer2.toString(), this.width / 4 * 3, 120);
 	}
 
-	updatePhysics()
-	{
+	updatePhysics(){
 		// Rebounds on top and bottom
-		if (this.ball.y > this.height || this.ball.y < 0)
-		{
+		if (this.ball.y > this.height || this.ball.y < 0){
 			this.ball.speedY *= -1;
 		}
 
 		// The ball reaches the right or left limit
-		if (this.ball.x < PLAYER_WIDTH)
-		{
+		if (this.ball.x < PLAYER_WIDTH){
 			this.collide(this.player1);
-		}
-		else if (this.ball.x > this.width - PLAYER_WIDTH)
-		{
+		} else if (this.ball.x > this.width - PLAYER_WIDTH){
 			this.collide(this.player2);
 		}
 
@@ -537,28 +558,24 @@ class PongGame{
 		this.ball.y += this.ball.speedY;
 	}
 	
-	setOver(didWin: boolean) {
+	setOver(didWin: boolean){
 		this.over = true;
 		this.didWin = didWin;
 	}
  
-	collide(opponent: Player)
-	{
+	collide(opponent: Player){
 		// The player misses the ball
-		if (this.ball.y < opponent.y || this.ball.y > opponent.y + PLAYER_HEIGHT)
-		{
+		if (this.ball.y < opponent.y
+				|| this.ball.y > opponent.y + PLAYER_HEIGHT){
 			// The player who scores gets 1 point
-			if (opponent === this.player1)
-			{
+			if (opponent === this.player1){
 				this.scorePlayer2++;
-			}
-			else
-			{
+			} else{
 				this.scorePlayer1++;
 			}
 			// End of the game if one player reaches scoreToWin
-			if (this.scorePlayer1 === this.scoreToWin || this.scorePlayer2 === this.scoreToWin)
-			{
+			if (this.scorePlayer1 === this.scoreToWin 
+				|| this.scorePlayer2 === this.scoreToWin){
 				this.over = true
 				return;
 			}
@@ -571,8 +588,7 @@ class PongGame{
 			this.ball.speedY = BALL_SPEED;
 		}
 		// The player hits the ball
-		else
-		{
+		else {
 			// Increase speed and change direction
 			this.ball.x += 1;
 			this.ball.speedX *= -1.2;
@@ -580,8 +596,7 @@ class PongGame{
 		}
 	}
 
-	changeDirection(playerPosition: number)
-	{
+	changeDirection(playerPosition: number){
 		let impact = this.ball.y - playerPosition - PLAYER_HEIGHT / 2;
 		let ratio = 100 / (PLAYER_HEIGHT / 2);
 		// Get a value between 0 and 10
@@ -589,12 +604,10 @@ class PongGame{
 	}
 
 	// Function called every 20ms (50 Hz / 50 times per second)
-	update()
-	{
+	update(){
 		this.currentTicks++;
 		
-		if (!this.over && !this.start)
-		{
+		if (!this.over && !this.start){
 			this.handleMovement();
 			// this.updatePhysics();
 
@@ -602,14 +615,14 @@ class PongGame{
 		}
 	}
 
-	setScore(score1: number, score2: number) {
+	setScore(score1: number, score2: number){
 		this.scorePlayer1 = score1;
 		this.scorePlayer2 = score2;
 	}
 
-	netUpdateState(state: NetworkedGameState) {
+	netUpdateState(state: NetworkedGameState){
 		// this.player2.y = y;
-		if (state.authoritative) {
+		if (state.authoritative){
 			this.player1.y = state.p1_y;
 		}
 
@@ -618,20 +631,17 @@ class PongGame{
 		this.ball.y = state.ball_y;
 	}
 
-	handleMovement()
-	{
+	handleMovement(){
 		const maxPlayerY = this.height - PLAYER_HEIGHT;
 
-		if (this.keyStates[PLAYER1_UP_KEY])
-		{
+		if (this.keyStates[PLAYER1_UP_KEY]){
 			// socket.emit('moveDown');
 			this.player1.y -= 7;
 			if (this.player1.y < 0)
 				this.player1.y = 0;
 		}
 
-		if (this.keyStates[PLAYER1_DOWN_KEY])
-		{
+		if (this.keyStates[PLAYER1_DOWN_KEY]){
 			// socket.emit('moveUp');
 			this.player1.y += 7;
 			if (this.player1.y >= maxPlayerY)
@@ -639,13 +649,11 @@ class PongGame{
 		}
 	}
 
-	handleKeyUp(code: string)
-	{
+	handleKeyUp(code: string){
 		delete this.keyStates[code];
 	}
 
-	handleKeyDown(code: string)
-	{
+	handleKeyDown(code: string){
 		this.keyStates[code] = true;
 	}
 }
@@ -659,11 +667,10 @@ const GAME_HEIGHT = 680;
 
 const gameInstance = new PongGame(GAME_WIDTH, GAME_HEIGHT);
 
-const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
-{
+const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) => {
 	const canvasRef = React.useRef<HTMLCanvasElement>(null);
 	const resizeHandler = () => {
-		if (canvasRef.current instanceof HTMLCanvasElement) {
+		if (canvasRef.current instanceof HTMLCanvasElement){
 			const c = canvasRef.current;
 			const pixelRatio = window.devicePixelRatio || 1;
 
@@ -680,8 +687,7 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 		};
 	}, []);
 
-	React.useEffect(() =>
-	{
+	React.useEffect(() => {
 		const canvas = canvasRef.current;
 		let animFrameId: number;
 		
@@ -694,8 +700,7 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 		// Force a size update to keep it in sync
 		resizeHandler();
 
-		function render()
-		{
+		function render(){
 			const c = ctx as CanvasRenderingContext2D;
 
 			c.setTransform(
@@ -708,8 +713,7 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 
 		render();
 
-		return () =>
-		{
+		return () => {
 			window.cancelAnimationFrame(animFrameId);
 		}
 	}, [draw]);
@@ -722,20 +726,19 @@ type PongGameBootstrapProps = {
 	game_id: number;
 }
 
-const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) =>
-{
+const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) => {
 	const game = gameInstance;
 	const canvasRef = useCanvas(ctx => game.render(ctx));
 	const [over, setOver] = React.useState<Boolean>(false);
 
 	useEffect(() => {
 		game.newGame();
-		if (!game.attemptedConnect) {
-			if (mode === 'spectate') {
+		if (!game.attemptedConnect){
+			if (mode === 'spectate'){
 				socket.emit('spectate', { game_id });
-			} else if (mode === 'private') {
+			} else if (mode === 'private'){
 				socket.emit('join', { game_id });
-			} else {
+			} else{
 				socket.emit('queue', { type: 'Ranked' });
 			}
 			game.attemptedConnect = true;
@@ -762,15 +765,20 @@ const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) =>
 			game.setCountdownStart(Date.now() - countdown);
 			game.setPlayers(player1, player2);
 		});
-		socket.on('queuing', () => game.statusMessage = 'Searching for an opponent...');
+		socket.on('queuing', () => {
+			game.statusMessage = 'Searching for an opponent...'
+		});
 		socket.on('exception', e => {
 			game.setErrorMessage(`Error: ${e.message}`);
 		});
 		socket.on('waitingForOpponent', ({ username }) => {
 			game.statusMessage = `Waiting for ${username} to join.`;
 		});
-		socket.on('start', () => game.setStart());
-		socket.on('state', state => game.netUpdateState(state));
+		socket.on('start', () => {
+			game.setStart()
+		});
+		socket.on('state', state => {game.netUpdateState(state)
+		});
 
 		return () => {
 			/* Notify the backend that we left the page */
@@ -786,25 +794,22 @@ const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) =>
 	const onKeyUp = (e: React.KeyboardEvent) => {
 		e.preventDefault();
 
-		if (mode !== 'spectate') {
+		if (mode !== 'spectate'){
 			game.handleKeyUp(e.code);
 		}
 	};
 	const onKeyDown = (e: React.KeyboardEvent) => {
 		e.preventDefault();
 
-		if (mode !== 'spectate') {
+		if (mode !== 'spectate'){
 			game.handleKeyDown(e.code);
 		}
 	};
 
-	console.log(game.over);//
-
 	if (over === false){
 		return (
-			<div style={{position: 'fixed', top:'350px', bottom:'25px', left:0, right:0}}>
-	
-				<div style={{aspectRatio: 16 / 9 , maxHeight:'100%', maxWidth:'100%', marginLeft:'auto', marginRight:'auto'}}>
+			<div className="Pong-window-lvl1">
+				<div className="Pong-window-lvl2">
 					<canvas
 						id="responsive-canvas"
 						ref={canvasRef}
@@ -819,9 +824,8 @@ const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) =>
 	} else {
 		return (
 			<div className="Pong">
-				<div style={{position: 'fixed', top:'350px', bottom:'25px', left:0, right:0}}>
-		
-					<div style={{aspectRatio: 16 / 9 , maxHeight:'100%', maxWidth:'100%', marginLeft:'auto', marginRight:'auto'}}>
+				<div className="Pong-window-lvl1">
+					<div className="Pong-window-lvl2">
 						<canvas
 							id="responsive-canvas"
 							ref={canvasRef}
