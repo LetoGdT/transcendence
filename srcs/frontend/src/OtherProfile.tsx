@@ -537,7 +537,12 @@ function OtherProfile(){
 	}, []);
 
 	const options = {
-		title: "Your matches' results",
+		title: "Their matches' results",
+		titleTextStyle: {
+			color: '#faebd7',    // any HTML string color ('red', '#cc00cc')
+			fontSize: 20, // 12, 18 whatever you want (don't specify px)
+			bold: true,    // true or false
+		},
 		backgroundColor: 'black',
 		colors: ['#009900', '#cc0000', '#646464'],
 		legend: {textStyle: {color: 'gray', fontSize: '15'}}
@@ -597,7 +602,7 @@ function OtherProfile(){
 					</div>
 					<div className='Profile-container-row-lvl1'>
 						<div className='Profile-Avatar'>
-							<img src={data?.image_url} alt="alias' avatar" className='Profile-avatar-img'></img>
+							<img src={data?.image_url} alt={data?.username + "'s avatar"} className='Profile-avatar-img'></img>
 						</div>
 						<div className='Profile-Pie-Charts'>
 							<Chart
