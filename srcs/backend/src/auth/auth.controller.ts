@@ -22,7 +22,7 @@ import { RequestWithUser } from '../interfaces/RequestWithUser.interface';
 export class AuthController
 {
 	state: string;
-	private readonly logger = new Logger(Api42.name);
+	private readonly logger = new Logger(AuthController.name);
 
 	constructor(private readonly configService: ConfigService,
 				private jwtService: JwtService,
@@ -66,6 +66,7 @@ export class AuthController
 				secure: false,		// Just info for the browser
 			}
 		);
+		this.logger.debug(`${user.username} is connected`);
 		if (!user.enabled2fa)
 		{		
 			res.cookie('refresh_token', refresh_token,
@@ -78,6 +79,7 @@ export class AuthController
 			return (res.redirect(`${this.configService.get<string>('REACT_APP_REACT_HOSTNAME')}`));
 		}
 		return (res.redirect(`${this.configService.get<string>('REACT_APP_REACT_HOSTNAME')}/2fa`));
+		this.logger.debug(`${access_token}, ${refresh_token}`);
 	}
 
 	@Get('/logout')

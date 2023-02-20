@@ -20,6 +20,8 @@ import { MatchesService } from '../matches/matches.service';
 import { Connection } from '../interfaces/connection.interface';
 // import { Game } from './game/game.class';
 import { CreateMatchDto } from '../dto/matches.dto';
+import { PageOptionsDto, Order } from "../dto/page-options.dto";
+import { MatchesQueryFilterDto } from '../dto/query-filters.dto';
 
 /* Sync with frontend's code */
 const PLAYER_HEIGHT = 100;
@@ -175,16 +177,16 @@ class Game {
 				this.start();
 			}
 		} else if (this.gameState === GameState.Created) {
-			// this.logger.log('Game is starting');
+			// this.logger.debug('Game is starting');
 			if (null != this.player1.socket) {
 				this.netSendGameFoundPacket(this.player1.socket);
-				// this.logger.log('Packet sent');
+				// this.logger.debug('Packet sent');
 			}
 			if (null != this.player2.socket) {
 				this.netSendGameFoundPacket(this.player2.socket);
-				// this.logger.log('Packet sent');
+				// this.logger.debug('Packet sent');
 			}
-			// this.logger.log('Switching to countdown state');
+			// this.logger.debug('Switching to countdown state');
 			this.gameState = GameState.Countdown;
 		} else if (this.gameState === GameState.Countdown) {
 			if (this.timeSinceStart() >= 4000) {
@@ -444,6 +446,7 @@ class Game {
 	}
 
 	reconnectUser(user: User, socket: Socket) {
+		this.logger.debug(`Reconnecting ${user.username}`);
 		let playerIndex: number;
 		let player: RemotePlayer;
 
@@ -580,16 +583,16 @@ class GameManager {
 
 		this.games.push(game);
 
-		this.logger.log(`[GameManager] Creating new ${privateGame ? 'private' : 'public'} game with ${player1.user.username} and ${player2.user.username}`);
+		this.logger.debug(`[GameManager] Creating new ${privateGame ? 'private' : 'public'} game with ${player1.user.username} and ${player2.user.username}`);
 
 		
 
 		return game;
 	}
 
-	// findGameByUser(user: User, privateOnly: boolean) {
-	// 	return this.games.find(game => game.hasUser(user));
-	// }
+	findGameByUser(user: User) {
+		return this.games.find(game => game.hasUser(user));
+	}
 
 	getCurrentGameForUser(user: User) {
 		return this.games.find(game =>
@@ -636,9 +639,6 @@ export class MySocketGateway implements OnGatewayConnection,
 	@WebSocketServer()
 	server: Server;
 
-	queue = new Map<number, Connection[]>();
-	games: Game[] = [];
-
 	matchmakingQueue: Connection[] = [];
 
 	async handleConnection(client: Socket) {
@@ -663,7 +663,7 @@ export class MySocketGateway implements OnGatewayConnection,
 
 		this.clients.push({user, client});
 		await this.usersService.changeUserStatus(user.id, 'online');
-		this.logger.log(user.username + " has connected to the websocket");
+		this.logger.debug(user.username + " has connected to the websocket");
 	}
 
 	removeClientFromQueue(client: Connection) {
@@ -680,7 +680,7 @@ export class MySocketGateway implements OnGatewayConnection,
 			const conn = this.clients[index];
 			const { user } = conn;
 
-			this.logger.log(user.username + " has disconnected from the websocket.");
+			this.logger.debug(user.username + " has disconnected from the websocket.");
 			
 			this.removeClientFromQueue(conn);
 
@@ -694,12 +694,10 @@ export class MySocketGateway implements OnGatewayConnection,
 	handleGameLeft(@ConnectedSocket() client: Socket) {
 		const connection = this.clients.find(c => c.client.id === client.id);
 
-		if (null != connection) {
+		if (connection != null)
 			this.removeClientFromQueue(connection);
-			// gameManager.handleDisconnect(connection);
-		}
 
-		this.logger.log(`${connection.user.username} left the queue`);
+		this.logger.debug(`${connection.user.username} left the queue`);
 	}
 
 	@SubscribeMessage('newMessage')
@@ -740,6 +738,48 @@ export class MySocketGateway implements OnGatewayConnection,
 				continue ;
 			}
 		}
+	}
+
+	@SubscribeMessage('getInfos')
+	async getInfos(@ConnectedSocket() client: Socket)
+	{
+		const connection = this.clients.find(c => c.client.id == client.id);
+
+		if (connection == null)
+			throw new WsException('We don\'t know you sir, but that\'s our bad');
+
+		const queueIndex = this.matchmakingQueue.findIndex(e => e.user.id === connection.user.id)
+
+		if (queueIndex != -1)
+		{
+			client.emit('queuing');
+			return;
+		}
+
+		const game = gameManager.findGameByUser(connection.user);
+		if (game != null)
+		{
+			game.reconnectUser(connection.user, connection.client);
+			return;
+		}
+
+		const pageOptionsDto = new PageOptionsDto();
+		pageOptionsDto.take = 1;
+		pageOptionsDto.order = Order.DESC;
+		const games = await this.matchesService.getAllMatches(pageOptionsDto, new MatchesQueryFilterDto, connection.user.id);
+		const lastGame = games.data[0];
+
+		client.emit('gameFound', {
+				countdown: 4000,
+				player1: { id: lastGame.user1.id, image_url: lastGame.user1.image_url, username: lastGame.user1.username },
+				player2: { id: lastGame.user2.id, image_url: lastGame.user2.image_url, username: lastGame.user2.username },
+		});
+		client.emit('start');
+		client.emit('score', { score1: lastGame.score_user1, score2: lastGame.score_user2 });
+		if (lastGame.winner.id == connection.user.id)
+			client.emit('win', { didWin: true });
+		else
+			client.emit('win', { didWin: false });
 	}
 
 	@SubscribeMessage('spectate')
@@ -802,17 +842,18 @@ export class MySocketGateway implements OnGatewayConnection,
 		@ConnectedSocket() client: Socket,)
 	{
 		const remoteConn = this.clients.find(connection => connection.client.id == client.id);
-		if (null == remoteConn)
+		if (remoteConn == null)
 			throw new WsException('We don\'t know you sir, but that\'s our bad (failed to queue)');
 
 		const game = gameManager.getCurrentGameForUser(remoteConn.user);
 
-		if (null != game) {
+		if (game != null) {
 			game.reconnectUser(remoteConn.user, remoteConn.client);
+			this.logger.debug(`Reconnected ${remoteConn.user.username} on socket ${remoteConn.client.id}`);
 			return ;
 		}
 
-		if (body.type == 'Ranked')
+		if (body.type === 'Ranked')
 		{
 			const queueIdx = this.matchmakingQueue.findIndex(e => e.user.id === remoteConn.user.id);
 
@@ -843,7 +884,7 @@ export class MySocketGateway implements OnGatewayConnection,
 					this.matchesService.calculateRank(match.id);
 				}, this.usersService);
 			} else {
-				this.logger.log(`${remoteConn.user.username} is queuing`);
+				this.logger.debug(`${remoteConn.user.username} is queuing`);
 				client.emit('queuing');
 			}
 		}
@@ -886,10 +927,9 @@ export class MySocketGateway implements OnGatewayConnection,
 				usersService.changeUserStatus(game.player1.user.id, 'online');
 				usersService.changeUserStatus(game.player2.user.id, 'online');
 				const match = await this.matchesService.createMatch(createMatchDto);
-				/* TODO calculate rank for private games ? */
-				this.matchesService.calculateRank(match.id);
 			}, this.usersService, body.ball_speed, body.winning_score);
 			this.clients[meIndex].client.emit('gameCreated', { game_id: game.id });
+			this.logger.debug(`${this.clients[meIndex]} asked ${this.clients[opponentIndex]} for a private game`);
 			this.sendInvitesList(this.clients[opponentIndex]);
 
 			/* Broadcast the notification to every socket this user has */
@@ -905,7 +945,7 @@ export class MySocketGateway implements OnGatewayConnection,
 	async getInvite(@ConnectedSocket() client: Socket)
 	{
 		const connection = this.clients.find(connection => connection.client.id == client.id);
-		if (null == connection)
+		if (connection == null)
 			throw new WsException('We don\'t know you sir, but that\'s our bad');
 		this.sendInvitesList(connection);
 	}
@@ -924,6 +964,7 @@ export class MySocketGateway implements OnGatewayConnection,
 			game = gameManager.getGameById(body.game_id);
 			if (null != game) {
 				game.reconnectUser(connection.user, connection.client);
+				this.logger.debug(`${connection.user.username} joined a private game`)
 			} else {
 				throw new WsException('Game not found');
 			}
@@ -943,6 +984,7 @@ export class MySocketGateway implements OnGatewayConnection,
 		}
 		game.player1.socket.emit('refuseInvite');
 		this.sendInvitesList(connection);
+		this.logger.debug(`${connection.user.username} refused the invitation to a game`);
 	}
 
 	sendInvitesList({ user, client }: Connection) {
