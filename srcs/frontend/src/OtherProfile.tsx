@@ -2,6 +2,7 @@ import './App.css'
 import './Profile.css'
 import './MatchHistory.css'
 import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import { Link, useParams } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
@@ -50,6 +51,11 @@ type meProps = {
 
 type matchHistoryProps = {
 	data: [];
+}
+
+type gamesProps = {
+	data: [];
+	user: {id: string};
 }
 
 const AddButton = styled(Button)({
@@ -488,6 +494,8 @@ function OtherProfile(){
 	const [achievements, setAchievements] = useState<achievementProps[]>([]);
 	const [matchs, setMatchs] = useState<matchHistoryProps[]>([]);
 	const [error, setError] = React.useState("");
+	const [games, setGames] = useState<gamesProps[]>([]);
+	const navigate = useNavigate();
 	
 	useEffect(() => {
 		const api = async () => {
@@ -533,7 +541,12 @@ function OtherProfile(){
 			}
 		};
 	
+		socket.on('returnInvites', (data) => {
+			setGames(data);
+		});
+		socket.emit('getInvites');
 		api();
+
 	}, []);
 
 	const options = {
@@ -582,6 +595,14 @@ function OtherProfile(){
 		}
 	};
 
+	const HandleAskGame = async (event: any) => {
+		let game = games.find(game => game.user.id == uid);
+		if (game !== undefined)
+			Notification(['You cannot ask for multiple games at once with the same player']);
+		else
+			navigate(event.target.value);
+	};
+
 	var url_aksgame: string = "/setprivategame/";
 	if (uid !== undefined){
 		url_aksgame = url_aksgame.concat(uid.toString());
@@ -596,7 +617,7 @@ function OtherProfile(){
 						<div className='Profile-Alias-div'>{data?.username}</div>
 						<div className='Profile-Alias-div'>{AddOrRemoveButton(uid)}</div>
 						<div className='Profile-Alias-div'>{BlockOrUnblockButton(uid)}</div>
-						<div className='Profile-Alias-div'><Link to={url_aksgame}><AskButton variant="contained" disableRipple>Ask for a game</AskButton></Link></div>
+						<div className='Profile-Alias-div'><AskButton variant="contained" disableRipple value={url_aksgame} onClick={HandleAskGame}>Ask for a game</AskButton></div>
 						<div className='Profile-Alias-div'><Link to="/chat"><AskButton variant="contained" disableRipple onClick={handleClickChat}>Chat in private</AskButton></Link></div>
 						{/*button pour spec ?*/}
 					</div>
