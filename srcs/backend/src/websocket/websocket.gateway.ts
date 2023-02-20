@@ -152,14 +152,16 @@ class Game {
 	}
 
 	resetBall() {
-		this.ballDirY = (Math.random() * 2 - 1) / 2;
-		this.ballDirX = Math.sqrt(1 - (this.ballDirY * this.ballDirY));
+		// this.ballDirY = (Math.random() * 2 - 1) / 2;
+		this.ballDirY = 0;
+		// this.ballDirX = Math.sqrt(1 - (this.ballDirY * this.ballDirY));
+		this.ballDirX = 1;
 
-		if (Math.random() < 0.5)
-			this.ballDirX *= -1;
+		// if (Math.random() < 0.5)
+		// 	this.ballDirX *= -1;
 
-		if (Math.random() < 0.5)
-			this.ballDirY *= -1;
+		// if (Math.random() < 0.5)
+		// 	this.ballDirY *= -1;
 
 		this.ballX = GAME_WIDTH / 2;
 		this.ballY = GAME_HEIGHT / 2;
@@ -223,11 +225,63 @@ class Game {
 		/* Check if the ball collides with the paddles */
 		if (this.paddleCollides())
 		{
-			this.ballDirX *= -1;
-			// let impact = this.coordinates.y - this.paddle1.bottom - this.paddle1.height / 2;
-			// let ratio = 100 / (this.paddle1.height / 2);
-			// this.direction.y = Math.round(impact * ratio);
+			let yBallOnPaddle1 = this.ballY - this.player1.y;
+			let yBallOnPaddle2 = this.ballY - this.player2.y;
+			let ratio = Math.round(PLAYER_HEIGHT / 3);
+			let theta = Math.PI / 6;//angle qu'on ajoute ou enleve
 
+			this.ballDirX *= -1;
+
+			let newDirX : number;
+			
+			let ray : number = Math.sqrt(Math.pow(this.ballDirX, 2) + Math.pow(this.ballDirY, 2));
+
+			let alpha: number = Math.acos(this.ballDirX / (ray));//angle de depart de la balle si non modif
+
+			// if (0 <= yBallOnPaddle && yBallOnPaddle < ratio
+			// 		&& -2 * Math.PI / 3 < alpha && alpha < Math.PI){
+			// 	newDirX = this.ballDirX * Math.cos(theta) + this.ballDirY * Math.sin(theta);
+			// 	this.ballDirY = this.ballDirY * Math.cos(theta) - this.ballDirX * Math.sin(theta);
+			// 	this.ballDirX = newDirX;
+			// } else if (PLAYER_HEIGHT - ratio < yBallOnPaddle
+			// 	&& yBallOnPaddle <= PLAYER_HEIGHT
+			// 	&& -Math.PI < alpha && alpha < 2 * Math.PI / 3){
+			// 	newDirX = this.ballDirX * Math.cos(-theta) + this.ballDirY * Math.sin(-theta);
+			// 	this.ballDirY = this.ballDirY * Math.cos(-theta) - this.ballDirX * Math.sin(-theta);
+			// 	this.ballDirX = newDirX;
+			// }
+			if (this.ballDirX > 0
+				&& 0 <= yBallOnPaddle1 && yBallOnPaddle1 < ratio
+				&& -2 * Math.PI / 3 < alpha && alpha < Math.PI){
+				console.log("yBallOnPaddle1 = " + yBallOnPaddle1);
+				newDirX = this.ballDirX * Math.cos(theta) + this.ballDirY * Math.sin(theta);
+				this.ballDirY = this.ballDirY * Math.cos(theta) - this.ballDirX * Math.sin(theta);
+				this.ballDirX = newDirX;
+			} else if (this.ballDirX < 0 
+				&& 0 <= yBallOnPaddle2 && yBallOnPaddle2 < ratio
+				&& -2 * Math.PI / 3 < alpha && alpha < Math.PI){
+				console.log("yBallOnPaddle2 = " + yBallOnPaddle2);
+				newDirX = this.ballDirX * Math.cos(-theta) + this.ballDirY * Math.sin(-theta);
+				this.ballDirY = this.ballDirY * Math.cos(-theta) - this.ballDirX * Math.sin(-theta);
+				this.ballDirX = newDirX
+			} else 
+			if (this.ballDirX > 0
+					&& PLAYER_HEIGHT - ratio < yBallOnPaddle1 && yBallOnPaddle1 <= PLAYER_HEIGHT
+					&& -Math.PI < alpha && alpha < 2 * Math.PI / 3){
+				console.log("yBallOnPaddle1 = " + yBallOnPaddle1);
+				newDirX = this.ballDirX * Math.cos(-theta) + this.ballDirY * Math.sin(-theta);
+				this.ballDirY = this.ballDirY * Math.cos(-theta) - this.ballDirX * Math.sin(-theta);
+				this.ballDirX = newDirX;
+			} else if (this.ballDirX < 0
+				&& PLAYER_HEIGHT - ratio < yBallOnPaddle2 && yBallOnPaddle2 <= PLAYER_HEIGHT
+				&& -Math.PI < alpha && alpha < 2 * Math.PI / 3){
+				console.log("yBallOnPaddle2 = " + yBallOnPaddle2);
+				newDirX = this.ballDirX * Math.cos(theta) + this.ballDirY * Math.sin(theta);
+				this.ballDirY = this.ballDirY * Math.cos(theta) - this.ballDirX * Math.sin(theta);
+				this.ballDirX = newDirX
+			}
+			console.log("alpha = " + alpha);
+			
 			if (this.ballSpeed <= 100)
 				this.ballSpeed += this.ballSpeed * this.ballAcceleration;
 		}
