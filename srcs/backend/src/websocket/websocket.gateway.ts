@@ -154,16 +154,16 @@ class Game {
 	}
 
 	resetBall() {
-		// this.ballDirY = (Math.random() * 2 - 1) / 2;
-		this.ballDirY = 0;
-		// this.ballDirX = Math.sqrt(1 - (this.ballDirY * this.ballDirY));
-		this.ballDirX = 1;
+		this.ballDirY = (Math.random() * 2 - 1) / 2;
+		// this.ballDirY = 0;
+		this.ballDirX = Math.sqrt(1 - (this.ballDirY * this.ballDirY));
+		// this.ballDirX = 1;
 
-		// if (Math.random() < 0.5)
-		// 	this.ballDirX *= -1;
+		if (Math.random() < 0.5)
+			this.ballDirX *= -1;
 
-		// if (Math.random() < 0.5)
-		// 	this.ballDirY *= -1;
+		if (Math.random() < 0.5)
+			this.ballDirY *= -1;
 
 		this.ballX = GAME_WIDTH / 2;
 		this.ballY = GAME_HEIGHT / 2;
@@ -227,62 +227,53 @@ class Game {
 		/* Check if the ball collides with the paddles */
 		if (this.paddleCollides())
 		{
-			let yBallOnPaddle1 = this.ballY - this.player1.y;
-			let yBallOnPaddle2 = this.ballY - this.player2.y;
-			let ratio = Math.round(PLAYER_HEIGHT / 3);
-			let theta = Math.PI / 6;//angle qu'on ajoute ou enleve
-
-			this.ballDirX *= -1;
-
-			let newDirX : number;
 			
-			let ray : number = Math.sqrt(Math.pow(this.ballDirX, 2) + Math.pow(this.ballDirY, 2));
-
-			let alpha: number = Math.acos(this.ballDirX / (ray));//angle de depart de la balle si non modif
-
-			// if (0 <= yBallOnPaddle && yBallOnPaddle < ratio
-			// 		&& -2 * Math.PI / 3 < alpha && alpha < Math.PI){
+			this.ballDirX *= -1;
+			
+			// let yBallOnPaddle1 = this.ballY - this.player1.y;
+			// let yBallOnPaddle2 = this.ballY - this.player2.y;
+			// let ratio = Math.round(PLAYER_HEIGHT / 3);
+			// let theta = Math.PI / 6;//angle qu'on ajoute ou enleve
+			// let newDirX : number;
+			// let ray : number = Math.sqrt(Math.pow(this.ballDirX, 2) + Math.pow(this.ballDirY, 2));
+			// let alpha: number = Math.acos(this.ballDirX / (ray));//angle de depart de la balle si non modif
+			// if (this.ballDirX > 0
+			// 	&& 0 <= yBallOnPaddle1 && yBallOnPaddle1 < ratio
+			// 	// && -2 * Math.PI / 3 < alpha && alpha < Math.PI
+			// ){
 			// 	newDirX = this.ballDirX * Math.cos(theta) + this.ballDirY * Math.sin(theta);
 			// 	this.ballDirY = this.ballDirY * Math.cos(theta) - this.ballDirX * Math.sin(theta);
 			// 	this.ballDirX = newDirX;
-			// } else if (PLAYER_HEIGHT - ratio < yBallOnPaddle
-			// 	&& yBallOnPaddle <= PLAYER_HEIGHT
-			// 	&& -Math.PI < alpha && alpha < 2 * Math.PI / 3){
+			// 	this.logger.debug("yBallOnPaddle1 on up part");
+			// }
+			// else if (this.ballDirX < 0 
+			// 	&& 0 <= yBallOnPaddle2 && yBallOnPaddle2 < ratio
+			// // 	// && -2 * Math.PI / 3 < alpha && alpha < Math.PI
+			// ){
+			// 	newDirX = this.ballDirX * Math.cos(-theta) + this.ballDirY * Math.sin(-theta);
+			// 	this.ballDirY = this.ballDirY * Math.cos(-theta) - this.ballDirX * Math.sin(-theta);
+			// 	this.ballDirX = newDirX
+			// 	this.logger.warn("yBallOnPaddle2 on up part");
+			// }
+			// else if (this.ballDirX > 0
+			// 	&& PLAYER_HEIGHT - ratio < yBallOnPaddle1 && yBallOnPaddle1 <= PLAYER_HEIGHT
+			// 	// && -Math.PI < alpha && alpha < 2 * Math.PI / 3
+			// ){
 			// 	newDirX = this.ballDirX * Math.cos(-theta) + this.ballDirY * Math.sin(-theta);
 			// 	this.ballDirY = this.ballDirY * Math.cos(-theta) - this.ballDirX * Math.sin(-theta);
 			// 	this.ballDirX = newDirX;
+			// 	this.logger.debug("yBallOnPaddle1 on down part");
 			// }
-			if (this.ballDirX > 0
-				&& 0 <= yBallOnPaddle1 && yBallOnPaddle1 < ratio
-				&& -2 * Math.PI / 3 < alpha && alpha < Math.PI){
-				newDirX = this.ballDirX * Math.cos(theta) + this.ballDirY * Math.sin(theta);
-				this.ballDirY = this.ballDirY * Math.cos(theta) - this.ballDirX * Math.sin(theta);
-				this.ballDirX = newDirX;
-				this.logger.debug("yBallOnPaddle1 on up part");
-			} else if (this.ballDirX < 0 
-				&& 0 <= yBallOnPaddle2 && yBallOnPaddle2 < ratio
-				&& -2 * Math.PI / 3 < alpha && alpha < Math.PI){
-				newDirX = this.ballDirX * Math.cos(-theta) + this.ballDirY * Math.sin(-theta);
-				this.ballDirY = this.ballDirY * Math.cos(-theta) - this.ballDirX * Math.sin(-theta);
-				this.ballDirX = newDirX
-				this.logger.warn("yBallOnPaddle2 on up part");
-			} else 
-			if (this.ballDirX > 0
-				&& PLAYER_HEIGHT - ratio < yBallOnPaddle1 && yBallOnPaddle1 <= PLAYER_HEIGHT
-				&& -Math.PI < alpha && alpha < 2 * Math.PI / 3){
-				newDirX = this.ballDirX * Math.cos(-theta) + this.ballDirY * Math.sin(-theta);
-				this.ballDirY = this.ballDirY * Math.cos(-theta) - this.ballDirX * Math.sin(-theta);
-				this.ballDirX = newDirX;
-				this.logger.debug("yBallOnPaddle1 on down part");
-			} else if (this.ballDirX < 0
-				&& PLAYER_HEIGHT - ratio < yBallOnPaddle2 && yBallOnPaddle2 <= PLAYER_HEIGHT
-				&& -Math.PI < alpha && alpha < 2 * Math.PI / 3){
-				newDirX = this.ballDirX * Math.cos(theta) + this.ballDirY * Math.sin(theta);
-				this.ballDirY = this.ballDirY * Math.cos(theta) - this.ballDirX * Math.sin(theta);
-				this.ballDirX = newDirX
-				this.logger.debug("yBallOnPaddle2 on down part");
-			}
-			console.log("alpha = " + alpha);
+			// else if (this.ballDirX < 0
+			// 	&& PLAYER_HEIGHT - ratio < yBallOnPaddle2 && yBallOnPaddle2 <= PLAYER_HEIGHT
+			// // 	// && -Math.PI < alpha && alpha < 2 * Math.PI / 3
+			// ){
+			// 	newDirX = this.ballDirX * Math.cos(theta) + this.ballDirY * Math.sin(theta);
+			// 	this.ballDirY = this.ballDirY * Math.cos(theta) - this.ballDirX * Math.sin(theta);
+			// 	this.ballDirX = newDirX
+			// 	this.logger.debug("yBallOnPaddle2 on down part");
+			// }
+			// console.log("alpha = " + alpha);
 			
 			if (this.ballSpeed <= 100)
 				this.ballSpeed += this.ballSpeed * this.ballAcceleration;
