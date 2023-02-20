@@ -278,6 +278,7 @@ function AddOrRemoveButton(uid: string | undefined){
 	};
 
 	const [friend, setFriend] = useState<friendProps>();
+	const [me, setMe] = useState<meProps>();
 
 	useEffect(() => {
 		const api = async () => {
@@ -288,6 +289,12 @@ function AddOrRemoveButton(uid: string | undefined){
 			const jsonFriend = await friend.json();
 			setFriend(jsonFriend);
 			
+			const me = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`, {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonMe = await me.json();
+			setMe(jsonMe);
 		};
 	
 		api();
@@ -295,7 +302,13 @@ function AddOrRemoveButton(uid: string | undefined){
 
 	const res1 = friend?.data.find(({ id }) => id === uid);
 
-	if (typeof res1 === "undefined"){
+	if (me?.id == uid){
+		return (
+			<div>
+			</div>
+		);
+	}
+	else if (typeof res1 === "undefined"){
 		return(
 			<AddButton variant="contained" disableRipple onClick={handleClickInvite}>Add to Friends</AddButton>
 		);
@@ -349,6 +362,7 @@ function BlockOrUnblockButton(uid: string | undefined){
 	};
 
 	const [blocked, setBlocked] = useState<blockedProps[]>([]);
+	const [me, setMe] = useState<meProps>();
 
 	useEffect(() => {
 		const api = async () => {
@@ -358,6 +372,13 @@ function BlockOrUnblockButton(uid: string | undefined){
 			});
 			const jsonBlocked = await blocked.json();
 			setBlocked(jsonBlocked);
+
+			const me = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`, {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonMe = await me.json();
+			setMe(jsonMe);
 		};
 	
 		api();
@@ -367,7 +388,13 @@ function BlockOrUnblockButton(uid: string | undefined){
 		return user.id == Number(uid);
 	});
 
-	if (toFind === -1){
+	if (me?.id == uid){
+		return (
+			<div>
+			</div>
+		);
+	}
+	else if (toFind === -1){
 		return(
 			<BlockButton variant="contained" disableRipple onClick={handleClickBlock}>Block</BlockButton>
 		);
@@ -480,6 +507,103 @@ function OneMatch(match:any){
 	}
 }
 
+function AskForAGameButton(uid: string | undefined){
+	const [me, setMe] = useState<meProps>();
+
+	useEffect(() => {
+		const api = async () => {
+			const me = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`, {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonMe = await me.json();
+			setMe(jsonMe);
+		};
+	
+		api();
+	}, []);
+
+	var url_aksgame: string = "/setprivategame/";
+	if (uid !== undefined){
+		url_aksgame = url_aksgame.concat(uid.toString());
+	}
+
+	if (me?.id == uid){
+		return (
+			<div>
+			</div>
+		);
+	} else {
+		return(
+			<Link to={url_aksgame}>
+				<AskButton variant="contained" disableRipple>
+					Ask for a game
+				</AskButton>
+			</Link>
+		);
+	}
+}
+
+function ChatButton(uid: string | undefined){
+	const [me, setMe] = useState<meProps>();
+
+	useEffect(() => {
+		const api = async () => {
+			const me = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`, {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonMe = await me.json();
+			setMe(jsonMe);
+		};
+	
+		api();
+	}, []);
+
+	const handleClickChat = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		let convExists: boolean = false;
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/conversations?user2_id=${uid}`, {
+			method: "GET",
+			credentials: 'include', 
+		})
+		.then(response=>response.json())
+		.then(data => convExists = data.data.length !== 0);
+		if (!convExists) {
+			const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/conversations/`, {
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				method: 'POST',
+				credentials: 'include',
+				body: JSON.stringify({ recipient_id: uid })
+			})
+			.then(response => {
+				if (!response.ok)
+					return response.json();
+				else
+					socket.emit("newConv", {id: uid});
+			})
+			.then(data => {if (data !== undefined) Notification(data.message)});
+		}
+	};
+
+	if (me?.id == uid){
+		return (
+			<div>
+			</div>
+		);
+	} else {
+		return(
+			<Link to="/chat">
+				<AskButton variant="contained" disableRipple onClick={handleClickChat}>
+					Chat in private
+				</AskButton>
+			</Link>
+		);
+	}
+}
+
 function OtherProfile(){
 	let { uid } = useParams();
 	const [is404, setIs404] = React.useState(false);
@@ -554,39 +678,6 @@ function OtherProfile(){
 		["Defeats", stats?.losses],
 	];
 
-	const handleClickChat = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		let convExists: boolean = false;
-		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/conversations?user2_id=${uid}`, {
-			method: "GET",
-			credentials: 'include', 
-		})
-		.then(response=>response.json())
-		.then(data => convExists = data.data.length !== 0);
-		if (!convExists) {
-			const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/conversations/`, {
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json'
-				},
-				method: 'POST',
-				credentials: 'include',
-				body: JSON.stringify({ recipient_id: uid })
-			})
-			.then(response => {
-				if (!response.ok)
-					return response.json();
-				else
-					socket.emit("newConv", {id: uid});
-			})
-			.then(data => {if (data !== undefined) Notification(data.message)});
-		}
-	};
-
-	var url_aksgame: string = "/setprivategame/";
-	if (uid !== undefined){
-		url_aksgame = url_aksgame.concat(uid.toString());
-	}
-
 	if (!is404) {
 		return(
 			<React.Fragment>
@@ -596,8 +687,8 @@ function OtherProfile(){
 						<div className='Profile-Alias-div'>{data?.username}</div>
 						<div className='Profile-Alias-div'>{AddOrRemoveButton(uid)}</div>
 						<div className='Profile-Alias-div'>{BlockOrUnblockButton(uid)}</div>
-						<div className='Profile-Alias-div'><Link to={url_aksgame}><AskButton variant="contained" disableRipple>Ask for a game</AskButton></Link></div>
-						<div className='Profile-Alias-div'><Link to="/chat"><AskButton variant="contained" disableRipple onClick={handleClickChat}>Chat in private</AskButton></Link></div>
+						<div className='Profile-Alias-div'>{AskForAGameButton(uid)}</div>
+						<div className='Profile-Alias-div'>{ChatButton(uid)}</div>
 						{/*button pour spec ?*/}
 					</div>
 					<div className='Profile-container-row-lvl1'>
