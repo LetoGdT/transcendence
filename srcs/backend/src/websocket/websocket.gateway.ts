@@ -715,17 +715,34 @@ export class MySocketGateway implements OnGatewayConnection,
 		const games = await this.matchesService.getAllMatches(pageOptionsDto, new MatchesQueryFilterDto, connection.user.id);
 		const lastGame = games.data[0];
 
-		client.emit('gameFound', {
+		if (lastGame.user1.id == connection.user.id)
+		{
+			client.emit('gameFound', {
 				countdown: 4000,
 				player1: { id: lastGame.user1.id, image_url: lastGame.user1.image_url, username: lastGame.user1.username },
 				player2: { id: lastGame.user2.id, image_url: lastGame.user2.image_url, username: lastGame.user2.username },
-		});
-		client.emit('start');
-		client.emit('score', { score1: lastGame.score_user1, score2: lastGame.score_user2 });
-		if (lastGame.winner.id == connection.user.id)
-			client.emit('win', { didWin: true });
+			});
+			client.emit('start');
+			client.emit('score', { score1: lastGame.score_user1, score2: lastGame.score_user2 });
+			if (lastGame.winner.id == connection.user.id)
+				client.emit('win', { didWin: true });
+			else
+				client.emit('win', { didWin: false });
+		}
 		else
-			client.emit('win', { didWin: false });
+		{
+			client.emit('gameFound', {
+				countdown: 4000,
+				player2: { id: lastGame.user1.id, image_url: lastGame.user1.image_url, username: lastGame.user1.username },
+				player1: { id: lastGame.user2.id, image_url: lastGame.user2.image_url, username: lastGame.user2.username },
+			});
+			client.emit('start');
+			client.emit('score', { score2: lastGame.score_user1, score1: lastGame.score_user2 });
+			if (lastGame.winner.id == connection.user.id)
+				client.emit('win', { didWin: true });
+			else
+				client.emit('win', { didWin: false });
+		}
 	}
 
 	@SubscribeMessage('spectate')
@@ -838,6 +855,9 @@ export class MySocketGateway implements OnGatewayConnection,
 		{
 			if (body.opponent_id == null)
 				throw new WsException('You must provide an opponent');
+
+			if (body.opponent_id == remoteConn.user.id)
+				throw new WsException('You can\'t play against yourself !');
 
 			const opponentIndex: number = this.clients.findIndex(connection => {
 				return connection.user.id == body.opponent_id
