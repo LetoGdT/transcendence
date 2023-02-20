@@ -3,10 +3,11 @@ import './SetPrivateGame.css';
 import { socket } from './WebsocketContext';
 
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Slider from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
+import {Link} from 'react-router-dom';
 
 const MaxPtsSlider = styled(Slider)({
   color: '#3b9b3b',
@@ -126,10 +127,18 @@ const AskButton = styled(Button)({
 
 export function SetPrivateGame(){
 	let { uid } = useParams();
+	const navigate = useNavigate();
 	const [newPts, setNewPts] = React.useState(10);
 	const [newSpeed, setNewSpeed] = React.useState(10);
 
+	const [ isCreatingGame, setCreatingGame ] = React.useState(false);
+
 	const handleClickSetParams = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		if (isCreatingGame)
+			return ;
+		
+		setCreatingGame(true);
+
 		socket.emit('queue', {
 			type: 'Quick play',
 			ball_speed: newSpeed,
@@ -137,6 +146,19 @@ export function SetPrivateGame(){
 			opponent_id: uid
 		})
 	};
+
+	const onGameCreated = ({ game_id }: { game_id: number }) => {
+		console.log('GAAAAAMe created ' + game_id);
+		navigate(`/join/${game_id}`);
+	};
+
+	React.useEffect(() => {
+		socket.on('gameCreated', onGameCreated);
+
+		return () => {
+			socket.off('gameCreated', onGameCreated);
+		};
+	}, []);
 
 	const handleNewPts = (value: any) => {
 		setNewPts(value);
@@ -173,7 +195,11 @@ export function SetPrivateGame(){
 				/>
 				</div>
 			</div>
-			<div className='Set-Private-Game-Button'><AskButton variant="contained" disableRipple onClick={handleClickSetParams}>Set Parameters</AskButton></div>
+			<div className='Set-Private-Game-Button'>
+				<AskButton variant="contained" disableRipple onClick={handleClickSetParams} disabled={isCreatingGame}>
+					Set Parameters
+				</AskButton>
+			</div>
 		</React.Fragment>
 	);
 }

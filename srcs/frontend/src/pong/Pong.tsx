@@ -2,9 +2,12 @@ import { red } from '@mui/material/colors';
 import React, { useState, useEffect, useRef } from 'react';
 import PongGame from './pong_tools/PongGame';
 import { socket } from '../WebsocketContext';
+import { useParams } from 'react-router-dom';
 
 const GAME_WIDTH = 1040;
 const GAME_HEIGHT = 680;
+
+const gameInstance = new PongGame(GAME_WIDTH, GAME_HEIGHT);
 
 const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 {
@@ -64,84 +67,85 @@ const useCanvas = (draw: (ctx: CanvasRenderingContext2D) => void) =>
 	return canvasRef;
 };
 
-function useGame()
-{
-	const ref = useRef<PongGame>();
-	if (!ref.current)
-		ref.current = new PongGame(GAME_WIDTH, GAME_HEIGHT);
-	return ref.current;
+type PongGameBootstrapProps = {
+	mode: 'spectate' | 'private' | 'ranked';
+	game_id: number;
 }
 
-const PongGameBootstrap = () =>
+const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) =>
 {
-	const [winner, setWinner] = useState(-1);
-	const [lastUpdate, setLastUpdate] = useState(performance.now());
-	const [attemptedConnect, setAttemptedConnect] = useState(false);
-	const [checkRefresh, setCheckRefresh] = useState(false);
-	const [move, setMove] = useState(false);
-	
-	const game = useGame();
+	const game = gameInstance;
 	const canvasRef = useCanvas(ctx => game.render(ctx));
 
-	useEffect(() =>
-	{
-		if (attemptedConnect === false)
-		{
-			socket.emit('queue', { type: 'Ranked' });
-			setAttemptedConnect(true);
-		}
-		if (performance.now() - lastUpdate > 2000 / 50)
-		{
-			game.update();
-			setLastUpdate(performance.now());
-		}
-		const sleep = async () => {
-			await new Promise(r => setTimeout(r, 10));
-			setCheckRefresh(!checkRefresh);
-		}
-		sleep();
-	}, [checkRefresh]);
-
 	useEffect(() => {
-		socket.on('ball', (data) => {
-			setLastUpdate(performance.now());
-			game.setBall(data);
-		});
-		socket.on('players', (data) => {
-			setLastUpdate(performance.now());
-			game.setPlayers(data);
-		});
-		socket.on('score', (data) => {
-			setLastUpdate(performance.now());
-			game.setScore(data);
-		});
-		socket.on('gameFound', () => game.setConnecting());
-		socket.on('winner', (data) => {
-			setLastUpdate(performance.now());
-			game.setScore(data);
-			game.update();
-		});
-		socket.on('start', () => game.setStart());
+		game.newGame();
+		if (!game.attemptedConnect) {
+			if (mode === 'spectate') {
+				socket.emit('spectate', { game_id });
+			} else if (mode === 'private') {
+				socket.emit('join', { game_id });
+			} else {
+				socket.emit('queue', { type: 'Ranked' });
+			}
+			game.attemptedConnect = true;
+		}
+		return () => {
+			game.attemptedConnect = false;
+		};
 	}, []);
 
 	useEffect(() => {
-		game.handleMovement();
-		setMove(false);
-	}, [move]);
+		game.statusMessage = 'Connecting...';
+		socket.on('score', ({ score1, score2 }) => {
+			game.setScore(score1, score2);
+		});
+		socket.on('win', ({ didWin }) => game.setOver(didWin));
+		socket.on('spectator-game-result', ({ id }) => {
+			game.setSpectatorWin(id);
+		});
+		socket.on('gameFound', ({ countdown, player1, player2 }) => {
+			game.setConnecting();
+			game.setCountdownStart(Date.now() - countdown);
+			game.setPlayers(player1, player2);
+		});
+		socket.on('queuing', () => game.statusMessage = 'Searching for an opponent...');
+		socket.on('exception', e => {
+			game.setErrorMessage(`Error: ${e.message}`);
+		});
+		socket.on('waitingForOpponent', ({ username }) => {
+			game.statusMessage = `Waiting for ${username} to join.`;
+		});
+		socket.on('start', () => game.setStart());
+		socket.on('state', state => game.netUpdateState(state));
+
+		return () => {
+			/* Notify the backend that we left the page */
+			socket.emit('gameLeft');
+		}
+	}, []);
+
+	useEffect(() => {
+		const timer = setInterval(() => game.update(), 20);
+		return () => clearInterval(timer);
+	}, []);
 
 	const onKeyUp = (e: React.KeyboardEvent) => {
 		e.preventDefault();
-		setMove(true);
-		game.handleKeyUp(e.code);
+
+		if (mode !== 'spectate') {
+			game.handleKeyUp(e.code);
+		}
 	};
 	const onKeyDown = (e: React.KeyboardEvent) => {
 		e.preventDefault();
-		setMove(true);
-		game.handleKeyDown(e.code);
+
+		if (mode !== 'spectate') {
+			game.handleKeyDown(e.code);
+		}
 	};
 
 	return (
-		<div style={{position: 'fixed', top:'200px', bottom:0, left:0, right:0}}>
+		<div style={{position: 'fixed', top:'350px', bottom:'25px', left:0, right:0}}>
 
 			<div style={{aspectRatio: 16 / 9 , maxHeight:'100%', maxWidth:'100%', marginLeft:'auto', marginRight:'auto'}}>
 				<canvas
@@ -157,14 +161,17 @@ const PongGameBootstrap = () =>
 	);
 }
 
-const Pong = () =>
-(
-	<>
-		<h1>PONG</h1>
-		<div>
-			<PongGameBootstrap/>
-		</div>
-	</>
-);
+const Pong = (props: any) => {
+	const routeParams = useParams();
+	const game_id = parseInt(routeParams.game_id!);	
+
+	return (
+		<>
+			<div>
+				<PongGameBootstrap {...props} game_id={game_id} />
+			</div>
+		</>
+	);
+};
 
 export { Pong };

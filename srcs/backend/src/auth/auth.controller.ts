@@ -105,14 +105,6 @@ export class AuthController
 		return (res.redirect('http://localhost:3000/'));
 	}
 
-	@Get('/gen_token')
-	genToken(@Query() params: { id: number })
-	{
-		if (params.id == null)
-			throw new BadRequestException('You need to specify an id');
-		return this.authService.createTokens(params.id, true);
-	}
-
 	@Get('/2fa/generate')
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)

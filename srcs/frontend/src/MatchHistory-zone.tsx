@@ -55,7 +55,7 @@ function OneMatch(match:any){
 		};
 	
 		api();
-	});
+	}, []);
 
 	var url: string = "/otherprofile"; 
 

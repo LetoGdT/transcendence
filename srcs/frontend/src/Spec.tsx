@@ -2,163 +2,115 @@ import './App.css';
 import './Spec.css'
 import React, { useEffect, useState } from 'react';
 import { PleaseConnect } from './adaptable-zone';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { faEye } from '@fortawesome/free-solid-svg-icons/faEye';
 import { IconButton } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { socket } from './WebsocketContext'
 
 
 type opponentProps = {
 	username: string;
 };
 
-function DisplayMatch(match:any){
-	const {user1, user2, game_mode} = match.match;
-	const [data1, setResult1] = useState<opponentProps>();
-	const [data2, setResult2] = useState<opponentProps>();
+type gameProps = {
+	game: { player1_id: number, player2_id: number };
+}
 
-	useEffect(() => {
-		const api = async () => {
-			let urltofetch1 : string;
-			urltofetch1 = `http://localhost:9999/api/users/${user1.id}`;
-			const data1 = await fetch(urltofetch1, {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonData1 = await data1.json();
-			setResult1(jsonData1);
-			
-			let urltofetch : string;
-			urltofetch = `http://localhost:9999/api/users/${user2.id}`;
-			const data2 = await fetch(urltofetch, {
-				method: "GET",
-				credentials: 'include'
-			});
-			const jsonData = await data2.json();
-			setResult2(jsonData);
-		};
+type matchInfo = {
+	game_id: number;
+	player1_id: number;
+	player2_id: number;
+	player1_username: string;
+	player2_username: string;
+}
+
+function DisplayMatch({ match: { game_id, player1_id, player2_id, player1_username, player2_username } }: { match: matchInfo }) {
+	const navigate = useNavigate();
+	const url1 = `/otherprofile/${player1_id}`;
+	const url2 = `/otherprofile/${player2_id}`;
+
+	const handleClickSee = (event: any) => navigate(`/spectate/${game_id}`);
+
+	return(
+		<div className='Spec-container-div'>
+			<div className='Spec-container-who'>
+				<Link to={url1}>
+					{player1_username}
+				</Link>
+			</div>
+			<div className='Spec-container-VS'>
+				VS
+			</div>
+			<div className='Spec-container-who'>
+				<Link to={url2}>
+					{player2_username}
+				</Link>
+			</div>
+			<div className='empty'></div>
+			<div className='Spec-container-watch-button'>
+				<IconButton
+					sx={{fontSize:"2rem"}}
+					size="large"
+					onClick={handleClickSee}
+				>
+					<FontAwesomeIcon icon={faEye} />
+				</IconButton>
+			</div>
+		</div>
+	);
 	
-		api();
-	});
-
-	var url1: string = "/otherprofile";
-	url1 = url1.concat("/");
-	url1 = url1.concat(user1.id.toString());
-	var url2: string = "/otherprofile";
-	url2 = url2.concat("/");
-	url2 = url2.concat(user2.id.toString());
-
-	if (game_mode === 'unicorn'){
-		return(
-			<div className='Spec-container-div-unicorn'>
-				<div className='Spec-container-who'>
-					<Link to={url1}>
-						{data1?.username}
-					</Link>
-				</div>
-				<div className='Spec-container-VS'>
-					VS
-				</div>
-				<div className='Spec-container-who'>
-					<Link to={url2}>
-						{data2?.username}
-					</Link>
-				</div>
-				<div className='empty'></div>
-				<div className='Spec-container-watch-button'>
-					<IconButton
-						sx={{fontSize:"2rem"}}
-						size="large"
-						// onClick={handleClicksee}
-					>
-						<FontAwesomeIcon icon={faEye} />
-					</IconButton>
-				</div>
-			</div>
-		);
-	} else {
-		return(
-			<div className='Spec-container-div'>
-				<div className='Spec-container-who'>
-					<Link to={url1}>
-						{data1?.username}
-					</Link>
-				</div>
-				<div className='Spec-container-VS'>
-					VS
-				</div>
-				<div className='Spec-container-who'>
-					<Link to={url2}>
-						{data2?.username}
-					</Link>
-				</div>
-				<div className='empty'></div>
-				<div className='Spec-container-watch-button'>
-					<IconButton
-						sx={{fontSize:"2rem"}}
-						size="large"
-						// onClick={handleClicksee}
-					>
-						<FontAwesomeIcon icon={faEye} />
-					</IconButton>
-				</div>
-			</div>
-		);
-	}
 }
 
 function SpecAMatch(){
+	// const [data1, setResult1] = useState<opponentProps>();
+	// const [data2, setResult2] = useState<opponentProps>();
+	const [games, setGames] = useState<matchInfo[]>([]);
+
+	useEffect(() => {
+		socket.emit('getGames');
+		const refreshTimer = setInterval(() => {
+			socket.emit('getGames');
+		}, 1000);
+		return () => clearInterval(refreshTimer);
+		// const api = async () => {
+		// 	let urltofetch1 : string;
+		// 	urltofetch1 = `http://localhost:9999/api/users/${user1.id}`;
+		// 	const data1 = await fetch(urltofetch1, {
+		// 		method: "GET",
+		// 		credentials: 'include'
+		// 	});
+		// 	const jsonData1 = await data1.json();
+		// 	setResult1(jsonData1);
+			
+		// 	let urltofetch : string;
+		// 	urltofetch = `http://localhost:9999/api/users/${user2.id}`;
+		// 	const data2 = await fetch(urltofetch, {
+		// 		method: "GET",
+		// 		credentials: 'include'
+		// 	});
+		// 	const jsonData = await data2.json();
+		// 	setResult2(jsonData);
+		// };
+		// api();
+	}, []);
+
+	const updateGames = (games: matchInfo[]) => setGames(games);
+
+	useEffect(() => {
+		socket.on('returnGames', updateGames);
+		return () => {
+			socket.off('returnGames', updateGames);
+		}
+	}, []);
+
 	return(
 		<React.Fragment>
 			<h1>Spec a Match</h1>
 			<div className='Spec-container'>
-				{/* la div suiv est vouée a disparaitre, remplacée par l'utilisation de DisplayMatch */}
-				<div className='Spec-container-div-unicorn'>
-					<div className='Spec-container-who'>
-						Aleyra
-					</div>
-					<div className='Spec-container-VS'>
-						VS
-					</div>
-					<div className='Spec-container-who'>
-						<Link to="\profile">
-							Tlafay
-						</Link>
-						
-					</div>
-					<div className='empty'></div>
-					<div className='Spec-container-watch-button'>
-						<IconButton
-							sx={{fontSize:"2rem"}}
-							size="large"
-							// onClick={handleClicksee}
-						>
-							<FontAwesomeIcon icon={faEye} />
-						</IconButton>
-					</div>
-				</div>
-				{/* idem avec celle-ci */}
-				<div className='Spec-container-div'>
-					<div className='Spec-container-who'>
-						Aleyra
-					</div>
-					<div className='Spec-container-VS'>
-						VS
-					</div>
-					<div className='Spec-container-who'>
-						Tlafay
-					</div>
-					<div className='empty'></div>
-					<div className='Spec-container-watch-button'>
-						<IconButton
-							sx={{fontSize:"2rem"}}
-							size="large"
-							// onClick={handleClicksee}
-						>
-							<FontAwesomeIcon icon={faEye} />
-						</IconButton>
-					</div>
-				</div>
+				{games.map((match: matchInfo) => 
+					<DisplayMatch key={`${match.player1_id}-${match.player2_id}`} match={match} />
+				)}
 			</div>
 		</React.Fragment>
 	);

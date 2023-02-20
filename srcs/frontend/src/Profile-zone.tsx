@@ -13,6 +13,7 @@ import {FromEXPtoLvl, ToNextLevel, getAllPaginated} from './tools'
 import GameAchievement from './game_achievement.png';
 import MessageAchievement from './message_achievement.png';
 import FriendAchievement from './friend_achievement.png';
+import { socket } from './WebsocketContext';
 
 type resultProps = {
 	email: string;
@@ -100,8 +101,7 @@ export function Profile(){
 			await getAllPaginated('users/me/friends/invites')
 			.then(data => setInvites(data));
 
-			// await getAllPaginated('?')
-			// .then(data => setGames(data));
+			socket.emit('getInvites');
 			
 			const stats = await fetch("http://localhost:9999/api/users/me/winrate", {
 				method: "GET",
@@ -115,6 +115,13 @@ export function Profile(){
 		};
 	
 		api();
+	}, []);
+
+	useEffect(() => {
+		socket.on('returnInvites', (data) => {
+			setGames(data);
+			console.log(games);//
+		})
 	}, []);
 
 	const options = {
@@ -191,6 +198,7 @@ export function Profile(){
 													credentials: 'include',
 													body: JSON.stringify({ id: uid })
 												});
+												window.location.reload();
 											}}>
 												<CheckIcon />
 											</IconButton>
@@ -206,6 +214,7 @@ export function Profile(){
 													method: 'DELETE',
 													credentials: 'include',
 												});
+												window.location.reload();
 											}}>
 												<CloseIcon />
 											</IconButton>
@@ -215,58 +224,36 @@ export function Profile(){
 							);
 						})}
 					</div>
-					{/* <h4>Invitations received for playing a game</h4>
+					<h4>Invitations received for playing a game</h4>
 					<div>
-						{games.length > 0 && games.map((user: any) => {
-							var url: string = "/otherprofile";
-							url = url.concat("/");
-							url = url.concat(user.id);
-							var uid = user.id;
-							return(
+						{	
+							games.map(({ game_id, user }: any) => (
 								<React.Fragment>
 									<div className='Profile-invitation-received'>
-										<Link to={url} >
+										<Link to={`/otherprofile/${user.id}`} >
 											<div>
 												<img src={user.image_url} alt={user.username + "'s avatar"} className='Profile-invitation-received-img'></img>
 											</div>
 											<div>{user.username}</div>
 										</Link>
 										<div>
-											<IconButton color="success" aria-label="accept" onClick={()=>{
-												const response = fetch('?', {//?
-													headers: {
-														'Accept': 'application/json',
-														'Content-Type': 'application/json'
-													},
-													method: 'POST',
-													credentials: 'include',
-													body: JSON.stringify({ id: uid })
-												});
-											}}>
-												<CheckIcon />
-											</IconButton>
+											<Link to={`/join/${game_id}`}>
+												<IconButton color="success" aria-label="accept">
+													<CheckIcon />
+												</IconButton>
+											</Link>
 										</div>
 										<div>
 											<IconButton color="error" aria-label="reject" onClick={()=>{
-												let urltofetch : string;
-												urltofetch = '?' + uid;//?
-												const response = fetch(urltofetch, {
-													headers: {
-														'Accept': 'application/json',
-														'Content-Type': 'application/json'
-													},
-													method: 'DELETE',
-													credentials: 'include',
-												});
+												socket.emit('refuseInvite', { game_id });
 											}}>
 												<CloseIcon />
 											</IconButton>
 										</div>
 									</div>
 								</React.Fragment>
-							);
-						})}
-					</div> */}
+							))}
+					</div>
 				</div>
 			</div>
 		</React.Fragment>

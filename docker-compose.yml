@@ -52,7 +52,7 @@ services:
             # TODO next line was modified in order for me to be able to work on my mac. Keep the one from Timothee elsewhere
             - ./srcs/db/pgadmin:/var/lib/pgadmin
         ports:
-            - "${PGADMIN_PORT:-5050}:80"
+            - "5050:80"
         networks:
             - ft_transcendence
         restart: unless-stopped

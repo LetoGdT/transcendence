@@ -1,6 +1,6 @@
 
-const PLAYER_HEIGHT = 100; // TODO needs to be responsive
-const PLAYER_WIDTH = 13; // TODO needs to be responsive
+const PLAYER_HEIGHT = 100;
+const PLAYER_WIDTH = 13;
 
 class Player
 {
@@ -8,7 +8,6 @@ class Player
 	public y: number;
 	public width: number
 	public height: number
-	public win: boolean;
 	
 	constructor(x: number, y: number)
 	{
@@ -16,7 +15,6 @@ class Player
 		this.y = y;
 		this.width = PLAYER_WIDTH;
 		this.height = PLAYER_HEIGHT;
-		this.win = false; // TODO Alexis thinks it would be better in PongGame class
 	}
 
 	draw(ctx: CanvasRenderingContext2D)
