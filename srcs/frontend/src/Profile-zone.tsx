@@ -129,6 +129,11 @@ function Profile(){
 
 	const options = {
 		title: "Your matches' results",
+		titleTextStyle: {
+			color: '#faebd7',    // any HTML string color ('red', '#cc00cc')
+			fontSize: 20, // 12, 18 whatever you want (don't specify px)
+			bold: true,    // true or false
+		},
 		backgroundColor: 'black',
 		colors: ['#009900', '#cc0000', '#646464'],
 		legend: {textStyle: {color: 'gray', fontSize: '15'}}

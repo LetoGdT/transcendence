@@ -941,6 +941,7 @@ export class MySocketGateway implements OnGatewayConnection,
 		if (null != game && game.hasUser(connection.user)) {
 			gameManager.cancelGame(game.id);
 		}
+		game.player1.socket.emit('refuseInvite');
 		this.sendInvitesList(connection);
 	}
 
