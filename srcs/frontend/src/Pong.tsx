@@ -611,9 +611,11 @@ const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) => {
 				socket.emit('spectate', { game_id });
 			else if (mode === 'private')
 				socket.emit('join', { game_id });
-			// socket.emit('getInfos');
+			else
+				socket.emit('getInfos');
 			game.attemptedConnect = true;
 		}
+
 		return () => {
 			game.attemptedConnect = false;
 		};

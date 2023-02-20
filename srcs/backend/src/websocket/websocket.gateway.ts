@@ -20,8 +20,6 @@ import { MatchesService } from '../matches/matches.service';
 import { Connection } from '../interfaces/connection.interface';
 // import { Game } from './game/game.class';
 import { CreateMatchDto } from '../dto/matches.dto';
-import { PageOptionsDto, Order } from "../dto/page-options.dto";
-import { MatchesQueryFilterDto } from '../dto/query-filters.dto';
 
 /* Sync with frontend's code */
 const PLAYER_HEIGHT = 100;
@@ -391,13 +389,11 @@ class Game {
 		}
 	}
 
-	reconnectUser(user: User, socket: Socket, clients: Connection[]) {
+	reconnectUser(user: User, socket: Socket) {
+		this.logger.debug(`Reconnecting ${user.username}`);
 		let playerIndex: number;
 		let player: RemotePlayer;
 
-		// if (clients.find(client => client.client.id == this.player1.socket.id) != null
-		// 	|| clients.find(client => client.client.id == this.player2.socket.id) != null)
-		// 	throw new WsException('You are already connected on another client');
 		if (user.id === this.player1.user.id) {
 			playerIndex = 1;
 			player = this.player1;
@@ -538,7 +534,7 @@ class GameManager {
 		return game;
 	}
 
-	findGameByUser(user: User, privateOnly: boolean = false) {
+	findGameByUser(user: User) {
 		return this.games.find(game => game.hasUser(user));
 	}
 
@@ -587,9 +583,6 @@ export class MySocketGateway implements OnGatewayConnection,
 	@WebSocketServer()
 	server: Server;
 
-	queue = new Map<number, Connection[]>();
-	games: Game[] = [];
-
 	matchmakingQueue: Connection[] = [];
 
 	async handleConnection(client: Socket) {
@@ -614,7 +607,7 @@ export class MySocketGateway implements OnGatewayConnection,
 
 		this.clients.push({user, client});
 		await this.usersService.changeUserStatus(user.id, 'online');
-		// this.logger.debug(user.username + " has connected to the websocket");
+		this.logger.debug(user.username + " has connected to the websocket");
 	}
 
 	removeClientFromQueue(client: Connection) {
@@ -631,7 +624,7 @@ export class MySocketGateway implements OnGatewayConnection,
 			const conn = this.clients[index];
 			const { user } = conn;
 
-			// this.logger.debug(user.username + " has disconnected from the websocket.");
+			this.logger.debug(user.username + " has disconnected from the websocket.");
 			
 			this.removeClientFromQueue(conn);
 
@@ -692,25 +685,25 @@ export class MySocketGateway implements OnGatewayConnection,
 	}
 
 	@SubscribeMessage('getInfos')
-	async returnInfos(@ConnectedSocket() client: Socket)
+	async getInfos(@ConnectedSocket() client: Socket)
 	{
 		const connection = this.clients.find(c => c.client.id == client.id);
 
-		const game = gameManager.getCurrentGameForUser(connection.user);
+		if (connection == null)
+			throw new WsException('We don\'t know you sir, but that\'s our bad');
 
+		const queueIndex = this.matchmakingQueue.findIndex(e => e.user.id === connection.user.id)
+
+		if (queueIndex != -1)
+		{
+			client.emit('queuing');
+			return;
+		}
+
+		const game = gameManager.findGameByUser(connection.user);
 		if (game != null)
 		{
-			game.reconnectUser(connection.user, connection.client, this.clients);
-			this.logger.debug(`Reconnected ${connection.user.username} on socket ${connection.client.id}`);
-		}
-		else
-		{
-			const pageOptionsDto = new PageOptionsDto();
-			pageOptionsDto.take = 1;
-			pageOptionsDto.order = Order.DESC;
-			const games = await this.matchesService.getAllMatches(pageOptionsDto, new MatchesQueryFilterDto, connection.user.id);
-			const lastGame = games.data[0];
-			client.emit('returnInfos', { gameStatus: 'Ended',  })
+			game.reconnectUser(connection.user, connection.client);
 		}
 	}
 
@@ -780,7 +773,7 @@ export class MySocketGateway implements OnGatewayConnection,
 		const game = gameManager.getCurrentGameForUser(remoteConn.user);
 
 		if (game != null) {
-			game.reconnectUser(remoteConn.user, remoteConn.client, this.clients);
+			game.reconnectUser(remoteConn.user, remoteConn.client);
 			this.logger.debug(`Reconnected ${remoteConn.user.username} on socket ${remoteConn.client.id}`);
 			return ;
 		}
@@ -839,9 +832,10 @@ export class MySocketGateway implements OnGatewayConnection,
 			if (meIndex === -1)
 				throw new WsException('An unexpected error occured');
 
-			// this.logger.warn(`${gameManager.getGames().length}`);
-			// if (gameManager.findGameByUser(this.clients[meIndex].user, true) != null
-			// 	|| gameManager.findGameByUser(this.clients[opponentIndex].user, true) != null)
+			// 	/* TODO duplicate condition here */
+			// TODO restore this condition later
+			// if (gameManager.findGameByUser(this.clients[meIndex].user) != null
+			// 	|| gameManager.findGameByUser(this.clients[meIndex].user) != null)
 			// 	throw new WsException('You or your opponent have already been invited');
 
 			const game = gameManager.startGame(this.clients[meIndex], this.clients[opponentIndex], true,
@@ -860,7 +854,7 @@ export class MySocketGateway implements OnGatewayConnection,
 				const match = await this.matchesService.createMatch(createMatchDto);
 			}, this.usersService, body.ball_speed, body.winning_score);
 			this.clients[meIndex].client.emit('gameCreated', { game_id: game.id });
-			this.logger.debug(`${this.clients[meIndex].user.username} asked ${this.clients[opponentIndex].user.username} for a private game`);
+			this.logger.debug(`${this.clients[meIndex]} asked ${this.clients[opponentIndex]} for a private game`);
 			this.sendInvitesList(this.clients[opponentIndex]);
 
 			/* Broadcast the notification to every socket this user has */
@@ -894,7 +888,7 @@ export class MySocketGateway implements OnGatewayConnection,
 
 			game = gameManager.getGameById(body.game_id);
 			if (null != game) {
-				game.reconnectUser(connection.user, connection.client, this.clients);
+				game.reconnectUser(connection.user, connection.client);
 				this.logger.debug(`${connection.user.username} joined a private game`)
 			} else {
 				throw new WsException('Game not found');
