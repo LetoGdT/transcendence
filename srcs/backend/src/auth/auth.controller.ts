@@ -62,8 +62,8 @@ export class AuthController
 		res.cookie('access_token', access_token,
 			{
 				httpOnly: true,		// Prevent xss
-				sameSite: 'none',	// Prevent CSRF
-				secure: true,		// Just info for the browser
+				sameSite: 'lax',	// Prevent CSRF
+				secure: false,		// Just info for the browser
 			}
 		);
 		if (!user.enabled2fa)
@@ -71,8 +71,8 @@ export class AuthController
 			res.cookie('refresh_token', refresh_token,
 				{
 					httpOnly: true,		// Prevent xss
-					sameSite: 'none',	// Prevent CSRF
-					secure: true,		// Just info for the browser
+					sameSite: 'lax',	// Prevent CSRF
+					secure: false,		// Just info for the browser
 				}
 			);
 			return (res.redirect(`${this.configService.get<string>('REACT_APP_REACT_HOSTNAME')}`));
@@ -91,15 +91,15 @@ export class AuthController
 		res.clearCookie('access_token',
 			{
 				httpOnly: true,
-				sameSite: 'none',
-				secure: true,
+				sameSite: 'lax',
+				secure: false,
 			}
 		);
 		res.clearCookie('refresh_token',
 			{
 				httpOnly: true,
-				sameSite: 'none',
-				secure: true,
+				sameSite: 'lax',
+				secure: false,
 			}
 		);
 		return (res.redirect(`${this.configService.get<string>('REACT_APP_REACT_HOSTNAME')}/`));
@@ -167,15 +167,15 @@ export class AuthController
 		res.cookie('access_token', access_token,
 			{
 				httpOnly: true,		// Prevent xss
-				sameSite: 'none',	// Prevent CSRF
-				secure: true,		// Just info for the browser
+				sameSite: 'lax',	// Prevent CSRF
+				secure: false,		// Just info for the browser
 			}
 		);
 		res.cookie('refresh_token', refresh_token,
 			{
 				httpOnly: true,		// Prevent xss
-				sameSite: 'none',	// Prevent CSRF
-				secure: true,		// Just info for the browser
+				sameSite: 'lax',	// Prevent CSRF
+				secure: false,		// Just info for the browser
 			}
 		);
 	}
