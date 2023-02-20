@@ -1,6 +1,7 @@
 import './App.css'
 
 import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
@@ -59,6 +60,7 @@ const SendButton = styled(Button)({
 
 export function Activate2FA(): React.ReactElement{
 	const [code2FA, setCode2FA] = React.useState("");
+	const navigate = useNavigate();
 
 	const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setCode2FA(e.target.value);
@@ -78,7 +80,7 @@ export function Activate2FA(): React.ReactElement{
 			if (!response.ok)
 				return response.json();
 			else
-				window.location.replace('/settings');
+				navigate('/settings');
 		})
 		.then(data => {if (data !== undefined) Notification(data.message)});
 	}

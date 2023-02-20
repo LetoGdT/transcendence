@@ -2,6 +2,7 @@ import './App.css'
 import './Profile.css'
 import './MatchHistory.css'
 import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import { Link, useParams } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
@@ -50,6 +51,11 @@ type meProps = {
 
 type matchHistoryProps = {
 	data: [];
+}
+
+type gamesProps = {
+	data: [];
+	user: {id: string};
 }
 
 const AddButton = styled(Button)({
@@ -509,6 +515,8 @@ function OneMatch(match:any){
 
 function AskForAGameButton(uid: string | undefined){
 	const [me, setMe] = useState<meProps>();
+	const [games, setGames] = useState<gamesProps[]>([]);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const api = async () => {
@@ -521,7 +529,19 @@ function AskForAGameButton(uid: string | undefined){
 		};
 	
 		api();
+		socket.on('returnInvites', (data) => {
+			setGames(data);
+		});
+		socket.emit('getInvites');
 	}, []);
+
+	const handleAskGame = async (event: any) => {
+		let game = games.find(game => game.user.id == uid);
+		if (game !== undefined)
+			Notification(['You cannot ask for multiple games at once with the same player']);
+		else
+			navigate(event.target.value);
+	};
 
 	var url_aksgame: string = "/setprivategame/";
 	if (uid !== undefined){
@@ -535,11 +555,9 @@ function AskForAGameButton(uid: string | undefined){
 		);
 	} else {
 		return(
-			<Link to={url_aksgame}>
-				<AskButton variant="contained" disableRipple>
-					Ask for a game
-				</AskButton>
-			</Link>
+			<AskButton variant="contained" disableRipple value={url_aksgame} onClick={handleAskGame}>
+				Ask for a game
+			</AskButton>
 		);
 	}
 }
@@ -658,6 +676,7 @@ function OtherProfile(){
 		};
 	
 		api();
+
 	}, []);
 
 	const options = {
