@@ -14,6 +14,7 @@ import GameAchievement from './game_achievement.png';
 import MessageAchievement from './message_achievement.png';
 import FriendAchievement from './friend_achievement.png';
 import { socket } from './WebsocketContext';
+import { Notification } from './Notifications';
 
 type resultProps = {
 	email: string;
@@ -30,7 +31,6 @@ type statsProps = {
 }
 
 type invitesProps = {
-	data: [];
 };
 
 type gamesProps = {
@@ -47,10 +47,10 @@ export function OneAchievement(achievement: any){
 	if (achievementType.name === "I'm a sociable person"){
 		return(
 			<div className='Profile-achievement-container-div'>
-				<div>
+				<div key = "img">
 					<img src={MessageAchievement} alt='1 sent in chat' className='Profile-achievement-container-div-img'></img>
 				</div>
-				<div>
+				<div key = "what">
 					1st message sent
 				</div>
 			</div>
@@ -58,10 +58,10 @@ export function OneAchievement(achievement: any){
 	} else if (achievementType.name === "I'm a mundaine person"){
 		return(
 			<div className='Profile-achievement-container-div'>
-				<div>
+				<div  key = "img">
 					<img src={FriendAchievement} alt='1 friend made' className='Profile-achievement-container-div-img'></img>
 				</div>
-				<div>
+				<div key = "what">
 					1st friend get
 				</div>
 			</div>
@@ -69,20 +69,20 @@ export function OneAchievement(achievement: any){
 	} else if (achievementType.name === "I'm a gamer"){
 		return(
 			<div className='Profile-achievement-container-div'>
-				<div>
+				<div key = "img">
 					<img src={GameAchievement} alt='1 game played' className='Profile-achievement-container-div-img'></img>
 				</div>
-				<div>
+				<div key = "what">
 					1st game played
 				</div>
 			</div>
 		);
 	} else {
-		return(<div></div>);
+		return(<div key = "empty"></div>);
 	}
 }
 
-export function Profile(){
+function Profile(){
 	const [data, setResult] = useState<resultProps>();
 	const [invites, setInvites] = useState<invitesProps[]>([]);
 	const [games, setGames] = useState<gamesProps[]>([]);
@@ -91,19 +91,23 @@ export function Profile(){
 
 	useEffect(() => {
 		const api = async () => {
-			const data = await fetch("http://localhost:9999/api/users/me", {
+			const data = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`, {
 				method: "GET",
 				credentials: 'include'
 			});
 			const jsonData = await data.json();
 			setResult(jsonData);
 
-			await getAllPaginated('users/me/friends/invites')
-			.then(data => setInvites(data));
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/friends/invites`, {
+				method: "GET",
+				credentials: 'include'
+			})
+			.then(response => response.json())
+			.then(data => { setInvites(data) });
 
 			socket.emit('getInvites');
 			
-			const stats = await fetch("http://localhost:9999/api/users/me/winrate", {
+			const stats = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/winrate`, {
 				method: "GET",
 				credentials: 'include'
 			});
@@ -120,12 +124,16 @@ export function Profile(){
 	useEffect(() => {
 		socket.on('returnInvites', (data) => {
 			setGames(data);
-			console.log(games);//
 		})
 	}, []);
 
 	const options = {
 		title: "Your matches' results",
+		titleTextStyle: {
+			color: '#faebd7',    // any HTML string color ('red', '#cc00cc')
+			fontSize: 20, // 12, 18 whatever you want (don't specify px)
+			bold: true,    // true or false
+		},
 		backgroundColor: 'black',
 		colors: ['#009900', '#cc0000', '#646464'],
 		legend: {textStyle: {color: 'gray', fontSize: '15'}}
@@ -158,101 +166,114 @@ export function Profile(){
 						/>
 					</div>
 				</div>
-				<div>
+				<div key = "game info + invitations">
 					<div className='Profile-game-info'>
-						<div><b>Level:</b> {FromEXPtoLvl(data?.exp)}</div>
-						<div><b>To next level:</b> {ToNextLevel(data?.exp)} EXP</div>
+						<div key = "lvl"><b>Level:</b> {FromEXPtoLvl(data?.exp)}</div>
+						<div key = "till next lvl"><b>To next level:</b> {ToNextLevel(data?.exp)} EXP</div>
 					</div>
 					<h4>Achievements</h4>
 					<div className='Profile-achievement-container'>
 						{achievements.length > 0 && achievements.map((achievement:any) => {
 							return(
-								<OneAchievement achievement={achievement} />
+								<OneAchievement achievement={achievement} key={achievement.id}/>
 							);
 						})}
 					</div>
 					<h4>Invitations received for friendship</h4>
-					<div>
+					<div key = "invitation for friendship">
 						{invites.length > 0 && invites.map((user: any) => {
 							var url: string = "/otherprofile";
 							url = url.concat("/");
 							url = url.concat(user.id);
 							var uid = user.id;
 							return(
-								<React.Fragment>
-									<div className='Profile-invitation-received'>
-										<Link to={url} >
-											<div>
-												<img src={user.image_url} alt={user.username + "'s avatar"} className='Profile-invitation-received-img'></img>
-											</div>
-											<div>{user.username}</div>
-										</Link>
-										<div>
-											<IconButton color="success" aria-label="accept" onClick={()=>{
-												const response = fetch('http://localhost:9999/api/users/me/friends', {
-													headers: {
-														'Accept': 'application/json',
-														'Content-Type': 'application/json'
-													},
-													method: 'POST',
-													credentials: 'include',
-													body: JSON.stringify({ id: uid })
-												});
-												window.location.reload();
-											}}>
-												<CheckIcon />
-											</IconButton>
+								<div className='Profile-invitation-received' key={user.id}>
+									<Link to={url} >
+										<div key = "img">
+											<img src={user.image_url} alt={user.username + "'s avatar"} className='Profile-invitation-received-img'></img>
 										</div>
-										<div>
-											<IconButton color="error" aria-label="reject" onClick={()=>{
-												let urltofetch : string;
-												urltofetch = 'http://localhost:9999/api/users/me/friends/invites/' + uid;												const response = fetch(urltofetch, {
-													headers: {
-														'Accept': 'application/json',
-														'Content-Type': 'application/json'
-													},
-													method: 'DELETE',
-													credentials: 'include',
-												});
-												window.location.reload();
-											}}>
-												<CloseIcon />
-											</IconButton>
+										<div key = "name">
+											{user.username}
 										</div>
+									</Link>
+									<div key = "accept">
+										<IconButton color="success" aria-label="accept" onClick={()=>{
+											const response = fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/friends`, {
+												headers: {
+													'Accept': 'application/json',
+													'Content-Type': 'application/json'
+												},
+												method: 'POST',
+												credentials: 'include',
+												body: JSON.stringify({ id: uid })
+											})
+											.then(response => {
+												if (!response.ok)
+													return response.json();
+												else
+													window.location.reload();
+											})
+											.then(data => {if (data !== undefined) Notification(data.message)});
+										}}>
+											<CheckIcon />
+										</IconButton>
 									</div>
-								</React.Fragment>
+									<div key = "refuse">
+										<IconButton color="error" aria-label="reject" onClick={()=>{
+											let urltofetch : string;
+											urltofetch = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/friends/invites/` + uid;												const response = fetch(urltofetch, {
+												headers: {
+													'Accept': 'application/json',
+													'Content-Type': 'application/json'
+												},
+												method: 'DELETE',
+												credentials: 'include',
+											})
+											.then(response => {
+												if (!response.ok)
+													return response.json();
+												else
+													window.location.reload();
+											})
+											.then(data => {if (data !== undefined) Notification(data.message)});
+										}}>
+											<CloseIcon />
+										</IconButton>
+									</div>
+								</div>
 							);
 						})}
 					</div>
 					<h4>Invitations received for playing a game</h4>
-					<div>
+					<div key = "invitation for playing">
 						{	
 							games.map(({ game_id, user }: any) => (
-								<React.Fragment>
-									<div className='Profile-invitation-received'>
-										<Link to={`/otherprofile/${user.id}`} >
-											<div>
-												<img src={user.image_url} alt={user.username + "'s avatar"} className='Profile-invitation-received-img'></img>
-											</div>
-											<div>{user.username}</div>
-										</Link>
-										<div>
-											<Link to={`/join/${game_id}`}>
-												<IconButton color="success" aria-label="accept">
-													<CheckIcon />
-												</IconButton>
-											</Link>
+								<div className='Profile-invitation-received' key={game_id}>
+									<Link to={`/otherprofile/${user.id}`} >
+										<div key="img">
+											<img src={user.image_url} alt={user.username + "'s avatar"} className='Profile-invitation-received-img'></img>
 										</div>
-										<div>
-											<IconButton color="error" aria-label="reject" onClick={()=>{
-												socket.emit('refuseInvite', { game_id });
-											}}>
-												<CloseIcon />
+										<div key = "name">
+											{user.username}
+										</div>
+									</Link>
+									<div key="accept">
+										<Link to={`/join/${game_id}`}>
+											<IconButton color="success" aria-label="accept">
+												<CheckIcon />
 											</IconButton>
-										</div>
+										</Link>
 									</div>
-								</React.Fragment>
-							))}
+									<div key = "refuse">
+										<IconButton color="error" aria-label="reject" onClick={()=>{
+											socket.emit('refuseInvite', { game_id });
+										}}>
+											<CloseIcon />
+										</IconButton>
+									</div>
+								</div>
+							))
+						}
 					</div>
 				</div>
 			</div>
@@ -260,20 +281,21 @@ export function Profile(){
 	);
 }
 
-type meProps = {
-};
-
 export function ProfileZone(){
-	const [me, setMe] = useState<meProps>();
+	const [me, setMe] = useState<Boolean>(false);
 
 	useEffect(() => {
 		const api = async () => {
-			const data = await fetch("http://localhost:9999/api/users/isconnected", {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/isconnected`, {
 				method: "GET",
 				credentials: 'include'
+			})
+			.then((response) => {
+				if (!response.ok)
+					setMe(false);
+				else
+					setMe(true);
 			});
-			const jsonData = await data.json();
-			setMe(jsonData);
 		};
 	
 		api();

@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional, Max, Min, IsNotEmpty } from "class-validator";
+import { IsInt, IsOptional, Max, Min, IsNotEmpty, MaxLength } from "class-validator";
 
 export class UserSelectDto
 {
@@ -20,15 +20,8 @@ export class UserSelectDto
 
 export class PostMessageDto
 {
-	@Type(() => Number)
-	@Min(1)
-	@Max(Number.MAX_SAFE_INTEGER)
-	@IsOptional()
-	recipient_id ?: number;
-
-	recipient_name ?: string;
-
 	@IsNotEmpty()
+	@MaxLength(500)
 	content: string;
 }
 
@@ -36,5 +29,6 @@ export class UpdateMessageDto
 {
 	@Type(() => String)
 	@IsNotEmpty()
+	@MaxLength(500)
 	content: string;
 }

@@ -70,7 +70,7 @@ export class AchievementsService
 		const achievementType = await queryBuilder.getOne();
 
 		if (achievementType == null)
-			throw new HttpException("You forgot to create this achievement type in the database",
+			throw new HttpException(["You forgot to create this achievement type in the database"],
 				HttpStatus.INTERNAL_SERVER_ERROR);
 
 		const newAchievement = await this.achievementRepository.create({
@@ -79,5 +79,25 @@ export class AchievementsService
 		});
 
 		return await this.achievementRepository.save(newAchievement);
+	}
+
+	async initAchievementTypes()
+	{
+		const queryBuilder = this.achievementTypeRepository.createQueryBuilder("achievementType");
+
+		queryBuilder
+			.where('achievementType.name = :name', { name: 'I\'m a sociable person'});
+
+		const achievementType = await queryBuilder.getOne();
+
+		if (achievementType != null)
+			return;
+		const newAchievementType = await this.achievementTypeRepository.create({
+			name: 'I\'m a sociable person',
+			description: 'Send your first message',
+			reward: 'A friend (maybe)',
+		});
+
+		return await this.achievementTypeRepository.save(newAchievementType);
 	}
 }

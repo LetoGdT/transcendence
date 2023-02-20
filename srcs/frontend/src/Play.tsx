@@ -5,6 +5,7 @@ import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom'
 import { PleaseConnect } from "./adaptable-zone";
+import { socket } from './WebsocketContext';
 
 
 const NormalModeButton = styled(Button)({
@@ -45,69 +46,40 @@ const NormalModeButton = styled(Button)({
 	},
 });
 
-const UnicornModeButton = styled(Button)({
-	boxShadow: 'none',
-	width: '400px',
-	height: '126px',
-	textTransform: 'none',
-	fontSize: 27,
-	padding: '6px 12px',
-	border: '1px solid',
-	lineHeight: 1.5,
-	backgroundColor: '#646464',
-	borderColor: '#646464',
-	color: '#34ebe5',
-	fontFamily: [
-		'Chilanka',
-      	'cursive',
-	].join(','),
-	'&:hover': {
-		backgroundColor: '#9542f5',
-		borderColor: '#646464',
-		boxShadow: 'none',
-	},
-	'&:active': {
-		boxShadow: 'none',
-		backgroundColor: '#7F1DEC',
-		borderColor: '#646464',
-	},
-	'&:focus': {
-		adow: '0 0 0 0.2rem rgba(0,0,0,.5)',
-	},
-});
-
 function Play(){
+	const handleClick = () => {
+		socket.emit('queue', { type: 'Ranked' });
+	};
+
 	return(
 		<React.Fragment>
 			<h1>Play</h1>
 			<div className='Play-container'>
 				<div className='Play-button'>
 					<Link to="/pong">
-						<NormalModeButton variant="contained" disableRipple>PLAY<br></br>Classic Mode</NormalModeButton>
+						<NormalModeButton variant="contained" disableRipple onClick={handleClick}>PLAY<br></br>Classic Mode</NormalModeButton>
 					</Link>
 				</div>
-				{/*<div className='Play-button'>
-					<UnicornModeButton variant="contained" disableRipple>PLAY<br></br>Unicorn Mode</UnicornModeButton>
-				</div>*/}
 			</div>
 		</React.Fragment>
 	);
 }
 
-type meProps = {
-};
-
 export function PlayZone(){
-	const [me, setMe] = React.useState<meProps>();
+	const [me, setMe] = React.useState<Boolean>(false);
 
 	React.useEffect(() => {
 		const api = async () => {
-			const data = await fetch("http://localhost:9999/api/users/isconnected", {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/isconnected`, {
 				method: "GET",
 				credentials: 'include'
+			})
+			.then((response) => {
+				if (!response.ok)
+					setMe(false);
+				else
+					setMe(true);
 			});
-			const jsonData = await data.json();
-			setMe(jsonData);
 		};
 	
 		api();
@@ -123,6 +95,6 @@ export function PlayZone(){
 	{
 		return (
 			<PleaseConnect />
-		);
+			);
 	}
 }

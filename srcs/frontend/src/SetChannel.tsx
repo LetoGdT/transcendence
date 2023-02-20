@@ -4,8 +4,10 @@ import React from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
 import {Link} from 'react-router-dom';
+import { PleaseConnect } from './adaptable-zone';
+import { Notification } from './Notifications';
+import { socket } from './WebsocketContext';
 
 const SetChannelTextField = styled(TextField)({
 	'& input:valid + fieldset': {
@@ -58,7 +60,7 @@ const SetChannelButton = styled(Button)({
 	},
 });
 
-export function SetChannel(){
+function SetChannel(){
 	const [name, setName] = React.useState("");
 	const [password, setPassword] = React.useState("");
 
@@ -72,7 +74,7 @@ export function SetChannel(){
 
 	const handleClickSetChannel = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		const body = password.length === 0 ? {name: name} : {name: name, password: password};
-		await fetch(`http://localhost:9999/api/channels/`, {
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/`, {
 			method: "POST",
 			credentials: "include",
 			headers: {
@@ -80,6 +82,19 @@ export function SetChannel(){
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(body)
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+			else {
+				socket.emit('newChannel');
+				window.location.replace('/chat');
+			}
+		})
+		.then(data => {
+			if (data !== undefined) {
+				Notification(data.message);
+			}
 		});
 	};
 
@@ -106,6 +121,7 @@ export function SetChannel(){
 					<div className='SetChannel-TextField'>
 						<SetChannelTextField
 							label="Password (optional)"
+							type="password"
 							InputLabelProps={{
 								sx:{
 									color:"white",
@@ -120,13 +136,45 @@ export function SetChannel(){
 					</div>
 				</div>
 				<div className='SetChannel-button'>
-					<Link to="/chat">
-						<SetChannelButton variant="contained" disableRipple onClick={handleClickSetChannel}>
-							Create Channel
-						</SetChannelButton>
-					</Link>
+					<SetChannelButton variant="contained" disableRipple onClick={handleClickSetChannel}>
+						Create Channel
+					</SetChannelButton>
 				</div>
 			</div>
 		</React.Fragment>
     );
+}
+
+export function SetChanZone(){
+	const [me, setMe] = React.useState<Boolean>(false);
+
+	React.useEffect(() => {
+		const api = async () => {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/isconnected`, {
+				method: "GET",
+				credentials: 'include'
+			})
+			.then((response) => {
+				if (!response.ok)
+					setMe(false);
+				else
+					setMe(true);
+			});
+		};
+	
+		api();
+	}, []);
+	
+	const isLoggedIn = me;
+	if (isLoggedIn){
+		return (
+			<SetChannel />
+		);
+	}
+	else 
+	{
+		return (
+			<PleaseConnect />
+		 );
+	}
 }

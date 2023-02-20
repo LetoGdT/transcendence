@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty, MaxLength, MinLength, Matches, IsOptional, IsAscii, IsIn, IsBoolean } from 'class-validator';
+import { IsNotEmpty, MaxLength, MinLength, Matches, IsOptional, IsAscii, IsIn, IsBoolean, Max } from 'class-validator';
 
 export class PostChannelDto
 {
@@ -36,10 +36,4 @@ export class PatchChannelUserDto
 	@IsBoolean()
 	@IsOptional()
 	is_muted: Boolean
-}
-
-export class PostChannelMessageDto
-{
-	@IsNotEmpty()
-	content: string;
 }

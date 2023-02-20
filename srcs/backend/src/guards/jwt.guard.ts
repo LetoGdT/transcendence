@@ -46,14 +46,14 @@ export class JwtAuthGuard extends AuthGuard('jwt')
 
 		const refreshToken = await request.cookies['refresh_token'];
 		if (!refreshToken)
-			throw new UnauthorizedException('Refresh token is not set');
+			return false;
 		const user = await this.usersService.getOneByRefresh(refreshToken);
 		if (!user)
-			throw new UnauthorizedException('Refresh token is not valid');
+			return false;
 		const expires: Date = new Date(user.refresh_expires);
 		const today: Date = new Date();
 		if (!user || refreshToken != user.refresh_token || expires < today)
-			throw new UnauthorizedException('Refresh token is not valid');
+			return false;
 
 		const {
 			access_token: newAccessToken,
@@ -65,7 +65,6 @@ export class JwtAuthGuard extends AuthGuard('jwt')
 
 		response.cookie('access_token', newAccessToken, cookie_options);
 		response.cookie('refresh_token', newRefreshToken, cookie_options);
-
 		return true;
 	}
 }

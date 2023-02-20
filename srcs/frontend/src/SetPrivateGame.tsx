@@ -8,6 +8,7 @@ import Slider from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import {Link} from 'react-router-dom';
+import { PleaseConnect } from './adaptable-zone';
 
 const MaxPtsSlider = styled(Slider)({
   color: '#3b9b3b',
@@ -125,7 +126,7 @@ const AskButton = styled(Button)({
 	},
 });
 
-export function SetPrivateGame(){
+function SetPrivateGame(){
 	let { uid } = useParams();
 	const navigate = useNavigate();
 	const [newPts, setNewPts] = React.useState(10);
@@ -148,7 +149,6 @@ export function SetPrivateGame(){
 	};
 
 	const onGameCreated = ({ game_id }: { game_id: number }) => {
-		console.log('GAAAAAMe created ' + game_id);
 		navigate(`/join/${game_id}`);
 	};
 
@@ -202,4 +202,38 @@ export function SetPrivateGame(){
 			</div>
 		</React.Fragment>
 	);
+}
+
+export function SetPGameZone(){
+	const [me, setMe] = React.useState<Boolean>(false);
+
+	React.useEffect(() => {
+		const api = async () => {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/isconnected`, {
+				method: "GET",
+				credentials: 'include'
+			})
+			.then((response) => {
+				if (!response.ok)
+					setMe(false);
+				else
+					setMe(true);
+			});
+		};
+	
+		api();
+	}, []);
+	
+	const isLoggedIn = me;
+	if (isLoggedIn){
+		return (
+			<SetPrivateGame />
+		);
+	}
+	else 
+	{
+		return (
+			<PleaseConnect />
+		 );
+	}
 }

@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional, Max, Min, IsNotEmpty } from "class-validator";
+import { IsInt, IsOptional, Max, Min, IsNotEmpty, MaxLength } from "class-validator";
 
 export class PostConversationDto
 {
@@ -10,16 +10,10 @@ export class PostConversationDto
 	recipient_id: number;
 }
 
-export class PostConversationMessageDto
-{
-	@Type(() => String)
-	@IsNotEmpty()
-	content: string;
-}
-
 export class UpdateConversationMessageDto
 {
 	@Type(() => String)
 	@IsNotEmpty()
+	@MaxLength(500)
 	content: string;
 }

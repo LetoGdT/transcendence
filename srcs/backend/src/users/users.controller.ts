@@ -4,13 +4,14 @@ import {
 	UnauthorizedException, ClassSerializerInterceptor,
 	UseInterceptors, Query, Req, UseFilters, Body, UploadedFile, Res,
 	StreamableFile, Header, Response, ParseFilePipe, FileTypeValidator,
-	SerializeOptions, HttpStatus, HttpException
+	SerializeOptions, HttpStatus, HttpException, MaxFileSizeValidator
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
 import { diskStorage } from 'multer';
 import { resolve } from 'path';
 import * as fs from 'fs';
+import * as mmm from 'mmmagic';
 import { UsersService } from './users.service';
 import { MatchesService } from '../matches/matches.service';
 import { AuthService } from '../auth/auth.service';
@@ -42,15 +43,8 @@ export class UsersController
 	}
 
 	@Get('/isconnected')
-	@UseInterceptors(ClassSerializerInterceptor)
-	@UseInterceptors(AuthInterceptor)
-	async isConnected(@Req() req: RequestWithUser)
-	{
-		if (req.user != null && req.user.enabled2fa
-			&& !(await this.authService.tokenInfos(req.cookies.access_token).enabled2fa))
-			return false;
-		return req.user != null;
-	}
+	@UseGuards(JwtAuthGuard)
+	async isConnected() {}
 
 	@Get('/me')
 	@UseInterceptors(ClassSerializerInterceptor)
@@ -71,7 +65,7 @@ export class UsersController
 	@SerializeOptions({
 		groups: ['me'],
 	})
-	updateUser(@Body() updateUserDto: UpdateUserDto,
+	async updateUser(@Body() updateUserDto: UpdateUserDto,
 		@Req() req: RequestWithUser)
 	{
 		if (Object.keys(updateUserDto).length === 0)
@@ -134,10 +128,9 @@ export class UsersController
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(AuthInterceptor)
-	async getUserFriendInvitations(@Query() pageOptionsDto: PageOptionsDto,
-		@Req() req: RequestWithUser)
+	async getUserFriendInvitations(@Req() req: RequestWithUser)
 	{
-		return this.usersService.getUserFriendInvitations(pageOptionsDto, req.user);
+		return this.usersService.getUserFriendInvitations(req.user);
 	}
 
 	@Post('/me/friends/invites')
@@ -252,20 +245,24 @@ export class UsersController
 	@UseInterceptors(AuthInterceptor)
 	async uploadImage(@UploadedFile(new ParseFilePipe({
 		validators: [
+			new MaxFileSizeValidator({ maxSize: 10000000 }),
 			new FileTypeValidator({ fileType: 'image/*' }),
 			],
 	})) file: Express.Multer.File, @Req() req: RequestWithUser)
 	{
-		if (file.mimetype.split('/')[0] !== 'image')
+		const type = await this.usersService.mimeFromData(file.path);
+		if (typeof type === "string" && type.split('/')[0] !== 'image')
 		{
 			fs.unlink(file.path, (err) => {
 				if (err)
 					throw new HttpException('There was an error deleting the file',
-						HttpStatus.INTERNAL_SERVER_ERROR)
+						HttpStatus.INTERNAL_SERVER_ERROR);
 			});
+			throw new BadRequestException('Invalid file; expected an image');
 		}
-
+		
 		this.usersService.deleteOldPhoto(req.user, file.filename);
+
 		return {
 			filename: file.filename,
 		};

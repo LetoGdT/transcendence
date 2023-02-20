@@ -22,7 +22,7 @@ import { RequestWithUser } from '../interfaces/RequestWithUser.interface';
 export class AuthController
 {
 	state: string;
-	private readonly logger = new Logger(Api42.name);
+	private readonly logger = new Logger(AuthController.name);
 
 	constructor(private readonly configService: ConfigService,
 				private jwtService: JwtService,
@@ -39,7 +39,7 @@ export class AuthController
 		if (uid == undefined || secret == undefined)
 			throw new HttpException('42API credentials not set. Did you forget to create .env ?',
 				HttpStatus.INTERNAL_SERVER_ERROR);
-		let redirect_uri: string = 'http://localhost:9999/callback';
+		let redirect_uri: string = `${this.configService.get<string>('REACT_APP_NESTJS_HOSTNAME')}/callback`;
 		let state: string = randomBytes(32).toString("hex");
 		this.state = state;
 		let url = `${host}?client_id=${uid}&redirect_uri=${redirect_uri}&response_type=code&scope=public&state=${state}`;
@@ -63,21 +63,23 @@ export class AuthController
 			{
 				httpOnly: true,		// Prevent xss
 				sameSite: 'lax',	// Prevent CSRF
-				secure: true,		// Just info for the browser
+				secure: false,		// Just info for the browser
 			}
 		);
+		this.logger.debug(`${user.username} is connected`);
 		if (!user.enabled2fa)
 		{		
 			res.cookie('refresh_token', refresh_token,
 				{
 					httpOnly: true,		// Prevent xss
 					sameSite: 'lax',	// Prevent CSRF
-					secure: true,		// Just info for the browser
+					secure: false,		// Just info for the browser
 				}
 			);
-			return (res.redirect('http://localhost:3000'));
+			return (res.redirect(`${this.configService.get<string>('REACT_APP_REACT_HOSTNAME')}`));
 		}
-		return (res.redirect('http://localhost:3000/2fa'));
+		return (res.redirect(`${this.configService.get<string>('REACT_APP_REACT_HOSTNAME')}/2fa`));
+		this.logger.debug(`${access_token}, ${refresh_token}`);
 	}
 
 	@Get('/logout')
@@ -92,17 +94,17 @@ export class AuthController
 			{
 				httpOnly: true,
 				sameSite: 'lax',
-				secure: true,
+				secure: false,
 			}
 		);
 		res.clearCookie('refresh_token',
 			{
 				httpOnly: true,
 				sameSite: 'lax',
-				secure: true,
+				secure: false,
 			}
 		);
-		return (res.redirect('http://localhost:3000/'));
+		return (res.redirect(`${this.configService.get<string>('REACT_APP_REACT_HOSTNAME')}/`));
 	}
 
 	@Get('/2fa/generate')
@@ -135,8 +137,11 @@ export class AuthController
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(ClassSerializerInterceptor)
 	@UseInterceptors(AuthInterceptor)
-	disable2fa(@Req() req: RequestWithUser)
+	disable2fa(@Req() req: RequestWithUser, @Body() { code } : { code: string })
 	{
+		const isCodeValid = this.authService.is2faCodeValid(code, req.user);
+		if (!isCodeValid)
+			throw new UnauthorizedException('Invalid code');
 		return this.usersService.disable2fa(req.user);
 	}
 
@@ -157,14 +162,14 @@ export class AuthController
 			{
 				httpOnly: true,		// Prevent xss
 				sameSite: 'lax',	// Prevent CSRF
-				secure: true,		// Just info for the browser
+				secure: false,		// Just info for the browser
 			}
 		);
 		res.cookie('refresh_token', refresh_token,
 			{
 				httpOnly: true,		// Prevent xss
 				sameSite: 'lax',	// Prevent CSRF
-				secure: true,		// Just info for the browser
+				secure: false,		// Just info for the browser
 			}
 		);
 	}

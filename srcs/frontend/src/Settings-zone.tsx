@@ -9,6 +9,7 @@ import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
 import { useState, useEffect } from "react";
 import { PleaseConnect } from './adaptable-zone';
+import { Notification } from './Notifications';
 
 type resultProps = {
 	username: string;
@@ -109,7 +110,7 @@ function ActivateOrDesactivate2FAButton(){
 
 	useEffect(() => {
 		const api = async () => {
-			const data = await fetch("http://localhost:9999/api/users/me", {
+			const data = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`, {
 				method: "GET",
 				credentials: 'include'
 			});
@@ -120,25 +121,13 @@ function ActivateOrDesactivate2FAButton(){
 		api();
 	}, []);
 
-	const handleDesactivate2FA = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('http://localhost:9999/api/2fa/disable',{
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			method: 'POST',
-			credentials: 'include',
-		});
-		window.location.reload();
-	}
-
 	if(data?.enabled2fa === true){
 		return(
 			<div className='Settings-container-div-lvl4'>
-				<Link to={"/activate2fa"}>
-					<SettingsButton2 variant="contained" disableRipple onClick={
-						handleDesactivate2FA
-					}>Desactivate</SettingsButton2>
+				<Link to={"/desactivate2fa"}>
+					<SettingsButton2 variant="contained" disableRipple>
+						Desactivate
+					</SettingsButton2>
 				</Link>
             </div>
 		);
@@ -146,21 +135,23 @@ function ActivateOrDesactivate2FAButton(){
 		return(
 			<div className='Settings-container-div-lvl4'>
 				<Link to={"/activate2fa"}>
-					<SettingsButton variant="contained" disableRipple >Activate</SettingsButton>
+					<SettingsButton variant="contained" disableRipple >
+						Activate
+					</SettingsButton>
 				</Link>
             </div>
 		);
 	}
 }
 
-export function Settings(){
+function Settings(){
 	const [data, setResult] = useState<resultProps>();
 	const [newAvatar, setNewAvatar] = React.useState("");
 	const [newAlias, setNewAlias] = React.useState("");
 
 	useEffect(() => {
 		const api = async () => {
-			const data = await fetch("http://localhost:9999/api/users/me", {
+			const data = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`, {
 				method: "GET",
 				credentials: 'include'
 			});
@@ -180,7 +171,7 @@ export function Settings(){
 	};
 
 	const handleChangeAlias = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('http://localhost:9999/api/users/me',{
+		const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`,{
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -188,12 +179,18 @@ export function Settings(){
 			method: 'PATCH',
 			credentials: 'include',
 			body: JSON.stringify({username: newAlias})
-		});
-		window.location.reload();
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+			else
+				window.location.reload();
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
 	}
 
 	const handleChangeAvatar = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('http://localhost:9999/api/users/me',{
+		const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`,{
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -201,24 +198,15 @@ export function Settings(){
 			method: 'PATCH',
 			credentials: 'include',
 			body: JSON.stringify({image_url: newAvatar})
-		});
-		window.location.reload();
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+			else
+				window.location.reload();
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
 	}
-
-	React.useEffect(() => {
-		const api = async () => {
-			const response = await fetch('http://localhost:9999/api/users/me?',{
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json'
-				},
-				method: 'PATCH',
-				credentials: 'include',
-				body: JSON.stringify({image_url: newAvatar})
-			});
-		};
-
-	});
 
 	const uploadAvatar = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		const input = document.querySelector('input[type="file"]') as HTMLInputElement;
@@ -227,15 +215,21 @@ export function Settings(){
 		const file = input.files[0];
 		const formData = new FormData();
 		formData.append('file', file, file.name);
-		const response = await fetch('http://localhost:9999/api/users/me/picture',{
+		const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/picture`,{
 			headers: {
 					'Accept': 'application/json',
 				},
 			method: 'POST',
 			credentials: 'include',
 			body: formData
-		});
-		window.location.reload();
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+			else
+				window.location.reload();
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
 	}
 
 	return(
@@ -251,28 +245,21 @@ export function Settings(){
 							</div>
 							<div className='Settings-container-div-lvl4'>
 								<div>
-									<Box
-										component="form"
-										noValidate
-										sx={{
-											display: 'grid',
-											gap: 2,
+									<SettingsTextField
+										label="New avatar"
+										InputLabelProps={{
+										sx:{
+											color:"white",
+										}
 										}}
-									>
-										<SettingsTextField
-											label="New avatar"
-											InputLabelProps={{
-											sx:{
-												color:"white",
-											}
-											}}
-											variant="outlined"
-											defaultValue="*.jpg or *.png"
-											sx={{ input: { color: 'grey' } }}
-											id="validation-outlined-input"
-											onChange={handleInputAvatar}
-										/>
-									</Box>
+										variant="outlined"
+										sx={{ input: { color: 'grey' } }}
+										id="validation-outlined-input"
+										onChange={handleInputAvatar}
+									/>
+								</div>
+								<div className='example'>
+									*.jpg or *.png
 								</div>
 								<div>
 									<SettingsButton variant="contained" disableRipple onClick={
@@ -302,14 +289,7 @@ export function Settings(){
 								{data?.username}
 							</div>
 							<div className='Settings-container-div-lvl4'>
-							<Box
-									component="form"
-									noValidate
-									sx={{
-										display: 'grid',
-										gap: 2,
-									}}
-								>
+								<div>
 									<SettingsTextField
 										label="New alias"
 										InputLabelProps={{
@@ -318,14 +298,16 @@ export function Settings(){
 											}
 										}}
 										variant="outlined"
-										defaultValue="ex: Toto"
 										sx={{ input: { color: 'grey' } }}
 										id="validation-outlined-input"
 										onChange={handleInputAlias}
 									/>
-								</Box>
+								</div>
+								<div className='example'>
+									ex: Toto
+								</div>
 							</div>
-							<div>
+							<div className='Settings-container-div-lvl4'>
 								<SettingsButton variant="contained" disableRipple onClick={
 									handleChangeAlias
 								}>Change Alias</SettingsButton>
@@ -345,20 +327,21 @@ export function Settings(){
 	);
 }
 
-type meProps = {
-};
-
 export function SettingsZone(){
-	const [me, setMe] = useState<meProps>();
+	const [me, setMe] = useState<Boolean>(false);
 
 	useEffect(() => {
 		const api = async () => {
-			const data = await fetch("http://localhost:9999/api/users/isconnected", {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/isconnected`, {
 				method: "GET",
 				credentials: 'include'
+			})
+			.then((response) => {
+				if (!response.ok)
+					setMe(false);
+				else
+					setMe(true);
 			});
-			const jsonData = await data.json();
-			setMe(jsonData);
 		};
 	
 		api();

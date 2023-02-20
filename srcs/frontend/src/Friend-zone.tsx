@@ -13,7 +13,7 @@ type resultProps = {
 	data: [];
 }
 
-export function Friends(){
+function Friends(){
 	const [data, setResult] = useState<resultProps[]>([]);
 
 	useEffect(() => {
@@ -26,14 +26,14 @@ export function Friends(){
 
 	return(
 		<React.Fragment>
-			<h1>Friends</h1>
+			<h1 className='Centered'>Friends</h1>
 			<div className='Friend-container'>
 				{data.length > 0 && data?.map((user: any) => {
 					var url: string = "/otherprofile";
 					url = url.concat("/");
 					url = url.concat(user.id);
 					return(
-						<Link to={url} >
+						<Link to={url} key={user.id}>
 							<div className='Friend-container-div'>
 								<div>
 									<img src={user.image_url} alt={user.username + "'s avatar"} className='Friend-avatar'></img>
@@ -51,20 +51,21 @@ export function Friends(){
 	);
 }
 
-type meProps = {
-};
-
 export function FriendsZone(){
-	const [me, setMe] = useState<meProps>();
+	const [me, setMe] = useState<Boolean>(false);
 
 	useEffect(() => {
 		const api = async () => {
-			const data = await fetch("http://localhost:9999/api/users/isconnected", {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/isconnected`, {
 				method: "GET",
 				credentials: 'include'
+			})
+			.then((response) => {
+				if (!response.ok)
+					setMe(false);
+				else
+					setMe(true);
 			});
-			const jsonData = await data.json();
-			setMe(jsonData);
 		};
 	
 		api();

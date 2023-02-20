@@ -1,5 +1,5 @@
 import { Exclude, Type } from 'class-transformer';
-import { IsNotEmpty, Min, Max, IsOptional } from 'class-validator';
+import { IsNotEmpty, Min, Max, IsOptional, Matches, MinLength, MaxLength } from 'class-validator';
 
 export class CreateUserDto
 {
@@ -22,10 +22,14 @@ export class UpdateUserDto
 {
 	@IsNotEmpty()
 	@IsOptional()
+	@Matches('^[ A-Za-z0-9_\\-!?]*$')
+	@MinLength(3)
+	@MaxLength(20)
 	username: string;
 
 	@IsNotEmpty()
 	@IsOptional()
+	@MaxLength(2000)
 	image_url: string;
 }
 

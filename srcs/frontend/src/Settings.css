@@ -1,6 +1,7 @@
 .Settings-container{
 	display: flex;
 	flex-direction: column;
+	flex-wrap: wrap;
 	align-items: center;
 }
 
@@ -16,12 +17,14 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
+	flex-wrap: wrap;
 	margin-left: 15px;
 }
 
 .Settings-container-div-lvl3{
 	display: flex;
 	flex-direction: row;
+	flex-wrap: wrap;
 	justify-content: flex-start;
 	margin-left: 5px;
 }
@@ -29,6 +32,7 @@
 .Settings-container-div-lvl4{
 	margin-left: 5px;
 	align-self: center;
+	flex-wrap: wrap;
 	display: flex;
 	flex-direction: column;
 }
@@ -37,4 +41,8 @@
 	max-width: 200px;
 	height: auto;
 	max-height: 210px;
+}
+
+.example {
+	font-size: small;
 }

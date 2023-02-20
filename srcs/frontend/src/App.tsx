@@ -6,24 +6,23 @@ import { OurMenu } from './Menu-zone';
 import { Home, NotFound } from './adaptable-zone';
 import { PlayZone } from './Play';
 import { SpecZone } from './Spec';
-import { Pong } from './pong/Pong';
+import { Pong } from './Pong';
 import { ChatZone } from './Chat-zone';
 import { FriendsZone } from './Friend-zone';
 import { MatchHistoryZone } from './MatchHistory-zone';
 import { SettingsZone } from './Settings-zone';
 import { ProfileZone} from './Profile-zone';
-import { OtherProfile } from './OtherProfile';
+import { OProfileZone } from './OtherProfile';
 import { SignUp } from './adaptable-zone';
 import { AuthWith2FA } from './authWith2fa';
-import { Activate2FA } from './activate2fa';
+import { Activate2FA, Desactivate2FA } from './activate2fa';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import { socket, websocketContext } from './WebsocketContext';
-// import { useState, useEffect } from 'react';
-import toast, {Toaster} from 'react-hot-toast';
+import {Toaster} from 'react-hot-toast';
 import { setUpNewMessageNotificationsFn, setUpNewGameNotificationFn } from './Notifications';
-import { SetPrivateGame } from './SetPrivateGame';
-import { SetChannel } from './SetChannel';
-import { ManageChannel } from './ManageChannel';
+import { SetPGameZone } from './SetPrivateGame';
+import { SetChanZone } from './SetChannel';
+import { ManaChanZone } from './ManageChannel';
 
 function App() {
 	const router = 
@@ -47,42 +46,42 @@ function App() {
 						<Route path="/settings" element={<SettingsZone/>} />
 						<Route path="/specamatch" element={<SpecZone/>} />
 						<Route path="/otherprofile/">
-							<Route path=':uid' element={<OtherProfile />} />
+							<Route path=':uid' element={<OProfileZone />} />
 						</Route>
 						<Route path="/spectate/:game_id" element={<Pong mode="spectate" />} />
 						<Route path="/join/:game_id" element={<Pong mode="private" />} />
 						<Route path='/pong' element={<Pong mode="ranked" />} />
 						<Route path="/setprivategame">
-							<Route path=':uid' element={<SetPrivateGame />} />
+							<Route path=':uid' element={<SetPGameZone />} />
 						</Route>
 						<Route path="/managechannel">
-							<Route path=':cid' element={<ManageChannel />} />
+							<Route path=':cid' element={<ManaChanZone />} />
 						</Route>
 						<Route path="/profile" element={<ProfileZone/>} />
 						<Route path="/signup" element={<SignUp/>} />
 						<Route path='/2fa' element={<AuthWith2FA />} />
+						<Route path='/setchannel' element={<SetChanZone />} />
 						<Route path='/activate2fa' element={<Activate2FA />} />
-						<Route path='/setchannel' element={<SetChannel />} />
+						<Route path='/desactivate2fa' element={<Desactivate2FA />} />
 						<Route path='*' element={<NotFound/>} />
 					</Routes>
 				</div>
 			</Router>
 
-	type meProps = {
-		id: number;
-		username: string;
-		image_url: string;
-	}
-	const [me, setMe] = useState<meProps>();
+	const [me, setMe] = useState<Boolean>();
 
 	useEffect(() => {
 		const api = async () => {
-			const data = await fetch("http://localhost:9999/api/users/isconnected", {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/isconnected`, {
 				method: "GET",
 				credentials: 'include'
+			})
+			.then((response) => {
+				if (!response.ok)
+					setMe(false);
+				else
+					setMe(true);
 			});
-			const jsonData = await data.json();
-			setMe(jsonData);
 		};
 	
 		api();

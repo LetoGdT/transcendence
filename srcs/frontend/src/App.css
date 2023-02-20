@@ -13,10 +13,19 @@
 	color: #faebd7;
 	height: 100%;
 	margin: 5px;
+	width: 100%;
 }
 
 .Notif{
 	background-color: #007dd6;
+	color: antiquewhite;
+	border-radius: 10px;
+	padding: 10px;
+	text-align: center;
+}
+
+.ErrorNotif{
+	background-color: #bb1d03;
 	color: antiquewhite;
 	border-radius: 10px;
 	padding: 10px;
@@ -48,4 +57,8 @@ a:active {
 #responsive-canvas {
 	width: 100%;
 	height: 100%;
+}
+
+.Centered{
+	text-align: center;
 }

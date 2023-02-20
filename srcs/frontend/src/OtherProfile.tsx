@@ -7,10 +7,11 @@ import { Link, useParams } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import { Chart } from "react-google-charts";
 import { useState, useEffect } from "react";
-import { NotFound } from './adaptable-zone';
+import { NotFound, PleaseConnect } from './adaptable-zone';
 import { FromEXPtoLvl, getAllPaginated, ToNextLevel } from './tools';
 import { OneAchievement } from './Profile-zone';
 import { socket } from './WebsocketContext';
+import { Notification } from './Notifications';
 
 type resultProps = {
 	email: string;
@@ -240,7 +241,7 @@ const AskButton = styled(Button)({
 function AddOrRemoveButton(uid: string | undefined){
 
 	const handleClickInvite = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('http://localhost:9999/api/users/me/friends/invites', {
+		const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/friends/invites`, {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -248,12 +249,17 @@ function AddOrRemoveButton(uid: string | undefined){
 			method: 'POST',
 			credentials: 'include',
 			body: JSON.stringify({ id: uid })
-		});
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
 	};
 
 	const handleClickRemove = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		let urltofetch : string;
-		urltofetch = 'http://localhost:9999/api/users/me/friends/' + uid;
+		urltofetch = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/friends/` + uid;
 		const response = await fetch(urltofetch, {
 			headers: {
 				'Accept': 'application/json',
@@ -261,21 +267,34 @@ function AddOrRemoveButton(uid: string | undefined){
 			},
 			method: 'DELETE',
 			credentials: 'include',
-		});
-		window.location.reload();
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+			else
+				window.location.reload();
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
 	};
 
 	const [friend, setFriend] = useState<friendProps>();
+	const [me, setMe] = useState<meProps>();
 
 	useEffect(() => {
 		const api = async () => {
-			const friend = await fetch("http://localhost:9999/api/users/me/friends/", {
+			const friend = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/friends/`, {
 				method: "GET",
 				credentials: 'include'
 			});
 			const jsonFriend = await friend.json();
 			setFriend(jsonFriend);
 			
+			const me = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`, {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonMe = await me.json();
+			setMe(jsonMe);
 		};
 	
 		api();
@@ -283,7 +302,13 @@ function AddOrRemoveButton(uid: string | undefined){
 
 	const res1 = friend?.data.find(({ id }) => id === uid);
 
-	if (typeof res1 === "undefined"){
+	if (me?.id == uid){
+		return (
+			<div>
+			</div>
+		);
+	}
+	else if (typeof res1 === "undefined"){
 		return(
 			<AddButton variant="contained" disableRipple onClick={handleClickInvite}>Add to Friends</AddButton>
 		);
@@ -298,7 +323,7 @@ function AddOrRemoveButton(uid: string | undefined){
 function BlockOrUnblockButton(uid: string | undefined){
 
 	const handleClickBlock = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch('http://localhost:9999/api/users/me/banlist', {
+		const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/banlist`, {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -306,13 +331,19 @@ function BlockOrUnblockButton(uid: string | undefined){
 			method: 'POST',
 			credentials: 'include',
 			body: JSON.stringify({ id: uid })
-		});
-		window.location.reload();
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+			else
+				window.location.reload();
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
 	};
 
 	const handleClickUnblock = async (event: React.MouseEvent<HTMLButtonElement>) => {
 		let urltofetch : string;
-		urltofetch = 'http://localhost:9999/api/users/me/banlist/' + uid;
+		urltofetch = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/banlist/` + uid;
 		const response = await fetch(urltofetch, {
 			headers: {
 				'Accept': 'application/json',
@@ -320,20 +351,34 @@ function BlockOrUnblockButton(uid: string | undefined){
 			},
 			method: 'DELETE',
 			credentials: 'include',
-		});
-		window.location.reload();
+		})
+		.then(response => {
+			if (!response.ok)
+				return response.json();
+			else
+				window.location.reload();
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
 	};
 
 	const [blocked, setBlocked] = useState<blockedProps[]>([]);
+	const [me, setMe] = useState<meProps>();
 
 	useEffect(() => {
 		const api = async () => {
-			const blocked = await fetch("http://localhost:9999/api/users/me/banlist/", {
+			const blocked = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/banlist/`, {
 				method: "GET",
 				credentials: 'include'
 			});
 			const jsonBlocked = await blocked.json();
 			setBlocked(jsonBlocked);
+
+			const me = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`, {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonMe = await me.json();
+			setMe(jsonMe);
 		};
 	
 		api();
@@ -343,7 +388,13 @@ function BlockOrUnblockButton(uid: string | undefined){
 		return user.id == Number(uid);
 	});
 
-	if (toFind === -1){
+	if (me?.id == uid){
+		return (
+			<div>
+			</div>
+		);
+	}
+	else if (toFind === -1){
 		return(
 			<BlockButton variant="contained" disableRipple onClick={handleClickBlock}>Block</BlockButton>
 		);
@@ -364,7 +415,7 @@ function OneMatch(match:any){
 	useEffect(() => {
 		const api = async () => {
 			let urltofetch1 : string;
-			urltofetch1 = `http://localhost:9999/api/users/${user1.id}`;
+			urltofetch1 = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/${user1.id}`;
 			const data1 = await fetch(urltofetch1, {
 				method: "GET",
 				credentials: 'include'
@@ -373,7 +424,7 @@ function OneMatch(match:any){
 			setResult1(jsonData1);
 			
 			let urltofetch : string;
-			urltofetch = `http://localhost:9999/api/users/${user2.id}`;
+			urltofetch = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/${user2.id}`;
 			const data2 = await fetch(urltofetch, {
 				method: "GET",
 				credentials: 'include'
@@ -381,7 +432,7 @@ function OneMatch(match:any){
 			const jsonData = await data2.json();
 			setResult2(jsonData);
 
-			urltofetch = `http://localhost:9999/api/users/${uid}`;
+			urltofetch = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/${uid}`;
 			const me = await fetch(urltofetch, {
 				method: "GET",
 				credentials: 'include'
@@ -407,7 +458,7 @@ function OneMatch(match:any){
 				</div>
 				<div className='Match-Summary'>
 					<div className='Match-Player-score'>
-						<div>You</div>
+						<div>{user1.username}</div>
 						<div className='Match-Player-points'>{score_user1}</div>
 					</div>
 					<div className='Match-VS'>
@@ -436,7 +487,7 @@ function OneMatch(match:any){
 				</div>
 				<div className='Match-Summary'>
 					<div className='Match-Player-score'>
-						<div>You</div>
+						<div>{user2.username}</div>
 						<div className='Match-Player-points'>{score_user2}</div>
 					</div>
 					<div className='Match-VS'>
@@ -456,7 +507,104 @@ function OneMatch(match:any){
 	}
 }
 
-export function OtherProfile(){
+function AskForAGameButton(uid: string | undefined){
+	const [me, setMe] = useState<meProps>();
+
+	useEffect(() => {
+		const api = async () => {
+			const me = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`, {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonMe = await me.json();
+			setMe(jsonMe);
+		};
+	
+		api();
+	}, []);
+
+	var url_aksgame: string = "/setprivategame/";
+	if (uid !== undefined){
+		url_aksgame = url_aksgame.concat(uid.toString());
+	}
+
+	if (me?.id == uid){
+		return (
+			<div>
+			</div>
+		);
+	} else {
+		return(
+			<Link to={url_aksgame}>
+				<AskButton variant="contained" disableRipple>
+					Ask for a game
+				</AskButton>
+			</Link>
+		);
+	}
+}
+
+function ChatButton(uid: string | undefined){
+	const [me, setMe] = useState<meProps>();
+
+	useEffect(() => {
+		const api = async () => {
+			const me = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`, {
+				method: "GET",
+				credentials: 'include'
+			});
+			const jsonMe = await me.json();
+			setMe(jsonMe);
+		};
+	
+		api();
+	}, []);
+
+	const handleClickChat = async (event: React.MouseEvent<HTMLButtonElement>) => {
+		let convExists: boolean = false;
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/conversations?user2_id=${uid}`, {
+			method: "GET",
+			credentials: 'include', 
+		})
+		.then(response=>response.json())
+		.then(data => convExists = data.data.length !== 0);
+		if (!convExists) {
+			const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/conversations/`, {
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				method: 'POST',
+				credentials: 'include',
+				body: JSON.stringify({ recipient_id: uid })
+			})
+			.then(response => {
+				if (!response.ok)
+					return response.json();
+				else
+					socket.emit("newConv", {id: uid});
+			})
+			.then(data => {if (data !== undefined) Notification(data.message)});
+		}
+	};
+
+	if (me?.id == uid){
+		return (
+			<div>
+			</div>
+		);
+	} else {
+		return(
+			<Link to="/chat">
+				<AskButton variant="contained" disableRipple onClick={handleClickChat}>
+					Chat in private
+				</AskButton>
+			</Link>
+		);
+	}
+}
+
+function OtherProfile(){
 	let { uid } = useParams();
 	const [is404, setIs404] = React.useState(false);
 	const [data, setResult] = useState<resultProps>();
@@ -468,7 +616,7 @@ export function OtherProfile(){
 	useEffect(() => {
 		const api = async () => {
 			let urltofetch : string;
-			urltofetch = `http://localhost:9999/api/users/${uid}`;
+			urltofetch = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/${uid}`;
 			const data = await fetch(urltofetch, {
 				method: "GET",
 				credentials: 'include'
@@ -492,7 +640,7 @@ export function OtherProfile(){
 			})
 			.then(data => setError(data != null ? data.message : null));
 
-			const stats = await fetch(`http://localhost:9999/api/matches/${uid}/winrate`, {
+			const stats = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/matches/${uid}/winrate`, {
 				method: "GET",
 				credentials: 'include'
 			});
@@ -513,7 +661,12 @@ export function OtherProfile(){
 	}, []);
 
 	const options = {
-		title: "Your matches' results",
+		title: "Their matches' results",
+		titleTextStyle: {
+			color: '#faebd7',    // any HTML string color ('red', '#cc00cc')
+			fontSize: 20, // 12, 18 whatever you want (don't specify px)
+			bold: true,    // true or false
+		},
 		backgroundColor: 'black',
 		colors: ['#009900', '#cc0000', '#646464'],
 		legend: {textStyle: {color: 'gray', fontSize: '15'}}
@@ -525,33 +678,6 @@ export function OtherProfile(){
 		["Defeats", stats?.losses],
 	];
 
-	const handleClickChat = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		let convExists: boolean = false;
-		await fetch(`http://localhost:9999/api/conversations?user2_id=${uid}`, {
-			method: "GET",
-			credentials: 'include', 
-		})
-		.then(response=>response.json())
-		.then(data => convExists = data.data.length !== 0);
-		if (!convExists) {
-			const response = await fetch(`http://localhost:9999/api/conversations/`, {
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json'
-				},
-				method: 'POST',
-				credentials: 'include',
-				body: JSON.stringify({ recipient_id: uid })
-			});
-			socket.emit("newConv", {id: uid});
-		}
-	};
-
-	var url_aksgame: string = "/setprivategame/";
-	if (uid !== undefined){
-		url_aksgame = url_aksgame.concat(uid.toString());
-	}
-
 	if (!is404) {
 		return(
 			<React.Fragment>
@@ -561,13 +687,13 @@ export function OtherProfile(){
 						<div className='Profile-Alias-div'>{data?.username}</div>
 						<div className='Profile-Alias-div'>{AddOrRemoveButton(uid)}</div>
 						<div className='Profile-Alias-div'>{BlockOrUnblockButton(uid)}</div>
-						<div className='Profile-Alias-div'><Link to={url_aksgame}><AskButton variant="contained" disableRipple>Ask for a game</AskButton></Link></div>
-						<div className='Profile-Alias-div'><Link to="/chat"><AskButton variant="contained" disableRipple onClick={handleClickChat}>Chat in private</AskButton></Link></div>
+						<div className='Profile-Alias-div'>{AskForAGameButton(uid)}</div>
+						<div className='Profile-Alias-div'>{ChatButton(uid)}</div>
 						{/*button pour spec ?*/}
 					</div>
 					<div className='Profile-container-row-lvl1'>
 						<div className='Profile-Avatar'>
-							<img src={data?.image_url} alt="alias' avatar" className='Profile-avatar-img'></img>
+							<img src={data?.image_url} alt={data?.username + "'s avatar"} className='Profile-avatar-img'></img>
 						</div>
 						<div className='Profile-Pie-Charts'>
 							<Chart
@@ -588,7 +714,7 @@ export function OtherProfile(){
 						<div className='Profile-achievement-container'>
 							{achievements.length > 0 && achievements.map((achievement:any) => {
 								return(
-									<OneAchievement achievement={achievement} />
+									<OneAchievement achievement={achievement} key={achievement.id}/>
 								);
 							})}
 						</div>
@@ -596,7 +722,7 @@ export function OtherProfile(){
 						<div className='Match-container-otherProfile'>
 							{matchs.length > 0 && matchs.map((match:any) => {
 								return(
-										<OneMatch match={match} />
+										<OneMatch match={match} key={match.id}/>
 								);
 							})}
 						</div>
@@ -612,3 +738,39 @@ export function OtherProfile(){
 		);
 	}
 }
+
+export function OProfileZone(){
+	let { cid } = useParams();
+	const [me, setMe] = React.useState<Boolean>(false);
+
+	React.useEffect(() => {
+		const api = async () => {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/isconnected`, {
+				method: "GET",
+				credentials: 'include'
+			})
+			.then((response) => {
+				if (!response.ok)
+					setMe(false);
+				else
+					setMe(true);
+			});
+		};
+	
+		api();
+	}, []);
+	
+	const isLoggedIn = me;
+	if (isLoggedIn){
+		return (
+			<OtherProfile />
+		);
+	}
+	else 
+	{
+		return (
+			<PleaseConnect />
+		 );
+	}
+}
+

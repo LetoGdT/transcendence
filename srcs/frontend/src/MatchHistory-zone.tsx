@@ -29,7 +29,7 @@ function OneMatch(match:any){
 	useEffect(() => {
 		const api = async () => {
 			let urltofetch1 : string;
-			urltofetch1 = `http://localhost:9999/api/users/${user1.id}`;
+			urltofetch1 = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/${user1.id}`;
 			const data1 = await fetch(urltofetch1, {
 				method: "GET",
 				credentials: 'include'
@@ -38,7 +38,7 @@ function OneMatch(match:any){
 			setResult1(jsonData1);
 			
 			let urltofetch : string;
-			urltofetch = `http://localhost:9999/api/users/${user2.id}`;
+			urltofetch = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/${user2.id}`;
 			const data2 = await fetch(urltofetch, {
 				method: "GET",
 				credentials: 'include'
@@ -46,7 +46,7 @@ function OneMatch(match:any){
 			const jsonData = await data2.json();
 			setResult2(jsonData);
 
-			const me = await fetch("http://localhost:9999/api/users/me", {
+			const me = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`, {
 				method: "GET",
 				credentials: 'include'
 			});
@@ -121,7 +121,7 @@ function OneMatch(match:any){
 	}
 }
 
-export function MatchHistory(){
+function MatchHistory(){
 	const [matchs, setMatchs] = useState<matchHistoryProps[]>([]);
 
 	useEffect(() => {
@@ -139,7 +139,7 @@ export function MatchHistory(){
 					{matchs.map((match:any) => {
 						return(
 							
-								<OneMatch match={match} />
+								<OneMatch match={match} key={match.id}/>
 							
 						);
 					})}
@@ -150,16 +150,20 @@ export function MatchHistory(){
 }
 
 export function MatchHistoryZone(){
-	const [me, setMe] = useState<meProps>();
+	const [me, setMe] = useState<Boolean>(false);
 
 	useEffect(() => {
 		const api = async () => {
-			const data = await fetch("http://localhost:9999/api/users/isconnected", {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/isconnected`, {
 				method: "GET",
 				credentials: 'include'
+			})
+			.then((response) => {
+				if (!response.ok)
+					setMe(false);
+				else
+					setMe(true);
 			});
-			const jsonData = await data.json();
-			setMe(jsonData);
 		};
 	
 		api();

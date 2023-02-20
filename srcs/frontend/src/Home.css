@@ -1,10 +1,18 @@
-.Friend-container{
+.Presentation{
+	text-align: center;
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: column;
+	align-items: center;
+}
+
+.Presentation-container{
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
 }
 
-.Friend-container-div{
+.Presentation-container-div{
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -12,23 +20,13 @@
 	margin: 10px;
 }
 
-.Friend-Name-status{
-	display: flex;
-	flex-direction: row;
-}
-
-.Friend-name{
+.Presentation-name{
 	align-items: center;
 }
 
-.Friend-avatar{
-	max-width: 100px;
+.Presentation-avatar{
 	height: 100px;
+	border-radius: 50%;
 	width: 100px;
 	object-fit: cover;
-}
-
-.Friend-status{
-	height: 17px;
-	margin-right: 1px;
 }

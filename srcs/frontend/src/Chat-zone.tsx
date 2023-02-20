@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import { PleaseConnect } from './adaptable-zone';
 import { socket } from './WebsocketContext';
 import { getAllPaginated } from './tools';
-import { disableNewMessageNotificationsFn, setUpNewMessageNotificationsFn } from './Notifications'
+import { Notification, setUpNewMessageNotificationsFn } from './Notifications'
 
 const PassawordTextField = styled(TextField)({
 	'& input:valid + fieldset': {
@@ -342,15 +342,21 @@ function Chat() {
 	const [channelsAvailable, setChannelsAvailable] = React.useState<Channel[]>([]);
 		
 	useEffect(() => {
-		disableNewMessageNotificationsFn();
 		updateUsersMe();
 		updateChannelsAvailable();
+		socket.on("newChannel", updateChannelsAvailable);
 
-		return setUpNewMessageNotificationsFn;
+		return () => {
+			socket.off('newMessage');
+			socket.off("newChannel");
+			socket.off('newConv');
+			setUpNewMessageNotificationsFn();
+		}
 	}, []);
 
 	useEffect(() => {
 		updateConvList();
+		socket.off("newConv");
 		socket.on("newConv", updateConvList);
 	}, [currentUser]);
 
@@ -362,6 +368,7 @@ function Chat() {
 	}, [convList])
 
 	useEffect(() => {
+		socket.off('newMessage');
 		socket.on('newMessage', (data) => {
 			const convId: number = data?.convId;
 			const latest_sent: Date = new Date(data?.latest_sent);
@@ -381,11 +388,6 @@ function Chat() {
 				updateMessages();
 			}
 		});
-		
-		return () => {
-			socket.off('newMessage');
-			socket.off('newConvChan');
-		}
 	}, [convList, currentConv]);
 
 	useEffect(() => {
@@ -418,7 +420,7 @@ function Chat() {
 		})));
 
 		// Set the list of channels for chat-navigate
-		await fetch('http://localhost:9999/api/users/me/channels', {
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/channels`, {
 			method: "GET",
 			credentials: 'include'
 		})
@@ -447,7 +449,7 @@ function Chat() {
 
 	async function updateUsersMe() {
 		// set Current_user_id
-		await fetch('http://localhost:9999/api/users/me/', {
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/`, {
 			method: "GET",
 			credentials: 'include'
 		})
@@ -508,9 +510,13 @@ function Chat() {
 	}
 
 	const handleSendMessage = async () => {
-		if (newMessage.length === 0 || currentConv === -1)
+		if (currentConv === -1) {
+			Notification(["You have nowhere to send a message"]);
 			return ;
-		await fetch(`http://localhost:9999/api/${isChannel?'channels':'conversations'}/${currentConv}/messages`, {
+		}
+		if (newMessage.length == 0)
+			return ;
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/${isChannel?'channels':'conversations'}/${currentConv}/messages`, {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -521,9 +527,11 @@ function Chat() {
 		})
 		.then(response => {
 			if (!response.ok)
-			return ;
-		});
-		socket.emit("newMessage", {chanOrConv: currentConv, isChannel: isChannel});
+				return response.json();
+			else
+				socket.emit("newMessage", {chanOrConv: currentConv, isChannel: isChannel});
+		})
+		.then(data => {if (data !== undefined) Notification(data.message)});
 		setNewMessage(""); // Sert à effacer le message une fois qu'on a appuyé sur le bouton send
 	}
 
@@ -645,7 +653,7 @@ function Chat() {
 		const [password, setPassword] = React.useState("");
 
 		const handleJoin = async (event: any) => {
-			await fetch(`http://localhost:9999/api/channels/${channel.id}/users`, {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/${props?.channel.id}/users`, {
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -656,14 +664,16 @@ function Chat() {
 			})
 			.then(response => {
 				if (!response.ok)
-					return ;
-			});
-			window.location.reload();
+					return response.json();
+				else
+					window.location.reload();
+			})
+			.then(data => {if (data !== undefined) Notification(data.message);});
 		}
 
 		const handleLeave = async (event: any) => {
 			const channelUserId = (channel.users.find((user: ChannelUser) => user.user.id === currentUser.id)).id;
-			await fetch(`http://localhost:9999/api/channels/${event.target.value}/users/${channelUserId}`, {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/${props?.channel.id}/users/${channelUserId}`, {
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -673,9 +683,13 @@ function Chat() {
 			})
 			.then(response => {
 				if (!response.ok)
-					return ;
-			});
-			window.location.reload();
+					return response.json();
+				else {
+					window.location.reload();
+					socket.emit('newChannel');
+				}
+			})
+			.then(data => {if (data !== undefined) Notification(data.message);});
 		}
 
 		const handleInputPassword = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -687,15 +701,15 @@ function Chat() {
 		if (typeof isIn !== "undefined"){
 			return(
 				<div className='Channels-available-div'>
-					<div className='Channels-available-button'>
+					<div className='Channels-available-button' key={1}>
 						{channel.name}
 					</div>
-					<div className='Channels-available-button'>
+					<div className='Channels-available-button' key={2}>
 						<LeaveButton variant="contained" disableRipple onClick={handleLeave} value={channel.id}>
 							Leave
 						</LeaveButton>
 					</div>
-					<div className='Channels-available-button'>
+					<div className='Channels-available-button' key={3}>
 						<AdminManagement channel={channel}/>
 					</div>
 				</div>
@@ -703,10 +717,10 @@ function Chat() {
 		} else if (typeof isIn === "undefined" && channel.status === 'public'){
 			return(
 				<div className='Channels-available-div'>
-					<div>
+					<div key={1}>
 						{channel.name}
 					</div>
-					<div className='Channels-available-button'>
+					<div className='Channels-available-button' key={2}>
 						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin} value={channel.id}>
 							Join
 						</CreateChannelButton>
@@ -716,12 +730,13 @@ function Chat() {
 		} else if (typeof isIn === "undefined" && channel.status === 'protected'){
 			return(
 				<div className='Channels-available-div'>
-					<div>
+					<div key={1}>
 						{channel.name}
 					</div>
-					<div className='Channels-available-button'>
+					<div className='Channels-available-button' key={2}>
 						<PassawordTextField
 							label="Password"
+							type="password"
 							InputLabelProps={{
 							sx:{
 								color:"white",
@@ -733,7 +748,7 @@ function Chat() {
 							onChange={handleInputPassword}
 						/>
 					</div>
-					<div className='Channels-available-button'>
+					<div className='Channels-available-button' key={3}>
 						<CreateChannelButton variant="contained" disableRipple onClick={handleJoin}>
 							Join
 						</CreateChannelButton>
@@ -743,10 +758,6 @@ function Chat() {
 		} else {
 			return (<React.Fragment></React.Fragment>);
 		}
-
-			
-			
-			
 	}
 
 	function ChannelList() {
@@ -771,26 +782,28 @@ function Chat() {
 	return (
 			<React.Fragment>
 				<h1>Chat</h1>
-				<div className='Chat-container'>
-					<ChatNavigate />
-					<div>
-						<DisplayMessageHistory/>
-						<div className='Chat-TextField-send-button'>
-							<div className='Chat-TextField'>
-								<TextareaAutosize
-									maxRows={4}
-									aria-label="maximum height"
-									placeholder="Message"
-									value={newMessage}
-									
-									style={{ width: "100%", borderRadius: "10px"}}
-									onChange={handleInputMessage}
-								/> 
-							</div>
-							<div className='Chat-send-button'>
-								<SendButton variant="contained" disableRipple
-								onClick={handleSendMessage}
-								>Send</SendButton>
+				<div className='Chat-zone-container'>
+					<div className='Chat-container'>
+						<ChatNavigate />
+						<div>
+							<DisplayMessageHistory/>
+							<div className='Chat-TextField-send-button'>
+								<div className='Chat-TextField'>
+									<TextareaAutosize
+										maxRows={4}
+										aria-label="maximum height"
+										placeholder="Message"
+										value={newMessage}
+										
+										style={{ width: "100%", borderRadius: "10px"}}
+										onChange={handleInputMessage}
+									/> 
+								</div>
+								<div className='Chat-send-button'>
+									<SendButton variant="contained" disableRipple
+									onClick={handleSendMessage}
+									>Send</SendButton>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -801,23 +814,21 @@ function Chat() {
 	)
 }
 
-type meProps = {
-	id: number;
-	username: string;
-	image_url: string;
-}
-
 export function ChatZone(){
-	const [me, setMe] = useState<meProps>();
+	const [me, setMe] = useState<Boolean>(false);
 
 	useEffect(() => {
 		const api = async () => {
-			const data = await fetch("http://localhost:9999/api/users/isconnected", {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/isconnected`, {
 				method: "GET",
 				credentials: 'include'
+			})
+			.then((response) => {
+				if (!response.ok)
+					setMe(false);
+				else
+					setMe(true);
 			});
-			const jsonData = await data.json();
-			setMe(jsonData);
 		};
 	
 		api();

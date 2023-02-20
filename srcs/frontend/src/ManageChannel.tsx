@@ -6,8 +6,9 @@ import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import {Link, useParams} from 'react-router-dom';
 
-import { NotFound } from './adaptable-zone';
+import { NotFound, PleaseConnect } from './adaptable-zone';
 import { getAllPaginated } from './tools';
+import { Notification } from './Notifications';
 
 const ManageChannelTextField = styled(TextField)({
 	'& input:valid + fieldset': {
@@ -173,7 +174,7 @@ type Channel = {
 	password: string;
 }
 
-export function ManageChannel(){
+function ManageChannel(){
 	let { cid } = useParams();
 	const [me, setMe] = React.useState<User>();
 	const [users, setUsers] = React.useState<ChannelUser[]>([]);
@@ -202,7 +203,7 @@ export function ManageChannel(){
 	}, [users]);
 
 	async function updateUsersMe() {
-		await fetch("http://localhost:9999/api/users/me", {
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`, {
 			method: "GET",
 			credentials: 'include'
 		})
@@ -211,12 +212,22 @@ export function ManageChannel(){
 	}
 
 	async function updateUsers() {
-		getAllPaginated(`channels/${cid}/users`)
-		.then(data => setUsers(data));
+		// try {
+			getAllPaginated(`channels/${cid}/users`)
+			.then(data => setUsers(data));
+		// } catch (err) {
+		// 	if (err instanceof Error)
+		// 	{
+		// 		console.log('Maybe a toast here ? ^^');
+		// 		// err.cause contains the response, so all the infos you could ever dream of :)
+		// 		if (err.cause instanceof Response)
+		// 			console.log(err.cause.status);
+		// 	}
+		// }
 	}
 
 	async function updateChannel() {
-		await fetch(`http://localhost:9999/api/channels/?id=${cid}`, {
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/?id=${cid}`, {
 			method: "GET",
 			credentials: "include",
 		})
@@ -226,7 +237,7 @@ export function ManageChannel(){
 
 	function SelectStatus() {
 		const handleClickSetPublic = async (event: React.MouseEvent<HTMLButtonElement>) => {
-			await fetch(`http://localhost:9999/api/channels/${cid}`,{
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/${cid}`,{
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -234,12 +245,18 @@ export function ManageChannel(){
 				method: 'PATCH',
 				credentials: 'include',
 				body: JSON.stringify({status: "public"})
-			});
-			window.location.reload();
+			})
+			.then(response => {
+				if (!response.ok)
+					return response.json();
+				else
+					window.location.reload();
+			})
+			.then(data => {if (data !== undefined) Notification(data.message)});
 		};
 
 		const handleClickSetPrivate = async (event: React.MouseEvent<HTMLButtonElement>) => {
-			await fetch(`http://localhost:9999/api/channels/${cid}`,{
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/${cid}`,{
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -247,12 +264,18 @@ export function ManageChannel(){
 				method: 'PATCH',
 				credentials: 'include',
 				body: JSON.stringify({status: "private"})
-			});
-			window.location.reload();
+			})
+			.then(response => {
+				if (!response.ok)
+					return response.json();
+				else
+					window.location.reload();
+			})
+			.then(data => {if (data !== undefined) Notification(data.message)});
 		};
 
 		const handleClickSetProtected = async (event: React.MouseEvent<HTMLButtonElement>) => {
-			await fetch(`http://localhost:9999/api/channels/${cid}`,{
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/${cid}`,{
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -260,8 +283,14 @@ export function ManageChannel(){
 				method: 'PATCH',
 				credentials: 'include',
 				body: JSON.stringify({status: "protected"})
-			});
-			window.location.reload();
+			})
+			.then(response => {
+				if (!response.ok)
+					return response.json();
+				else
+					window.location.reload();
+			})
+			.then(data => {if (data !== undefined) Notification(data.message)});
 		};
 
 		if (currentChannel?.status === "public") {
@@ -320,7 +349,7 @@ export function ManageChannel(){
 		};
 
 		const handleClickNewPwd = async (event: any) => {
-			await fetch(`http://localhost:9999/api/channels/${cid}`, {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/${cid}`, {
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -328,9 +357,15 @@ export function ManageChannel(){
 				method: 'PATCH',
 				credentials: 'include',
 				body: JSON.stringify({password: password, status: "protected"})
-			});
+			})
+			.then(response => {
+				if (!response.ok)
+					return response.json();
+				else
+					window.location.reload();
+			})
+			.then(data => {if (data !== undefined) Notification(data.message)});
 			setPassword("");
-			window.location.reload();
 		}
 
 		if (isOwner){
@@ -340,6 +375,7 @@ export function ManageChannel(){
 						<div className='Manage-Channel-div'>
 							<ManageChannelTextField
 								label="New Password"
+								type="password"
 								InputLabelProps={{
 								sx:{
 									color:"white",
@@ -381,7 +417,7 @@ export function ManageChannel(){
 		};
 
 		const handleClickBan = async (event: React.MouseEvent<HTMLButtonElement>) => {
-			await fetch(`http://localhost:9999/api/channels/${cid}/banlist`,{
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/${cid}/banlist`,{
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -389,21 +425,33 @@ export function ManageChannel(){
 				method: 'POST',
 				credentials: 'include',
 				body: JSON.stringify({user_id: props?.user.user.id, unban_date: banTime})
-			});
+			})
+			.then(response => {
+				if (!response.ok)
+					return response.json();
+				else
+					window.location.reload();
+			})
+			.then(data => {if (data !== undefined) Notification(data.message)});
 			setBanTime("");
-			window.location.reload();
 		}
 
 		const handleClickKick = async (event: React.MouseEvent<HTMLButtonElement>) => {
-			await fetch(`http://localhost:9999/api/channels/${cid}/users/${props?.user.id}`,{
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/${cid}/users/${props?.user.id}`,{
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
 				},
 				method: 'DELETE',
 				credentials: 'include',
-			});
-			window.location.reload();
+			})
+			.then(response => {
+				if (!response.ok)
+					return response.json();
+				else
+					window.location.reload();
+			})
+			.then(data => {if (data !== undefined) Notification(data.message)});
 		}
 
 		let url: string = "/otherprofile/";
@@ -454,7 +502,7 @@ export function ManageChannel(){
 	function OwnerPriv2(props: any){
 
 		const handleClickAdmin = async (event: React.MouseEvent<HTMLButtonElement>) => {
-			await fetch(`http://localhost:9999/api/channels/${cid}/users/${props?.user.id}`,{
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/${cid}/users/${props?.user.id}`,{
 				headers: {
 					'Accept': 'application/json',
 					'Content-Type': 'application/json'
@@ -462,8 +510,14 @@ export function ManageChannel(){
 				method: 'PATCH',
 				credentials: 'include',
 				body: JSON.stringify({role: "Admin"})
-			});
-			window.location.reload();
+			})
+			.then(response => {
+				if (!response.ok)
+					return response.json();
+				else
+					window.location.reload();
+			})
+			.then(data => {if (data !== undefined) Notification(data.message)});
 		}
 
 		if(isOwner && props?.user.role === 'None'){
@@ -500,12 +554,47 @@ export function ManageChannel(){
 						//recuperer la liste des users
 						users?.map((user: ChannelUser) => {
 							return(
-								<DisplayUser user={user} />
+								<DisplayUser user={user} key={user.id}/>
 							);
 						})
 					}
 				</div>
 			</React.Fragment>
 		);
+	}
+}
+
+export function ManaChanZone(){
+	let { cid } = useParams();
+	const [me, setMe] = React.useState<Boolean>(false);
+
+	React.useEffect(() => {
+		const api = async () => {
+			await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/isconnected`, {
+				method: "GET",
+				credentials: 'include'
+			})
+			.then((response) => {
+				if (!response.ok)
+					setMe(false);
+				else
+					setMe(true);
+			});
+		};
+	
+		api();
+	}, []);
+	
+	const isLoggedIn = me;
+	if (isLoggedIn){
+		return (
+			<ManageChannel />
+		);
+	}
+	else 
+	{
+		return (
+			<PleaseConnect />
+		 );
 	}
 }
