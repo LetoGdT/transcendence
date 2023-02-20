@@ -22,7 +22,7 @@ import { RequestWithUser } from '../interfaces/RequestWithUser.interface';
 export class AuthController
 {
 	state: string;
-	private readonly logger = new Logger(Api42.name);
+	private readonly logger = new Logger(AuthController.name);
 
 	constructor(private readonly configService: ConfigService,
 				private jwtService: JwtService,
@@ -62,22 +62,24 @@ export class AuthController
 		res.cookie('access_token', access_token,
 			{
 				httpOnly: true,		// Prevent xss
-				sameSite: 'none',	// Prevent CSRF
-				secure: true,		// Just info for the browser
+				sameSite: 'lax',	// Prevent CSRF
+				secure: false,		// Just info for the browser
 			}
 		);
+		this.logger.debug(`${user.username} is connected`);
 		if (!user.enabled2fa)
 		{		
 			res.cookie('refresh_token', refresh_token,
 				{
 					httpOnly: true,		// Prevent xss
-					sameSite: 'none',	// Prevent CSRF
-					secure: true,		// Just info for the browser
+					sameSite: 'lax',	// Prevent CSRF
+					secure: false,		// Just info for the browser
 				}
 			);
 			return (res.redirect(`${this.configService.get<string>('REACT_APP_REACT_HOSTNAME')}`));
 		}
 		return (res.redirect(`${this.configService.get<string>('REACT_APP_REACT_HOSTNAME')}/2fa`));
+		this.logger.debug(`${access_token}, ${refresh_token}`);
 	}
 
 	@Get('/logout')
@@ -91,15 +93,15 @@ export class AuthController
 		res.clearCookie('access_token',
 			{
 				httpOnly: true,
-				sameSite: 'none',
-				secure: true,
+				sameSite: 'lax',
+				secure: false,
 			}
 		);
 		res.clearCookie('refresh_token',
 			{
 				httpOnly: true,
-				sameSite: 'none',
-				secure: true,
+				sameSite: 'lax',
+				secure: false,
 			}
 		);
 		return (res.redirect(`${this.configService.get<string>('REACT_APP_REACT_HOSTNAME')}/`));
@@ -167,15 +169,15 @@ export class AuthController
 		res.cookie('access_token', access_token,
 			{
 				httpOnly: true,		// Prevent xss
-				sameSite: 'none',	// Prevent CSRF
-				secure: true,		// Just info for the browser
+				sameSite: 'lax',	// Prevent CSRF
+				secure: false,		// Just info for the browser
 			}
 		);
 		res.cookie('refresh_token', refresh_token,
 			{
 				httpOnly: true,		// Prevent xss
-				sameSite: 'none',	// Prevent CSRF
-				secure: true,		// Just info for the browser
+				sameSite: 'lax',	// Prevent CSRF
+				secure: false,		// Just info for the browser
 			}
 		);
 	}

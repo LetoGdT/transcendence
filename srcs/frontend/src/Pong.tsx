@@ -602,21 +602,27 @@ const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) => {
 	const game = gameInstance;
 	const canvasRef = useCanvas(ctx => game.render(ctx));
 	const [over, setOver] = React.useState<Boolean>(false);
+	const [gameRefused, setGameRefused] = React.useState<Boolean>(false);
 
 	useEffect(() => {
 		game.newGame();
-		if (!game.attemptedConnect){
-			if (mode === 'spectate'){
+		if (!game.attemptedConnect)
+		{
+			if (mode === 'spectate')
 				socket.emit('spectate', { game_id });
-			} else if (mode === 'private'){
+			else if (mode === 'private')
 				socket.emit('join', { game_id });
-			} else{
-				socket.emit('queue', { type: 'Ranked' });
-			}
+			else
+				socket.emit('getInfos');
 			game.attemptedConnect = true;
+			socket.on('refuseInvite', () => {
+				setGameRefused(true);
+			});
 		}
+
 		return () => {
 			game.attemptedConnect = false;
+			socket.off('refuseInvite');
 		};
 	}, []);
 
@@ -679,7 +685,32 @@ const PongGameBootstrap = ({ game_id, mode }: PongGameBootstrapProps) => {
 		}
 	};
 
-	if (over === false){
+	if (gameRefused){
+		return (
+			<div className="Pong">
+				<div className="Pong-window-lvl1">
+					<div className="Pong-window-lvl2">
+						<canvas
+							id="responsive-canvas"
+							ref={canvasRef}
+							onKeyDown={onKeyDown}
+							onKeyUp={onKeyUp}
+							tabIndex={-1}
+							>
+						</canvas>
+					</div>
+				</div>
+				<h3>Game was refused by the other party</h3> {/* Lucille est-ce que tu peux le mettre en gros rouge et centré ?*/}
+				<div className="OKButton">
+					<Link to='/play'>
+						<SignUpButton variant="contained" disableRipple>
+							Start another match
+						</SignUpButton>
+					</Link>
+				</div>
+			</div>
+		);
+	} else if (over === false) {
 		return (
 			<div className="Pong-window-lvl1">
 				<div className="Pong-window-lvl2">
