@@ -253,32 +253,32 @@ class Game {
 			if (this.ballDirX > 0
 				&& 0 <= yBallOnPaddle1 && yBallOnPaddle1 < ratio
 				&& -2 * Math.PI / 3 < alpha && alpha < Math.PI){
-				console.log("yBallOnPaddle1 = " + yBallOnPaddle1);
 				newDirX = this.ballDirX * Math.cos(theta) + this.ballDirY * Math.sin(theta);
 				this.ballDirY = this.ballDirY * Math.cos(theta) - this.ballDirX * Math.sin(theta);
 				this.ballDirX = newDirX;
+				this.logger.debug("yBallOnPaddle1 on up part");
 			} else if (this.ballDirX < 0 
 				&& 0 <= yBallOnPaddle2 && yBallOnPaddle2 < ratio
 				&& -2 * Math.PI / 3 < alpha && alpha < Math.PI){
-				console.log("yBallOnPaddle2 = " + yBallOnPaddle2);
 				newDirX = this.ballDirX * Math.cos(-theta) + this.ballDirY * Math.sin(-theta);
 				this.ballDirY = this.ballDirY * Math.cos(-theta) - this.ballDirX * Math.sin(-theta);
 				this.ballDirX = newDirX
+				this.logger.warn("yBallOnPaddle2 on up part");
 			} else 
 			if (this.ballDirX > 0
-					&& PLAYER_HEIGHT - ratio < yBallOnPaddle1 && yBallOnPaddle1 <= PLAYER_HEIGHT
-					&& -Math.PI < alpha && alpha < 2 * Math.PI / 3){
-				console.log("yBallOnPaddle1 = " + yBallOnPaddle1);
+				&& PLAYER_HEIGHT - ratio < yBallOnPaddle1 && yBallOnPaddle1 <= PLAYER_HEIGHT
+				&& -Math.PI < alpha && alpha < 2 * Math.PI / 3){
 				newDirX = this.ballDirX * Math.cos(-theta) + this.ballDirY * Math.sin(-theta);
 				this.ballDirY = this.ballDirY * Math.cos(-theta) - this.ballDirX * Math.sin(-theta);
 				this.ballDirX = newDirX;
+				this.logger.debug("yBallOnPaddle1 on down part");
 			} else if (this.ballDirX < 0
 				&& PLAYER_HEIGHT - ratio < yBallOnPaddle2 && yBallOnPaddle2 <= PLAYER_HEIGHT
 				&& -Math.PI < alpha && alpha < 2 * Math.PI / 3){
-				console.log("yBallOnPaddle2 = " + yBallOnPaddle2);
 				newDirX = this.ballDirX * Math.cos(theta) + this.ballDirY * Math.sin(theta);
 				this.ballDirY = this.ballDirY * Math.cos(theta) - this.ballDirX * Math.sin(theta);
 				this.ballDirX = newDirX
+				this.logger.debug("yBallOnPaddle2 on down part");
 			}
 			console.log("alpha = " + alpha);
 			
