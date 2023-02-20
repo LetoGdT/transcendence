@@ -20,6 +20,8 @@ import { MatchesService } from '../matches/matches.service';
 import { Connection } from '../interfaces/connection.interface';
 // import { Game } from './game/game.class';
 import { CreateMatchDto } from '../dto/matches.dto';
+import { PageOptionsDto, Order } from "../dto/page-options.dto";
+import { MatchesQueryFilterDto } from '../dto/query-filters.dto';
 
 /* Sync with frontend's code */
 const PLAYER_HEIGHT = 100;
@@ -704,7 +706,26 @@ export class MySocketGateway implements OnGatewayConnection,
 		if (game != null)
 		{
 			game.reconnectUser(connection.user, connection.client);
+			return;
 		}
+
+		const pageOptionsDto = new PageOptionsDto();
+		pageOptionsDto.take = 1;
+		pageOptionsDto.order = Order.DESC;
+		const games = await this.matchesService.getAllMatches(pageOptionsDto, new MatchesQueryFilterDto, connection.user.id);
+		const lastGame = games.data[0];
+
+		client.emit('gameFound', {
+				countdown: 4000,
+				player1: { id: lastGame.user1.id, image_url: lastGame.user1.image_url, username: lastGame.user1.username },
+				player2: { id: lastGame.user2.id, image_url: lastGame.user2.image_url, username: lastGame.user2.username },
+		});
+		client.emit('start');
+		client.emit('score', { score1: lastGame.score_user1, score2: lastGame.score_user2 });
+		if (lastGame.winner.id == connection.user.id)
+			client.emit('win', { didWin: true });
+		else
+			client.emit('win', { didWin: false });
 	}
 
 	@SubscribeMessage('spectate')
