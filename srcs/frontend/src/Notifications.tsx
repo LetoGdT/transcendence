@@ -44,7 +44,7 @@ export const Notification = async (response: Response | string) => {
 	let tmp: string | string[];
 	if (typeof response !== 'string') {
 		const data = await response.json();
-		if (response.status === 400)
+		if (response.status === 400 || response.status === 401)
 			tmp = data.message;
 		else if (response.status === 403) 
 			tmp = [data];
