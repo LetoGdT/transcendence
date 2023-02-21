@@ -112,7 +112,7 @@ export class ConversationsService
 			.getCount();
 
 		if (count != 1)
-			throw new HttpException(['You are not a part of this conversation'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You are not a part of this conversation']);
 
 		const queryBuilder= this.messagesRepository.createQueryBuilder('message');
 
@@ -170,7 +170,7 @@ export class ConversationsService
 		const count = await queryBuilder.getCount();
 
 		if (count != 1)
-			throw new HttpException(['You are not a part of this conversation'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You are not a part of this conversation']);
 
 		const conversation = await queryBuilder.getOne();
 
@@ -203,7 +203,7 @@ export class ConversationsService
 		});
 
 		if (bannedIndex != -1)
-			throw new HttpException(['You have been blocked by this user'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You have been blocked by this user']);
 
 		const newMessage : Message = new Message();
 		newMessage.sender = user;
@@ -245,7 +245,7 @@ export class ConversationsService
 		const count = await queryBuilder.getCount();
 
 		if (count != 1)
-			throw new HttpException(['You are not a part of this conversation'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You are not a part of this conversation']);
 
 		const conversation = await queryBuilder.getOne();
 
@@ -260,7 +260,7 @@ export class ConversationsService
 			throw new HttpException(['Message not found'], HttpStatus.NOT_FOUND);
 
 		if (conversation.messages[messageIndex].sender.id != user.id)
-			throw new HttpException(['You can only modify your own messages'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You can only modify your own messages']);
 
 		return this.messagesService.updateMessageFromId(message_id, updateConversationMessageDto.content);
 	}
@@ -286,7 +286,7 @@ export class ConversationsService
 		const count = await queryBuilder.getCount();
 
 		if (count != 1)
-			throw new HttpException(['You are not a part of this conversation'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You are not a part of this conversation']);
 
 		const conversation: Conversation | null = await queryBuilder.getOne();
 
@@ -301,7 +301,7 @@ export class ConversationsService
 			throw new HttpException(['Message not found'], HttpStatus.NOT_FOUND);
 
 		if (conversation.messages[messageIndex].sender.id != user.id)
-			throw new HttpException(['You can only modify your own messages'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You can only modify your own messages']);
 
 		await this.messagesService.deleteMessage(conversation.messages[messageIndex]);
 		

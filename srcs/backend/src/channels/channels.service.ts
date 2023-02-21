@@ -161,10 +161,10 @@ export class ChannelsService
 		}
 
 		if (channelUser == null)
-			throw new HttpException(['You are not in this channel'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You are not in this channel']);
 
 		if (channelUser.role === 'None')
-			throw new HttpException(['You are not a channel administrator'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You are not a channel administrator']);
 
 		channel.status = patchChannelDto.status;
 
@@ -209,7 +209,7 @@ export class ChannelsService
 				throw new BadRequestException(['A password is expected for protected channels']);
 			const isMatch: boolean = await bcrypt.compare(password, channel.password);
 			if (!isMatch)
-				throw new HttpException(['Passwords don\'t match'], HttpStatus.FORBIDDEN);
+				throw new BadRequestException(['Passwords don\'t match']);
 		}
 
 		let bannedIndex: number = channel.banlist.findIndex((users) => {
@@ -220,7 +220,7 @@ export class ChannelsService
 		{
 			const bannedUser = channel.banlist[bannedIndex];
 			if (bannedUser.unban_date == null || bannedUser.unban_date > new Date())
-				throw new HttpException(['You are banned from this channel'], HttpStatus.FORBIDDEN);
+				throw new BadRequestException(['You are banned from this channel']);
 			this.channelBanRepository.remove(bannedUser);
 		}
 
@@ -269,7 +269,7 @@ export class ChannelsService
 		}
 
 		if (requester == null)
-			throw new HttpException(['You are not in this channel'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You are not in this channel']);
 		if (toChange == null)
 			throw new BadRequestException(['User not found']);
 		if (channel == null)
@@ -294,12 +294,12 @@ export class ChannelsService
 				channel.users[requesterIndex].role = 'Admin';
 		}
 		else if (patchChannelUserDto.role != null)
-			throw new HttpException(['You don\'t have permissions to execute this action'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You don\'t have permissions to execute this action']);
 		if (patchChannelUserDto.is_muted != null
 			&& this.permissions.get(requester.role) > this.permissions.get(toChange.role))
 			channel.users[toChangeIndex].is_muted = patchChannelUserDto.is_muted;
 		else if (patchChannelUserDto.is_muted != null)
-			throw new HttpException(['You don\'t have permissions to execute this action'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You don\'t have permissions to execute this action']);
 
 		return this.channelRepository.save(channel);
 	}
@@ -343,7 +343,7 @@ export class ChannelsService
 		}
 
 		if (requester == null)
-			throw new HttpException(['You are not in this channel'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You are not in this channel']);
 		if (toDelete == null)
 			throw new BadRequestException(['User not found']);
 		if (channel == null)
@@ -369,7 +369,7 @@ export class ChannelsService
 			return this.channelRepository.save(channel);
 		}
 
-		throw new HttpException(['You can\'t delete a user with a higher or equal role'], HttpStatus.FORBIDDEN);
+		throw new BadRequestException(['You can\'t delete a user with a higher or equal role']);
 	}
 
 	async getChannelMessages(channel_id: number,
@@ -406,10 +406,10 @@ export class ChannelsService
 		});
 
 		if (senderIndex === -1)
-			throw new HttpException(['You are not in this channel'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You are not in this channel']);
 
 		if (channel.users[senderIndex].is_muted == true)
-			throw new HttpException(['You are muted on this channel'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You are muted on this channel']);
 
 		const newMessage : Message = new Message();
 
@@ -455,7 +455,7 @@ export class ChannelsService
 		});
 
 		if (senderIndex === -1)
-			throw new HttpException(['You are not in this channel'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You are not in this channel']);
 
 		let messageIndex: number = channel.messages.findIndex((message) => {
 			return message.id == message_id;
@@ -465,7 +465,7 @@ export class ChannelsService
 			throw new HttpException(['Message not found'], HttpStatus.NOT_FOUND);
 
 		if (channel.messages[messageIndex].sender.id != sender.id)
-			throw new HttpException(['You can only modify your own messages'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You can only modify your own messages']);
 
 		return this.messagesService.updateMessageFromId(message_id, updateMessageDto.content);
 	}
@@ -494,7 +494,7 @@ export class ChannelsService
 		});
 
 		if (senderIndex === -1)
-			throw new HttpException(['You are not in this channel'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You are not in this channel']);
 
 		let messageIndex: number = channel.messages.findIndex((message) => {
 			return message.id == message_id;
@@ -504,7 +504,7 @@ export class ChannelsService
 			throw new HttpException(['Message not found'], HttpStatus.NOT_FOUND);
 
 		if (channel.messages[messageIndex].sender.id != sender.id)
-			throw new HttpException(['You can only delete your own messages'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You can only delete your own messages']);
 
 		await this.messagesService.deleteMessage(channel.messages[messageIndex]);
 		
@@ -601,7 +601,7 @@ export class ChannelsService
 		});
 
 		if (userIndex === -1)
-			throw new HttpException(['You are not in this channel'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You are not in this channel']);
 
 		let toBanIndex: number = users.findIndex((users) => {
 			return users.user.id == postChannelBanDto.user_id;
@@ -614,7 +614,7 @@ export class ChannelsService
 			throw new BadRequestException(['You can\'t ban yourself !']);
 
 		if (this.permissions.get(users[userIndex].role) <= this.permissions.get(users[toBanIndex].role))
-			throw new HttpException(['You can\'t ban a user with a higher or equal role'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You can\'t ban a user with a higher or equal role']);
 
 		const bannedUser = new ChannelBan();
 
@@ -652,7 +652,7 @@ export class ChannelsService
 		});
 
 		if (userIndex === -1)
-			throw new HttpException(['You are not in this channel'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You are not in this channel']);
 
 		let bannedIndex: number = banlist.findIndex((users) => {
 			return users.id == ban_id;
@@ -665,7 +665,7 @@ export class ChannelsService
 			throw new BadRequestException(['You can\'t unban yourself !']);
 
 		if (this.permissions.get(channel.users[userIndex].role) < this.permissions.get('Admin'))
-			throw new HttpException(['You need to be admin or owner to edit a ban'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You need to be admin or owner to edit a ban']);
 
 		channel.banlist[bannedIndex].unban_date = updateChannelBanDto.unban_date;
 		return this.channelRepository.save(channel);
@@ -696,7 +696,7 @@ export class ChannelsService
 		});
 
 		if (userIndex === -1)
-			throw new HttpException(['You are not in this channel'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You are not in this channel']);
 
 		let bannedIndex: number = banlist.findIndex((users) => {
 			return users.id == ban_id;
@@ -709,7 +709,7 @@ export class ChannelsService
 			throw new BadRequestException(['You can\'t unban yourself !']);
 
 		if (this.permissions.get(channel.users[userIndex].role) < this.permissions.get('Admin'))
-			throw new HttpException(['You need to be admin or owner to edit a ban'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You need to be admin or owner to edit a ban']);
 
 		this.channelBanRepository.remove(banlist[bannedIndex]);
 		channel.banlist.splice(bannedIndex, 1);

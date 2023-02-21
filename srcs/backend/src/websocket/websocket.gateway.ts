@@ -177,16 +177,12 @@ class Game {
 				this.start();
 			}
 		} else if (this.gameState === GameState.Created) {
-			// this.logger.debug('Game is starting');
 			if (null != this.player1.socket) {
 				this.netSendGameFoundPacket(this.player1.socket);
-				// this.logger.debug('Packet sent');
 			}
 			if (null != this.player2.socket) {
 				this.netSendGameFoundPacket(this.player2.socket);
-				// this.logger.debug('Packet sent');
 			}
-			// this.logger.debug('Switching to countdown state');
 			this.gameState = GameState.Countdown;
 		} else if (this.gameState === GameState.Countdown) {
 			if (this.timeSinceStart() >= 4000) {
@@ -244,7 +240,6 @@ class Game {
 			// 	newDirX = this.ballDirX * Math.cos(theta) + this.ballDirY * Math.sin(theta);
 			// 	this.ballDirY = this.ballDirY * Math.cos(theta) - this.ballDirX * Math.sin(theta);
 			// 	this.ballDirX = newDirX;
-			// 	this.logger.debug("yBallOnPaddle1 on up part");
 			// }
 			// else if (this.ballDirX < 0 
 			// 	&& 0 <= yBallOnPaddle2 && yBallOnPaddle2 < ratio
@@ -253,7 +248,6 @@ class Game {
 			// 	newDirX = this.ballDirX * Math.cos(-theta) + this.ballDirY * Math.sin(-theta);
 			// 	this.ballDirY = this.ballDirY * Math.cos(-theta) - this.ballDirX * Math.sin(-theta);
 			// 	this.ballDirX = newDirX
-			// 	this.logger.warn("yBallOnPaddle2 on up part");
 			// }
 			// else if (this.ballDirX > 0
 			// 	&& PLAYER_HEIGHT - ratio < yBallOnPaddle1 && yBallOnPaddle1 <= PLAYER_HEIGHT
@@ -262,7 +256,6 @@ class Game {
 			// 	newDirX = this.ballDirX * Math.cos(-theta) + this.ballDirY * Math.sin(-theta);
 			// 	this.ballDirY = this.ballDirY * Math.cos(-theta) - this.ballDirX * Math.sin(-theta);
 			// 	this.ballDirX = newDirX;
-			// 	this.logger.debug("yBallOnPaddle1 on down part");
 			// }
 			// else if (this.ballDirX < 0
 			// 	&& PLAYER_HEIGHT - ratio < yBallOnPaddle2 && yBallOnPaddle2 <= PLAYER_HEIGHT
@@ -271,7 +264,6 @@ class Game {
 			// 	newDirX = this.ballDirX * Math.cos(theta) + this.ballDirY * Math.sin(theta);
 			// 	this.ballDirY = this.ballDirY * Math.cos(theta) - this.ballDirX * Math.sin(theta);
 			// 	this.ballDirX = newDirX
-			// 	this.logger.debug("yBallOnPaddle2 on down part");
 			// }
 			// console.log("alpha = " + alpha);
 			
@@ -437,7 +429,6 @@ class Game {
 	}
 
 	reconnectUser(user: User, socket: Socket) {
-		this.logger.debug(`Reconnecting ${user.username}`);
 		let playerIndex: number;
 		let player: RemotePlayer;
 
@@ -567,17 +558,9 @@ class GameManager {
 		if (privateGame) {
 			p2.socket = null;
 		}
-
 		const game = new Game(p1, p2, updateMatchHistory, this.id, privateGame, usersService, speed, score);
-
 		this.id++;
-
 		this.games.push(game);
-
-		this.logger.debug(`[GameManager] Creating new ${privateGame ? 'private' : 'public'} game with ${player1.user.username} and ${player2.user.username}`);
-
-		
-
 		return game;
 	}
 
@@ -654,7 +637,6 @@ export class MySocketGateway implements OnGatewayConnection,
 
 		this.clients.push({user, client});
 		await this.usersService.changeUserStatus(user.id, 'online');
-		this.logger.debug(user.username + " has connected to the websocket");
 	}
 
 	removeClientFromQueue(client: Connection) {
@@ -671,7 +653,6 @@ export class MySocketGateway implements OnGatewayConnection,
 			const conn = this.clients[index];
 			const { user } = conn;
 
-			this.logger.debug(user.username + " has disconnected from the websocket.");
 			
 			this.removeClientFromQueue(conn);
 
@@ -688,7 +669,6 @@ export class MySocketGateway implements OnGatewayConnection,
 		if (connection != null)
 			this.removeClientFromQueue(connection);
 
-		this.logger.debug(`${connection.user.username} left the queue`);
 	}
 
 	@SubscribeMessage('newMessage')
@@ -857,7 +837,6 @@ export class MySocketGateway implements OnGatewayConnection,
 
 		if (game != null) {
 			game.reconnectUser(remoteConn.user, remoteConn.client);
-			this.logger.debug(`Reconnected ${remoteConn.user.username} on socket ${remoteConn.client.id}`);
 			return ;
 		}
 
@@ -892,7 +871,6 @@ export class MySocketGateway implements OnGatewayConnection,
 					this.matchesService.calculateRank(match.id);
 				}, this.usersService);
 			} else {
-				this.logger.debug(`${remoteConn.user.username} is queuing`);
 				client.emit('queuing');
 			}
 		}
@@ -940,7 +918,6 @@ export class MySocketGateway implements OnGatewayConnection,
 				const match = await this.matchesService.createMatch(createMatchDto);
 			}, this.usersService, body.ball_speed, body.winning_score);
 			this.clients[meIndex].client.emit('gameCreated', { game_id: game.id });
-			this.logger.debug(`${this.clients[meIndex]} asked ${this.clients[opponentIndex]} for a private game`);
 			this.sendInvitesList(this.clients[opponentIndex]);
 
 			/* Broadcast the notification to every socket this user has */
@@ -975,7 +952,6 @@ export class MySocketGateway implements OnGatewayConnection,
 			game = gameManager.getGameById(body.game_id);
 			if (null != game) {
 				game.reconnectUser(connection.user, connection.client);
-				this.logger.debug(`${connection.user.username} joined a private game`)
 			} else {
 				throw new WsException('Game not found');
 			}
@@ -995,7 +971,6 @@ export class MySocketGateway implements OnGatewayConnection,
 		}
 		game.player1.socket.emit('refuseInvite');
 		this.sendInvitesList(connection);
-		this.logger.debug(`${connection.user.username} refused the invitation to a game`);
 	}
 
 	sendInvitesList({ user, client }: Connection) {

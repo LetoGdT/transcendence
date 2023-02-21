@@ -292,14 +292,14 @@ export class UsersService
 		});
 
 		if (checkBan != -1)
-			throw new HttpException(['You have been blocked by this user'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You have been blocked by this user']);
 
 		checkBan = user.banlist.findIndex((users) => {
 			return users.id == user2.id
 		})
 
 		if (checkBan != -1)
-			throw new HttpException(['You blocked this user'], HttpStatus.FORBIDDEN);
+			throw new BadRequestException(['You blocked this user']);
 
 		const newInvited = await queryBuilder2.getOne();
 

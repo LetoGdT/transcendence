@@ -51,9 +51,9 @@ export class AuthController
 		@Res({ passthrough: true }) res: Response)
 	{
 		if (!query.code || !this.state) // Avoid CSRF
-			throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+			throw new BadRequestException('Forbidden');
 		if (query.state != this.state)
-			throw new HttpException('CSRF attempt detected !', HttpStatus.FORBIDDEN);
+			throw new BadRequestException('CSRF attempt detected !');
 		let api = new Api42();
 		await api.setToken(query.code);
 		let me = await api.get('/v2/me');
