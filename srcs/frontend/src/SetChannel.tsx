@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
-import {Link} from 'react-router-dom';
 import { PleaseConnect } from './adaptable-zone';
 import { Notification } from './Notifications';
 import { socket } from './WebsocketContext';
@@ -74,7 +73,7 @@ function SetChannel(){
 		setPassword(e.target.value);
 	};
 
-	const handleClickSetChannel = async (event: React.MouseEvent<HTMLButtonElement>) => {
+	const handleClickSetChannel = async () => {
 		const body = password.length === 0 ? {name: name} : {name: name, password: password};
 		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/channels/`, {
 			method: "POST",
@@ -87,7 +86,7 @@ function SetChannel(){
 		})
 		.then(response => {
 			if (!response.ok)
-				return response.json();
+				return response;
 			else {
 				socket.emit('newChannel');
 				navigate('/chat');
@@ -95,7 +94,7 @@ function SetChannel(){
 		})
 		.then(data => {
 			if (data !== undefined) {
-				Notification(data.message);
+				Notification(data);
 			}
 		});
 	};

@@ -346,7 +346,7 @@ function Chat() {
 		updateChannelsAvailable();
 		socket.on("newChannel", updateChannelsAvailable);
 		socket.on('exception', e => {
-			Notification([e.message]);
+			Notification(e.message);
 		});
 
 		return () => {
@@ -515,7 +515,7 @@ function Chat() {
 
 	const handleSendMessage = async () => {
 		if (currentConv === -1) {
-			Notification(["You have nowhere to send a message"]);
+			Notification("You have nowhere to send a message");
 			return ;
 		}
 		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/${isChannel?'channels':'conversations'}/${currentConv}/messages`, {
@@ -529,11 +529,11 @@ function Chat() {
 		})
 		.then(response => {
 			if (!response.ok)
-				return response.json();
+				return response;
 			else
 				socket.emit("newMessage", {chanOrConv: currentConv, isChannel: isChannel});
 		})
-		.then(data => {if (data !== undefined) Notification(data.message)});
+		.then(data => {if (data !== undefined) Notification(data)});
 		setNewMessage(""); // Sert à effacer le message une fois qu'on a appuyé sur le bouton send
 	}
 
@@ -666,11 +666,11 @@ function Chat() {
 			})
 			.then(response => {
 				if (!response.ok)
-					return response.json();
+					return response;
 				else
 					window.location.reload();
 			})
-			.then(data => {if (data !== undefined) Notification(data.message);});
+			.then(data => {if (data !== undefined) Notification(data);});
 		}
 
 		const handleLeave = async (event: any) => {
@@ -685,13 +685,13 @@ function Chat() {
 			})
 			.then(response => {
 				if (!response.ok)
-					return response.json();
+					return response;
 				else {
 					window.location.reload();
 					socket.emit('newChannel');
 				}
 			})
-			.then(data => {if (data !== undefined) Notification(data.message);});
+			.then(data => {if (data !== undefined) Notification(data);});
 		}
 
 		const handleInputPassword = (e: React.ChangeEvent<HTMLTextAreaElement>) => {

@@ -181,11 +181,11 @@ function Settings(){
 		})
 		.then(response => {
 			if (!response.ok)
-				return response.json();
+				return response;
 			else
 				window.location.reload();
 		})
-		.then(data => {if (data !== undefined) Notification(data.message)});
+		.then(data => {if (data !== undefined) Notification(data)});
 	}
 
 	const handleChangeAvatar = async () => {
@@ -200,11 +200,11 @@ function Settings(){
 		})
 		.then(response => {
 			if (!response.ok)
-				return response.json();
+				return response;
 			else
 				window.location.reload();
 		})
-		.then(data => {if (data !== undefined) Notification(data.message)});
+		.then(data => {if (data !== undefined) Notification(data)});
 	}
 
 	const uploadAvatar = async () => {
@@ -228,7 +228,7 @@ function Settings(){
 			else
 				window.location.reload();
 		})
-		.then(data => {if (data !== undefined) Notification([data.message])});
+		.then(data => {if (data !== undefined) Notification(data)});
 	}
 
 	return(

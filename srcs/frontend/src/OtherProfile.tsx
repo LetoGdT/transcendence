@@ -246,8 +246,8 @@ const AskButton = styled(Button)({
 
 function AddOrRemoveButton(uid: string | undefined){
 
-	const handleClickInvite = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/friends/invites`, {
+	const handleClickInvite = async () => {
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/friends/invites`, {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -258,15 +258,15 @@ function AddOrRemoveButton(uid: string | undefined){
 		})
 		.then(response => {
 			if (!response.ok)
-				return response.json();
+				return response;
 		})
-		.then(data => {if (data !== undefined) Notification(data.message)});
+		.then(data => {if (data !== undefined) Notification(data)});
 	};
 
-	const handleClickRemove = async (event: React.MouseEvent<HTMLButtonElement>) => {
+	const handleClickRemove = async () => {
 		let urltofetch : string;
 		urltofetch = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/friends/` + uid;
-		const response = await fetch(urltofetch, {
+		await fetch(urltofetch, {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -276,11 +276,11 @@ function AddOrRemoveButton(uid: string | undefined){
 		})
 		.then(response => {
 			if (!response.ok)
-				return response.json();
+				return response;
 			else
 				window.location.reload();
 		})
-		.then(data => {if (data !== undefined) Notification(data.message)});
+		.then(data => {if (data !== undefined) Notification(data)});
 	};
 
 	const [friend, setFriend] = useState<friendProps>();
@@ -328,8 +328,8 @@ function AddOrRemoveButton(uid: string | undefined){
 
 function BlockOrUnblockButton(uid: string | undefined){
 
-	const handleClickBlock = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/banlist`, {
+	const handleClickBlock = async () => {
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/banlist`, {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -340,17 +340,17 @@ function BlockOrUnblockButton(uid: string | undefined){
 		})
 		.then(response => {
 			if (!response.ok)
-				return response.json();
+				return response;
 			else
 				window.location.reload();
 		})
-		.then(data => {if (data !== undefined) Notification(data.message)});
+		.then(data => {if (data !== undefined) Notification(data)});
 	};
 
-	const handleClickUnblock = async (event: React.MouseEvent<HTMLButtonElement>) => {
+	const handleClickUnblock = async () => {
 		let urltofetch : string;
 		urltofetch = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/banlist/` + uid;
-		const response = await fetch(urltofetch, {
+		await fetch(urltofetch, {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -360,11 +360,11 @@ function BlockOrUnblockButton(uid: string | undefined){
 		})
 		.then(response => {
 			if (!response.ok)
-				return response.json();
+				return response;
 			else
 				window.location.reload();
 		})
-		.then(data => {if (data !== undefined) Notification(data.message)});
+		.then(data => {if (data !== undefined) Notification(data)});
 	};
 
 	const [blocked, setBlocked] = useState<blockedProps[]>([]);
@@ -538,7 +538,7 @@ function AskForAGameButton(uid: string | undefined){
 	const handleAskGame = async (event: any) => {
 		let game = games.find(game => game.user.id == uid);
 		if (game !== undefined)
-			Notification(['You cannot ask for multiple games at once with the same player']);
+			Notification('You cannot ask for multiple games at once with the same player');
 		else
 			navigate(event.target.value);
 	};
@@ -598,11 +598,11 @@ function ChatButton(uid: string | undefined){
 			})
 			.then(response => {
 				if (!response.ok)
-					return response.json();
+					return response;
 				else
 					socket.emit("newConv", {id: uid});
 			})
-			.then(data => {if (data !== undefined) Notification(data.message)});
+			.then(data => {if (data !== undefined) Notification(data)});
 		}
 	};
 
