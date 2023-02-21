@@ -41,17 +41,22 @@ const newMessage = () => {
 
 export const Notification = async (response: Response | string) => {
 	let notifs: string[];
-	if (response instanceof Response) {
+	let tmp: string | string[];
+	if (typeof response !== 'string') {
 		const data = await response.json();
 		if (response.status === 400)
-			notifs = data.message;
+			tmp = data.message;
 		else if (response.status === 403) 
-			notifs = [data];
+			tmp = [data];
 		else
-			notifs = data;
+			tmp = data;
 	}
 	else
-		notifs = [response];
+		tmp = [response];
+	if (typeof tmp === 'string')
+		notifs = [tmp];
+	else
+		notifs = tmp;
 	notifs.forEach((errorMsg: string) => {
 		toast.custom(
 			<div className='ErrorNotif'>
