@@ -259,7 +259,7 @@ function Settings(){
 									/>
 								</div>
 								<div className='example'>
-									*.jpg or *.png
+									*.jpg or *.png or *.gif
 								</div>
 								<div>
 									<SettingsButton variant="contained" disableRipple onClick={
