@@ -170,7 +170,7 @@ function Settings(){
 	};
 
 	const handleChangeAlias = async () => {
-		const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`,{
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`,{
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -189,7 +189,7 @@ function Settings(){
 	}
 
 	const handleChangeAvatar = async () => {
-		const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`,{
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`,{
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -214,7 +214,7 @@ function Settings(){
 		const file = input.files[0];
 		const formData = new FormData();
 		formData.append('file', file, file.name);
-		const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/picture`,{
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/picture`,{
 			headers: {
 					'Accept': 'application/json',
 				},
