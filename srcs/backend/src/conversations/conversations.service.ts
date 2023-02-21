@@ -198,8 +198,8 @@ export class ConversationsService
 		if (receiver == null)
 			throw new BadRequestException(['An error occured']);
 
-		let bannedIndex: number = receiver.banlist.findIndex((user) => {
-			return user.id == user.id;
+		let bannedIndex: number = receiver.banlist.findIndex((banned) => {
+			return banned.id == user.id;
 		});
 
 		if (bannedIndex != -1)
