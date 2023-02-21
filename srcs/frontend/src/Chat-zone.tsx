@@ -588,7 +588,7 @@ function Chat() {
 		if (currentConv === conv?.id && isChannel === conv.is_channel)
 			return (
 				<div>
-					<ChannelSelectedButton variant="contained" disableRipple onClick={handleChangeConv} value={(conv.is_channel?"a":"b")+conv.id}>
+					<ChannelSelectedButton variant="contained" disableRipple onClick={handleChangeConv}>
 						{conv.name}
 					</ChannelSelectedButton>
 				</div>
@@ -596,7 +596,7 @@ function Chat() {
 		else if (conv.new_message === true){
 			return(
 				<div>
-					<ChannelButtonNewMessage variant="contained" disableRipple onClick={handleChangeConv} value={(conv.is_channel?"a":"b")+conv.id}>
+					<ChannelButtonNewMessage variant="contained" disableRipple onClick={handleChangeConv}>
 						{conv.name}
 					</ChannelButtonNewMessage>
 				</div>
@@ -604,7 +604,7 @@ function Chat() {
 		} else {
 			return(
 				<div>
-					<ChannelButton variant="contained" disableRipple onClick={handleChangeConv} value={(conv.is_channel?"a":"b")+conv.id}>
+					<ChannelButton variant="contained" disableRipple onClick={handleChangeConv}>
 						{conv.name}
 					</ChannelButton>
 				</div>
@@ -617,7 +617,7 @@ function Chat() {
 			<div className='Chat-navigate'>
 				{convList?.map((conv: Conversation) => {
 					return (
-						<DisplayChannel conv={conv} key={conv.is_channel?"1":"2"+conv.id}/>
+						<DisplayChannel conv={conv} key={(conv.is_channel?"a":"b")+conv.id}/>
 					);
 				})}
 			</div>
