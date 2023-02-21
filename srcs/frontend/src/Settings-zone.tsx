@@ -4,7 +4,6 @@ import './Settings.css'
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
-import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
 import { useState, useEffect } from "react";
@@ -170,8 +169,8 @@ function Settings(){
 		setNewAlias(e.target.value);
 	};
 
-	const handleChangeAlias = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`,{
+	const handleChangeAlias = async () => {
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`,{
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -189,8 +188,8 @@ function Settings(){
 		.then(data => {if (data !== undefined) Notification(data.message)});
 	}
 
-	const handleChangeAvatar = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`,{
+	const handleChangeAvatar = async () => {
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me`,{
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -208,14 +207,14 @@ function Settings(){
 		.then(data => {if (data !== undefined) Notification(data.message)});
 	}
 
-	const uploadAvatar = async (event: React.MouseEvent<HTMLButtonElement>) => {
+	const uploadAvatar = async () => {
 		const input = document.querySelector('input[type="file"]') as HTMLInputElement;
 		if (input == null || input.files == null)
 			return;
 		const file = input.files[0];
 		const formData = new FormData();
 		formData.append('file', file, file.name);
-		const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/picture`,{
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/users/me/picture`,{
 			headers: {
 					'Accept': 'application/json',
 				},
@@ -229,7 +228,7 @@ function Settings(){
 			else
 				window.location.reload();
 		})
-		.then(data => {if (data !== undefined) Notification(data.message)});
+		.then(data => {if (data !== undefined) Notification([data.message])});
 	}
 
 	return(
@@ -259,7 +258,7 @@ function Settings(){
 									/>
 								</div>
 								<div className='example'>
-									*.jpg or *.png
+									*.jpg or *.png or *.gif
 								</div>
 								<div>
 									<SettingsButton variant="contained" disableRipple onClick={

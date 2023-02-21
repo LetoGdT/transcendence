@@ -1,6 +1,7 @@
 import './App.css';
 import './SetChannel.css';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
@@ -63,6 +64,7 @@ const SetChannelButton = styled(Button)({
 function SetChannel(){
 	const [name, setName] = React.useState("");
 	const [password, setPassword] = React.useState("");
+	const navigate = useNavigate();
 
 	const handleInputName = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setName(e.target.value);
@@ -88,7 +90,7 @@ function SetChannel(){
 				return response.json();
 			else {
 				socket.emit('newChannel');
-				window.location.replace('/chat');
+				navigate('/chat');
 			}
 		})
 		.then(data => {
