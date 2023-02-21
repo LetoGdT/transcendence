@@ -518,8 +518,6 @@ function Chat() {
 			Notification(["You have nowhere to send a message"]);
 			return ;
 		}
-		if (newMessage.length == 0)
-			return ;
 		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/${isChannel?'channels':'conversations'}/${currentConv}/messages`, {
 			headers: {
 				'Accept': 'application/json',
