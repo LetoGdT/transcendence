@@ -209,11 +209,11 @@ function Profile(){
 											})
 											.then(response => {
 												if (!response.ok)
-													return response.json();
+													return response;
 												else
 													window.location.reload();
 											})
-											.then(data => {if (data !== undefined) Notification(data.message)});
+											.then(data => {if (data !== undefined) Notification(data)});
 										}}>
 											<CheckIcon />
 										</IconButton>
@@ -231,11 +231,11 @@ function Profile(){
 											})
 											.then(response => {
 												if (!response.ok)
-													return response.json();
+													return response;
 												else
 													window.location.reload();
 											})
-											.then(data => {if (data !== undefined) Notification(data.message)});
+											.then(data => {if (data !== undefined) Notification(data)});
 										}}>
 											<CloseIcon />
 										</IconButton>

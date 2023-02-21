@@ -155,7 +155,7 @@ function SetPrivateGame(){
 	React.useEffect(() => {
 		socket.on('gameCreated', onGameCreated);
 		socket.on('exception', e => {
-			Notification([e.message]);
+			Notification(e.message);
 		});
 
 		return () => {

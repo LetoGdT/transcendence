@@ -248,11 +248,11 @@ function ManageChannel(){
 			})
 			.then(response => {
 				if (!response.ok)
-					return response.json();
+					return response;
 				else
 					window.location.reload();
 			})
-			.then(data => {if (data !== undefined) Notification(data.message)});
+			.then(data => {if (data !== undefined) Notification(data)});
 		};
 
 		const handleClickSetPrivate = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -267,11 +267,11 @@ function ManageChannel(){
 			})
 			.then(response => {
 				if (!response.ok)
-					return response.json();
+					return response;
 				else
 					window.location.reload();
 			})
-			.then(data => {if (data !== undefined) Notification(data.message)});
+			.then(data => {if (data !== undefined) Notification(data)});
 		};
 
 		const handleClickSetProtected = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -286,11 +286,11 @@ function ManageChannel(){
 			})
 			.then(response => {
 				if (!response.ok)
-					return response.json();
+					return response;
 				else
 					window.location.reload();
 			})
-			.then(data => {if (data !== undefined) Notification(data.message)});
+			.then(data => {if (data !== undefined) Notification(data)});
 		};
 
 		if (currentChannel?.status === "public") {
@@ -360,11 +360,11 @@ function ManageChannel(){
 			})
 			.then(response => {
 				if (!response.ok)
-					return response.json();
+					return response;
 				else
 					window.location.reload();
 			})
-			.then(data => {if (data !== undefined) Notification(data.message)});
+			.then(data => {if (data !== undefined) Notification(data)});
 			setPassword("");
 		}
 
@@ -428,11 +428,11 @@ function ManageChannel(){
 			})
 			.then(response => {
 				if (!response.ok)
-					return response.json();
+					return response;
 				else
 					window.location.reload();
 			})
-			.then(data => {if (data !== undefined) Notification(data.message)});
+			.then(data => {if (data !== undefined) Notification(data)});
 			setBanTime("");
 		}
 
@@ -447,11 +447,11 @@ function ManageChannel(){
 			})
 			.then(response => {
 				if (!response.ok)
-					return response.json();
+					return response;
 				else
 					window.location.reload();
 			})
-			.then(data => {if (data !== undefined) Notification(data.message)});
+			.then(data => {if (data !== undefined) Notification(data)});
 		}
 
 		let url: string = "/otherprofile/";
@@ -513,11 +513,11 @@ function ManageChannel(){
 			})
 			.then(response => {
 				if (!response.ok)
-					return response.json();
+					return response;
 				else
 					window.location.reload();
 			})
-			.then(data => {if (data !== undefined) Notification(data.message)});
+			.then(data => {if (data !== undefined) Notification(data)});
 		}
 
 		if(isOwner && props?.user.role === 'None'){

@@ -78,11 +78,11 @@ export function AuthWith2FA(): React.ReactElement{
 		})
 		.then(response => {
 			if (!response.ok)
-				return response.json();
+				return response;
 			navigate('/');
 			return null;
 		})
-		.then(data => {if (data != null) Notification(data.message)});
+		.then(data => {if (data != null) Notification(data)});
 	}
 	
 	return(
