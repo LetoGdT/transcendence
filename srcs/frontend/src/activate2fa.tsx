@@ -78,11 +78,11 @@ export function Activate2FA(): React.ReactElement{
 		})
 		.then(response => {
 			if (!response.ok)
-				return response.json();
+				return response;
 			else
 				navigate('/settings');
 		})
-		.then(data => {if (data !== undefined) Notification([data.message])});
+		.then(data => {if (data !== undefined) Notification(data)});
 	}
 	let qrcode: string = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/2fa/generate`;
 	return(
@@ -128,11 +128,11 @@ export function Desactivate2FA(): React.ReactElement{
 		})
 		.then(response => {
 			if (!response.ok)
-				return response.json();
+				return response;
 			else
 				navigate('/settings');
 		})
-		.then(data => {if (data !== undefined) Notification([data.message])});
+		.then(data => {if (data !== undefined) Notification(data)});
 	}
 	
 	return(

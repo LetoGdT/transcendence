@@ -346,7 +346,7 @@ function Chat() {
 		updateChannelsAvailable();
 		socket.on("newChannel", updateChannelsAvailable);
 		socket.on('exception', e => {
-			Notification([e.message]);
+			Notification(e.message);
 		});
 
 		return () => {
@@ -515,11 +515,9 @@ function Chat() {
 
 	const handleSendMessage = async () => {
 		if (currentConv === -1) {
-			Notification(["You have nowhere to send a message"]);
+			Notification("You have nowhere to send a message");
 			return ;
 		}
-		if (newMessage.length == 0)
-			return ;
 		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/${isChannel?'channels':'conversations'}/${currentConv}/messages`, {
 			headers: {
 				'Accept': 'application/json',
@@ -531,11 +529,11 @@ function Chat() {
 		})
 		.then(response => {
 			if (!response.ok)
-				return response.json();
+				return response;
 			else
 				socket.emit("newMessage", {chanOrConv: currentConv, isChannel: isChannel});
 		})
-		.then(data => {if (data !== undefined) Notification(data.message)});
+		.then(data => {if (data !== undefined) Notification(data)});
 		setNewMessage(""); // Sert à effacer le message une fois qu'on a appuyé sur le bouton send
 	}
 
@@ -588,7 +586,7 @@ function Chat() {
 		if (currentConv === conv?.id && isChannel === conv.is_channel)
 			return (
 				<div>
-					<ChannelSelectedButton variant="contained" disableRipple onClick={handleChangeConv}>
+					<ChannelSelectedButton variant="contained" disableRipple onClick={handleChangeConv} value={(conv.is_channel?"a":"b")+conv.id}>
 						{conv.name}
 					</ChannelSelectedButton>
 				</div>
@@ -596,7 +594,7 @@ function Chat() {
 		else if (conv.new_message === true){
 			return(
 				<div>
-					<ChannelButtonNewMessage variant="contained" disableRipple onClick={handleChangeConv}>
+					<ChannelButtonNewMessage variant="contained" disableRipple onClick={handleChangeConv} value={(conv.is_channel?"a":"b")+conv.id}>
 						{conv.name}
 					</ChannelButtonNewMessage>
 				</div>
@@ -604,7 +602,7 @@ function Chat() {
 		} else {
 			return(
 				<div>
-					<ChannelButton variant="contained" disableRipple onClick={handleChangeConv}>
+					<ChannelButton variant="contained" disableRipple onClick={handleChangeConv} value={(conv.is_channel?"a":"b")+conv.id}>
 						{conv.name}
 					</ChannelButton>
 				</div>
@@ -668,11 +666,11 @@ function Chat() {
 			})
 			.then(response => {
 				if (!response.ok)
-					return response.json();
+					return response;
 				else
 					window.location.reload();
 			})
-			.then(data => {if (data !== undefined) Notification(data.message);});
+			.then(data => {if (data !== undefined) Notification(data);});
 		}
 
 		const handleLeave = async (event: any) => {
@@ -687,13 +685,13 @@ function Chat() {
 			})
 			.then(response => {
 				if (!response.ok)
-					return response.json();
+					return response;
 				else {
 					window.location.reload();
 					socket.emit('newChannel');
 				}
 			})
-			.then(data => {if (data !== undefined) Notification(data.message);});
+			.then(data => {if (data !== undefined) Notification(data);});
 		}
 
 		const handleInputPassword = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
