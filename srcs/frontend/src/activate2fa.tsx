@@ -66,8 +66,8 @@ export function Activate2FA(): React.ReactElement{
 		setCode2FA(e.target.value);
 	};
 
-	const handleSend = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/2fa/enable`,{
+	const handleSend = async () => {
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/2fa/enable`,{
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -82,7 +82,7 @@ export function Activate2FA(): React.ReactElement{
 			else
 				navigate('/settings');
 		})
-		.then(data => {if (data !== undefined) Notification(data.message)});
+		.then(data => {if (data !== undefined) Notification([data.message])});
 	}
 	let qrcode: string = `${process.env.REACT_APP_NESTJS_HOSTNAME}/api/2fa/generate`;
 	return(
@@ -110,13 +110,14 @@ export function Activate2FA(): React.ReactElement{
 
 export function Desactivate2FA(): React.ReactElement{
 	const [code2FA, setCode2FA] = React.useState("");
+	const navigate = useNavigate();
 
 	const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setCode2FA(e.target.value);
 	};
 
-	const handleSend = async (event: React.MouseEvent<HTMLButtonElement>) => {
-		const response = await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/2fa/disable`,{
+	const handleSend = async () => {
+		await fetch(`${process.env.REACT_APP_NESTJS_HOSTNAME}/api/2fa/disable`,{
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json'
@@ -129,9 +130,9 @@ export function Desactivate2FA(): React.ReactElement{
 			if (!response.ok)
 				return response.json();
 			else
-				window.location.replace('/settings');
+				navigate('/settings');
 		})
-		.then(data => {if (data !== undefined) Notification(data.message)});
+		.then(data => {if (data !== undefined) Notification([data.message])});
 	}
 	
 	return(
