@@ -345,11 +345,15 @@ function Chat() {
 		updateUsersMe();
 		updateChannelsAvailable();
 		socket.on("newChannel", updateChannelsAvailable);
+		socket.on('exception', e => {
+			Notification([e.message]);
+		});
 
 		return () => {
 			socket.off('newMessage');
 			socket.off("newChannel");
 			socket.off('newConv');
+			socket.off('exception');
 			setUpNewMessageNotificationsFn();
 		}
 	}, []);

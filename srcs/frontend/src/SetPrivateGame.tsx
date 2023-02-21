@@ -7,8 +7,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Slider from '@mui/material/Slider';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
-import {Link} from 'react-router-dom';
 import { PleaseConnect } from './adaptable-zone';
+import { Notification } from './Notifications';
 
 const MaxPtsSlider = styled(Slider)({
   color: '#3b9b3b',
@@ -134,7 +134,7 @@ function SetPrivateGame(){
 
 	const [ isCreatingGame, setCreatingGame ] = React.useState(false);
 
-	const handleClickSetParams = async (event: React.MouseEvent<HTMLButtonElement>) => {
+	const handleClickSetParams = async () => {
 		if (isCreatingGame)
 			return ;
 		
@@ -154,9 +154,13 @@ function SetPrivateGame(){
 
 	React.useEffect(() => {
 		socket.on('gameCreated', onGameCreated);
+		socket.on('exception', e => {
+			Notification([e.message]);
+		});
 
 		return () => {
 			socket.off('gameCreated', onGameCreated);
+			socket.off('exception');
 		};
 	}, []);
 
